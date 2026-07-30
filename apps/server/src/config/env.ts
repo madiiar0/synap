@@ -76,6 +76,17 @@ if (!parsed.success) {
   process.exit(1);
 }
 
+// A forgeable session secret must never reach production.
+if (
+  parsed.data.NODE_ENV === "production" &&
+  (parsed.data.JWT_SECRET === "change_me" || parsed.data.JWT_SECRET.length < 16)
+) {
+  console.error(
+    "Refusing to start: JWT_SECRET is unset/default. Generate one with `openssl rand -hex 32`.",
+  );
+  process.exit(1);
+}
+
 export const env = parsed.data;
 export const isProd = env.NODE_ENV === "production";
 export { repoRoot };

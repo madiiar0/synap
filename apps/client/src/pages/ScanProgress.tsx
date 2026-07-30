@@ -21,11 +21,18 @@ export default function ScanProgress(): JSX.Element {
   const [leaving, setLeaving] = useState(false);
   const leavingRef = useRef(false);
 
-  const { data } = useQuery({
+  const { data, isError } = useQuery({
     queryKey: ["progress", id],
     queryFn: () => apiGet<ScanProgressDto>(`/api/public/scan/${id}/progress`),
-    refetchInterval: 1500,
+    // Stop polling on terminal states and on fetch errors (dead scan id).
+    refetchInterval: (query) => {
+      if (query.state.error) return false;
+      const status = query.state.data?.status;
+      return status === "done" || status === "partial" || status === "failed" ? false : 1500;
+    },
+    retry: 1,
     enabled: Boolean(id) && !leaving,
+    meta: { silent: true },
   });
 
   useEffect(() => {
@@ -39,7 +46,7 @@ export default function ScanProgress(): JSX.Element {
     }
   }, [data, id, navigate]);
 
-  const failed = data?.status === "failed";
+  const failed = data?.status === "failed" || isError;
   const brandInitial = (data?.brandName || "S").charAt(0).toUpperCase();
   const fraction = data && data.total > 0 ? data.done / data.total : 0;
   const filledDots = Math.round(fraction * 5);

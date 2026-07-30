@@ -16,9 +16,10 @@ const queryClient = new QueryClient({
     queries: { retry: 1, refetchOnWindowFocus: false, staleTime: 15_000 },
   },
   queryCache: new QueryCache({
-    onError: (error) => {
-      // 401s are handled by redirects, not toasts.
+    onError: (error, query) => {
+      // 401s are handled by redirects; polling queries opt out via meta.
       if (error instanceof ApiError && error.status === 401) return;
+      if (query.meta?.silent) return;
       toast(i18n.t("common.error"));
     },
   }),

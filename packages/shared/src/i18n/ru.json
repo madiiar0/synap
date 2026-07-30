@@ -13,6 +13,8 @@
     "demoBadge": "Демо-данные",
     "notAvailable": "—",
     "language": "Язык",
+    "langRu": "Русский",
+    "langEn": "English",
     "logout": "Выйти",
     "email": "Email",
     "emailPlaceholder": "you@company.com",

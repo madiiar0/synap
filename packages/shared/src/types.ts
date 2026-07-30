@@ -154,6 +154,7 @@ export interface PromptRowDto {
 
 export interface ScanListItemDto {
   id: string;
+  brandId: string;
   brandName: string;
   tier: ScanTier;
   status: ScanStatus;

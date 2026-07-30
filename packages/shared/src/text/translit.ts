@@ -10,6 +10,8 @@ const RU_TO_EN: Record<string, string> = {
   п: "p", р: "r", с: "s", т: "t", у: "u", ф: "f", х: "kh", ц: "ts",
   ч: "ch", ш: "sh", щ: "shch", ъ: "", ы: "y", ь: "", э: "e", ю: "yu",
   я: "ya",
+  // Kazakh Cyrillic (kz is the primary market)
+  ә: "a", ғ: "g", қ: "k", ң: "n", ө: "o", ұ: "u", ү: "u", һ: "h", і: "i",
 };
 
 /** Digraphs first (longest match wins), then single letters. */

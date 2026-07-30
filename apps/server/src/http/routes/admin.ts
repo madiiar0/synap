@@ -48,8 +48,12 @@ adminRouter.get("/leads", async (req, res, next) => {
 adminRouter.get("/leads.csv", async (_req, res, next) => {
   try {
     const leads = await Lead.find({}).sort({ createdAt: -1 }).limit(2000);
-    const escape = (v: string | undefined): string =>
-      `"${(v ?? "").replace(/"/g, '""').replace(/\r?\n/g, " ")}"`;
+    const escape = (v: string | undefined): string => {
+      let cell = (v ?? "").replace(/"/g, '""').replace(/\r?\n/g, " ");
+      // Neutralize spreadsheet formula injection from untrusted lead input.
+      if (/^[=+\-@\t]/.test(cell)) cell = `'${cell}`;
+      return `"${cell}"`;
+    };
     const rows = [
       "type,email,phone,name,brandName,source,message,createdAt",
       ...leads.map((l) =>
@@ -83,6 +87,7 @@ adminRouter.get("/scans", async (_req, res, next) => {
     const overallByScan = new Map(snapshots.map((s) => [String(s.scanId), s.overall]));
     const rows: ScanListItemDto[] = scans.map((s) => ({
       id: String(s._id),
+      brandId: String(s.brandId),
       brandName: brandNames.get(String(s.brandId)) ?? "?",
       tier: s.tier,
       status: s.status,
@@ -101,6 +106,11 @@ adminRouter.post("/scans/:id/rerun", async (req, res, next) => {
   try {
     const scan = await Scan.findById(req.params.id).catch(() => null);
     if (!scan) throw new AppError("NOT_FOUND", 404, "Scan not found");
+    if (scan.status === "running") {
+      // A live run must not be duplicated; the stale-running sweeper
+      // rescues genuinely dead runs.
+      throw new AppError("SCAN_RUNNING", 409, "Scan is already running");
+    }
     if (scan.status === "done") {
       // A finished scan re-runs as a fresh scan of the same shape.
       const fresh = await Scan.create({

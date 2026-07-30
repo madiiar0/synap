@@ -61,7 +61,7 @@ export function findAliasInText(text: string, alias: string): { index: number } 
 
   // Token positions in the text so fuzzy hits can report a char index.
   const tokens: { word: string; index: number }[] = [];
-  const re = /[\p{L}\p{N}-]+/gu;
+  const re = /[\p{L}\p{N}]+/gu;
   let tm: RegExpExecArray | null;
   while ((tm = re.exec(text)) !== null) {
     tokens.push({ word: tm[0], index: tm.index });
@@ -71,7 +71,11 @@ export function findAliasInText(text: string, alias: string): { index: number } 
     for (let j = 0; j < aliasTokens.length; j++) {
       const target = aliasTokens[j];
       const candidate = tokens[i + j].word;
-      const tol = wordTolerance(target);
+      // The first (distinctive) token anchors the match and must be exact —
+      // fuzzy anchors turn 1-edit rivals into false positives ("Mega
+      // Clinics" ≠ "Vega Clinic", "Alga Bank" ≠ "Alfa Bank"). Later,
+      // generic tokens keep the typo tolerance.
+      const tol = j === 0 ? 0 : wordTolerance(target);
       if (tol === 0) {
         if (candidate !== target) continue outer;
       } else if (levenshtein(candidate, target, tol) > tol) {
@@ -102,17 +106,28 @@ export interface DetectedBrand {
   position: number; // 1-based order of first mention
 }
 
-/** Detect several brands in one answer and rank them by first mention. */
+/**
+ * Detect several brands in one answer and rank them by first mention.
+ * One text span credits only one brand: on identical start offsets the
+ * longer (more specific / exact) alias wins.
+ */
 export function detectBrands(answerText: string, brands: BrandLike[]): DetectedBrand[] {
-  const found: { name: string; index: number }[] = [];
+  const found: { name: string; index: number; aliasLen: number }[] = [];
   for (const brand of brands) {
     const m = matchBrand(answerText, brand);
     if (m.matched && m.index !== undefined) {
-      found.push({ name: brand.name, index: m.index });
+      found.push({ name: brand.name, index: m.index, aliasLen: m.alias?.length ?? 0 });
     }
   }
-  found.sort((a, b) => a.index - b.index);
-  return found.map((f, i) => ({ ...f, position: i + 1 }));
+  found.sort((a, b) => a.index - b.index || b.aliasLen - a.aliasLen);
+  const kept: { name: string; index: number }[] = [];
+  let lastIndex = -1;
+  for (const f of found) {
+    if (f.index === lastIndex) continue;
+    kept.push({ name: f.name, index: f.index });
+    lastIndex = f.index;
+  }
+  return kept.map((f, i) => ({ ...f, position: i + 1 }));
 }
 
 /** Key used to dedupe/cache scan requests and prompt texts. */

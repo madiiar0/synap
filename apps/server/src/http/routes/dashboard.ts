@@ -30,7 +30,12 @@ async function loadOwnedBrand(req: Request): Promise<BrandDoc> {
   if (!brand) throw new AppError("NOT_FOUND", 404, "Brand not found");
   const user = req.user;
   if (!user) throw new AppError("UNAUTHORIZED", 401, "Sign in required");
-  if (user.role !== "admin" && String(brand.userId) !== String(user._id)) {
+  const uid = String(user._id);
+  const hasAccess =
+    user.role === "admin" ||
+    String(brand.userId) === uid ||
+    brand.claimedBy.some((id) => String(id) === uid);
+  if (!hasAccess) {
     throw new AppError("FORBIDDEN", 403, "Not your brand");
   }
   return brand;
@@ -40,7 +45,10 @@ dashboardRouter.get("/brands", async (req, res, next) => {
   try {
     const user = req.user;
     if (!user) throw new AppError("UNAUTHORIZED", 401);
-    const query = user.role === "admin" ? {} : { userId: user._id };
+    const query =
+      user.role === "admin"
+        ? {}
+        : { $or: [{ userId: user._id }, { claimedBy: user._id }] };
     const brands = await Brand.find(query).sort({ createdAt: -1 }).limit(50);
     res.json(brands.map(toBrandDto));
   } catch (err) {

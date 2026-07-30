@@ -113,8 +113,14 @@ async function finalizeScan(
 
 /** Execute a scan end-to-end: prompts → engines → extraction → snapshot. */
 export async function runScan(scanId: string): Promise<void> {
-  const scan = await Scan.findById(scanId);
-  if (!scan || scan.status === "done") return;
+  // Atomic claim: exactly one runner may take a scan out of a runnable state.
+  // Duplicate enqueues (admin rerun, sweeper, multiple workers) become no-ops.
+  const scan = await Scan.findOneAndUpdate(
+    { _id: scanId, status: { $in: ["queued", "partial", "failed"] } },
+    { $set: { status: "running" } },
+    { new: true },
+  ).catch(() => null);
+  if (!scan) return;
   const brand = await Brand.findById(scan.brandId);
   if (!brand) {
     scan.status = "failed";
@@ -132,11 +138,13 @@ export async function runScan(scanId: string): Promise<void> {
   }
 
   const prompts = await ensurePrompts(scan, brand);
+  // Failed answers are retried on resume: clear them so the unique index
+  // doesn't block the replacement rows.
+  await AnswerResult.deleteMany({ scanId: scan._id, failed: true });
   const existing = await AnswerResult.find({ scanId: scan._id }, { promptId: 1, engine: 1 });
   const doneKeys = new Set(existing.map((a) => `${a.promptId}|${a.engine}`));
 
   const total = prompts.length * engines.length;
-  scan.status = "running";
   scan.startedAt = scan.startedAt ?? new Date();
   scan.progress = { done: existing.length, total, currentPrompt: null };
   await scan.save();
@@ -229,11 +237,30 @@ export async function runScan(scanId: string): Promise<void> {
   if (fresh) await finalizeScan(fresh, brand, prompts, budgetPaused);
 }
 
-/** Scans stuck in `queued` for over 2 minutes (inline-driver crash recovery). */
+/**
+ * Crash recovery: scans stuck in `queued` for 2+ minutes, plus `running`
+ * scans whose doc hasn't been touched for 10+ minutes (progress updates
+ * touch updatedAt on every answer, so staleness means the runner died).
+ * Stale running scans are atomically reset to queued so runScan can
+ * re-claim them; resume skips already-answered pairs.
+ */
 export async function findStuckScans(): Promise<string[]> {
-  const cutoff = new Date(Date.now() - 2 * 60 * 1000);
+  const queuedCutoff = new Date(Date.now() - 2 * 60 * 1000);
+  const runningCutoff = new Date(Date.now() - 10 * 60 * 1000);
+
+  const staleRunning = await Scan.find(
+    { status: "running", updatedAt: { $lt: runningCutoff } },
+    { _id: 1 },
+  ).limit(10);
+  for (const scan of staleRunning) {
+    await Scan.updateOne(
+      { _id: scan._id, status: "running", updatedAt: { $lt: runningCutoff } },
+      { $set: { status: "queued" } },
+    );
+  }
+
   const stuck = await Scan.find(
-    { status: "queued", createdAt: { $lt: cutoff } },
+    { status: "queued", createdAt: { $lt: queuedCutoff } },
     { _id: 1 },
   ).limit(10);
   return stuck.map((s) => String(s._id as Types.ObjectId));

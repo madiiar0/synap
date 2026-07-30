@@ -105,8 +105,8 @@ export default function SettingsPage(): JSX.Element {
               onChange={(e) => setLocaleState(e.target.value as Locale)}
               className={inputCls}
             >
-              <option value="ru">Русский</option>
-              <option value="en">English</option>
+              <option value="ru">{t("common.langRu")}</option>
+              <option value="en">{t("common.langEn")}</option>
             </select>
           </div>
         </div>

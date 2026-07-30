@@ -9,10 +9,15 @@ export function normalizeText(input: string): string {
     .trim();
 }
 
-/** Like normalizeText but also strips punctuation to bare words (for token matching). */
+/**
+ * Like normalizeText but also strips punctuation to bare words (for token
+ * matching). Hyphens become spaces so "Astra-Dental" ≡ "Astra Dental" on
+ * both the alias and the answer side.
+ */
 export function normalizeForMatch(input: string): string {
   return normalizeText(input)
-    .replace(/[^\p{L}\p{N}\s-]/gu, " ")
+    .replace(/-/g, " ")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
     .replace(/\s+/g, " ")
     .trim();
 }

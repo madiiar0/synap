@@ -22,23 +22,28 @@ export const apiLimiter = rateLimit({
 });
 
 // Per-IP daily counter for public scan creation (in-memory, resets by day).
+// Split check/consume so validation failures and cache hits don't burn quota.
 const ipCounters = new Map<string, { day: string; count: number }>();
 
 export function publicScanIpLimit(req: Request, _res: Response, next: NextFunction): void {
-  const ip = req.ip ?? "unknown";
-  const day = todayKey();
-  const entry = ipCounters.get(ip);
-  if (!entry || entry.day !== day) {
-    ipCounters.set(ip, { day, count: 1 });
-    next();
-    return;
-  }
-  if (entry.count >= env.PUBLIC_SCAN_PER_IP_PER_DAY) {
+  const entry = ipCounters.get(req.ip ?? "unknown");
+  if (entry && entry.day === todayKey() && entry.count >= env.PUBLIC_SCAN_PER_IP_PER_DAY) {
     next(new AppError("RATE_LIMITED", 429, "Daily free scan limit reached"));
     return;
   }
-  entry.count += 1;
   next();
+}
+
+/** Called by the route only when a scan is actually created. */
+export function consumePublicScanQuota(ip: string | undefined): void {
+  const key = ip ?? "unknown";
+  const day = todayKey();
+  const entry = ipCounters.get(key);
+  if (!entry || entry.day !== day) {
+    ipCounters.set(key, { day, count: 1 });
+  } else {
+    entry.count += 1;
+  }
 }
 
 /** Global daily cap on public scans (Mongo-backed, restart-safe). */

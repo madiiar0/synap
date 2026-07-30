@@ -12,7 +12,7 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
-    "test": "pnpm -r test",
+    "test": "pnpm -r test && node scripts/check-i18n.mjs",
     "smoke": "pnpm --filter @synapai/server smoke",
     "seed": "pnpm --filter @synapai/server seed",
     "check-i18n": "node scripts/check-i18n.mjs"

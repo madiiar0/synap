@@ -45,10 +45,12 @@ export default function BookCallButton({
   const config = useAppConfig();
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const phoneValid = phone.trim().length >= 5;
 
   const handleOpen = useCallback(() => {
     setOpen(true);
@@ -57,13 +59,14 @@ export default function BookCallButton({
   }, [source, scanId, brandName]);
 
   const submit = useCallback(async () => {
-    if (!phone.trim()) return;
+    if (phone.trim().length < 5) return;
     setSubmitting(true);
+    setFailed(false);
     try {
       await apiPost("/api/leads", { name, phone, message, source, scanId, brandName });
       setSent(true);
     } catch {
-      setSent(true); // the open was already logged; don't trap the user in the modal
+      setFailed(true); // never fake success — the user can retry or use WhatsApp
     } finally {
       setSubmitting(false);
     }
@@ -134,9 +137,10 @@ export default function BookCallButton({
                     rows={3}
                     className="w-full rounded-xl border border-line bg-base px-4 py-3 text-sm outline-none focus:border-ink"
                   />
+                  {failed && <p className="text-sm text-red-500">{t("common.error")}</p>}
                   <button
                     type="button"
-                    disabled={submitting || !phone.trim()}
+                    disabled={submitting || !phoneValid}
                     onClick={() => void submit()}
                     className="w-full rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-black disabled:opacity-40"
                   >

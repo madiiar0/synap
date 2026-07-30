@@ -17,7 +17,12 @@ import { enqueue } from "../../queue/index.js";
 import { createMagicLink } from "../../services/auth.js";
 import { getBudgetState } from "../../services/usage.js";
 import { buildTeaser } from "../../services/views.js";
-import { publicScanGlobalLimit, publicScanIpLimit } from "../middleware/rateLimits.js";
+import {
+  authLimiter,
+  consumePublicScanQuota,
+  publicScanGlobalLimit,
+  publicScanIpLimit,
+} from "../middleware/rateLimits.js";
 
 export const publicRouter = Router();
 
@@ -28,16 +33,20 @@ publicRouter.post("/scan", publicScanIpLimit, publicScanGlobalLimit, async (req,
     // Same brand+category+city completed within 7 days → serve the cached scan.
     const normKey = normalizedKey(input.brandName, input.category, input.city);
     const cacheCutoff = new Date(Date.now() - SCAN_CACHE_DAYS * 24 * 60 * 60 * 1000);
-    const existingBrands = await Brand.find({ normKey }).limit(10);
-    for (const existing of existingBrands) {
-      const cached = await Scan.findOne({
-        brandId: existing._id,
+    const brandIds = (await Brand.find({ normKey }, { _id: 1 }).limit(200)).map((b) => b._id);
+    if (brandIds.length > 0) {
+      const cachedScans = await Scan.find({
+        brandId: { $in: brandIds },
         status: { $in: ["done", "partial"] },
         finishedAt: { $gte: cacheCutoff },
-      }).sort({ finishedAt: -1 });
-      if (cached && (await ScoreSnapshot.exists({ scanId: cached._id }))) {
-        res.json({ scanId: String(cached._id), cached: true });
-        return;
+      })
+        .sort({ finishedAt: -1 })
+        .limit(5);
+      for (const cached of cachedScans) {
+        if (await ScoreSnapshot.exists({ scanId: cached._id })) {
+          res.json({ scanId: String(cached._id), cached: true });
+          return;
+        }
       }
     }
 
@@ -45,6 +54,9 @@ publicRouter.post("/scan", publicScanIpLimit, publicScanGlobalLimit, async (req,
     if (budget.paused) {
       throw new AppError("SCANS_PAUSED", 503, "Scanning is temporarily paused");
     }
+
+    // Only an actually-created scan consumes the per-IP daily quota.
+    consumePublicScanQuota(req.ip);
 
     const brand = await Brand.create({
       name: input.brandName,
@@ -96,7 +108,8 @@ publicRouter.get("/scan/:id/teaser", async (req, res, next) => {
   }
 });
 
-publicRouter.post("/scan/:id/unlock", async (req, res, next) => {
+// authLimiter: this endpoint sends email — cap it like the other mail senders.
+publicRouter.post("/scan/:id/unlock", authLimiter, async (req, res, next) => {
   try {
     const { email, locale } = unlockRequestSchema.parse(req.body);
     const scan = await Scan.findById(req.params.id).catch(() => null);
@@ -113,10 +126,13 @@ publicRouter.post("/scan/:id/unlock", async (req, res, next) => {
     });
 
     const { user, link } = await createMagicLink(email, locale ?? brand.locale);
-    if (!brand.userId) {
-      brand.userId = user._id;
-      await brand.save();
+    // Public scans are shared: every unlocker gets dashboard access, the
+    // first one also becomes the nominal owner.
+    if (!brand.userId) brand.userId = user._id;
+    if (!brand.claimedBy.some((id) => String(id) === String(user._id))) {
+      brand.claimedBy.push(user._id);
     }
+    await brand.save();
     const snapshot = await ScoreSnapshot.findOne({ scanId: scan._id });
     await sendScanReadyEmail(email, user.locale, brand.name, snapshot?.overall ?? 0, link);
     res.json({ ok: true });

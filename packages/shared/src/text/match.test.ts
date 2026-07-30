@@ -39,8 +39,21 @@ describe("matchBrand", () => {
     expect(matchBrand("Astra Dental is a solid choice.", { name: "Астра Дентал" }).matched).toBe(true);
   });
 
-  it("matches small typos via fuzzy per-word distance", () => {
-    expect(matchBrand("Try Astro Dentall for implants.", astra).matched).toBe(true);
+  it("matches small typos in non-anchor words (first word must be exact)", () => {
+    expect(matchBrand("Try Astra Dentall for implants.", astra).matched).toBe(true);
+  });
+
+  it("does not credit 1-edit rival names to the brand", () => {
+    expect(matchBrand("Рекомендую Mega Clinics.", { name: "Vega Clinic" }).matched).toBe(false);
+    expect(matchBrand("Alga Bank is popular.", { name: "Alfa Bank" }).matched).toBe(false);
+    expect(matchBrand("Astro Dental is nearby.", astra).matched).toBe(false);
+  });
+
+  it("matches hyphenated and spaced name variants both ways", () => {
+    expect(matchBrand("Советуют клинику Astra-Dental.", { name: "Astra Dental" }).matched).toBe(
+      true,
+    );
+    expect(matchBrand("Go to Astra Dental today.", { name: "Astra-Dental" }).matched).toBe(true);
   });
 
   it("does not match short words inside longer ones", () => {
@@ -64,6 +77,14 @@ describe("detectBrands", () => {
     ]);
     expect(detected.map((d) => d.name)).toEqual(["Nurly Dent", "Astra Dental", "Vega Clinic"]);
     expect(detected[1].position).toBe(2);
+  });
+
+  it("credits one text span to a single brand", () => {
+    const detected = detectBrands("Visit Astra Dental now.", [
+      { name: "Astra Dental" },
+      { name: "Astra Dental Care" },
+    ]);
+    expect(detected).toHaveLength(1);
   });
 });
 

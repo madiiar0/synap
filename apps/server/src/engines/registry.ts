@@ -30,7 +30,9 @@ function realAdapter(id: EngineId): EngineAdapter {
 function demoAdapter(id: EngineId): EngineAdapter {
   let adapter = demoAdapters.get(id);
   if (!adapter) {
-    adapter = createDemoAdapter(id);
+    // Instrumented too, so demo runs record call volumes (at zero cost) and
+    // exercise the same budget-guard path as real engines.
+    adapter = instrumentEngine(createDemoAdapter(id));
     demoAdapters.set(id, adapter);
   }
   return adapter;

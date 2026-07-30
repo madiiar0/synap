@@ -135,6 +135,7 @@ export default function Teaser(): JSX.Element {
                   {t("teaser.unlockButton")}
                 </button>
               </div>
+              {unlock.isError && <p className="mt-2 text-sm text-red-500">{t("common.error")}</p>}
             </>
           )}
         </div>

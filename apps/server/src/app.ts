@@ -47,7 +47,7 @@ export function createApp(): Express {
     });
   });
 
-  app.use("/api/public", publicRouter);
+  app.use("/api/public", apiLimiter, publicRouter);
   app.use("/api/auth", authRouter);
   app.use("/api/leads", apiLimiter, leadsRouter);
   app.use("/api/admin", apiLimiter, adminRouter);

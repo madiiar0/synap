@@ -41,13 +41,23 @@ export const adminLoginSchema = z.object({
   password: z.string().min(8).max(200),
 });
 
+/** Optional text field where an empty/blank string means "not provided". */
+const optionalText = (min: number, max: number) =>
+  z.preprocess(
+    (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+    trimmed(min, max).optional(),
+  );
+
 export const bookCallLeadSchema = z.object({
-  name: trimmed(1, 80).optional(),
-  email: z.string().trim().toLowerCase().email().max(120).optional(),
-  phone: trimmed(5, 40).optional(),
-  message: z.string().trim().max(1000).optional(),
-  brandName: trimmed(1, 80).optional(),
-  scanId: z.string().max(64).optional(),
+  name: optionalText(1, 80),
+  email: z.preprocess(
+    (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+    z.string().trim().toLowerCase().email().max(120).optional(),
+  ),
+  phone: optionalText(5, 40),
+  message: optionalText(1, 1000),
+  brandName: optionalText(1, 80),
+  scanId: optionalText(1, 64),
   source: z.enum(["landing", "dashboard", "report"]).default("landing"),
   /** true when the modal was merely opened (Calendly may complete off-site). */
   opened: z.boolean().optional(),

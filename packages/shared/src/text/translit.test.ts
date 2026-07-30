@@ -8,10 +8,16 @@ describe("ruToEn", () => {
   });
 
   it("handles digraph letters", () => {
-    expect(ruToEn("Жаңа")).toBe("zhaңa"); // non-Russian letters pass through
     expect(ruToEn("Чехов")).toBe("chekhov");
     expect(ruToEn("Щит")).toBe("shchit");
     expect(ruToEn("Юрта")).toBe("yurta");
+  });
+
+  it("transliterates Kazakh Cyrillic letters", () => {
+    expect(ruToEn("Жаңа")).toBe("zhana");
+    expect(ruToEn("Қазақ")).toBe("kazak");
+    expect(ruToEn("Әсем")).toBe("asem");
+    expect(ruToEn("Түркістан")).toBe("turkistan");
   });
 
   it("drops soft/hard signs", () => {

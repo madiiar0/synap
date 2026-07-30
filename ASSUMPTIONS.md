@@ -38,6 +38,19 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
 10. **`pnpm seed` against the in-memory fallback is throwaway** (separate
    process = separate in-memory DB). The dev server auto-seeds its own
    in-memory DB on startup instead; `pnpm seed` is for real-Mongo setups.
-11. **Cost table is estimates.** Per-1M-token USD prices for sonar /
+11. **Public scans are shared, not owned.** The 7-day cache means several
+    visitors can reach the same scan. Every visitor who unlocks with an email
+    gets dashboard access (`Brand.claimedBy` array); the first one is also
+    the nominal `userId` owner. Anyone with the same public brand info could
+    always trigger the same scan, so shared read access leaks nothing new.
+12. **Fuzzy matching is stricter than the literal spec.** The spec says
+    "Levenshtein ≤2/word", but that misattributes 1-edit rival names
+    ("Mega Clinics" → "Vega Clinic", "Alga Bank" → "Alfa Bank"). Implemented:
+    fuzzy only for multi-word aliases, the first (distinctive) word must
+    match exactly, later words keep the ≤1/≤2 tolerance; one text span
+    credits only one brand. Regression-tested.
+13. **Production refuses the default JWT secret** (`change_me` or <16 chars)
+    at startup — forged admin sessions otherwise.
+14. **Cost table is estimates.** Per-1M-token USD prices for sonar /
    gpt-4o-mini / claude-haiku-4-5 / gemini-2.5-flash are constants marked as
    estimates to be re-verified when real keys are added (MANUAL_SETUP step).

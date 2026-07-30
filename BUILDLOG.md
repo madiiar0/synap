@@ -82,3 +82,34 @@ Chronological log of the SynapAI v2 build. Newest entries last.
 - 6 client component tests (Reveal, hero fixed-height cycle, FAQ toggle).
 - Browser-verified at 1440 / 768 / 375 px — no horizontal overflow; radar and
   full reveal flow captured live.
+
+## P4 — Admin, i18n sweep, docs, adversarial review ✅
+
+- Admin panel (`/admin`, admin role): Leads (type filter + CSV export), Scans
+  (status/cost/score, re-run, trigger FULL scan per brand), Usage (per-day
+  per-provider cost chart, budget state + resume), Engines (global flags).
+  All four pages browser-verified.
+- i18n: `scripts/check-i18n.mjs` wired into `pnpm test` — zero hard-coded
+  Cyrillic in `apps/client/src`, 241 keys mirrored across ru/en.
+- Docs: README (quickstart, architecture, scoring), MANUAL_SETUP (9-step
+  founder checklist: keys → Calendly → SMTP → Atlas → deploy → go-live).
+- **Adversarial review** (26-agent workflow: 5 dimension reviewers, then a
+  skeptic verifying every finding): 18 confirmed findings, all fixed —
+  - scan pipeline: atomic queued→running claim (duplicate enqueues are
+    no-ops), stale-`running` rescue in the sweeper, failed answers now retried
+    on re-run (were permanently skipped), admin rerun of a live scan → 409;
+  - security: production refuses default JWT secret; rate limiter on all
+    public endpoints + strict limiter on the email-sending unlock endpoint;
+    CSV formula-injection escaping; per-IP scan quota no longer burned by
+    validation failures or cache hits; cache lookup no longer degrades after
+    10 same-key brands;
+  - product: unlockers of a cached scan get shared dashboard access
+    (claimedBy) instead of a dead-end; BookCall no longer fakes success on
+    failure (and blank optional fields no longer 400); teaser unlock shows
+    errors; progress screen stops polling dead scans and shows a failure
+    state;
+  - matcher: first-word-exact fuzzy anchoring (kills 1-edit rival false
+    positives), hyphen≡space name variants, one-span-one-brand dedupe,
+    Kazakh Cyrillic transliteration (ә ғ қ ң ө ұ ү һ і).
+- Final green board: typecheck ✅ lint ✅ 58 tests ✅ i18n sweep ✅ client
+  build ✅ offline smoke ✅.

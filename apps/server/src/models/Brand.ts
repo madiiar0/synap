@@ -4,6 +4,8 @@ import type { CompetitorRef, Locale, Market } from "@synapai/shared";
 export interface BrandDoc extends Document {
   _id: Types.ObjectId;
   userId?: Types.ObjectId;
+  /** Everyone who unlocked a report for this brand (public scans are shared). */
+  claimedBy: Types.ObjectId[];
   name: string;
   aliases: string[];
   website?: string;
@@ -32,6 +34,7 @@ const competitorSchema = new Schema<CompetitorRef>(
 const brandSchema = new Schema<BrandDoc>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", index: true },
+    claimedBy: { type: [Schema.Types.ObjectId], ref: "User", default: [], index: true },
     name: { type: String, required: true },
     aliases: { type: [String], default: [] },
     website: { type: String },
