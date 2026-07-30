@@ -57,3 +57,28 @@ Chronological log of the SynapAI v2 build. Newest entries last.
 - Verified in a real browser against the auto-seeded demo brand: all six pages
   render every widget (magic-link login → /app). typecheck/lint/tests/build/
   smoke all green.
+
+## P3 — Landing design (§12) ✅
+
+- Design system: light `#FAFAFA` / dark `#0A0A0A` sections, dashed hairline
+  separators, vertical blueprint guides at container edges (≥1280px), Inter
+  variable (self-hosted, Cyrillic subsets), pill buttons, monochrome engine
+  glyphs (deliberately not official logos + trademark note in the footer).
+- Motion: `Reveal` (IntersectionObserver .25 once → 600ms cubic-bezier
+  blur/translate clear, 70ms stagger, reduced-motion = fade only); hero engine
+  line cycling ChatGPT→Claude→Gemini→Perplexity every 2.2s with a 500ms blur
+  swap in a fixed-height line (no layout shift); CSS marquee (two rows,
+  opposite directions, hover pause, duplicated track).
+- Sections built per spec order: dark hero + hairline scan form card, fear
+  line (last two words unblur on scroll), chat-style mock answer (Astra/
+  Nurly/Vega), prompt marquee, 3-column how-it-works, oversized Gartner quote
+  (the only statistic), angled product-preview div, 6-item FAQ accordion,
+  final dark CTA with preview peeking, minimal footer.
+- Progress screen §12.10: radar (3 hairline rings, conic sweep 3s, pulsing
+  ring dots, brand initial), blur-swapped currentPrompt, 5 progress dots +
+  counter, blur-out transition into the teaser. Fixed a React effect-cleanup
+  bug that cancelled the teaser navigation; progress DTO now carries
+  brandName for the radar initial.
+- 6 client component tests (Reveal, hero fixed-height cycle, FAQ toggle).
+- Browser-verified at 1440 / 768 / 375 px — no horizontal overflow; radar and
+  full reveal flow captured live.

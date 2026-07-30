@@ -1,0 +1,36 @@
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { currentLocale, setLocale } from "../../lib/i18n";
+
+export default function LandingFooter(): JSX.Element {
+  const { t } = useTranslation();
+  return (
+    <footer className="border-t border-line bg-base py-10">
+      <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-4 px-6 sm:flex-row">
+        <p className="flex items-center gap-2 text-sm font-bold tracking-tight">
+          <span className="inline-block h-2 w-2 rounded-sm bg-accent" aria-hidden />
+          {t("common.brand")}
+        </p>
+        <div className="flex items-center gap-6 text-sm text-sub">
+          <a href="#how" className="hover:text-ink">
+            {t("nav.howItWorks")}
+          </a>
+          <a href="#faq" className="hover:text-ink">
+            {t("nav.faq")}
+          </a>
+          <Link to="/login" className="hover:text-ink">
+            {t("nav.login")}
+          </Link>
+          <button
+            type="button"
+            onClick={() => setLocale(currentLocale() === "ru" ? "en" : "ru")}
+            className="hover:text-ink"
+          >
+            {currentLocale() === "ru" ? "EN" : "RU"}
+          </button>
+        </div>
+      </div>
+      <p className="mt-6 px-6 text-center text-xs text-sub">{t("common.trademarkNote")}</p>
+    </footer>
+  );
+}

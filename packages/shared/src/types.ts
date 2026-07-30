@@ -38,6 +38,7 @@ export interface ScanProgressDto {
   done: number;
   total: number;
   currentPrompt: string | null;
+  brandName: string;
 }
 
 export interface TeaserEngineBar {

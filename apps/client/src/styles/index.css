@@ -18,3 +18,123 @@ body {
 .dark-section .hairline-dashed {
   border-top-color: #262626;
 }
+
+/* ---- §12 motion system: Reveal (blur-in, staggered) ---- */
+.reveal > * {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(14px);
+  transition:
+    opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-visible > * {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+
+.reveal > *:nth-child(2) { transition-delay: 70ms; }
+.reveal > *:nth-child(3) { transition-delay: 140ms; }
+.reveal > *:nth-child(4) { transition-delay: 210ms; }
+.reveal > *:nth-child(5) { transition-delay: 280ms; }
+.reveal > *:nth-child(6) { transition-delay: 350ms; }
+.reveal > *:nth-child(n + 7) { transition-delay: 420ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal > * {
+    filter: none;
+    transform: none;
+    transition: opacity 600ms ease;
+  }
+}
+
+/* ---- Prompt marquee: two rows, opposite directions, seamless loop ---- */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 48s linear infinite;
+}
+
+.marquee-track.marquee-reverse {
+  animation-direction: reverse;
+}
+
+.marquee-row:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
+/* ---- Blur swap (hero engine cycle / progress prompt) ---- */
+@keyframes blur-in {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.blur-in {
+  animation: blur-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blur-in {
+    animation: none;
+  }
+}
+
+/* ---- Vertical blueprint guides at container edges ---- */
+.guides {
+  position: relative;
+}
+
+@media (min-width: 1280px) {
+  .guides::before,
+  .guides::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    border-left: 1px dashed #e7e7e7;
+  }
+
+  .guides::before { left: 0; }
+  .guides::after { right: 0; }
+
+  .guides-dark::before,
+  .guides-dark::after { border-left-color: #262626; }
+}
+
+/* ---- Radar sweep on the scan progress screen ---- */
+@keyframes radar-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.radar-sweep {
+  animation: radar-sweep 3s linear infinite;
+}
+
+@keyframes radar-dot {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+.radar-dot {
+  animation: radar-dot 2.4s ease-in-out infinite;
+}

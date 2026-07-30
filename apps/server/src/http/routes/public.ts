@@ -73,12 +73,14 @@ publicRouter.get("/scan/:id/progress", async (req, res, next) => {
   try {
     const scan = await Scan.findById(req.params.id).catch(() => null);
     if (!scan) throw new AppError("NOT_FOUND", 404, "Scan not found");
+    const brand = await Brand.findById(scan.brandId);
     const dto: ScanProgressDto = {
       scanId: String(scan._id),
       status: scan.status,
       done: scan.progress.done,
       total: scan.progress.total,
       currentPrompt: scan.progress.currentPrompt,
+      brandName: brand?.name ?? "",
     };
     res.json(dto);
   } catch (err) {

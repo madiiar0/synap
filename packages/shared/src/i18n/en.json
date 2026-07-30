@@ -57,6 +57,7 @@
     },
     "mockAnswer": {
       "userQuestion": "Which {{category}} should I choose in Almaty?",
+      "sampleCategory": "dentist",
       "caption": "This is what the new search results look like. No links — only recommendations.",
       "blurb1": "A modern clinic with transparent pricing and online booking.",
       "blurb2": "A large network, operating since 2012, same-day appointments.",
