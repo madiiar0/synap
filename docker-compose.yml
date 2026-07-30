@@ -1,0 +1,23 @@
+# Local infrastructure for SynapAI. Redis is optional — without it the app
+# uses an in-process job queue; without Mongo (dev only) it falls back to an
+# in-memory MongoDB.
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  mongo-data:
+  redis-data:

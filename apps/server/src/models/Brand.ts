@@ -1,0 +1,50 @@
+import mongoose, { Schema, type Document, type Types } from "mongoose";
+import type { CompetitorRef, Locale, Market } from "@synapai/shared";
+
+export interface BrandDoc extends Document {
+  _id: Types.ObjectId;
+  userId?: Types.ObjectId;
+  name: string;
+  aliases: string[];
+  website?: string;
+  category: string;
+  city?: string;
+  country: string;
+  market: Market;
+  competitors: CompetitorRef[];
+  locale: Locale;
+  /** Normalized prompt texts the user disabled for future scans. */
+  disabledPrompts: string[];
+  /** normalizedKey(name, category, city) — used for the 7-day public-scan cache. */
+  normKey: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const competitorSchema = new Schema<CompetitorRef>(
+  {
+    name: { type: String, required: true },
+    aliases: { type: [String], default: [] },
+  },
+  { _id: false },
+);
+
+const brandSchema = new Schema<BrandDoc>(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: "User", index: true },
+    name: { type: String, required: true },
+    aliases: { type: [String], default: [] },
+    website: { type: String },
+    category: { type: String, required: true },
+    city: { type: String },
+    country: { type: String, default: "KZ" },
+    market: { type: String, enum: ["kz", "ru", "global"], default: "kz" },
+    competitors: { type: [competitorSchema], default: [] },
+    locale: { type: String, enum: ["ru", "en"], default: "ru" },
+    disabledPrompts: { type: [String], default: [] },
+    normKey: { type: String, required: true, index: true },
+  },
+  { timestamps: true },
+);
+
+export const Brand = mongoose.model<BrandDoc>("Brand", brandSchema);

@@ -1,0 +1,304 @@
+{
+  "common": {
+    "brand": "SynapAI",
+    "loading": "Loading…",
+    "error": "Something went wrong. Please try again.",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Saved",
+    "send": "Send",
+    "close": "Close",
+    "back": "Back",
+    "demoBadge": "Demo data",
+    "notAvailable": "—",
+    "language": "Language",
+    "logout": "Log out",
+    "email": "Email",
+    "emailPlaceholder": "you@company.com",
+    "trademarkNote": "All product names are trademarks of their respective owners."
+  },
+  "nav": {
+    "product": "Product",
+    "howItWorks": "How it works",
+    "faq": "FAQ",
+    "login": "Log in",
+    "checkBrand": "Check your brand"
+  },
+  "landing": {
+    "heroLine1": "Get your brand mentioned by",
+    "heroSub1": "Millions of people already ask AI what to buy.",
+    "heroSub2": "Find out if it names you.",
+    "ctaCheckFree": "Check for free",
+    "ctaBookCall": "Book a call",
+    "form": {
+      "brandLabel": "Brand",
+      "brandPlaceholder": "e.g. Astra Dental",
+      "categoryLabel": "Category",
+      "categoryPlaceholder": "e.g. dental clinic",
+      "cityLabel": "City",
+      "cityPlaceholder": "e.g. Almaty",
+      "marketLabel": "Market",
+      "marketKz": "Kazakhstan",
+      "marketRu": "Russia",
+      "marketGlobal": "Global",
+      "competitorsLabel": "Competitors (up to 5, comma-separated)",
+      "competitorsPlaceholder": "Optional",
+      "websiteLabel": "Website",
+      "websitePlaceholder": "Optional",
+      "submit": "Run the scan",
+      "submitting": "Starting…",
+      "rateLimited": "Today's free scans are used up. Try tomorrow or book a call.",
+      "validation": "Fill in brand and category (at least 2 characters)."
+    },
+    "fear": {
+      "before": "Right now, someone is asking AI about your services. AI recommended",
+      "emphasis": "your competitor."
+    },
+    "mockAnswer": {
+      "userQuestion": "Which {{category}} should I choose in Almaty?",
+      "caption": "This is what the new search results look like. No links — only recommendations.",
+      "blurb1": "A modern clinic with transparent pricing and online booking.",
+      "blurb2": "A large network, operating since 2012, same-day appointments.",
+      "blurb3": "Premium service and attentive doctors, by appointment."
+    },
+    "marquee": {
+      "heading1": "AI platforms are the new search engines.",
+      "heading2": "Track the prompts that define your brand."
+    },
+    "how": {
+      "title": "How it works",
+      "step1Title": "We scan",
+      "step1Text": "Up to 100 generated questions across ChatGPT, Claude, Gemini and Perplexity.",
+      "step2Title": "We score",
+      "step2Text": "A 0–100 Visibility Score, competitors, sources.",
+      "step3Title": "We break it down on a call",
+      "step3Text": "A visibility growth plan that we execute for you."
+    },
+    "stat": {
+      "quote": "“50% of traditional search traffic will be replaced with generative AI by 2028”",
+      "source": "Source: Gartner",
+      "question": "Is your brand ready?"
+    },
+    "preview": {
+      "title": "Rankings",
+      "subtitle": "Comparison with competitors",
+      "colBrand": "Brand",
+      "colVisibility": "Visibility",
+      "colSentiment": "Sentiment"
+    },
+    "faq": {
+      "title": "FAQ",
+      "q1": "How is the Visibility Score calculated?",
+      "a1": "We ask AI platforms dozens of questions your customers typically ask and measure how often — and at which position — they name your brand. The 0–100 score combines branded, category and comparison prompts.",
+      "q2": "Which models do you check?",
+      "a2": "Perplexity — always; ChatGPT, Gemini and Claude — on the full scan. The list keeps growing.",
+      "q3": "How long does a scan take?",
+      "a3": "The free scan takes about a minute. A full scan of 100 prompts across 4 platforms takes up to 15 minutes; we email you the report link.",
+      "q4": "Is the data accurate?",
+      "a4": "AI answers vary: the same question can produce different answers. We run repeated passes and average them, so the score reflects a stable picture rather than a single reply.",
+      "q5": "What happens after the call?",
+      "a5": "We walk through your report, show where you lose customers, and propose a plan: sources, content, mentions. We execute it for you and track the score's growth.",
+      "q6": "How much does it cost?",
+      "a6": "The scan is free. Improving your visibility is scoped on the call — it depends on your category and competition."
+    },
+    "finalCta": {
+      "title": "Find out what AI says about your brand",
+      "start": "Start the free scan",
+      "book": "Book a call"
+    }
+  },
+  "progress": {
+    "title": "Checking what AI says about your brand…",
+    "counter": "{{done}} / {{total}} prompts",
+    "failed": "The scan failed. Please try again.",
+    "queued": "Scan queued…"
+  },
+  "teaser": {
+    "title": "Your brand's Visibility Score",
+    "outOf": "out of 100",
+    "enginesTitle": "Platforms",
+    "competitorsDetected": "Competitors spotted in answers: {{count}}",
+    "sampleTitle": "Sample AI answer",
+    "lockedNote": "Full report — by email",
+    "unlockTitle": "Get the full report",
+    "unlockText": "We'll send a link to the dashboard with answers, competitors and sources.",
+    "unlockButton": "Open the report",
+    "unlockSent": "Done! Check your inbox — we sent the dashboard link.",
+    "bookBanner": "Want a higher score? We'll do it for you — a 20-minute call."
+  },
+  "auth": {
+    "title": "Sign in to SynapAI",
+    "requestText": "We'll email you a sign-in link.",
+    "requestButton": "Get the link",
+    "requestSent": "Link sent. Check your inbox.",
+    "verifying": "Signing in…",
+    "verifyFailed": "The link is invalid or expired. Request a new one.",
+    "adminTitle": "Admin sign-in",
+    "password": "Password",
+    "loginButton": "Sign in"
+  },
+  "dashboard": {
+    "nav": {
+      "overview": "Overview",
+      "answers": "Answers",
+      "competitors": "Competitors",
+      "sources": "Sources",
+      "prompts": "Prompts",
+      "settings": "Settings"
+    },
+    "rescan": "Re-scan",
+    "rescanUnavailable": "Available {{date}}",
+    "score": "Visibility Score",
+    "delta": "vs previous scan",
+    "engines": "Platforms",
+    "mentionRate": "Mentions",
+    "shareOfVoice": "Share of Voice",
+    "detectedTag": "detected",
+    "usTag": "you",
+    "whereYouLose": "Where you lose",
+    "whereYouLoseText": "Prompts where AI names competitors but not you.",
+    "showAnswer": "Show answer",
+    "bookBanner": "Want a higher score? We'll do it for you — a 20-minute call.",
+    "answers": {
+      "filterEngine": "Platform",
+      "filterLanguage": "Language",
+      "filterIntent": "Intent",
+      "filterMentioned": "Mentioned",
+      "mentionedYes": "Yes",
+      "mentionedNo": "No",
+      "all": "All",
+      "empty": "No answers yet.",
+      "citations": "Answer sources",
+      "sentiment": { "pos": "Positive", "neu": "Neutral", "neg": "Negative", "na": "—" }
+    },
+    "competitors": {
+      "title": "Competitors",
+      "colBrand": "Brand",
+      "colVisibility": "Visibility %",
+      "colSentiment": "Sentiment",
+      "colPosition": "Avg position",
+      "colTrend": "Trend",
+      "edit": "Edit competitors",
+      "empty": "Competitors will appear after the first scan."
+    },
+    "sources": {
+      "title": "Sources",
+      "colDomain": "Domain",
+      "colCitations": "Citations",
+      "colMentionsUs": "Cites you",
+      "insight": "AI answers in your category are built from these sites — presence there = visibility.",
+      "yes": "Yes",
+      "no": "No",
+      "empty": "Sources will appear after the first scan."
+    },
+    "prompts": {
+      "title": "Prompts",
+      "disableHint": "Disabled prompts are excluded from the next scan.",
+      "colPrompt": "Prompt",
+      "colIntent": "Intent",
+      "colEngines": "Platforms",
+      "enabled": "On",
+      "disabled": "Off",
+      "intent": {
+        "branded": "Branded",
+        "category": "Category",
+        "best_of": "Best of",
+        "comparison": "Comparison",
+        "informational": "Informational",
+        "purchase": "Purchase"
+      }
+    },
+    "settings": {
+      "title": "Brand settings",
+      "aliases": "Aliases (spelling variants)",
+      "aliasesHint": "One per line. Transliteration is added automatically.",
+      "competitors": "Competitors",
+      "competitorName": "Name",
+      "addCompetitor": "Add competitor",
+      "removeCompetitor": "Remove",
+      "market": "Market",
+      "locale": "Interface language"
+    },
+    "empty": {
+      "noScan": "No completed scans yet.",
+      "runFirst": "Run your first scan to see the data."
+    }
+  },
+  "bookCall": {
+    "button": "Book a call",
+    "title": "A 20-minute call",
+    "subtitle": "We'll walk through your report and show how to raise visibility.",
+    "name": "Name",
+    "phone": "Phone / WhatsApp",
+    "comment": "Comment",
+    "submit": "Send request",
+    "thanks": "We'll get back to you within one business day.",
+    "whatsapp": "Message on WhatsApp"
+  },
+  "admin": {
+    "title": "Admin",
+    "nav": { "leads": "Leads", "scans": "Scans", "usage": "Usage", "engines": "Engines" },
+    "leads": {
+      "colType": "Type",
+      "colContact": "Contact",
+      "colBrand": "Brand",
+      "colSource": "Source",
+      "colDate": "Date",
+      "colMessage": "Message",
+      "filterAll": "All",
+      "exportCsv": "Export CSV",
+      "typeScanEmail": "Scan email",
+      "typeBookCall": "Call request"
+    },
+    "scans": {
+      "colBrand": "Brand",
+      "colTier": "Tier",
+      "colStatus": "Status",
+      "colScore": "Score",
+      "colCost": "Cost",
+      "colDate": "Date",
+      "rerun": "Re-run",
+      "triggerFull": "Full scan"
+    },
+    "usage": {
+      "today": "Today",
+      "budget": "Daily budget",
+      "paused": "Scans paused — budget exhausted",
+      "resume": "Resume",
+      "colDate": "Date",
+      "colProvider": "Provider",
+      "colCalls": "Calls",
+      "colTokens": "Tokens",
+      "colCost": "USD"
+    },
+    "engines": {
+      "hint": "Global engine toggles. A disabled engine is excluded from scans.",
+      "keyMissing": "No key"
+    }
+  },
+  "emails": {
+    "magicLink": {
+      "subject": "Sign in to SynapAI",
+      "title": "Your sign-in link",
+      "body": "Click the button to open the {{brand}} dashboard. The link is valid for 30 minutes.",
+      "button": "Open dashboard"
+    },
+    "scanReady": {
+      "subject": "The report for {{brand}} is ready",
+      "title": "Your Visibility Score: {{score}}",
+      "body": "The scan is complete. Open the report to see AI answers, competitors and sources.",
+      "button": "Open report"
+    },
+    "leadNotification": {
+      "subject": "New lead: {{type}}",
+      "title": "New lead in SynapAI",
+      "body": "Type: {{type}}. Brand: {{brand}}. Contact: {{contact}}."
+    },
+    "budgetPaused": {
+      "subject": "SynapAI: daily LLM budget exhausted",
+      "title": "Scans paused",
+      "body": "Today's spend reached {{spend}} USD against a {{budget}} USD limit. Scans are paused until tomorrow — resume from the admin panel."
+    }
+  }
+}
