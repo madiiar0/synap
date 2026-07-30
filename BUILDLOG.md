@@ -36,3 +36,24 @@ Chronological log of the SynapAI v2 build. Newest entries last.
 - Seed: admin creds printed at runtime (regenerated each seed; not recorded
   here on purpose), demo brand «Astra Dental» — old snapshot 21, fresh FULL
   fixture scan scored 39.
+
+## P2 — Dashboard ✅
+
+- App shell: sidebar (six sections), topbar with brand switcher, locale
+  toggle, re-scan button honoring the weekly quota (disabled + tooltip when
+  used), demo badge, logout; unauthenticated → /login redirect.
+- Pages: Overview (animated score ring + delta vs previous scan, four engine
+  cards with trend arrows, Share-of-Voice bars with "вы"/"замечен" tags,
+  "Where you lose" expandable prompts with brand-highlighted answers,
+  persistent Book-a-call banner), Answers explorer (4 filters, expandable rows
+  with highlight + sentiment + citations), Competitors leaderboard (rankings
+  table w/ visibility bars, sentiment, avg position, trend), Sources (+insight
+  line), Prompts (engine result dots + disable toggles), Settings (brand,
+  aliases, competitors editor, market, locale).
+- Error toasts via a QueryCache hook (401s excluded); skeletons + empty states
+  throughout.
+- Fixes along the way: /g-regex lastIndex bug in the highlighter, toggle knob
+  positioning, prompt template/modifier word doubling («отзывы — отзывы»).
+- Verified in a real browser against the auto-seeded demo brand: all six pages
+  render every widget (magic-link login → /app). typecheck/lint/tests/build/
+  smoke all green.

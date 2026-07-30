@@ -2,16 +2,26 @@
 import "@fontsource-variable/inter";
 import "./styles/index.css";
 import "./lib/i18n";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import i18n from "./lib/i18n";
+import { ApiError } from "./lib/api";
+import { toast } from "./lib/toast";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: 1, refetchOnWindowFocus: false, staleTime: 15_000 },
   },
+  queryCache: new QueryCache({
+    onError: (error) => {
+      // 401s are handled by redirects, not toasts.
+      if (error instanceof ApiError && error.status === 401) return;
+      toast(i18n.t("common.error"));
+    },
+  }),
 });
 
 const rootEl = document.getElementById("root");

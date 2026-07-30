@@ -163,8 +163,12 @@ function fillIntent(
   };
   const out: PromptSpec[] = [];
   for (let m = 0; m < mods.length && out.length < count; m++) {
+    const modCore = mods[m].replace(/[^\p{L}\p{N}]+/gu, " ").trim().split(" ")[0] ?? "";
     for (let t = 0; t < templates.length && out.length < count; t++) {
-      const text = `${templates[t](ctx)}${mods[m]}`;
+      const base = templates[t](ctx);
+      // Skip awkward doubles like «… отзывы — отзывы».
+      if (modCore && base.toLowerCase().includes(modCore.toLowerCase())) continue;
+      const text = `${base}${mods[m]}`;
       const key = normalizedKey(text);
       if (used.has(key)) continue;
       used.add(key);
