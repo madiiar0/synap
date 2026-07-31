@@ -88,11 +88,11 @@ function AdminLeads(): JSX.Element {
                     </span>
                   </td>
                   <td className="px-2 py-3">
-                    {[lead.name, lead.email, lead.phone].filter(Boolean).join(" · ") || "—"}
+                    {[lead.name, lead.email, lead.phone].filter(Boolean).join(" · ") || "-"}
                   </td>
-                  <td className="px-2 py-3">{lead.brandName || "—"}</td>
+                  <td className="px-2 py-3">{lead.brandName || "-"}</td>
                   <td className="px-2 py-3 text-sub">{lead.source}</td>
-                  <td className="max-w-[220px] px-2 py-3 text-sub">{lead.message || "—"}</td>
+                  <td className="max-w-[220px] px-2 py-3 text-sub">{lead.message || "-"}</td>
                   <td className="whitespace-nowrap px-5 py-3 text-right text-sub">
                     {new Date(lead.createdAt).toLocaleString()}
                   </td>
@@ -160,7 +160,7 @@ function AdminScans(): JSX.Element {
                     {scan.status}
                   </span>
                 </td>
-                <td className="px-2 py-3">{scan.overall ?? "—"}</td>
+                <td className="px-2 py-3">{scan.overall ?? "-"}</td>
                 <td className="px-2 py-3 text-sub">${scan.costUsd.toFixed(3)}</td>
                 <td className="whitespace-nowrap px-2 py-3 text-sub">
                   {new Date(scan.createdAt).toLocaleDateString()}
@@ -236,7 +236,7 @@ function AdminUsage(): JSX.Element {
         <Card className="p-5">
           <p className="text-xs text-sub">{t("admin.usage.budget")}</p>
           <p className="mt-1 text-2xl font-semibold">
-            ${data?.budget.dailyBudgetUsd.toFixed(2) ?? "—"}
+            ${data?.budget.dailyBudgetUsd.toFixed(2) ?? "-"}
           </p>
         </Card>
         <Card className="flex items-center justify-between p-5">

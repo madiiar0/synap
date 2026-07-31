@@ -184,3 +184,65 @@ block; rankings section gone; gradient CTA localized; dashboard shows six
 engine cards with real logos («Индекс видимости» 40, +19). Widths 375/768/
 1440: no horizontal overflow (fixed a hero-slot overflow at 375 by lowering
 the clamp minimum, and a 4-line fear wrap at 1440 by widening to max-w-5xl).
+
+## Iteration 3 — SEO, Firebase auth, hero and landing polish (2026-07-31)
+
+- **Dash purge (§0.1):** both i18n bundles, all client source, quotes,
+  fixtures and prompt templates rewritten without em/en dashes (hyphen only
+  where a connector is unavoidable); enforced by a new vitest
+  (`dashPurge.test.ts`) scanning JSON + every client .ts/.tsx + quotes.ts.
+- **SEO (§1):** Express middleware injects per-route, per-language title,
+  description, canonical, hreflang (ru/en/x-default), OG/Twitter tags and
+  JSON-LD (Organization, SoftwareApplication, WebSite, FAQPage on /) for
+  `/`, `/scan`, `/login` and the `/en` variants; a build-time prerender
+  (react-dom/server via a Vite SSR entry, no puppeteer) writes real-body
+  HTML for all six route×locale pages; language now lives in the URL
+  (`/en` prefix) and the toggle rewrites it; robots.txt (10 crawlers/AI bots
+  explicitly), sitemap.xml with hreflang alternates, llms.txt; favicon
+  set + apple-touch + webmanifest + og-image generated from the synapse mark
+  via sharp (`scripts/generate-icons.mjs`); per-route tab titles fixed.
+  Verified by curl: real HTML body («Станьте ответом» ≥1), localized titles,
+  hreflang, 4 JSON-LD blocks, robots/sitemap/llms served, icons 200.
+- **Auth (§2):** magic-link and password auth fully removed (UI + endpoints +
+  schemas). Firebase Auth: client email+password и Google (popup, redirect
+  fallback), server verifies ID tokens via firebase-admin and upserts by
+  firebaseUid with email fallback, so scan-unlock pre-created accounts link
+  automatically; `AUTH_MODE=mock` (email-only) keeps dev/demo/smoke fully
+  offline and is refused in production; admin has no public entry point
+  (role via Mongo, documented in MANUAL_SETUP). Localized error mapping for
+  wrong password / email-in-use / weak password / popup closed / blocked /
+  network.
+- **Auth page (§2.3-2.5):** two-column light layout; left card (logo, single
+  h1, Google button with the official mark, divider, email+password,
+  black-pill submit, sign-in/up toggle, book-a-call link, focus rings,
+  autocomplete attrs); right #F4F4F4 dot-grid panel with the quote carousel:
+  **five web-verified quotes** (Pichai, Nadella, Srinivas, Huang, Schmidt) —
+  each verified against a public source by an adversarial two-pass search
+  workflow (15 agents), stored with sourceUrl + dated company figures;
+  Altman (weak fragment) and Jassy (>20 words, contains a dash) dropped.
+  8s auto-advance, pause on hover/focus, dots + arrows, arrow keys,
+  aria-live polite, 500ms blur fade, reduced-motion instant swap.
+- **Hero (§3):** «Станьте ответом в» / "Be the answer in" + the platform as
+  its own centered cycling line; hero fills 100svh minus the fixed navbar
+  (--nav-h) and centers vertically; same 3.5s/900ms crossfade.
+- **Fear line (§4):** rebuilt as a continuous feathered gradient — one rAF
+  loop writes blur/opacity/color per word every frame (FEATHER=4.5, ease-out
+  cubic, #B4B4B4→#111), no CSS transitions. Verified in a frozen frame:
+  blur levels 0.07 / 0.84 / 3.2 / 8.2 / 14 px simultaneously (≥3 required).
+- **Landing polish:** real coffee logos in the mock answer (h-8, alt, initial
+  square fallback) and in the final-CTA rankings panel (h-5) with a visible
+  «Пример данных» / "Sample data" tag; marquee heading rewritten (RU 3 lines
+  / EN 2 lines via locale-conditional max-width); how-it-works copy dash-free;
+  RU quote in guillemets, two lines, one-sentence hyphen source line; navbar
+  three levels (ghost lang / secondary «Войти» pill / primary black pill);
+  footer trademark line replaced with © 2026 SynapAI; /scan select fixed
+  (appearance-none, chevron right-4, h-12 uniform), subtitle rewritten, no
+  duplicated footer nav.
+- **QA (§13):** typecheck ✅ lint ✅ 70 tests ✅ (dash purge, SEO/JSON-LD,
+  i18n purity, hero cycle) i18n sweep ✅ (254 keys) build+prerender ✅ (6
+  pages, login body included) smoke ✅ (mock-auth flow, report email links
+  to /login). Browser: mock sign-in → /app works; hero centered, 2 lines,
+  no layout shift; feathered fear verified numerically; quote guillemets;
+  CTA coffee logos + sample tag; scan select inset chevron; EN at /en fully
+  localized (lang=en, EN marquee set); no horizontal overflow at minimum
+  width in either locale.

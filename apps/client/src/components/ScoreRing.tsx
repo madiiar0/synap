@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-/** Animated 0–100 score ring with a count-up. */
+/** Animated 0-100 score ring with a count-up. */
 export default function ScoreRing({
   value,
   size = 180,

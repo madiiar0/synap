@@ -15,7 +15,6 @@ import { extractAnswer } from "./extraction.js";
 import { generatePrompts } from "./promptGen.js";
 import { computeSnapshot, type ScoringAnswer } from "./scoring.js";
 import { Semaphore } from "../engines/semaphore.js";
-import { createMagicLink } from "./auth.js";
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -97,13 +96,13 @@ async function finalizeScan(
   scan.progress.currentPrompt = null;
   await scan.save();
 
-  // Report-ready email for claimed brands (button = fresh magic link).
+  // Report-ready email for claimed brands (button links to sign-in).
   if (brand.userId && snapshotOverall !== null && !budgetPaused) {
     const user = await User.findById(brand.userId);
     if (user) {
       try {
-        const { link } = await createMagicLink(user.email, user.locale);
-        await sendScanReadyEmail(user.email, user.locale, brand.name, snapshotOverall, link);
+        const loginLink = `${env.CLIENT_URL}/login?email=${encodeURIComponent(user.email)}`;
+        await sendScanReadyEmail(user.email, user.locale, brand.name, snapshotOverall, loginLink);
       } catch (err) {
         logger.error({ err }, "failed to send scan-ready email");
       }

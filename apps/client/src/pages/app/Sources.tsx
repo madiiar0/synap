@@ -4,7 +4,7 @@ import { Card, EmptyState, Skeleton } from "../../components/ui";
 import { useSources } from "../../lib/queries";
 import { useActiveBrand } from "./AppShell";
 
-/** Cited-domains table — the "sales weapon" page for the call. */
+/** Cited-domains table: the "sales weapon" page for the call. */
 export default function Sources(): JSX.Element {
   const { t } = useTranslation();
   const brand = useActiveBrand();

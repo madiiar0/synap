@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Logo from "../../components/Logo";
-import { currentLocale, setLocale } from "../../lib/i18n";
+import { currentLocale, setLocale, localizedPath } from "../../lib/i18n";
 
 /**
  * §3 liquid-glass navbar: full-width transparent glass at the top,
@@ -36,17 +36,17 @@ export default function LandingNav(): JSX.Element {
           island ? "nav-inner-island" : "nav-inner-top"
         }`}
       >
-        <Link to="/" aria-label="SynapAI">
+        <Link to={localizedPath("/")} aria-label="SynapAI">
           <Logo size={20} className="text-lg" />
         </Link>
         <div className="hidden items-center gap-8 text-sm text-sub md:flex">
-          <a href="/#product" className="transition-colors hover:text-ink">
+          <a href={`${localizedPath("/")}#product`.replace("//#", "/#")} className="transition-colors hover:text-ink">
             {t("nav.product")}
           </a>
-          <a href="/#how" className="transition-colors hover:text-ink">
+          <a href={`${localizedPath("/")}#how`.replace("//#", "/#")} className="transition-colors hover:text-ink">
             {t("nav.howItWorks")}
           </a>
-          <a href="/#faq" className="transition-colors hover:text-ink">
+          <a href={`${localizedPath("/")}#faq`.replace("//#", "/#")} className="transition-colors hover:text-ink">
             {t("nav.faq")}
           </a>
         </div>
@@ -58,11 +58,14 @@ export default function LandingNav(): JSX.Element {
           >
             {currentLocale() === "ru" ? "EN" : "RU"}
           </button>
-          <Link to="/login" className="hidden text-sub transition-colors hover:text-ink sm:block">
+          <Link
+            to={localizedPath("/login")}
+            className="hidden rounded-full border border-line bg-white px-4 py-2 font-medium text-ink transition-colors hover:border-[#D4D4D4] sm:block"
+          >
             {t("nav.login")}
           </Link>
           <Link
-            to="/scan"
+            to={localizedPath("/scan")}
             className="rounded-full bg-ink px-5 py-2 font-semibold text-white transition-opacity hover:opacity-85"
           >
             {t("nav.checkBrand")}

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import Reveal from "../../components/Reveal";
 import { AI_LOGOS } from "../../lib/aiLogos";
+import { brandLogo } from "../../lib/brandLogos";
 
 // §6+7: real chain names are allowed ONLY here, with neutral descriptions.
 const SHOPS = ["Global Coffee", "Master Coffee", "Coffee Boom"] as const;
@@ -43,10 +44,21 @@ export default function MockAnswer(): JSX.Element {
                   <span className="mt-0.5 shrink-0 rounded-lg border border-line px-2 py-0.5 text-xs font-semibold text-sub">
                     #{index + 1}
                   </span>
-                  {/* brand-initial square — we do not invent logos for real companies */}
-                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-line bg-base text-xs font-bold text-ink">
-                    {name.charAt(0)}
-                  </span>
+                  {brandLogo(name) ? (
+                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-surface">
+                      <img
+                        src={brandLogo(name)}
+                        alt={name}
+                        className="h-8 w-8 object-contain"
+                        loading="lazy"
+                      />
+                    </span>
+                  ) : (
+                    // fallback when a logo asset is missing
+                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-base text-xs font-bold text-ink">
+                      {name.charAt(0)}
+                    </span>
+                  )}
                   <div className="min-w-0">
                     <p className="text-sm font-semibold">{name}</p>
                     <p className="mt-1 text-sm leading-relaxed text-sub">{blurbs[index]}</p>

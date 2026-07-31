@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ENGINE_LABELS, type TeaserDto } from "@synapai/shared";
 import BookCallButton from "../components/BookCallButton";
 import { apiGet, apiPost } from "../lib/api";
@@ -113,7 +113,15 @@ export default function Teaser(): JSX.Element {
 
         <div className="mt-8 rounded-2xl border border-line bg-surface p-8">
           {unlock.isSuccess ? (
-            <p className="text-center text-sm">{t("teaser.unlockSent")}</p>
+            <div className="text-center">
+              <p className="text-sm">{t("teaser.unlockSent")}</p>
+              <Link
+                to={`/login?email=${encodeURIComponent(email)}`}
+                className="mt-4 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              >
+                {t("teaser.createAccount")}
+              </Link>
+            </div>
           ) : (
             <>
               <h2 className="text-lg font-semibold tracking-tight">{t("teaser.unlockTitle")}</h2>

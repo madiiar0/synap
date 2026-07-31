@@ -1,21 +1,15 @@
-import bcrypt from "bcryptjs";
 import { Router } from "express";
-import {
-  adminLoginSchema,
-  requestLinkSchema,
-  verifyTokenSchema,
-  type SessionUserDto,
-} from "@synapai/shared";
+import { z } from "zod";
+import type { SessionUserDto } from "@synapai/shared";
+import { authMode, isProd } from "../../config/env.js";
 import { AppError } from "../../lib/errors.js";
-import { sendMagicLinkEmail } from "../../mail/emails.js";
 import { User, type UserDoc } from "../../models/User.js";
 import {
   clearSessionCookie,
-  consumeMagicToken,
-  createMagicLink,
   createSessionToken,
   setSessionCookie,
 } from "../../services/auth.js";
+import { verifyFirebaseToken, type VerifiedIdentity } from "../../services/firebaseAdmin.js";
 import { authLimiter } from "../middleware/rateLimits.js";
 
 export const authRouter = Router();
@@ -30,35 +24,59 @@ function toSessionDto(user: UserDoc): SessionUserDto {
   };
 }
 
-authRouter.post("/request-link", authLimiter, async (req, res, next) => {
-  try {
-    const { email, locale } = requestLinkSchema.parse(req.body);
-    const { user, link } = await createMagicLink(email, locale);
-    await sendMagicLinkEmail(email, user.locale, link);
-    res.json({ ok: true });
-  } catch (err) {
-    next(err);
-  }
+const sessionSchema = z.object({
+  idToken: z.string().min(10).max(4096).optional(),
+  email: z.string().trim().toLowerCase().email().max(120).optional(),
+  locale: z.enum(["ru", "en"]).optional(),
 });
 
-authRouter.post("/verify", authLimiter, async (req, res, next) => {
-  try {
-    const { token } = verifyTokenSchema.parse(req.body);
-    const user = await consumeMagicToken(token);
-    setSessionCookie(res, createSessionToken(user));
-    res.json(toSessionDto(user));
-  } catch (err) {
-    next(err);
+/** Upsert by firebaseUid, falling back to email so pre-created accounts
+ * (scan unlock) get linked to the new Firebase identity (§2.2). */
+async function upsertFirebaseUser(
+  identity: VerifiedIdentity,
+  locale?: "ru" | "en",
+): Promise<UserDoc> {
+  let user = await User.findOne({ firebaseUid: identity.firebaseUid });
+  if (!user) {
+    user = await User.findOne({ email: identity.email });
   }
-});
+  if (!user) {
+    user = new User({ email: identity.email, locale: locale ?? "ru" });
+  }
+  user.firebaseUid = identity.firebaseUid;
+  if (identity.name && !user.name) user.name = identity.name;
+  if (identity.photoUrl) user.photoUrl = identity.photoUrl;
+  if (locale) user.locale = locale;
+  await user.save();
+  return user;
+}
 
-authRouter.post("/login", authLimiter, async (req, res, next) => {
+/**
+ * §2.2: exchange a Firebase ID token (or, in mock mode, a bare email) for
+ * the app's session cookie. Mock mode is refused in production at startup.
+ */
+authRouter.post("/session", authLimiter, async (req, res, next) => {
   try {
-    const { email, password } = adminLoginSchema.parse(req.body);
-    const user = await User.findOne({ email });
-    if (!user?.passwordHash || !(await bcrypt.compare(password, user.passwordHash))) {
-      throw new AppError("INVALID_CREDENTIALS", 401, "Invalid email or password");
+    const input = sessionSchema.parse(req.body);
+    let user: UserDoc;
+
+    if (authMode === "firebase") {
+      if (!input.idToken) throw new AppError("TOKEN_REQUIRED", 400, "idToken is required");
+      user = await upsertFirebaseUser(await verifyFirebaseToken(input.idToken), input.locale);
+    } else {
+      // mock: local dev token flow — trusts the email; never in production.
+      if (isProd) throw new AppError("FORBIDDEN", 403, "Mock auth is disabled");
+      if (!input.email) throw new AppError("EMAIL_REQUIRED", 400, "email is required");
+      const existing = await User.findOne({ email: input.email });
+      user =
+        existing ??
+        (await User.create({ email: input.email, locale: input.locale ?? "ru" }));
+      if (input.locale && user.locale !== input.locale) {
+        user.locale = input.locale;
+        await user.save();
+      }
     }
+
     setSessionCookie(res, createSessionToken(user));
     res.json(toSessionDto(user));
   } catch (err) {

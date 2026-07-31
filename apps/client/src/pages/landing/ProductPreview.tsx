@@ -1,5 +1,6 @@
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { brandLogo } from "../../lib/brandLogos";
 
 interface PreviewRow {
   name: string;
@@ -7,12 +8,12 @@ interface PreviewRow {
   trend: "up" | "down";
 }
 
-// Fictional names only — numbers/rankings never carry real companies.
+// Real coffee brands with their real logos; the percentages are illustrative,
+// which is why the panel header carries a visible "Sample data" tag (§10).
 const ROWS: PreviewRow[] = [
-  { name: "Astra", visibility: 74, trend: "up" },
-  { name: "Nurly", visibility: 52, trend: "down" },
-  { name: "Vega", visibility: 38, trend: "up" },
-  { name: "Orion", visibility: 21, trend: "down" },
+  { name: "Global Coffee", visibility: 74, trend: "up" },
+  { name: "Master Coffee", visibility: 52, trend: "down" },
+  { name: "Coffee Boom", visibility: 38, trend: "up" },
 ];
 
 /** Rankings preview panel used inside the final CTA card (localized). */
@@ -21,7 +22,12 @@ export default function ProductPreview(): JSX.Element {
   return (
     <div className="w-full max-w-xl rounded-2xl border border-darkline bg-dark p-6 text-darktext shadow-lg">
       <div className="flex items-center justify-between border-b border-darkline pb-4">
-        <p className="text-sm font-semibold">{t("landing.preview.title")}</p>
+        <p className="flex items-center gap-2 text-sm font-semibold">
+          {t("landing.preview.title")}
+          <span className="rounded-full border border-darkline px-2 py-0.5 text-[10px] font-normal text-sub">
+            {t("common.sampleData")}
+          </span>
+        </p>
         <p className="text-xs text-sub">{t("landing.preview.subtitle")}</p>
       </div>
       <table className="mt-2 w-full text-sm">
@@ -36,8 +42,18 @@ export default function ProductPreview(): JSX.Element {
           {ROWS.map((row, index) => (
             <tr key={row.name} className="border-t border-darkline">
               <td className="py-3">
-                <span className="mr-2 text-xs text-sub">{index + 1}</span>
-                <span className="font-medium">{row.name}</span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="text-xs text-sub">{index + 1}</span>
+                  {brandLogo(row.name) && (
+                    <img
+                      src={brandLogo(row.name)}
+                      alt={row.name}
+                      className="h-5 w-5 rounded object-contain"
+                      loading="lazy"
+                    />
+                  )}
+                  <span className="font-medium">{row.name}</span>
+                </span>
               </td>
               <td className="py-3">
                 <div className="flex items-center gap-2">

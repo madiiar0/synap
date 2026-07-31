@@ -81,6 +81,33 @@ embed your calendar; every open is also logged in Admin → Leads.
 
 ---
 
+## 4b. Sign-in — Firebase Auth
+
+**Why:** customers create accounts with email/password or Google. Without
+Firebase the app runs a mock email-only sign-in (dev/demo only; production
+refuses to start in mock mode).
+
+- [ ] Create a project at https://console.firebase.google.com
+- [ ] Build → Authentication → Sign-in method: enable **Email/Password** and
+      **Google**
+- [ ] Project settings → General → Your apps → add a **Web app**; copy the
+      config into the client env (`apps/client/.env`):
+      `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`,
+      `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_APP_ID`
+- [ ] Project settings → Service accounts → **Generate new private key**;
+      encode it: `base64 -i serviceAccount.json | tr -d '\n'` and paste into
+      `FIREBASE_SERVICE_ACCOUNT_JSON=` (server `.env`); set `AUTH_MODE=firebase`
+- [ ] **Granting admin:** the admin panel is gated by the `role` field in
+      MongoDB, not by Firebase. After you sign in once with your email, run
+      in mongosh / Atlas shell:
+      `db.users.updateOne({ email: "you@yourdomain.com" }, { $set: { role: "admin" } })`
+      Then open `/admin` directly (there is no admin link in the UI).
+
+**Verify:** sign up with email, sign in with Google, and confirm `/admin`
+opens only for the role-granted user.
+
+---
+
 ## 5. Email (SMTP)
 
 **Why:** magic-link sign-in and report emails. Without SMTP the app never

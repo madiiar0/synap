@@ -24,10 +24,10 @@ async function main(): Promise<void> {
   const result = await seedDemoData();
 
   console.log("\n=== SynapAI seed complete ===");
-  console.log(`Admin login:     ${result.adminEmail} / ${result.adminPassword}`);
-  console.log(`Demo user:       ${result.demoEmail} (sign in via magic link)`);
-  console.log(`Demo brand:      ${result.brandName} — latest Visibility Score: ${result.overall ?? "n/a"}`);
-  console.log("NOTE: admin password is regenerated on every seed run.\n");
+  console.log(`Admin user:      ${result.adminEmail} (mock mode: sign in with this email)`);
+  console.log(`Demo user:       ${result.demoEmail}`);
+  console.log(`Demo business:   ${result.brandName}, latest Visibility Score: ${result.overall ?? "n/a"}`);
+  console.log("With Firebase auth, grant admin via Mongo (see MANUAL_SETUP.md).\n");
 
   await disconnectDb();
 }

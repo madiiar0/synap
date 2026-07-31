@@ -20,8 +20,8 @@ async function main(): Promise<void> {
     const { seedDemoData } = await import("./services/seedData.js");
     const seeded = await seedDemoData();
     logger.info(
-      { admin: seeded.adminEmail, password: seeded.adminPassword, overall: seeded.overall },
-      "in-memory DB auto-seeded with demo data",
+      { admin: seeded.adminEmail, demo: seeded.demoEmail, overall: seeded.overall },
+      "in-memory DB auto-seeded with demo data (mock auth: sign in with the email)",
     );
   }
 

@@ -36,22 +36,22 @@ interface Ctx {
 
 type Tpl = (ctx: Ctx) => string;
 
-// Search-style modifiers create enough unique variants for large scans.
-const RU_MODS = ["", " — отзывы", " 2026", ", рейтинг", ", недорого", " рядом"];
-const EN_MODS = ["", " — reviews", " 2026", ", ranked", ", affordable", " near me"];
+// Search-style suffix modifiers create enough unique variants for large scans.
+const RU_MODS = ["", " отзывы", " 2026", " рейтинг", " недорого", " рядом"];
+const EN_MODS = ["", " reviews", " 2026", " ranked", " affordable", " near me"];
 
 const RU_TEMPLATES: Record<Exclude<PromptIntent, "comparison">, Tpl[]> = {
   branded: [
     (c) => `Что такое ${c.brand}?`,
     (c) => `${c.brand} отзывы`,
     (c) => `Стоит ли обращаться в ${c.brand}?`,
-    (c) => `${c.brand} — надёжная компания?`,
+    (c) => `${c.brand}: надёжная компания?`,
     (c) => `Расскажи про ${c.brand}`,
     (c) => `${c.brand} цены и условия`,
   ],
   category: [
     (c) => `Посоветуй ${c.category} в ${c.place}`,
-    (c) => `${c.category} — кого выбрать в ${c.place}?`,
+    (c) => `${c.category}: кого выбрать в ${c.place}?`,
     (c) => `Нужен ${c.category} в ${c.place}, что посоветуешь?`,
     (c) => `Какой ${c.category} выбрать?`,
     (c) => `${c.category} ${c.place}: варианты`,
@@ -70,7 +70,7 @@ const RU_TEMPLATES: Record<Exclude<PromptIntent, "comparison">, Tpl[]> = {
   ],
   purchase: [
     (c) => `Где заказать ${c.category} в ${c.place}?`,
-    (c) => `Хочу записаться: ${c.category} в ${c.place} — куда обратиться?`,
+    (c) => `Хочу записаться в ${c.category} в ${c.place}, куда обратиться?`,
     (c) => `Где найти ${c.category} недорого в ${c.place}?`,
   ],
 };
@@ -85,7 +85,7 @@ const EN_TEMPLATES: Record<Exclude<PromptIntent, "comparison">, Tpl[]> = {
   category: [
     (c) => `Recommend a ${c.category} in ${c.place}`,
     (c) => `Which ${c.category} should I choose in ${c.place}?`,
-    (c) => `Looking for a ${c.category} in ${c.place} — any suggestions?`,
+    (c) => `Looking for a ${c.category} in ${c.place}: any suggestions?`,
   ],
   best_of: [
     (c) => `Best ${c.category} in ${c.place}`,
@@ -104,12 +104,12 @@ const EN_TEMPLATES: Record<Exclude<PromptIntent, "comparison">, Tpl[]> = {
 
 const RU_COMPARISON: ((ctx: Ctx, competitor: string) => string)[] = [
   (c, comp) => `Сравни ${c.brand} и ${comp}`,
-  (c, comp) => `${c.brand} или ${comp} — что лучше?`,
+  (c, comp) => `${c.brand} или ${comp}: что лучше?`,
   (c, comp) => `Чем ${c.brand} отличается от ${comp}?`,
 ];
 
 const EN_COMPARISON: ((ctx: Ctx, competitor: string) => string)[] = [
-  (c, comp) => `${c.brand} vs ${comp} — which is better?`,
+  (c, comp) => `${c.brand} vs ${comp}: which is better?`,
   (c, comp) => `Compare ${c.brand} and ${comp}`,
 ];
 
@@ -166,7 +166,7 @@ function fillIntent(
     const modCore = mods[m].replace(/[^\p{L}\p{N}]+/gu, " ").trim().split(" ")[0] ?? "";
     for (let t = 0; t < templates.length && out.length < count; t++) {
       const base = templates[t](ctx);
-      // Skip awkward doubles like «… отзывы — отзывы».
+      // Skip awkward doubles like «… отзывы: отзывы».
       if (modCore && base.toLowerCase().includes(modCore.toLowerCase())) continue;
       const text = `${base}${mods[m]}`;
       const key = normalizedKey(text);
@@ -216,7 +216,7 @@ function fillComparison(
   return [...ru, ...en];
 }
 
-/** Hard-coded template generation — always used in DEMO_MODE and as LLM fallback. */
+/** Hard-coded template generation: always used in DEMO_MODE and as LLM fallback. */
 export function generateTemplatePrompts(brand: PromptGenBrand, n: number): PromptSpec[] {
   const counts = computeIntentCounts(n, brand.competitors.length > 0);
   const used = new Set<string>((brand.disabledPrompts ?? []).map((p) => normalizedKey(p)));

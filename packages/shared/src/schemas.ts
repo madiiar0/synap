@@ -29,18 +29,6 @@ export const unlockRequestSchema = z.object({
   locale: z.enum(LOCALES).optional(),
 });
 
-export const requestLinkSchema = z.object({
-  email: z.string().trim().toLowerCase().email().max(120),
-  locale: z.enum(LOCALES).optional(),
-});
-
-export const verifyTokenSchema = z.object({ token: z.string().min(10).max(2000) });
-
-export const adminLoginSchema = z.object({
-  email: z.string().trim().toLowerCase().email().max(120),
-  password: z.string().min(8).max(200),
-});
-
 /** Optional text field where an empty/blank string means "not provided". */
 const optionalText = (min: number, max: number) =>
   z.preprocess(

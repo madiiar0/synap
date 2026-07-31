@@ -4,7 +4,7 @@ import type { DemoContext } from "./types.js";
 
 /**
  * Deterministic fixture answers for DEMO_MODE. Everything here is labeled
- * demo data in the UI — the goal is realistic structure (positions,
+ * demo data in the UI: the goal is realistic structure (positions,
  * competitors, citations, sentiment variety), not real facts.
  */
 
@@ -27,7 +27,7 @@ const DOMAINS = [
   "tripadvisor.com",
 ] as const;
 
-/** FNV-1a — stable 32-bit hash for deterministic template selection. */
+/** FNV-1a: stable 32-bit hash for deterministic template selection. */
 export function fnv1a(input: string): number {
   let hash = 0x811c9dc5;
   for (let i = 0; i < input.length; i++) {
@@ -53,7 +53,7 @@ type Template = (f: Filled) => string;
 const RU = {
   brandPositive: [
     (f: Filled) =>
-      `«${f.brand}» — известная компания в категории «${f.category}»${f.locRu}. Клиенты отмечают качественный сервис и прозрачные цены. Судя по отзывам, это один из надёжных вариантов в своей нише.`,
+      `«${f.brand}»: известная компания в категории «${f.category}»${f.locRu}. Клиенты отмечают качественный сервис и прозрачные цены. Судя по отзывам, это один из надёжных вариантов в своей нише.`,
     (f: Filled) =>
       `О «${f.brand}» в целом отзываются положительно: удобная запись, внимательный персонал, стабильное качество. Актуальные цены рекомендуют уточнять напрямую.`,
     (f: Filled) =>
@@ -61,11 +61,11 @@ const RU = {
   ] as Template[],
   brandNeutral: [
     (f: Filled) =>
-      `По «${f.brand}» информации не очень много: это компания из категории «${f.category}»${f.locRu}. Однозначной оценки дать сложно — посмотрите свежие отзывы на 2ГИС и Яндекс Картах.`,
+      `По «${f.brand}» информации не очень много: это компания из категории «${f.category}»${f.locRu}. Однозначной оценки дать сложно: посмотрите свежие отзывы на 2ГИС и Яндекс Картах.`,
   ] as Template[],
   brandMixed: [
     (f: Filled) =>
-      `Про «${f.brand}» встречаются разные отзывы: часть клиентов довольна результатом, часть жалуется на ожидание и цены. Средняя оценка — около 4 из 5.`,
+      `Про «${f.brand}» встречаются разные отзывы: часть клиентов довольна результатом, часть жалуется на ожидание и цены. Средняя оценка: около 4 из 5.`,
   ] as Template[],
   noInfo: [
     () =>
@@ -73,41 +73,41 @@ const RU = {
   ] as Template[],
   brandFirst: [
     (f: Filled) =>
-      `Если ищете ${f.category}${f.locRu}, вот варианты, которые чаще всего рекомендуют:\n\n1. ${f.brand} — сильный сервис и хорошие отзывы клиентов.\n2. ${f.c1} — известный игрок с большой историей.\n3. ${f.d1} — набирающий популярность вариант.\n\nПеред выбором сравните цены и посмотрите свежие отзывы.`,
+      `Если ищете ${f.category}${f.locRu}, вот варианты, которые чаще всего рекомендуют:\n\n1. ${f.brand}: сильный сервис и хорошие отзывы клиентов.\n2. ${f.c1}: известный игрок с большой историей.\n3. ${f.d1}: набирающий популярность вариант.\n\nПеред выбором сравните цены и посмотрите свежие отзывы.`,
   ] as Template[],
   brandSecond: [
     (f: Filled) =>
-      `Популярные варианты в категории «${f.category}»${f.locRu}:\n\n1. ${f.c1} — пожалуй, самый узнаваемый бренд.\n2. ${f.brand} — отмечают соотношение цены и качества.\n3. ${f.c2} — хвалят за сервис.\n\nИтоговый выбор зависит от бюджета и расположения.`,
+      `Популярные варианты в категории «${f.category}»${f.locRu}:\n\n1. ${f.c1}: пожалуй, самый узнаваемый бренд.\n2. ${f.brand}: отмечают соотношение цены и качества.\n3. ${f.c2}: хвалят за сервис.\n\nИтоговый выбор зависит от бюджета и расположения.`,
   ] as Template[],
   brandThird: [
     (f: Filled) =>
-      `Топ-3 по отзывам${f.locRu}:\n\n1. ${f.c1} — лидер по количеству упоминаний.\n2. ${f.d1} — активно растёт в последний год.\n3. ${f.brand} — стабильный вариант со средними ценами.`,
+      `Топ-3 по отзывам${f.locRu}:\n\n1. ${f.c1}: лидер по количеству упоминаний.\n2. ${f.d1}: активно растёт в последний год.\n3. ${f.brand}: стабильный вариант со средними ценами.`,
   ] as Template[],
   competitorsOnly: [
     (f: Filled) =>
-      `Чаще всего в категории «${f.category}»${f.locRu} называют:\n\n1. ${f.c1} — лидер по узнаваемости.\n2. ${f.c2} — стабильное качество.\n3. ${f.d1} — активно продвигается в последнее время.\n\nСоветую изучить отзывы на 2ГИС и Яндекс Картах.`,
+      `Чаще всего в категории «${f.category}»${f.locRu} называют:\n\n1. ${f.c1}: лидер по узнаваемости.\n2. ${f.c2}: стабильное качество.\n3. ${f.d1}: активно продвигается в последнее время.\n\nСоветую изучить отзывы на 2ГИС и Яндекс Картах.`,
     (f: Filled) =>
-      `${f.c1} и ${f.d2} — два варианта, которые упоминают чаще других. У ${f.c1} сильные позиции по отзывам, ${f.d2} привлекает ценами. Также встречается ${f.c2}.`,
+      `${f.c1} и ${f.d2}: два варианта, которые упоминают чаще других. У ${f.c1} сильные позиции по отзывам, ${f.d2} привлекает ценами. Также встречается ${f.c2}.`,
     (f: Filled) =>
       `Однозначного лидера нет, но по отзывам выделяются ${f.c2} и ${f.d1}. Обе компании работают${f.locRu} не первый год. Рекомендую запросить условия у обеих и сравнить.`,
   ] as Template[],
   neutral: [
     (f: Filled) =>
-      `Выбирая ${f.category}, обращайте внимание на: опыт и репутацию, реальные отзывы (не только на сайте компании), прозрачность цен и гарантии. Составьте шорт-лист из 3–4 компаний и сравните условия.`,
+      `Выбирая ${f.category}, обращайте внимание на: опыт и репутацию, реальные отзывы (не только на сайте компании), прозрачность цен и гарантии. Составьте шорт-лист из 3-4 компаний и сравните условия.`,
     (f: Filled) =>
-      `Универсального ответа нет — рынок «${f.category}»${f.locRu} довольно конкурентный. Смотрите на свежие отзывы, сроки и договор. Хороший знак — когда компания открыто публикует цены.`,
+      `Универсального ответа нет: рынок «${f.category}»${f.locRu} довольно конкурентный. Смотрите на свежие отзывы, сроки и договор. Хороший знак: когда компания открыто публикует цены.`,
   ] as Template[],
   comparisonBrandWins: [
     (f: Filled) =>
-      `Сравнение «${f.brand}» и «${f.c1}»:\n\n• ${f.brand}: чаще хвалят за сервис и внимательность, цены средние по рынку.\n• ${f.c1}: сильная сторона — известность и опыт, но отзывы о сервисе неоднородные.\n\nДля большинства задач ${f.brand} выглядит предпочтительнее, но лучше запросить условия у обоих.`,
+      `Сравнение «${f.brand}» и «${f.c1}»:\n\n• ${f.brand}: чаще хвалят за сервис и внимательность, цены средние по рынку.\n• ${f.c1}: сильная сторона: известность и опыт, но отзывы о сервисе неоднородные.\n\nДля большинства задач ${f.brand} выглядит предпочтительнее, но лучше запросить условия у обоих.`,
   ] as Template[],
   comparisonCompWins: [
     (f: Filled) =>
-      `И «${f.brand}», и «${f.c1}» — рабочие варианты. По отзывам ${f.c1} немного впереди: стабильнее качество и быстрее отвечают. ${f.brand} может выигрывать по цене — уточняйте детали.`,
+      `И «${f.brand}», и «${f.c1}»: рабочие варианты. По отзывам ${f.c1} немного впереди: стабильнее качество и быстрее отвечают. ${f.brand} может выигрывать по цене: уточняйте детали.`,
   ] as Template[],
   comparisonNoBrand: [
     (f: Filled) =>
-      `Из этих двух чаще рекомендуют ${f.c1}: больше отзывов и выше узнаваемость. В этой же категории часто смотрят на ${f.d1} — тоже достойный вариант.`,
+      `Из этих двух чаще рекомендуют ${f.c1}: больше отзывов и выше узнаваемость. В этой же категории часто смотрят на ${f.d1}: тоже достойный вариант.`,
   ] as Template[],
   purchaseWithBrand: [
     (f: Filled) =>
@@ -136,21 +136,21 @@ const EN = {
   ] as Template[],
   brandFirst: [
     (f: Filled) =>
-      `If you're looking for a ${f.category}${f.locEn}, these options come up most often:\n\n1. ${f.brand} — strong service and positive customer reviews.\n2. ${f.c1} — a well-established player.\n3. ${f.d1} — a fast-growing option.\n\nCompare prices and read recent reviews before choosing.`,
+      `If you're looking for a ${f.category}${f.locEn}, these options come up most often:\n\n1. ${f.brand}: strong service and positive customer reviews.\n2. ${f.c1}: a well-established player.\n3. ${f.d1}: a fast-growing option.\n\nCompare prices and read recent reviews before choosing.`,
   ] as Template[],
   brandSecond: [
     (f: Filled) =>
-      `Popular options in the ${f.category} category${f.locEn}:\n\n1. ${f.c1} — probably the most recognized brand.\n2. ${f.brand} — praised for value for money.\n3. ${f.c2} — known for good service.`,
+      `Popular options in the ${f.category} category${f.locEn}:\n\n1. ${f.c1}: probably the most recognized brand.\n2. ${f.brand}: praised for value for money.\n3. ${f.c2}: known for good service.`,
   ] as Template[],
   competitorsOnly: [
     (f: Filled) =>
-      `The names that come up most often${f.locEn} are:\n\n1. ${f.c1} — the recognition leader.\n2. ${f.c2} — consistent quality.\n3. ${f.d1} — actively growing lately.\n\nCheck recent reviews before deciding.`,
+      `The names that come up most often${f.locEn} are:\n\n1. ${f.c1}: the recognition leader.\n2. ${f.c2}: consistent quality.\n3. ${f.d1}: actively growing lately.\n\nCheck recent reviews before deciding.`,
     (f: Filled) =>
       `${f.c1} and ${f.d2} are mentioned more often than others. ${f.c1} has stronger reviews, while ${f.d2} attracts customers with pricing. ${f.c2} is also worth a look.`,
   ] as Template[],
   neutral: [
     (f: Filled) =>
-      `When choosing a ${f.category}, look at: experience and reputation, genuine reviews, transparent pricing and guarantees. Shortlist 3–4 companies and compare their terms.`,
+      `When choosing a ${f.category}, look at: experience and reputation, genuine reviews, transparent pricing and guarantees. Shortlist 3-4 companies and compare their terms.`,
   ] as Template[],
   comparisonBrandWins: [
     (f: Filled) =>
@@ -265,7 +265,7 @@ export function buildDemoAnswer(
   const roll = h % 100;
   const filled = fill(ctx);
 
-  // Comparison prompts name a specific competitor — mirror it in the answer.
+  // Comparison prompts name a specific competitor: mirror it in the answer.
   if (ctx.intent === "comparison") {
     const inPrompt = ctx.competitors.find((c) =>
       prompt.toLowerCase().includes(c.name.toLowerCase()),

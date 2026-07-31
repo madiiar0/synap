@@ -40,4 +40,5 @@ export interface AppConfig {
   demo: boolean;
   calendlyUrl: string | null;
   whatsappUrl: string | null;
+  authMode: "firebase" | "mock";
 }

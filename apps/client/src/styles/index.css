@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Fixed navbar height; the hero centers itself in the remaining viewport. */
+  --nav-h: 72px;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -173,28 +178,14 @@ body {
   padding-bottom: 0.625rem;
 }
 
-/* ---- Fear line (§5): per-word scroll-linked unblur ---- */
+/*
+ * Fear line (§4, iteration 3): the per-word blur/opacity/color values are
+ * written DIRECTLY per frame from a rAF scroll loop, deliberately without
+ * CSS transitions, so the feathered falloff is continuous.
+ */
 .fear-word {
   display: inline-block;
-  transition:
-    filter 400ms ease-out,
-    opacity 400ms ease-out,
-    color 400ms ease-out;
-  filter: blur(10px);
-  opacity: 0.25;
-  color: #9ca3af;
-}
-
-.fear-word-on {
-  filter: blur(0);
-  opacity: 1;
-  color: #111111;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fear-word {
-    filter: none;
-  }
+  will-change: filter, opacity;
 }
 
 /* ---- Vertical blueprint guides at container edges ---- */
@@ -218,6 +209,28 @@ body {
 
   .guides-dark::before,
   .guides-dark::after { border-left-color: #262626; }
+}
+
+/* ---- Auth quote carousel swap (§2.5) ---- */
+@keyframes quote-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.quote-in {
+  animation: quote-in 500ms ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quote-in {
+    animation: none;
+  }
 }
 
 /* ---- Radar sweep on the scan progress screen ---- */

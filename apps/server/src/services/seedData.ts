@@ -1,5 +1,3 @@
-import crypto from "node:crypto";
-import bcrypt from "bcryptjs";
 import { ENGINE_IDS, normalizedKey } from "@synapai/shared";
 import { Brand } from "../models/Brand.js";
 import { Scan } from "../models/Scan.js";
@@ -9,7 +7,6 @@ import { runScan } from "./scanRunner.js";
 
 export interface SeedResult {
   adminEmail: string;
-  adminPassword: string;
   demoEmail: string;
   brandName: string;
   overall: number | null;
@@ -18,20 +15,15 @@ export interface SeedResult {
 /**
  * Demo dataset: admin + demo users, «Aroma Coffee» with an old fixture
  * snapshot (trends) and a fresh FULL fixture scan run through the real
- * pipeline. Idempotent; the admin password is regenerated on every run.
+ * pipeline. Idempotent. Auth: in mock mode either user signs in with just
+ * the email; with Firebase, the role comes from this Mongo document (see
+ * MANUAL_SETUP.md for granting admin).
  */
 export async function seedDemoData(): Promise<SeedResult> {
   const adminEmail = "admin@synapai.app";
-  const adminPassword = `synapai-${crypto.randomBytes(4).toString("hex")}`;
   await User.findOneAndUpdate(
     { email: adminEmail },
-    {
-      email: adminEmail,
-      role: "admin",
-      locale: "ru",
-      passwordHash: await bcrypt.hash(adminPassword, 10),
-      name: "Admin",
-    },
+    { email: adminEmail, role: "admin", locale: "ru", name: "Admin" },
     { upsert: true },
   );
 
@@ -42,7 +34,7 @@ export async function seedDemoData(): Promise<SeedResult> {
     { upsert: true, new: true },
   );
 
-  // Fictional demo business (coffee niche) — competitors are fictional too.
+  // Fictional demo business (coffee niche): competitors are fictional too.
   const brandName = "Aroma Coffee";
   let brand = await Brand.findOne({ name: brandName, userId: demoUser._id });
   if (!brand) {
@@ -138,5 +130,5 @@ export async function seedDemoData(): Promise<SeedResult> {
     overall = (await ScoreSnapshot.findOne({ scanId: freshDone._id }))?.overall ?? null;
   }
 
-  return { adminEmail, adminPassword, demoEmail, brandName, overall };
+  return { adminEmail, demoEmail, brandName, overall };
 }

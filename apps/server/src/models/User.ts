@@ -6,9 +6,8 @@ export interface UserDoc extends Document {
   name?: string;
   locale: Locale;
   role: UserRole;
-  passwordHash?: string;
-  magicTokenHash?: string;
-  magicExpiresAt?: Date;
+  firebaseUid?: string;
+  photoUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,9 +18,8 @@ const userSchema = new Schema<UserDoc>(
     name: { type: String },
     locale: { type: String, enum: ["ru", "en"], default: "ru" },
     role: { type: String, enum: ["user", "admin"], default: "user" },
-    passwordHash: { type: String },
-    magicTokenHash: { type: String },
-    magicExpiresAt: { type: Date },
+    firebaseUid: { type: String, unique: true, sparse: true },
+    photoUrl: { type: String },
   },
   { timestamps: true },
 );

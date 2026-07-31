@@ -14,7 +14,7 @@ import { Lead } from "../../models/Lead.js";
 import { Scan } from "../../models/Scan.js";
 import { ScoreSnapshot } from "../../models/ScoreSnapshot.js";
 import { enqueue } from "../../queue/index.js";
-import { createMagicLink } from "../../services/auth.js";
+import { User } from "../../models/User.js";
 import { getBudgetState } from "../../services/usage.js";
 import { buildTeaser } from "../../services/views.js";
 import {
@@ -125,16 +125,20 @@ publicRouter.post("/scan/:id/unlock", authLimiter, async (req, res, next) => {
       source: "report",
     });
 
-    const { user, link } = await createMagicLink(email, locale ?? brand.locale);
-    // Public scans are shared: every unlocker gets dashboard access, the
-    // first one also becomes the nominal owner.
+    // Pre-create the account; when the visitor signs up with this email via
+    // Firebase (or mock), the session upsert links to this same User and the
+    // claimed brand/scan opens automatically (§2.2).
+    const user =
+      (await User.findOne({ email })) ??
+      (await User.create({ email, locale: locale ?? brand.locale }));
     if (!brand.userId) brand.userId = user._id;
     if (!brand.claimedBy.some((id) => String(id) === String(user._id))) {
       brand.claimedBy.push(user._id);
     }
     await brand.save();
     const snapshot = await ScoreSnapshot.findOne({ scanId: scan._id });
-    await sendScanReadyEmail(email, user.locale, brand.name, snapshot?.overall ?? 0, link);
+    const loginLink = `${env.CLIENT_URL}/login?email=${encodeURIComponent(email)}`;
+    await sendScanReadyEmail(email, user.locale, brand.name, snapshot?.overall ?? 0, loginLink);
     res.json({ ok: true });
   } catch (err) {
     next(err);

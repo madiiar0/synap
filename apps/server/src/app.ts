@@ -6,7 +6,7 @@ import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
 import { pinoHttp } from "pino-http";
-import { env, repoRoot } from "./config/env.js";
+import { authMode, env, repoRoot } from "./config/env.js";
 import { logger } from "./lib/logger.js";
 import { adminRouter } from "./http/routes/admin.js";
 import { authRouter } from "./http/routes/auth.js";
@@ -16,6 +16,7 @@ import { publicRouter } from "./http/routes/public.js";
 import { attachUser } from "./http/middleware/auth.js";
 import { errorHandler, notFoundHandler } from "./http/middleware/errors.js";
 import { apiLimiter } from "./http/middleware/rateLimits.js";
+import { mountSeo } from "./http/seo.js";
 
 export function createApp(): Express {
   const app = express();
@@ -44,6 +45,7 @@ export function createApp(): Express {
       demo: env.DEMO_MODE,
       calendlyUrl: env.CALENDLY_URL || null,
       whatsappUrl: env.WHATSAPP_URL || null,
+      authMode,
     });
   });
 
@@ -52,6 +54,9 @@ export function createApp(): Express {
   app.use("/api/leads", apiLimiter, leadsRouter);
   app.use("/api/admin", apiLimiter, adminRouter);
   app.use("/api", apiLimiter, dashboardRouter);
+
+  // SEO: server-injected meta for public routes + robots/sitemap/llms (§1).
+  mountSeo(app);
 
   // Serve the built client when it exists (single-origin production setup).
   const clientDist = path.join(repoRoot, "apps/client/dist");

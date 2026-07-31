@@ -1,5 +1,5 @@
 /**
- * SynapAI mark: a minimal black "synapse" — three nodes joined by two
+ * SynapAI mark: a minimal black "synapse": three nodes joined by two
  * strokes. Single file so the owner can swap it trivially. Uses
  * currentColor; legible at 20px.
  */

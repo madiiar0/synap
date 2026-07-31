@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import BookCallButton from "../../components/BookCallButton";
 import Reveal from "../../components/Reveal";
+import { localizedPath } from "../../lib/i18n";
 
 /** §10: localized Gartner quote + credibility caption + question + CTAs. */
 export default function StatQuote(): JSX.Element {
@@ -16,16 +17,15 @@ export default function StatQuote(): JSX.Element {
           >
             {t("landing.stat.quote")}
           </blockquote>
-          <p className="mt-6 text-sm text-sub">{t("landing.stat.source")}</p>
-          <p className="mx-auto mt-2 max-w-md text-sm text-sub">
-            {t("landing.stat.gartnerCaption")}
+          <p className="mx-auto mt-6 max-w-xl text-sm text-sub">
+            {t("landing.stat.sourceLine")}
           </p>
           <p className="mt-12 text-2xl font-medium text-ink sm:text-3xl">
             {t("landing.stat.question")}
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <Link
-              to="/scan"
+              to={localizedPath("/scan")}
               className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
             >
               {t("landing.ctaCheckFree")}

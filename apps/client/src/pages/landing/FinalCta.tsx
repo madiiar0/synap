@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import BookCallButton from "../../components/BookCallButton";
 import Reveal from "../../components/Reveal";
 import ProductPreview from "./ProductPreview";
+import { localizedPath } from "../../lib/i18n";
 
 /**
- * §12: the ONLY dark surface on the site — a gradient CTA card whose right
+ * §12: the ONLY dark surface on the site: a gradient CTA card whose right
  * side lightens behind the elevated rankings preview.
  */
 export default function FinalCta(): JSX.Element {
@@ -30,7 +31,7 @@ export default function FinalCta(): JSX.Element {
               </h2>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
-                  to="/scan"
+                  to={localizedPath("/scan")}
                   className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink transition-opacity hover:opacity-90"
                 >
                   {t("landing.finalCta.start")}

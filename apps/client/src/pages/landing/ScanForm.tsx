@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +7,7 @@ import type { Market } from "@synapai/shared";
 import { ApiError, apiPost } from "../../lib/api";
 import { currentLocale } from "../../lib/i18n";
 
-/** The scan form — a single hairline card on the light /scan page. */
+/** The scan form: a single hairline card on the light /scan page. */
 export default function ScanForm(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ export default function ScanForm(): JSX.Element {
   };
 
   const inputCls =
-    "w-full rounded-xl border border-line bg-base px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-sub focus:border-ink";
+    "h-12 w-full rounded-xl border border-line bg-base px-4 text-sm text-ink outline-none transition-colors placeholder:text-sub focus:border-ink";
   const labelCls = "mb-1.5 block text-xs text-sub";
 
   return (
@@ -91,15 +92,23 @@ export default function ScanForm(): JSX.Element {
         </div>
         <div>
           <label className={labelCls}>{t("landing.form.marketLabel")}</label>
-          <select
-            value={market}
-            onChange={(e) => setMarket(e.target.value as Market)}
-            className={inputCls}
-          >
-            <option value="kz">{t("landing.form.marketKz")}</option>
-            <option value="ru">{t("landing.form.marketRu")}</option>
-            <option value="global">{t("landing.form.marketGlobal")}</option>
-          </select>
+          {/* §12: appearance-none + custom chevron inset from the border */}
+          <div className="relative">
+            <select
+              value={market}
+              onChange={(e) => setMarket(e.target.value as Market)}
+              className={`${inputCls} appearance-none pr-12`}
+            >
+              <option value="kz">{t("landing.form.marketKz")}</option>
+              <option value="ru">{t("landing.form.marketRu")}</option>
+              <option value="global">{t("landing.form.marketGlobal")}</option>
+            </select>
+            <ChevronDown
+              size={16}
+              aria-hidden
+              className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sub"
+            />
+          </div>
         </div>
         <div className="sm:col-span-3">
           <label className={labelCls}>{t("landing.form.competitorsLabel")}</label>

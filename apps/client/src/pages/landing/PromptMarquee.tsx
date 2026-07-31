@@ -38,16 +38,20 @@ function Row({
   );
 }
 
-/** §8: three localized prompt rows — right / left / right, varied speeds. */
+/** §8: three localized prompt rows: right / left / right, varied speeds. */
 export default function PromptMarquee(): JSX.Element {
   const { t } = useTranslation();
-  const [row1, row2, row3] = marqueeRows(currentLocale());
+  const locale = currentLocale();
+  const [row1, row2, row3] = marqueeRows(locale);
 
   return (
     <section className="hairline-dashed overflow-hidden bg-base py-24">
       <Reveal className="mx-auto max-w-container px-6 text-center">
+        {/* §6: RU wraps to three lines, EN keeps exactly two. */}
         <h2
-          className="mx-auto max-w-3xl font-semibold tracking-tight"
+          className={`mx-auto font-semibold tracking-tight ${
+            locale === "ru" ? "max-w-[760px]" : "max-w-[1020px]"
+          }`}
           style={{ fontSize: "clamp(26px, 3.4vw, 44px)", lineHeight: 1.2 }}
         >
           {t("landing.marquee.heading1")}

@@ -29,7 +29,6 @@ async function main(): Promise<void> {
   const { runScan } = await import("./services/scanRunner.js");
   const { OUTBOX_DIR } = await import("./mail/mailer.js");
   const { User } = await import("./models/User.js");
-  const bcrypt = (await import("bcryptjs")).default;
 
   await connectDb();
   registerHandler("runScan", ({ scanId }) => runScan(scanId));
@@ -113,7 +112,7 @@ async function main(): Promise<void> {
   assert.equal(teaserJson.demo, true, "demo flag must be true in demo mode");
   step(`teaser ok: overall=${teaserJson.overall}, engines=${teaserJson.engines.length}`);
 
-  // 4. Unlock with email → magic-link email file
+  // 4. Unlock with email → report-ready email file linking to /login
   const email = `smoke-${crypto.randomBytes(3).toString("hex")}@test.dev`;
   const unlock = await post(`/api/public/scan/${scanId}/unlock`, { email });
   assert.equal(unlock.status, 200, `unlock failed: ${JSON.stringify(unlock.json)}`);
@@ -121,18 +120,17 @@ async function main(): Promise<void> {
     .readdirSync(OUTBOX_DIR)
     .filter((f) => f.includes(email.split("@")[0]))
     .map((f) => path.join(OUTBOX_DIR, f));
-  assert.ok(outboxFiles.length > 0, "magic-link email file not found in outbox");
+  assert.ok(outboxFiles.length > 0, "report email file not found in outbox");
   const emailHtml = fs.readFileSync(outboxFiles[0], "utf8");
-  const tokenMatch = emailHtml.match(/auth\/verify\?token=([A-Za-z0-9._-]+)/);
-  assert.ok(tokenMatch, "magic link token not found in email");
-  step(`unlock ok: magic-link email written (${path.basename(outboxFiles[0])})`);
+  assert.ok(emailHtml.includes("/login"), "report email must link to /login");
+  step(`unlock ok: report email written (${path.basename(outboxFiles[0])})`);
 
-  // 5. Verify magic link → session cookie
-  const verify = await post("/api/auth/verify", { token: tokenMatch[1] });
-  assert.equal(verify.status, 200, `verify failed: ${JSON.stringify(verify.json)}`);
+  // 5. Mock auth session with the unlock email → session cookie (§2.2 link-up)
+  const verify = await post("/api/auth/session", { email });
+  assert.equal(verify.status, 200, `session failed: ${JSON.stringify(verify.json)}`);
   assert.ok(verify.setCookie, "session cookie not set");
   const cookie = (verify.setCookie as string).split(";")[0];
-  step(`magic link verified, session for ${verify.json.email as string}`);
+  step(`mock session created for ${verify.json.email as string}`);
 
   // 6. Dashboard data
   const brands = await get("/api/brands", cookie);
@@ -174,17 +172,11 @@ async function main(): Promise<void> {
   assert.equal(lead.status, 200, `lead failed: ${JSON.stringify(lead.json)}`);
   step("book_call lead created");
 
-  // 8. Admin can list the lead
+  // 8. Admin can list the lead (role comes from Mongo; mock session signs in)
   const adminEmail = "smoke-admin@test.dev";
-  const adminPassword = "smoke-admin-pass-1";
-  await User.create({
-    email: adminEmail,
-    role: "admin",
-    locale: "ru",
-    passwordHash: await bcrypt.hash(adminPassword, 4),
-  });
-  const login = await post("/api/auth/login", { email: adminEmail, password: adminPassword });
-  assert.equal(login.status, 200, `admin login failed: ${JSON.stringify(login.json)}`);
+  await User.create({ email: adminEmail, role: "admin", locale: "ru" });
+  const login = await post("/api/auth/session", { email: adminEmail });
+  assert.equal(login.status, 200, `admin session failed: ${JSON.stringify(login.json)}`);
   const adminCookie = (login.setCookie as string).split(";")[0];
   const adminLeads = await get("/api/admin/leads?type=book_call", adminCookie);
   const leadRows = adminLeads.json as { phone?: string }[];

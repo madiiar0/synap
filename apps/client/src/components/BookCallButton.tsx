@@ -9,7 +9,7 @@ interface BookCallButtonProps {
   source: LeadSource;
   scanId?: string;
   brandName?: string;
-  variant?: "primary" | "secondary" | "dark" | "dark-outline";
+  variant?: "primary" | "secondary" | "dark" | "dark-outline" | "link";
   label?: string;
   className?: string;
 }
@@ -19,6 +19,7 @@ const VARIANT_CLASSES: Record<NonNullable<BookCallButtonProps["variant"]>, strin
   secondary: "bg-surface border border-line text-ink hover:border-[#D4D4D4]",
   dark: "bg-white text-ink hover:bg-darktext",
   "dark-outline": "bg-transparent border border-darkline text-darktext hover:bg-white/5",
+  link: "!px-0 !py-0 bg-transparent text-sub underline underline-offset-4 hover:text-ink !font-normal",
 };
 
 export function useAppConfig(): AppConfig | undefined {
@@ -67,7 +68,7 @@ export default function BookCallButton({
       await apiPost("/api/leads", { name, phone, message, source, scanId, brandName });
       setSent(true);
     } catch {
-      setFailed(true); // never fake success — the user can retry or use WhatsApp
+      setFailed(true); // never fake success: the user can retry or use WhatsApp
     } finally {
       setSubmitting(false);
     }

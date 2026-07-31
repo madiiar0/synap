@@ -65,6 +65,26 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
 17. **Hero minimum font size is 24px** on very small screens — the price of
     keeping "рекомендует + [longest platform name]" on a single fixed line
     with zero layout shift during the cycle.
-18. **Cost table is estimates.** Per-1M-token USD prices for sonar /
+18. **Gartner wording (verified).** The landing renders the owner-specified
+    phrasing («50% трафика традиционного поиска к 2028 году заменит ИИ»).
+    The verified original prediction is "By 2028, brands' organic search
+    traffic will decrease by 50% or more as consumers embrace generative
+    AI-powered search" — Gartner press release, Dec 14, 2023
+    (gartner.com/en/newsroom/press-releases/2023-12-14-…). The often-cited
+    Feb 2024 release covers the separate "25% by 2026" prediction.
+19. **Quote carousel curation.** Seven candidates were researched; five
+    verified with exact wording + public sources and shipped. Sam Altman's
+    only on-topic verified line was a hedgy fragment; Andy Jassy's was over
+    the 20-word limit and contains an em dash — both dropped per the spec's
+    rules. RU texts are our translations of the verified EN originals
+    (labeled as such in quotes.ts).
+20. **Mock auth trusts the email** (no password) — dev/demo/smoke only; the
+    server refuses to start with AUTH_MODE=mock in production, and mock
+    sessions are additionally rejected at the endpoint when NODE_ENV=production.
+21. **Prerender uses react-dom/server**, not puppeteer/vite-react-ssg: a
+    Vite SSR entry renders the six public pages at build time. Hydration is
+    a plain client render (brief replace on load) — acceptable for an MVP;
+    crawlers get full HTML either way.
+22. **Cost table is estimates.** Per-1M-token USD prices for sonar /
    gpt-4o-mini / claude-haiku-4-5 / gemini-2.5-flash are constants marked as
    estimates to be re-verified when real keys are added (MANUAL_SETUP step).

@@ -71,6 +71,11 @@ const schema = z.object({
 
   DEMO_MODE: bool.default("true"),
   DEMO_SCAN_TOTAL_MS: z.coerce.number().int().min(0).default(18000),
+
+  // --- Auth (§2): firebase in production, mock for offline dev/demo/smoke.
+  AUTH_MODE: z.enum(["firebase", "mock"]).optional(),
+  FIREBASE_SERVICE_ACCOUNT_JSON: z.string().optional().default(""),
+  GOOGLE_APPLICATION_CREDENTIALS: z.string().optional().default(""),
 });
 
 const parsed = schema.safeParse(process.env);
@@ -93,4 +98,19 @@ if (
 
 export const env = parsed.data;
 export const isProd = env.NODE_ENV === "production";
+
+/** firebase when configured/forced; mock otherwise. Never mock in production. */
+export const authMode: "firebase" | "mock" =
+  env.AUTH_MODE ??
+  (env.FIREBASE_SERVICE_ACCOUNT_JSON || env.GOOGLE_APPLICATION_CREDENTIALS
+    ? "firebase"
+    : "mock");
+
+if (isProd && authMode === "mock") {
+  console.error(
+    "Refusing to start: AUTH_MODE=mock is not allowed in production. Configure Firebase credentials.",
+  );
+  process.exit(1);
+}
+
 export { repoRoot };

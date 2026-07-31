@@ -1,9 +1,8 @@
 import { useTranslation } from "react-i18next";
-import LandingFooter from "./landing/LandingFooter";
 import LandingNav from "./landing/LandingNav";
 import ScanForm from "./landing/ScanForm";
 
-/** §4: the scan form's own light page — every "check" CTA routes here. */
+/** The scan form's own light page: every "check" CTA routes here. */
 export default function ScanPage(): JSX.Element {
   const { t } = useTranslation();
   return (
@@ -20,7 +19,10 @@ export default function ScanPage(): JSX.Element {
           <ScanForm />
         </div>
       </main>
-      <LandingFooter />
+      {/* No duplicated nav links here (§12): just the copyright line. */}
+      <footer className="border-t border-line py-8 text-center text-xs text-sub">
+        {t("common.copyright")}
+      </footer>
     </div>
   );
 }

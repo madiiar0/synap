@@ -56,7 +56,7 @@ export default function ScanProgress(): JSX.Element {
       className="flex min-h-screen flex-col items-center justify-center bg-base px-6 text-center text-ink transition-all duration-500"
       style={leaving ? { opacity: 0, filter: "blur(14px)" } : undefined}
     >
-      {/* Radar — light theme: gray rings, black sweep/accents (§Global) */}
+      {/* Radar: light theme: gray rings, black sweep/accents (§Global) */}
       <div className="relative mb-14 h-56 w-56">
         <div className="absolute inset-0 rounded-full border border-line" />
         <div className="absolute inset-8 rounded-full border border-line" />

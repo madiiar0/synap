@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Logo from "../../components/Logo";
-import { currentLocale, setLocale } from "../../lib/i18n";
+import { currentLocale, setLocale, localizedPath } from "../../lib/i18n";
 
 export default function LandingFooter(): JSX.Element {
   const { t } = useTranslation();
@@ -10,13 +10,13 @@ export default function LandingFooter(): JSX.Element {
       <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-4 px-6 sm:flex-row">
         <Logo size={16} className="text-sm" />
         <div className="flex items-center gap-6 text-sm text-sub">
-          <a href="/#how" className="hover:text-ink">
+          <a href={`${localizedPath("/")}#how`.replace("//#", "/#")} className="hover:text-ink">
             {t("nav.howItWorks")}
           </a>
-          <a href="/#faq" className="hover:text-ink">
+          <a href={`${localizedPath("/")}#faq`.replace("//#", "/#")} className="hover:text-ink">
             {t("nav.faq")}
           </a>
-          <Link to="/login" className="hover:text-ink">
+          <Link to={localizedPath("/login")} className="hover:text-ink">
             {t("nav.login")}
           </Link>
           <button
@@ -28,7 +28,7 @@ export default function LandingFooter(): JSX.Element {
           </button>
         </div>
       </div>
-      <p className="mt-6 px-6 text-center text-xs text-sub">{t("common.trademarkNote")}</p>
+      <p className="mt-6 px-6 text-center text-xs text-sub">{t("common.copyright")}</p>
     </footer>
   );
 }
