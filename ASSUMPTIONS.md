@@ -32,17 +32,16 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
    spec's "overall 34" was treated as a target band, not an exact constant —
    forcing an exact number would mean fabricating the snapshot instead of
    exercising the pipeline.
-9. **OpenAI web search tool id.** The installed SDK's Responses API expects
-   `web_search_preview` (the spec says "web_search" generically); revisit when
-   real keys are added.
+9. *(superseded in iteration 4)* ~~OpenAI web search tool id~~ — direct
+   provider SDKs were removed; everything routes through Perplexity's Agent
+   API, whose `web_search` tool id is verified against live docs.
 10. **`pnpm seed` against the in-memory fallback is throwaway** (separate
    process = separate in-memory DB). The dev server auto-seeds its own
    in-memory DB on startup instead; `pnpm seed` is for real-Mongo setups.
-11. **Public scans are shared, not owned.** The 7-day cache means several
-    visitors can reach the same scan. Every visitor who unlocks with an email
-    gets dashboard access (`Brand.claimedBy` array); the first one is also
-    the nominal `userId` owner. Anyone with the same public brand info could
-    always trigger the same scan, so shared read access leaks nothing new.
+11. *(superseded in iteration 4)* ~~Public scans are shared~~ — anonymous
+    scanning and the 7-day scan cache were removed entirely. Scans belong to
+    the signed-in account that started them; `Brand.normKey` now only dedupes
+    a user's own Brand document (answers are never reused).
 12. **Fuzzy matching is stricter than the literal spec.** The spec says
     "Levenshtein ≤2/word", but that misattributes 1-edit rival names
     ("Mega Clinics" → "Vega Clinic", "Alga Bank" → "Alfa Bank"). Implemented:
@@ -51,10 +50,10 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
     credits only one brand. Regression-tested.
 13. **Production refuses the default JWT secret** (`change_me` or <16 chars)
     at startup — forged admin sessions otherwise.
-14. **DeepSeek/Grok pricing are estimates with source comments**
-    (`deepseek-chat` cache-miss rate; `grok-3-mini` — xAI Live Search is
-    billed extra per source and is NOT in the token cost table). Re-verify
-    when keys are added.
+14. *(superseded in iteration 4)* ~~DeepSeek/Grok pricing estimates~~ — all
+    rates now come from Perplexity's Agent API catalogue (verified
+    2026-08-01); DeepSeek is not offered there and was removed from
+    scannable platforms.
 15. **Copilot is display-only** (`scannable:false` — no public API): it
     appears in the hero cycle and marquee but never in scan results,
     weights, or engine cards.
@@ -85,6 +84,34 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
     Vite SSR entry renders the six public pages at build time. Hydration is
     a plain client render (brief replace on load) — acceptable for an MVP;
     crawlers get full HTML either way.
-22. **Cost table is estimates.** Per-1M-token USD prices for sonar /
-   gpt-4o-mini / claude-haiku-4-5 / gemini-2.5-flash are constants marked as
-   estimates to be re-verified when real keys are added (MANUAL_SETUP step).
+22. *(superseded in iteration 4)* ~~Cost table is estimates~~ — per-call cost
+    is now **provider-reported** (`usage.cost.total_cost` from the Agent
+    API); the local rate table in `packages/shared/src/engines.ts` (verified
+    2026-08-01) is only a fallback when the field is absent.
+
+## Iteration 4
+
+23. **Batch extraction failure degrades per-item.** If a batched extraction
+    call fails or returns unparsable JSON, the affected answers keep their
+    deterministic extraction (mentions/positions are already correct; only
+    LLM sentiment + unknown-brand discovery are lost). A scan never fails
+    because of extraction.
+24. **Scan quota is charged at start, not completion.** `freeScansUsed` is
+    incremented when the scan is created — otherwise a user could burn API
+    budget indefinitely by abandoning scans mid-run. Admins can reset the
+    counter in the Users tab.
+25. **Email verification is enforced only in firebase mode** and never for
+    admins. Mock mode marks sessions verified so offline dev/demo/smoke run
+    end-to-end.
+26. **Per-IP abuse counters are in-memory per day** (like the earlier daily
+    limits): restart-resistant enough for an MVP, simple, and the global
+    `DAILY_SCAN_CAP` (Mongo-counted) backstops them.
+27. **The idempotency window is 60s and in-memory.** It exists to absorb
+    double-clicks and the auth-redirect auto-run, not to be a durable ledger;
+    a replay after a restart simply starts a fresh scan, which is safe (and
+    quota-checked).
+28. **The full 125-call tier reuses `FREE_SCAN_PROMPTS`** (25 prompts × 5
+    engines); the spec fixed the multiplier, not a separate prompt count.
+29. **"Scans left" is `null` for admin/unlimited accounts** and the chip is
+    hidden — showing a number there would present a limit that does not
+    exist (rule 2).

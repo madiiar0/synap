@@ -15,6 +15,7 @@ export interface AnswerResultData {
   tokensIn: number;
   tokensOut: number;
   costUsd: number;
+  searchFeeUsd: number;
   failed: boolean;
   errorCode?: string;
   createdAt: Date;
@@ -59,6 +60,7 @@ const answerResultSchema = new Schema<AnswerResultData>(
     tokensIn: { type: Number, default: 0 },
     tokensOut: { type: Number, default: 0 },
     costUsd: { type: Number, default: 0 },
+    searchFeeUsd: { type: Number, default: 0 },
     failed: { type: Boolean, default: false },
     errorCode: { type: String },
   },

@@ -8,13 +8,12 @@ import type {
   PromptRowDto,
   ScoreSnapshotDto,
   Sentiment,
-  TeaserDto,
 } from "@synapai/shared";
-import { FREE_RESCANS_PER_WEEK, normalizedKey } from "@synapai/shared";
+import { normalizedKey } from "@synapai/shared";
 import { env } from "../config/env.js";
-import { AppError } from "../lib/errors.js";
+import type { UserDoc } from "../models/User.js";
 import { AnswerResult } from "../models/AnswerResult.js";
-import { Brand, type BrandDoc } from "../models/Brand.js";
+import { type BrandDoc } from "../models/Brand.js";
 import { GeneratedPrompt } from "../models/GeneratedPrompt.js";
 import { Scan, type ScanDoc } from "../models/Scan.js";
 import { ScoreSnapshot, type ScoreSnapshotDoc } from "../models/ScoreSnapshot.js";
@@ -62,49 +61,7 @@ export async function latestScoredScan(
   return null;
 }
 
-export async function buildTeaser(scanId: string): Promise<TeaserDto> {
-  const scan = await Scan.findById(scanId).catch(() => null);
-  if (!scan) throw new AppError("NOT_FOUND", 404, "Scan not found");
-  const brand = await Brand.findById(scan.brandId);
-  if (!brand) throw new AppError("NOT_FOUND", 404, "Brand not found");
-  const snapshot = await ScoreSnapshot.findOne({ scanId: scan._id });
-
-  let sampleAnswer: TeaserDto["sampleAnswer"] = null;
-  if (snapshot) {
-    const candidates = await AnswerResult.find({
-      scanId: scan._id,
-      failed: false,
-      "extracted.mentioned": false,
-      "extracted.brands.0": { $exists: true },
-    }).limit(10);
-    const chosen = candidates[0];
-    if (chosen) {
-      const prompt = await GeneratedPrompt.findById(chosen.promptId);
-      sampleAnswer = {
-        engine: chosen.engine,
-        prompt: prompt?.text ?? "",
-        snippet: chosen.rawAnswer.slice(0, 240),
-      };
-    }
-  }
-
-  return {
-    scanId: String(scan._id),
-    brandName: brand.name,
-    status: scan.status,
-    overall: snapshot?.overall ?? 0,
-    engines: (snapshot?.perEngine ?? []).map((e) => ({
-      engine: e.engine,
-      mentionRate: Math.round(e.mentionRate * 100) / 100,
-    })),
-    competitorsDetected:
-      snapshot?.shareOfVoice.filter((e) => !e.isUs && e.mentions > 0).length ?? 0,
-    sampleAnswer,
-    demo: env.DEMO_MODE,
-  };
-}
-
-export async function buildOverview(brand: BrandDoc): Promise<OverviewDto> {
+export async function buildOverview(brand: BrandDoc, user: UserDoc): Promise<OverviewDto> {
   const latest = await latestScoredScan(String(brand._id));
   let previous: ScoreSnapshotDto | null = null;
   let losePrompts: LosePromptDto[] = [];
@@ -148,19 +105,11 @@ export async function buildOverview(brand: BrandDoc): Promise<OverviewDto> {
       }));
   }
 
-  // Free-tier re-scan quota: FREE_RESCANS_PER_WEEK user-triggered scans / 7 days.
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const recentUserScans = await Scan.find({
-    brandId: brand._id,
-    trigger: "user",
-    createdAt: { $gte: weekAgo },
-  })
-    .sort({ createdAt: 1 })
-    .limit(FREE_RESCANS_PER_WEEK);
-  const rescanAvailableAt =
-    recentUserScans.length >= FREE_RESCANS_PER_WEEK
-      ? new Date(recentUserScans[0].createdAt.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      : null;
+  // §6.3: remaining free scans; null hides the indicator (admin/unlimited).
+  const unlimited = user.role === "admin" || user.unlimitedScans;
+  const scansLeft = unlimited
+    ? null
+    : Math.max(0, user.freeScanLimit - user.freeScansUsed);
 
   return {
     brand: toBrandDto(brand),
@@ -170,13 +119,14 @@ export async function buildOverview(brand: BrandDoc): Promise<OverviewDto> {
           status: latest.scan.status,
           tier: latest.scan.tier,
           finishedAt: latest.scan.finishedAt?.toISOString() ?? null,
+          engines: latest.scan.engines,
         }
-      : { id: "", status: "queued", tier: "free", finishedAt: null },
+      : { id: "", status: "queued", tier: "free", finishedAt: null, engines: [] },
     snapshot: latest ? toSnapshotDto(latest.snapshot) : null,
     previous,
     losePrompts,
     demo: env.DEMO_MODE,
-    rescanAvailableAt,
+    scansLeft,
   };
 }
 

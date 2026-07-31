@@ -3,7 +3,11 @@
 Written for a founder without a DevOps background. Do the steps in order;
 each has **why it matters → steps → which .env variable → how to verify**.
 Everything is optional except step 1 — the app runs in demo mode without any
-of it, but a live product needs at minimum steps 1, 2 (Perplexity) and 7.
+of it, but a live product needs at minimum steps 1, 2, 4 and 6.
+
+The product needs exactly four external credentials (§9 of the spec):
+**Perplexity API key** (all AI engines), **Firebase** (auth), **MongoDB**
+(data), **SMTP** (email). Nothing else.
 
 ---
 
@@ -14,58 +18,38 @@ of it, but a live product needs at minimum steps 1, 2 (Perplexity) and 7.
 - [ ] In the repo root: `cp .env.example .env`
 - [ ] Generate a session secret: run `openssl rand -hex 32` in a terminal and
       paste the output into `JWT_SECRET=`
-- [ ] Set `ADMIN_EMAIL=` to the inbox that should receive lead and budget
-      alerts.
+- [ ] Set `ADMIN_EMAIL=` to **your** email. This one address is auto-promoted
+      to admin (role + unlimited scans) every time the server boots — no
+      manual database step needed. It also receives lead and budget alerts.
 
 **Verify:** `pnpm dev` still starts and the log doesn't complain about env.
 
 ---
 
-## 2. Perplexity API key (first priority — the core engine)
+## 2. Perplexity API key — the ONLY AI credential
 
-**Why:** Perplexity powers the free tier; without it a non-demo scan has no
-engine at all.
+**Why:** every engine (ChatGPT, Gemini, Perplexity, Claude, Grok) and the
+extraction model are called through **Perplexity's Agent API** with this one
+key. Without it a non-demo scan has no engines at all.
 
 - [ ] Sign up at https://www.perplexity.ai/settings/api
 - [ ] Add a payment method, click **Generate API key**
 - [ ] Paste into `PERPLEXITY_API_KEY=`
 
-Model is `PERPLEXITY_MODEL=sonar` (cheap tier). Check current pricing at
-https://docs.perplexity.ai/guides/pricing and update the estimates in
-`packages/shared/src/constants.ts` (`COST_PER_MTOK`) if they moved.
+Model ids and per-token rates live in `packages/shared/src/engines.ts`
+(verified against https://docs.perplexity.ai on 2026-08-01). If Perplexity
+moves prices, update that one file. Web-search calls add a flat $2.50 per
+1000 requests on top of tokens.
 
-**Verify:** with `DEMO_MODE=false`, run one scan from the landing and watch
-Admin → Usage show a small cost for `perplexity`.
+**Cost expectations:** a free scan is 41 engine calls + ~5 extraction calls ≈
+**$0.16–0.30**. The daily hard-stop is `DAILY_LLM_BUDGET_USD` (default $10).
 
----
-
-## 3. Optional engines — OpenAI / Google AI Studio / Anthropic
-
-**Why:** the FULL tier fans out across 4 engines; any subset works — a
-missing key simply switches that engine off (dash in the UI).
-
-- [ ] **OpenAI**: https://platform.openai.com/api-keys → `OPENAI_API_KEY=`.
-      Uses the Responses API with the web-search tool; verify the model name
-      in `OPENAI_MODEL` is still the current cheap tier.
-- [ ] **Google**: https://aistudio.google.com/apikey → `GEMINI_API_KEY=`.
-      Search grounding is enabled automatically.
-- [ ] **Anthropic**: https://console.anthropic.com/settings/keys →
-      `ANTHROPIC_API_KEY=`. Verify the model id in `ANTHROPIC_MODEL` at
-      https://docs.claude.com/en/docs/about-claude/models
-- [ ] **DeepSeek**: https://platform.deepseek.com/api_keys →
-      `DEEPSEEK_API_KEY=` (model `deepseek-chat`).
-- [ ] **xAI (Grok)**: https://console.x.ai → `XAI_API_KEY=`. Live Search is
-      requested automatically (`mode: auto`) and billed per source — check
-      https://docs.x.ai for current pricing and the `GROK_MODEL` id.
-- [ ] Pick your extraction provider (the cheap model that parses answers):
-      `EXTRACTION_PROVIDER=perplexity` is a fine default.
-
-**Verify:** Admin → Engines shows the key present; trigger a FULL scan from
-Admin → Scans and see all enabled engines report results.
+**Verify:** with `DEMO_MODE=false`, run one scan and watch Admin → Costs
+show the per-scan cost; `pnpm cost:report` prints the same from the terminal.
 
 ---
 
-## 4. Booking a call — Calendly + WhatsApp
+## 3. Booking a call — Calendly + WhatsApp
 
 **Why:** "Book a call" is the product's only conversion. With no Calendly URL
 the button falls back to a lead form (works fine, but a calendar converts
@@ -81,11 +65,12 @@ embed your calendar; every open is also logged in Admin → Leads.
 
 ---
 
-## 4b. Sign-in — Firebase Auth
+## 4. Sign-in — Firebase Auth (required: scanning needs an account)
 
-**Why:** customers create accounts with email/password or Google. Without
-Firebase the app runs a mock email-only sign-in (dev/demo only; production
-refuses to start in mock mode).
+**Why:** running a scan requires a signed-in, email-verified account — that
+is how free-scan quotas (3 per account) are enforced. Without Firebase the
+app runs a mock email-only sign-in (dev/demo only; production refuses to
+start in mock mode).
 
 - [ ] Create a project at https://console.firebase.google.com
 - [ ] Build → Authentication → Sign-in method: enable **Email/Password** and
@@ -97,22 +82,23 @@ refuses to start in mock mode).
 - [ ] Project settings → Service accounts → **Generate new private key**;
       encode it: `base64 -i serviceAccount.json | tr -d '\n'` and paste into
       `FIREBASE_SERVICE_ACCOUNT_JSON=` (server `.env`); set `AUTH_MODE=firebase`
-- [ ] **Granting admin:** the admin panel is gated by the `role` field in
-      MongoDB, not by Firebase. After you sign in once with your email, run
-      in mongosh / Atlas shell:
-      `db.users.updateOne({ email: "you@yourdomain.com" }, { $set: { role: "admin" } })`
-      Then open `/admin` directly (there is no admin link in the UI).
+- [ ] **Admin access** is automatic: the `ADMIN_EMAIL` account from step 1 is
+      promoted on boot. Sign in with that email and open `/admin` (there is
+      no admin link in the public UI).
 
-**Verify:** sign up with email, sign in with Google, and confirm `/admin`
-opens only for the role-granted user.
+**Verify:** sign up with a fresh email → the app asks you to verify the
+email before scanning; verify, run a scan, and confirm the header shows
+«Осталось проверок: 2». Then sign in as `ADMIN_EMAIL` and confirm `/admin`
+opens with Users / Costs tabs.
 
 ---
 
 ## 5. Email (SMTP)
 
-**Why:** magic-link sign-in and report emails. Without SMTP the app never
-crashes — emails land in `apps/server/.mail-outbox/` as HTML files (good for
-testing, useless for customers).
+**Why:** scan-ready notifications, lead alerts and budget alerts. (The
+email-verification message itself is sent by Firebase, not SMTP.) Without
+SMTP the app never crashes — emails land in `apps/server/.mail-outbox/` as
+HTML files (good for testing, useless for customers).
 
 Concrete walkthrough with **Brevo** (free tier is enough to start):
 
@@ -125,7 +111,7 @@ Concrete walkthrough with **Brevo** (free tier is enough to start):
 
 (Any other SMTP provider — Resend, Postmark, Mailgun — works the same way.)
 
-**Verify:** request a sign-in link from `/login` and receive a real email.
+**Verify:** finish a scan and receive the "your report is ready" email.
 
 ---
 
@@ -144,8 +130,7 @@ database is required for production.
       re-runs scans stuck by a crash.
 
 **Verify:** restart the server; the log says `mongo connected` (not
-"in-memory"). Run `pnpm seed` once to create the admin user — the password is
-printed in the terminal (it regenerates on every seed run).
+"in-memory").
 
 ---
 
@@ -187,22 +172,28 @@ For both paths set:
 
 ## 8. Go-live checklist
 
-- [ ] `DEMO_MODE=false` in `.env`, restart
-- [ ] Run one real **free** scan from the landing (your own brand)
-- [ ] Check Admin → Usage: cost appeared, budget bar is sane; the daily
-      hard-stop is `DAILY_LLM_BUDGET_USD` (default $10 — scans pause and you
-      get an email at the cap; **Resume** button unpauses for the day)
-- [ ] Check the report email arrived and the magic link signs you in
+- [ ] `DEMO_MODE=false` and `AUTH_MODE=firebase` in `.env`, restart
+- [ ] Sign up with a fresh (non-admin) email, verify it, run one real **free**
+      scan of your own business
+- [ ] Check Admin → Costs: the scan cost appeared (should be ≤ $0.35);
+      `pnpm cost:report` agrees
+- [ ] Admin → Usage: budget bar is sane; the daily hard-stop is
+      `DAILY_LLM_BUDGET_USD` (default $10 — scans pause and you get an email
+      at the cap; **Resume** button unpauses for the day)
+- [ ] Check the "report is ready" email arrived and its link opens the
+      dashboard after sign-in
+- [ ] Spend the remaining free scans; the 4th attempt must show the
+      end-of-trial modal (book-a-call, no prices)
 - [ ] Book-a-call: submit a test lead, confirm the notification email
 
 ---
 
 ## 9. Where leads land
 
-- Admin → **Leads** (`/admin`): every unlock email and every book-a-call
-  click/submission, filterable by type.
+- Admin → **Leads** (`/admin`): every book-a-call click/submission,
+  filterable by type.
 - **CSV export** button in the same screen (`/api/admin/leads.csv`).
 - Each substantive lead also emails `ADMIN_EMAIL` immediately.
 
-Admin sign-in: `/login` → «Вход администратора» with the seeded credentials
-(printed by `pnpm seed`; the password regenerates on every seed run).
+Admin sign-in: `/login` with the `ADMIN_EMAIL` account (auto-promoted on
+boot), then open `/admin`.

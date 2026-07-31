@@ -31,6 +31,12 @@ export interface ScoringInput {
   configuredCompetitors: string[];
   prompts: ScoringPrompt[];
   answers: ScoringAnswer[];
+  /**
+   * §2.3 fair comparison: per-engine metrics (mention rate, engine score)
+   * are computed ONLY over this shared prompt set that every queried engine
+   * answered. Empty/omitted → all prompts (full scans).
+   */
+  corePromptIds?: string[];
 }
 
 export interface SnapshotData {
@@ -72,12 +78,17 @@ function weightedAverage(parts: { value: number; weight: number }[]): number {
 export function computeSnapshot(input: ScoringInput): SnapshotData {
   const intentByPrompt = new Map(input.prompts.map((p) => [p.id, p.intent]));
   const engines = [...new Set(input.answers.map((a) => a.engine))];
+  const coreSet =
+    input.corePromptIds && input.corePromptIds.length > 0
+      ? new Set(input.corePromptIds)
+      : null;
 
   const perEngine: PerEngineScore[] = [];
   const engineSubscores = new Map<EngineId, Partial<Record<Group, number>>>();
 
-  for (const engine of engines) {
-    const answers = input.answers.filter((a) => a.engine === engine && !a.failed);
+  const groupStats = (
+    answers: ScoringAnswer[],
+  ): { subs: Partial<Record<Group, number>>; mentionRate: number } => {
     const byGroup: Record<Group, { total: number; mentioned: number }> = {
       branded: { total: 0, mentioned: 0 },
       category: { total: 0, mentioned: 0 },
@@ -99,16 +110,29 @@ export function computeSnapshot(input: ScoringInput): SnapshotData {
         subs[group] = (byGroup[group].mentioned / byGroup[group].total) * 100;
       }
     }
-    engineSubscores.set(engine, subs);
+    return { subs, mentionRate: answers.length > 0 ? mentioned / answers.length : 0 };
+  };
+
+  for (const engine of engines) {
+    const allAnswers = input.answers.filter((a) => a.engine === engine && !a.failed);
+    // Overall subscores use everything the engine answered (weights applied).
+    engineSubscores.set(engine, groupStats(allAnswers).subs);
+
+    // §2.3 displayed per-engine metrics: only the shared core prompt set,
+    // so engines are never compared on prompts they did not both see.
+    const coreAnswers = coreSet
+      ? allAnswers.filter((a) => coreSet.has(a.promptId))
+      : allAnswers;
+    const core = groupStats(coreAnswers);
     const engineScore = weightedAverage(
-      (Object.entries(subs) as [Group, number][]).map(([group, value]) => ({
+      (Object.entries(core.subs) as [Group, number][]).map(([group, value]) => ({
         value,
         weight: SUBSCORE_WEIGHTS[group],
       })),
     );
     perEngine.push({
       engine,
-      mentionRate: answers.length > 0 ? mentioned / answers.length : 0,
+      mentionRate: core.mentionRate,
       score: Math.round(engineScore),
     });
   }

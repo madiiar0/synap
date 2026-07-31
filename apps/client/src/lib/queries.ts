@@ -77,12 +77,22 @@ export function usePrompts(brandId: string | undefined) {
   });
 }
 
-export function useRescan(brandId: string | undefined) {
+/** Re-scan = a fresh authed scan of the same business (same quota pool). */
+export function useStartScan(brand: BrandDto | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => apiPost<{ scanId: string }>(`/api/brands/${brandId}/rescan`),
+    mutationFn: () =>
+      apiPost<{ scanId: string }>("/api/scan", {
+        brandName: brand?.name,
+        category: brand?.category,
+        city: brand?.city || undefined,
+        market: brand?.market,
+        competitors: brand?.competitors.map((c) => c.name),
+        idempotencyKey: crypto.randomUUID(),
+      }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["overview", brandId] });
+      void queryClient.invalidateQueries({ queryKey: ["overview", brand?.id] });
+      void queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 }

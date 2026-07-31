@@ -18,11 +18,13 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     error?: { code?: string; message?: string };
   };
   if (!res.ok) {
-    throw new ApiError(
-      body.error?.code ?? "UNKNOWN",
-      res.status,
-      body.error?.message ?? `HTTP ${res.status}`,
-    );
+    const code = body.error?.code ?? "UNKNOWN";
+    // §6.4: any quota rejection, anywhere, opens the end-of-trial modal.
+    if (code === "QUOTA_EXCEEDED") {
+      const { openQuotaModal } = await import("./quotaModal");
+      openQuotaModal();
+    }
+    throw new ApiError(code, res.status, body.error?.message ?? `HTTP ${res.status}`);
   }
   return body as T;
 }

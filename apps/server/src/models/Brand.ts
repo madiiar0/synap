@@ -17,7 +17,7 @@ export interface BrandDoc extends Document {
   locale: Locale;
   /** Normalized prompt texts the user disabled for future scans. */
   disabledPrompts: string[];
-  /** normalizedKey(name, category, city) — used for the 7-day public-scan cache. */
+  /** normalizedKey(name, category, city) — used to reuse a user's own Brand doc across scans (answers are never reused, §2.4). */
   normKey: string;
   createdAt: Date;
   updatedAt: Date;

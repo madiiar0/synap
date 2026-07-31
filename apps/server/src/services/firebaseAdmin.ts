@@ -6,6 +6,7 @@ export interface VerifiedIdentity {
   email: string;
   name?: string;
   photoUrl?: string;
+  emailVerified: boolean;
 }
 
 let appPromise: Promise<typeof import("firebase-admin/auth")> | null = null;
@@ -50,5 +51,6 @@ export async function verifyFirebaseToken(idToken: string): Promise<VerifiedIden
     email: decoded.email.toLowerCase(),
     name: typeof decoded.name === "string" ? decoded.name : undefined,
     photoUrl: typeof decoded.picture === "string" ? decoded.picture : undefined,
+    emailVerified: decoded.email_verified === true,
   };
 }

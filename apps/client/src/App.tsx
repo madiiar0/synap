@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
+import QuotaModal from "./components/QuotaModal";
 import Toaster from "./components/Toaster";
 import { currentLocale, setLocale } from "./lib/i18n";
 import Landing from "./pages/Landing";
@@ -7,7 +8,6 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import ScanPage from "./pages/ScanPage";
 import ScanProgress from "./pages/ScanProgress";
-import Teaser from "./pages/Teaser";
 import AppShell from "./pages/app/AppShell";
 
 /** §1.4: /en-prefixed public routes render the English variant. */
@@ -22,13 +22,13 @@ export default function App(): JSX.Element {
   return (
     <>
       <Toaster />
+      <QuotaModal />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/en" element={<EnRoute><Landing /></EnRoute>} />
         <Route path="/scan" element={<ScanPage />} />
         <Route path="/en/scan" element={<EnRoute><ScanPage /></EnRoute>} />
         <Route path="/scan/:id" element={<ScanProgress />} />
-        <Route path="/scan/:id/teaser" element={<Teaser />} />
         <Route path="/login" element={<Login />} />
         <Route path="/en/login" element={<EnRoute><Login /></EnRoute>} />
         <Route path="/app/*" element={<AppShell />} />

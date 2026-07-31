@@ -8,7 +8,7 @@ import {
 
 const trimmed = (min: number, max: number) => z.string().trim().min(min).max(max);
 
-export const publicScanRequestSchema = z.object({
+export const scanRequestSchema = z.object({
   brandName: trimmed(2, 80),
   website: z
     .string()
@@ -21,13 +21,10 @@ export const publicScanRequestSchema = z.object({
   market: z.enum(MARKETS).default("kz"),
   competitors: z.array(trimmed(2, 80)).max(MAX_USER_COMPETITORS).optional(),
   locale: z.enum(LOCALES).optional(),
+  /** §2.4 idempotency: same key within 60s returns the existing scanId. */
+  idempotencyKey: trimmed(8, 64).optional(),
 });
-export type PublicScanRequest = z.infer<typeof publicScanRequestSchema>;
-
-export const unlockRequestSchema = z.object({
-  email: z.string().trim().toLowerCase().email().max(120),
-  locale: z.enum(LOCALES).optional(),
-});
+export type ScanRequest = z.infer<typeof scanRequestSchema>;
 
 /** Optional text field where an empty/blank string means "not provided". */
 const optionalText = (min: number, max: number) =>
@@ -69,6 +66,26 @@ export const promptToggleSchema = z.object({
   promptId: z.string().max(64),
   disabled: z.boolean(),
 });
+
+/** §4: one batched extraction call returns an array with one item per answer. */
+export const llmBatchExtractionSchema = z.array(
+  z.object({
+    index: z.number().int().min(0),
+    mentioned: z.boolean(),
+    matchedAlias: z.string().nullable().optional(),
+    position: z.number().int().min(1).max(50).nullable().optional(),
+    sentiment: z.enum(["pos", "neu", "neg", "na"]).default("na"),
+    brands: z
+      .array(
+        z.object({
+          name: z.string().min(1).max(120),
+          position: z.number().int().min(1).max(50).nullable().optional(),
+        }),
+      )
+      .default([]),
+  }),
+);
+export type LlmBatchExtraction = z.infer<typeof llmBatchExtractionSchema>;
 
 /** Strict JSON the extraction LLM must return. */
 export const llmExtractionSchema = z.object({

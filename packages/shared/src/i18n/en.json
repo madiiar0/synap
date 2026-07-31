@@ -57,7 +57,8 @@
     },
     "scanPage": {
       "title": "Check your business",
-      "subtitle": "A free one-minute check: see whether AI recommends your business and who takes your place."
+      "subtitle": "A free one-minute check: see whether AI recommends your business and who takes your place.",
+      "authNote": "Running a check requires an account. Your form data is kept, so nothing needs to be retyped."
     },
     "fear": {
       "line1": "Right now, someone is asking AI",
@@ -79,7 +80,7 @@
     "how": {
       "title": "How it works",
       "step1Title": "We ask the AIs",
-      "step1Text": "Up to 100 of your customers' questions across ChatGPT, Claude, Gemini, Perplexity, DeepSeek and Grok.",
+      "step1Text": "Up to 100 of your customers' questions across ChatGPT, Claude, Gemini, Perplexity and Grok.",
       "step2Title": "The full picture",
       "step2Text": "A 0-100 Visibility Score, competitors and the sources AI builds its answers from.",
       "step3Title": "We fix it for you",
@@ -102,9 +103,9 @@
       "q1": "How is the Visibility Score calculated?",
       "a1": "We ask AI platforms dozens of questions your customers typically ask and measure how often, and at which position, they name your business. The 0-100 score combines branded, category and comparison prompts.",
       "q2": "Which models do you check?",
-      "a2": "Six platforms: Perplexity always, with ChatGPT, Gemini, Claude, DeepSeek and Grok on the full scan.",
+      "a2": "Five platforms: ChatGPT, Gemini and Perplexity in the free check, with Claude and Grok added on the full scan.",
       "q3": "How long does a scan take?",
-      "a3": "The free scan takes about a minute. A full scan of 100 prompts across six platforms takes up to 20 minutes; we email you the report link.",
+      "a3": "The free check takes about a minute. The full five-platform scan takes a few minutes; we email you the report link.",
       "q4": "Is the data accurate?",
       "a4": "AI answers vary: the same question can produce different answers. We run repeated passes and average them, so the score reflects a stable picture rather than a single reply.",
       "q5": "What happens after the call?",
@@ -120,23 +121,8 @@
   },
   "progress": {
     "title": "Checking what AI says about your business…",
-    "counter": "{{done}} / {{total}} prompts",
     "failed": "The scan failed. Please try again.",
     "queued": "Scan queued…"
-  },
-  "teaser": {
-    "title": "Your business's Visibility Score",
-    "outOf": "out of 100",
-    "enginesTitle": "Platforms",
-    "competitorsDetected": "Competitors spotted in answers: {{count}}",
-    "sampleTitle": "Sample AI answer",
-    "lockedNote": "The full report opens after you create an account",
-    "unlockTitle": "Get the full report",
-    "unlockText": "Leave your email, then create an account with it to open the report with answers, competitors and sources.",
-    "unlockButton": "Continue",
-    "unlockSent": "Done! Now create an account with this email to open the full report.",
-    "createAccount": "Create an account",
-    "bookBanner": "Want a higher score? We'll do it for you: a 20-minute call."
   },
   "auth": {
     "title": "Sign in or create an account",
@@ -194,7 +180,12 @@
       "all": "All",
       "empty": "No answers yet.",
       "citations": "Answer sources",
-      "sentiment": { "pos": "Positive", "neu": "Neutral", "neg": "Negative", "na": "-" }
+      "sentiment": {
+        "pos": "Positive",
+        "neu": "Neutral",
+        "neg": "Negative",
+        "na": "-"
+      }
     },
     "competitors": {
       "title": "Competitors",
@@ -247,7 +238,9 @@
     "empty": {
       "noScan": "No completed scans yet.",
       "runFirst": "Run your first scan to see the data."
-    }
+    },
+    "scansLeft": "Scans left: {{count}}",
+    "notChecked": "not checked"
   },
   "bookCall": {
     "button": "Book a call",
@@ -262,7 +255,13 @@
   },
   "admin": {
     "title": "Admin",
-    "nav": { "leads": "Leads", "scans": "Scans", "usage": "Usage", "engines": "Engines" },
+    "nav": {
+      "leads": "Leads",
+      "scans": "Scans",
+      "usage": "Usage",
+      "engines": "Engines",
+      "users": "Users"
+    },
     "leads": {
       "colType": "Type",
       "colContact": "Contact",
@@ -299,6 +298,25 @@
     "engines": {
       "hint": "Global engine toggles. A disabled engine is excluded from scans.",
       "keyMissing": "No key"
+    },
+    "users": {
+      "search": "Search by email",
+      "colEmail": "Email",
+      "colUsed": "Used",
+      "colLimit": "Limit",
+      "colUnlimited": "Unlimited",
+      "reset": "Reset counter",
+      "grant": "Grant unlimited",
+      "revoke": "Revoke unlimited"
+    },
+    "costs": {
+      "today": "Spend today",
+      "month": "Spend, 30 days",
+      "colScan": "Scan",
+      "colCalls": "Calls",
+      "colTokens": "Tokens",
+      "colSearch": "Search fees",
+      "colCost": "Cost"
     }
   },
   "emails": {
@@ -318,5 +336,12 @@
       "title": "Scans paused",
       "body": "Today's spend reached {{spend}} USD against a {{budget}} USD limit. Scans are paused until tomorrow. Resume from the admin panel."
     }
+  },
+  "quota": {
+    "title": "Your free checks are used up",
+    "body": "You have used all your free checks. To get an extended analysis across all AI models and a visibility growth plan, book a call. We will review your case and do the work for you.",
+    "cta": "Book a call",
+    "whatsapp": "Message on WhatsApp",
+    "close": "Close"
   }
 }

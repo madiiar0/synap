@@ -246,3 +246,73 @@ the clamp minimum, and a 4-line fear wrap at 1440 by widening to max-w-5xl).
   CTA coffee logos + sample tag; scan select inset chevron; EN at /en fully
   localized (lang=en, EN marquee set); no horizontal overflow at minimum
   width in either locale.
+
+## Iteration 4 — Functionality rebuild: one provider, live-only scans, quotas (2026-08-01)
+
+Two overriding rules implemented end-to-end: **(1) no cross-scan caching of
+answers, ever** — every scan issues a complete fresh set of provider calls;
+**(2) never present data we did not measure** — only queried engines render.
+
+- **Provider catalogue verified live (2026-08-01, docs.perplexity.ai):**
+  Perplexity **Agent API** (`POST https://api.perplexity.ai/v1/agent`) exposes
+  third-party models under one key with provider-reported cost
+  (`usage.cost.total_cost` incl. `tool_calls_cost`) and a `web_search` tool at
+  a **flat $2.50 per 1000 requests**. Cheapest tier per provider chosen
+  (rates $/MTok in/out):
+  - chatgpt → `openai/gpt-5.4-nano` ($0.20 / $1.25), weight .30
+  - gemini → `google/gemini-3.1-flash-lite` ($0.25 / $1.50), weight .25
+  - perplexity → `perplexity/sonar` ($0.25 / $2.50), weight .20
+  - claude → `anthropic/claude-haiku-4-5` ($1.00 / $5.00), weight .15
+  - grok → `xai/grok-4.3` ($1.25 / $2.50), weight .10
+  - extraction/prompt-gen model: `openai/gpt-5.4-nano` (no web_search).
+  **DeepSeek is NOT offered** through the Agent API → removed from scannable
+  platforms (logo remains display-only) and from FAQ copy.
+  Registry + rates live in `packages/shared/src/engines.ts`; fallback local
+  rate math only applies if the API omits `usage.cost`.
+- **Why plain fetch, not the SDK:** the existing instrumented wrapper already
+  handles timeout (60s), 2 retries with backoff and per-call accounting; the
+  Agent API is one POST with a documented JSON schema, so the SDK would add a
+  dependency without removing any code.
+- **Scan plan (§2):** free scan = 25 prompts; core 8 (all 6 branded + 2
+  comparison) × core engines (chatgpt, gemini, perplexity) + 17 tail prompts
+  on perplexity = **41 live calls**. Full tier (admin-only) = 25 × 5 = 125.
+  Fair comparison: per-engine display metrics computed over the shared core
+  set only; the overall score uses every measured answer. Unqueried engines
+  render as «не проверялся» / "not checked" — never a number.
+- **Freshness (§2.4):** answer-reuse/normalized-key cache deleted; within-scan
+  dedup only. Enforced by `test/freshness.test.ts` (two sequential scans of
+  the same business = two full 41-call sets, zero shared documents) and the
+  §4 call-budget test (41 + ceil(41/10) max provider calls; extraction is
+  batched ≤10 answers per call → 5 extra calls).
+- **Auth & quotas (§5-6):** scanning requires a signed-in account —
+  anonymous scan, teaser page and email-unlock removed entirely; the landing
+  form stashes its data in sessionStorage, survives the login redirect and
+  auto-starts the scan once authenticated. Firebase email verification gates
+  the first scan (mock mode exempt). Quotas server-side: 3 free scans per
+  account (`freeScansUsed`/`freeScanLimit`/`unlimitedScans`), 4th attempt →
+  402 `QUOTA_EXCEEDED` → end-of-trial modal (book-a-call + WhatsApp, no
+  prices anywhere). Abuse controls: disposable-email blocklist, 5 scan
+  starts/IP/day, 3 new accounts/IP/day, global `DAILY_SCAN_CAP=200` (admin
+  emailed once/day at the cap). Idempotency keys (60s window) make double
+  submits return the same scan.
+- **Admin (§7):** `ADMIN_EMAIL` auto-promoted on boot (role + unlimited +
+  verified). New Users tab (search, grant/revoke unlimited, reset counter,
+  edit limit) and Costs tab (per-scan calls/tokens/search-fees/cost, spend
+  today + 30 days, budget state). `pnpm cost:report` prints the same offline.
+- **Cost instrumentation (§8):** per-answer tokens + `searchFeeUsd` +
+  provider-reported cost persisted; per-engine breakdown and totals on each
+  scan; one-line cost summary logged at scan end.
+- **Measured cost of one real scan: PENDING** — `PERPLEXITY_API_KEY` is empty
+  in the owner's `.env`, so no live call was possible this session. Computed
+  estimate from verified rates: 41 answers (~250 in / ~350 out tok) with 41
+  search fees ($0.1025) + 5 batched extraction calls ≈ **$0.16–0.25**, under
+  the $0.35 acceptance bar. TODO(owner): paste the key, run one scan, read
+  the exact figure from Admin → Costs or `pnpm cost:report`, record it here.
+- **Cleanup (§9):** per-provider adapters (openai/anthropic/genai/deepseek/
+  grok/perplexity direct), their env keys, deps (`openai`,
+  `@anthropic-ai/sdk`, `@google/genai`, `bcryptjs`), the public scan route,
+  teaser page and rescan-cooldown logic all deleted. `.env.example`, README,
+  MANUAL_SETUP rewritten around the four remaining credentials (Perplexity,
+  Firebase, MongoDB, SMTP).
+- **Progress UI:** percentage + radar + current question only; counts of
+  prompts/engines never shown.

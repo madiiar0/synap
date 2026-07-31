@@ -10,7 +10,7 @@ export function todayKey(now = new Date()): string {
 
 export async function recordUsage(
   provider: string,
-  usage: { tokensIn: number; tokensOut: number; costUsd: number },
+  usage: { tokensIn: number; tokensOut: number; costUsd: number; searchFeeUsd?: number },
 ): Promise<void> {
   await ApiUsage.updateOne(
     { date: todayKey(), provider },
@@ -19,6 +19,7 @@ export async function recordUsage(
         calls: 1,
         tokens: usage.tokensIn + usage.tokensOut,
         costUsd: usage.costUsd,
+        searchFees: usage.searchFeeUsd ?? 0,
       },
     },
     { upsert: true },

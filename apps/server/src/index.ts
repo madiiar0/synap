@@ -14,6 +14,18 @@ async function main(): Promise<void> {
   setBudgetEmailSender(sendBudgetPausedEmail);
   startStuckScanSweeper(findStuckScans);
 
+  // §7: the owner's account is admin + unlimited from the first sign-in.
+  const { User } = await import("./models/User.js");
+  await User.updateOne(
+    { email: env.ADMIN_EMAIL.toLowerCase() },
+    {
+      $set: { role: "admin", unlimitedScans: true },
+      $setOnInsert: { email: env.ADMIN_EMAIL.toLowerCase(), locale: "ru", emailVerified: true },
+    },
+    { upsert: true },
+  );
+  logger.info({ admin: env.ADMIN_EMAIL }, "admin account ensured (role + unlimited scans)");
+
   // The in-memory DB starts empty every boot — auto-seed it so `pnpm dev`
   // is demoable offline (admin creds are printed below).
   if (isMemoryDb() && env.DEMO_MODE) {

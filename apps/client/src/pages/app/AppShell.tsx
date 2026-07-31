@@ -12,12 +12,20 @@ import {
 } from "lucide-react";
 import { createContext, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import type { BrandDto } from "@synapai/shared";
 import Logo from "../../components/Logo";
 import { apiPost } from "../../lib/api";
 import { currentLocale, setLocale } from "../../lib/i18n";
-import { useBrands, useMe, useOverview, useRescan } from "../../lib/queries";
+import { useBrands, useMe, useOverview, useStartScan } from "../../lib/queries";
 import { DemoBadge, Skeleton } from "../../components/ui";
 import AdminPanel from "../admin/AdminPanel";
 import Answers from "./Answers";
@@ -59,7 +67,8 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
   }, [brands, brandId]);
 
   const { data: overview } = useOverview(admin ? undefined : brand?.id);
-  const rescan = useRescan(brand?.id);
+  const rescan = useStartScan(brand);
+  const navigate = useNavigate();
 
   if (isError) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
 
@@ -74,7 +83,7 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
   if (admin && user?.role !== "admin") return <Navigate to="/app" replace />;
 
   const base = admin ? "/admin" : "/app";
-  const rescanBlocked = Boolean(overview?.rescanAvailableAt);
+  const scansLeft = user?.scansLeft ?? null;
 
   return (
     <BrandContext.Provider value={{ brand }}>
@@ -116,6 +125,10 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
                   <RefreshCw size={16} />
                   {t("admin.nav.scans")}
                 </NavLink>
+                <NavLink to="/admin/users" className={adminNavCls}>
+                  <Settings size={16} />
+                  {t("admin.nav.users")}
+                </NavLink>
                 <NavLink to="/admin/usage" className={adminNavCls}>
                   <BarChart3 size={16} />
                   {t("admin.nav.usage")}
@@ -145,7 +158,7 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
 
         {/* Main column */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-line bg-base/80 px-4 py-3 backdrop-blur sm:px-8">
+          <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-3 border-b border-line bg-base/80 px-4 py-3 backdrop-blur sm:px-8">
             <div className="flex items-center gap-3">
               {!admin && brands && brands.length > 0 && (
                 <select
@@ -162,19 +175,22 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
               )}
               {overview?.demo && <DemoBadge />}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* §6.3 remaining-runs indicator: hidden for admin/unlimited */}
+              {!admin && scansLeft !== null && (
+                <span className="rounded-full border border-line bg-surface px-3 py-1 text-xs text-sub">
+                  {t("dashboard.scansLeft", { count: scansLeft })}
+                </span>
+              )}
               {!admin && brand && (
                 <button
                   type="button"
-                  disabled={rescan.isPending || rescanBlocked}
-                  title={
-                    rescanBlocked && overview?.rescanAvailableAt
-                      ? t("dashboard.rescanUnavailable", {
-                          date: new Date(overview.rescanAvailableAt).toLocaleDateString(),
-                        })
-                      : undefined
+                  disabled={rescan.isPending}
+                  onClick={() =>
+                    rescan.mutate(undefined, {
+                      onSuccess: (data) => navigate(`/scan/${data.scanId}`),
+                    })
                   }
-                  onClick={() => rescan.mutate()}
                   className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium disabled:opacity-40"
                 >
                   <RefreshCw size={14} className={rescan.isPending ? "animate-spin" : ""} />

@@ -12,7 +12,7 @@ import { adminRouter } from "./http/routes/admin.js";
 import { authRouter } from "./http/routes/auth.js";
 import { dashboardRouter } from "./http/routes/dashboard.js";
 import { leadsRouter } from "./http/routes/leads.js";
-import { publicRouter } from "./http/routes/public.js";
+import { scanRouter } from "./http/routes/scan.js";
 import { attachUser } from "./http/middleware/auth.js";
 import { errorHandler, notFoundHandler } from "./http/middleware/errors.js";
 import { apiLimiter } from "./http/middleware/rateLimits.js";
@@ -49,7 +49,7 @@ export function createApp(): Express {
     });
   });
 
-  app.use("/api/public", apiLimiter, publicRouter);
+  app.use("/api/scan", apiLimiter, scanRouter);
   app.use("/api/auth", authRouter);
   app.use("/api/leads", apiLimiter, leadsRouter);
   app.use("/api/admin", apiLimiter, adminRouter);

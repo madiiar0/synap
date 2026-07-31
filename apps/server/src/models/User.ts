@@ -8,6 +8,11 @@ export interface UserDoc extends Document {
   role: UserRole;
   firebaseUid?: string;
   photoUrl?: string;
+  emailVerified: boolean;
+  /** §6 quota: server-side authority, incremented on scan start. */
+  freeScansUsed: number;
+  freeScanLimit: number;
+  unlimitedScans: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,6 +25,10 @@ const userSchema = new Schema<UserDoc>(
     role: { type: String, enum: ["user", "admin"], default: "user" },
     firebaseUid: { type: String, unique: true, sparse: true },
     photoUrl: { type: String },
+    emailVerified: { type: Boolean, default: false },
+    freeScansUsed: { type: Number, default: 0 },
+    freeScanLimit: { type: Number, default: 3 },
+    unlimitedScans: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

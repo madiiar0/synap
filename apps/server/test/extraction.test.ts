@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   deterministicExtract,
+  extractionCallCount,
   keywordSentiment,
-  parseLlmJson,
+  parseLlmBatch,
 } from "../src/services/extraction.js";
 
 const target = {
@@ -54,27 +55,40 @@ describe("keywordSentiment", () => {
   });
 });
 
-describe("parseLlmJson (defensive LLM output parsing)", () => {
+describe("parseLlmBatch (defensive batched LLM output parsing)", () => {
   const valid =
-    '{"mentioned":true,"matchedAlias":"Astra","position":2,"sentiment":"pos","brands":[{"name":"Astra","position":2}]}';
+    '[{"index":0,"mentioned":true,"matchedAlias":"Astra","position":2,"sentiment":"pos","brands":[{"name":"Astra","position":2}]},' +
+    '{"index":1,"mentioned":false,"matchedAlias":null,"position":null,"sentiment":"na","brands":[]}]';
 
-  it("parses clean JSON", () => {
-    expect(parseLlmJson(valid)?.mentioned).toBe(true);
+  it("parses a clean JSON array", () => {
+    const batch = parseLlmBatch(valid);
+    expect(batch).toHaveLength(2);
+    expect(batch?.[0].mentioned).toBe(true);
+    expect(batch?.[1].index).toBe(1);
   });
 
   it("strips markdown fences", () => {
-    expect(parseLlmJson("```json\n" + valid + "\n```")?.position).toBe(2);
+    expect(parseLlmBatch("```json\n" + valid + "\n```")?.[0].position).toBe(2);
   });
 
-  it("extracts JSON wrapped in prose", () => {
-    expect(parseLlmJson("Here is the result:\n" + valid + "\nHope that helps!")?.sentiment).toBe(
-      "pos",
+  it("extracts the array wrapped in prose", () => {
+    expect(parseLlmBatch("Here are the results:\n" + valid + "\nHope that helps!")).toHaveLength(
+      2,
     );
   });
 
   it("returns null on garbage without throwing", () => {
-    expect(parseLlmJson("I could not process this request.")).toBeNull();
-    expect(parseLlmJson('{"mentioned": "yes"}')).toBeNull();
-    expect(parseLlmJson("")).toBeNull();
+    expect(parseLlmBatch("I could not process this request.")).toBeNull();
+    expect(parseLlmBatch('[{"index":0,"mentioned":"yes"}]')).toBeNull();
+    expect(parseLlmBatch("")).toBeNull();
+  });
+});
+
+describe("extractionCallCount (§4 call budget)", () => {
+  it("chunks answers into batches of 10", () => {
+    expect(extractionCallCount(0)).toBe(0);
+    expect(extractionCallCount(10)).toBe(1);
+    expect(extractionCallCount(41)).toBe(5);
+    expect(extractionCallCount(125)).toBe(13);
   });
 });

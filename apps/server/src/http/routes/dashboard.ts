@@ -5,12 +5,10 @@ import {
   promptToggleSchema,
   type EngineId,
 } from "@synapai/shared";
-import { env } from "../../config/env.js";
 import { AppError } from "../../lib/errors.js";
 import { Brand, type BrandDoc } from "../../models/Brand.js";
 import { Scan } from "../../models/Scan.js";
 import { GeneratedPrompt } from "../../models/GeneratedPrompt.js";
-import { enqueue } from "../../queue/index.js";
 import {
   buildAnswers,
   buildOverview,
@@ -58,7 +56,9 @@ dashboardRouter.get("/brands", async (req, res, next) => {
 
 dashboardRouter.get("/brands/:id/overview", async (req, res, next) => {
   try {
-    res.json(await buildOverview(await loadOwnedBrand(req)));
+    const user = req.user;
+    if (!user) throw new AppError("UNAUTHORIZED", 401);
+    res.json(await buildOverview(await loadOwnedBrand(req), user));
   } catch (err) {
     next(err);
   }
@@ -187,22 +187,4 @@ dashboardRouter.post("/brands/:id/prompts/toggle", async (req, res, next) => {
   }
 });
 
-dashboardRouter.post("/brands/:id/rescan", async (req, res, next) => {
-  try {
-    const brand = await loadOwnedBrand(req);
-    const overview = await buildOverview(brand);
-    if (overview.rescanAvailableAt) {
-      throw new AppError("RESCAN_QUOTA", 429, "Free re-scan quota used for this week");
-    }
-    const scan = await Scan.create({
-      brandId: brand._id,
-      tier: "free",
-      engines: env.ENGINES_FREE,
-      trigger: "user",
-    });
-    await enqueue("runScan", { scanId: String(scan._id) });
-    res.json({ scanId: String(scan._id) });
-  } catch (err) {
-    next(err);
-  }
-});
+// Re-scans go through POST /api/scan (same quota pool, always live calls).

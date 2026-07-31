@@ -6,6 +6,7 @@ export interface ApiUsageDoc extends Document {
   calls: number;
   tokens: number;
   costUsd: number;
+  searchFees: number;
 }
 
 const apiUsageSchema = new Schema<ApiUsageDoc>(
@@ -15,6 +16,7 @@ const apiUsageSchema = new Schema<ApiUsageDoc>(
     calls: { type: Number, default: 0 },
     tokens: { type: Number, default: 0 },
     costUsd: { type: Number, default: 0 },
+    searchFees: { type: Number, default: 0 },
   },
   { timestamps: true },
 );

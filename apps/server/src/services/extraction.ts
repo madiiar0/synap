@@ -1,16 +1,18 @@
 import {
   detectBrands,
-  llmExtractionSchema,
+  EXTRACTION_BATCH_SIZE,
+  llmBatchExtractionSchema,
   type BrandLike,
   type CompetitorRef,
   type Extracted,
-  type LlmExtraction,
+  type LlmBatchExtraction,
   type Sentiment,
 } from "@synapai/shared";
 import { env } from "../config/env.js";
 import { DEMO_DETECTED_COMPETITORS } from "../engines/fixtures.js";
-import { extractionAdapter } from "../engines/registry.js";
+import { extractionAvailable, extractionModelCall } from "../engines/perplexityAgent.js";
 import { logger } from "../lib/logger.js";
+import { recordUsage } from "./usage.js";
 
 const POSITIVE_MARKERS = [
   "хвалят", "рекоменд", "положительн", "довольн", "качествен", "надёжн", "надежн",
@@ -41,7 +43,7 @@ export interface ExtractionTarget {
   extraNames?: string[];
 }
 
-/** Stage 1: deterministic alias matching. Its `mentioned=true` always wins. */
+/** Stage 1: deterministic alias matching, free. Its `mentioned=true` always wins. */
 export function deterministicExtract(text: string, target: ExtractionTarget): Extracted {
   const candidates: BrandLike[] = [
     { name: target.brand.name, aliases: target.brand.aliases ?? [] },
@@ -59,40 +61,55 @@ export function deterministicExtract(text: string, target: ExtractionTarget): Ex
   };
 }
 
-/** Strip code fences / prose around a JSON object and parse defensively. */
-export function parseLlmJson(raw: string): LlmExtraction | null {
+/** Demo-mode extraction: deterministic only, with the fixture detected pool. */
+export function demoExtract(text: string, target: ExtractionTarget): Extracted {
+  return deterministicExtract(text, {
+    ...target,
+    extraNames: [...(target.extraNames ?? []), ...DEMO_DETECTED_COMPETITORS],
+  });
+}
+
+/** Strip code fences / prose around a JSON array and parse defensively. */
+export function parseLlmBatch(raw: string): LlmBatchExtraction | null {
   try {
     let cleaned = raw.trim();
     const fence = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (fence) cleaned = fence[1].trim();
-    const start = cleaned.indexOf("{");
-    const end = cleaned.lastIndexOf("}");
+    const start = cleaned.indexOf("[");
+    const end = cleaned.lastIndexOf("]");
     if (start === -1 || end === -1 || end <= start) return null;
     const parsed: unknown = JSON.parse(cleaned.slice(start, end + 1));
-    const result = llmExtractionSchema.safeParse(parsed);
+    const result = llmBatchExtractionSchema.safeParse(parsed);
     return result.success ? result.data : null;
   } catch {
     return null;
   }
 }
 
-function buildLlmPrompt(text: string, target: ExtractionTarget): string {
+function buildBatchPrompt(texts: string[], target: ExtractionTarget): string {
   const competitors = target.competitors.map((c) => c.name).join(", ") || "none listed";
+  const answersBlock = texts
+    .map((text, i) => `--- ANSWER ${i} ---\n${text.slice(0, 3500)}`)
+    .join("\n\n");
   return [
-    `You are a strict information extractor. Analyze the AI answer below.`,
+    `You are a strict information extractor. Below are ${texts.length} AI answers, numbered from 0.`,
     `Target brand: "${target.brand.name}" (aliases: ${(target.brand.aliases ?? []).join(", ") || "none"}).`,
     `Known competitors: ${competitors}.`,
-    `Return ONLY minified JSON, no prose, exactly this shape:`,
-    `{"mentioned":boolean,"matchedAlias":string|null,"position":number|null,"sentiment":"pos"|"neu"|"neg"|"na","brands":[{"name":string,"position":number|null}]}`,
-    `"brands" lists every company/brand named in the answer in order of first mention (position 1 = first).`,
+    `For EACH answer return one object. Reply with ONLY a minified JSON array, no prose:`,
+    `[{"index":number,"mentioned":boolean,"matchedAlias":string|null,"position":number|null,"sentiment":"pos"|"neu"|"neg"|"na","brands":[{"name":string,"position":number|null}]}]`,
+    `"brands" lists every company named in that answer in order of first mention (position 1 = first).`,
     `"position" is the target brand's position among them, null if absent. "sentiment" refers to the target brand only.`,
-    `ANSWER:\n"""${text.slice(0, 6000)}"""`,
+    ``,
+    answersBlock,
   ].join("\n");
 }
 
-function mergeExtractions(det: Extracted, llm: LlmExtraction): Extracted {
+function mergeExtractions(det: Extracted, llm: LlmBatchExtraction[number]): Extracted {
   const byName = new Map<string, { name: string; position?: number }>();
-  for (const b of [...det.brands, ...llm.brands.map((b) => ({ name: b.name, position: b.position ?? undefined }))]) {
+  for (const b of [
+    ...det.brands,
+    ...llm.brands.map((b) => ({ name: b.name, position: b.position ?? undefined })),
+  ]) {
     const key = b.name.toLowerCase();
     const existing = byName.get(key);
     if (!existing) byName.set(key, { name: b.name, position: b.position });
@@ -101,7 +118,7 @@ function mergeExtractions(det: Extracted, llm: LlmExtraction): Extracted {
     }
   }
   return {
-    // Deterministic mentioned=true always wins; LLM can only add a mention.
+    // Deterministic mentioned=true always wins; the LLM can only add a mention.
     mentioned: det.mentioned || llm.mentioned,
     matchedAlias: det.matchedAlias ?? llm.matchedAlias ?? undefined,
     position: det.position ?? llm.position ?? undefined,
@@ -110,31 +127,49 @@ function mergeExtractions(det: Extracted, llm: LlmExtraction): Extracted {
   };
 }
 
+export interface BatchItem {
+  id: string;
+  text: string;
+  deterministic: Extracted;
+}
+
+/** How many extraction calls a scan of `answerCount` answers needs (§4 test). */
+export function extractionCallCount(answerCount: number): number {
+  return Math.ceil(answerCount / EXTRACTION_BATCH_SIZE);
+}
+
 /**
- * Two-stage extraction: deterministic matcher first, then (outside demo mode)
- * an LLM pass via EXTRACTION_PROVIDER for sentiment + unknown-brand discovery.
- * Any LLM failure degrades to stage 1.
+ * §4: batched LLM extraction — up to 10 answers per call to a cheap
+ * NON-search model. Returns id → merged Extracted; items the LLM missed
+ * keep their deterministic result. No-op in demo mode / without a key.
  */
-export async function extractAnswer(text: string, target: ExtractionTarget): Promise<Extracted> {
-  if (env.DEMO_MODE) {
-    return deterministicExtract(text, {
-      ...target,
-      extraNames: [...(target.extraNames ?? []), ...DEMO_DETECTED_COMPETITORS],
-    });
-  }
-  const det = deterministicExtract(text, target);
-  const adapter = extractionAdapter();
-  if (!adapter) return det;
-  try {
-    const resp = await adapter.query(buildLlmPrompt(text, target), { language: "en" });
-    const llm = parseLlmJson(resp.text);
-    if (!llm) {
-      logger.warn({ engine: adapter.id }, "extraction LLM returned unparseable JSON");
-      return det;
+export async function batchLlmExtract(
+  items: BatchItem[],
+  target: ExtractionTarget,
+): Promise<Map<string, Extracted>> {
+  const merged = new Map<string, Extracted>();
+  if (env.DEMO_MODE || !extractionAvailable() || items.length === 0) return merged;
+
+  for (let offset = 0; offset < items.length; offset += EXTRACTION_BATCH_SIZE) {
+    const chunk = items.slice(offset, offset + EXTRACTION_BATCH_SIZE);
+    try {
+      const resp = await extractionModelCall(
+        buildBatchPrompt(chunk.map((c) => c.text), target),
+      );
+      await recordUsage("extraction", resp);
+      const parsed = parseLlmBatch(resp.text);
+      if (!parsed) {
+        logger.warn("batched extraction returned unparseable JSON; keeping deterministic");
+        continue;
+      }
+      for (const entry of parsed) {
+        const item = chunk[entry.index];
+        if (!item) continue;
+        merged.set(item.id, mergeExtractions(item.deterministic, entry));
+      }
+    } catch (err) {
+      logger.warn({ err }, "batched extraction call failed; keeping deterministic results");
     }
-    return mergeExtractions(det, llm);
-  } catch (err) {
-    logger.warn({ err }, "extraction LLM failed; using deterministic result");
-    return det;
   }
+  return merged;
 }

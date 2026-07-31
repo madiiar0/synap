@@ -1,46 +1,99 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import type { Market } from "@synapai/shared";
-import { ApiError, apiPost } from "../../lib/api";
-import { currentLocale } from "../../lib/i18n";
+import type { Market, SessionUserDto } from "@synapai/shared";
+import { ApiError, apiGet, apiPost } from "../../lib/api";
+import { currentLocale, localizedPath } from "../../lib/i18n";
 
-/** The scan form: a single hairline card on the light /scan page. */
+const STASH_KEY = "synapai_scan_stash";
+
+interface ScanStash {
+  brandName: string;
+  category: string;
+  city: string;
+  market: Market;
+  competitors: string;
+  autoRun: boolean;
+}
+
+function readStash(): ScanStash | null {
+  try {
+    const raw = sessionStorage.getItem(STASH_KEY);
+    return raw ? (JSON.parse(raw) as ScanStash) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * §5.2: scanning requires an account. The form stashes its data through the
+ * auth redirect (nothing is retyped) and auto-runs after sign-in.
+ */
 export default function ScanForm(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [brandName, setBrandName] = useState("");
-  const [category, setCategory] = useState("");
-  const [city, setCity] = useState("");
-  const [market, setMarket] = useState<Market>("kz");
-  const [competitors, setCompetitors] = useState("");
+  const stash = useRef(readStash());
+  const [brandName, setBrandName] = useState(stash.current?.brandName ?? "");
+  const [category, setCategory] = useState(stash.current?.category ?? "");
+  const [city, setCity] = useState(stash.current?.city ?? "");
+  const [market, setMarket] = useState<Market>(stash.current?.market ?? "kz");
+  const [competitors, setCompetitors] = useState(stash.current?.competitors ?? "");
   const [error, setError] = useState<string | null>(null);
 
+  const { data: me, isFetched } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => apiGet<SessionUserDto>("/api/auth/me"),
+    retry: false,
+  });
+
   const scan = useMutation({
-    mutationFn: () =>
-      apiPost<{ scanId: string }>("/api/public/scan", {
-        brandName,
-        category,
-        city: city || undefined,
-        market,
-        competitors: competitors
+    mutationFn: (input: { brandName: string; category: string; city: string; market: Market; competitors: string }) =>
+      apiPost<{ scanId: string }>("/api/scan", {
+        brandName: input.brandName,
+        category: input.category,
+        city: input.city || undefined,
+        market: input.market,
+        competitors: input.competitors
           .split(",")
           .map((c) => c.trim())
           .filter(Boolean)
           .slice(0, 5),
         locale: currentLocale(),
+        idempotencyKey: crypto.randomUUID(),
       }),
-    onSuccess: (data) => navigate(`/scan/${data.scanId}`),
+    onSuccess: (data) => {
+      sessionStorage.removeItem(STASH_KEY);
+      navigate(`/scan/${data.scanId}`);
+    },
     onError: (err) => {
-      setError(
-        err instanceof ApiError && err.status === 429
-          ? t("landing.form.rateLimited")
-          : t("common.error"),
-      );
+      if (err instanceof ApiError && err.code === "QUOTA_EXCEEDED") {
+        setError(null); // the global modal handles it
+      } else if (err instanceof ApiError && err.status === 429) {
+        setError(t("landing.form.rateLimited"));
+      } else {
+        setError(t("common.error"));
+      }
     },
   });
+
+  // After returning from sign-in with stashed data, run the scan once.
+  const autoRan = useRef(false);
+  useEffect(() => {
+    const stashed = stash.current;
+    if (!autoRan.current && isFetched && me && stashed?.autoRun && stashed.brandName) {
+      autoRan.current = true;
+      scan.mutate({
+        brandName: stashed.brandName,
+        category: stashed.category,
+        city: stashed.city,
+        market: stashed.market,
+        competitors: stashed.competitors,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFetched, me]);
 
   const submit = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -49,7 +102,14 @@ export default function ScanForm(): JSX.Element {
       setError(t("landing.form.validation"));
       return;
     }
-    scan.mutate();
+    if (!me) {
+      // Carry the form through the auth redirect (§5.2).
+      const payload: ScanStash = { brandName, category, city, market, competitors, autoRun: true };
+      sessionStorage.setItem(STASH_KEY, JSON.stringify(payload));
+      navigate(`${localizedPath("/login")}?next=${encodeURIComponent(localizedPath("/scan"))}`);
+      return;
+    }
+    scan.mutate({ brandName, category, city, market, competitors });
   };
 
   const inputCls =
@@ -92,7 +152,6 @@ export default function ScanForm(): JSX.Element {
         </div>
         <div>
           <label className={labelCls}>{t("landing.form.marketLabel")}</label>
-          {/* §12: appearance-none + custom chevron inset from the border */}
           <div className="relative">
             <select
               value={market}
@@ -120,6 +179,9 @@ export default function ScanForm(): JSX.Element {
           />
         </div>
       </div>
+      {!me && isFetched && (
+        <p className="mt-3 text-xs text-sub">{t("landing.scanPage.authNote")}</p>
+      )}
       {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
       <button
         type="submit"

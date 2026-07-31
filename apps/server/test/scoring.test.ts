@@ -94,7 +94,7 @@ describe("computeSnapshot", () => {
       { id: "m1", intent: "comparison" },
     ];
     const answers = [
-      // perplexity (weight .30): mentions everything → subscores 100
+      // perplexity (weight .20): mentions everything → subscores 100
       answer("b1", "perplexity", true),
       answer("c1", "perplexity", true),
       answer("m1", "perplexity", true),
@@ -109,8 +109,8 @@ describe("computeSnapshot", () => {
       prompts,
       answers,
     });
-    // (100·.30 + 0·.15) / .45 = 66.67 per subscore → overall 67 (no positions → no bonus)
-    expect(snap.overall).toBe(67);
+    // (100·.20 + 0·.15) / .35 = 57.14 per subscore → overall 57 (no positions → no bonus)
+    expect(snap.overall).toBe(57);
     expect(snap.perEngine).toHaveLength(2);
     expect(snap.perEngine.find((e) => e.engine === "perplexity")?.mentionRate).toBe(1);
   });
@@ -183,6 +183,37 @@ describe("computeSnapshot", () => {
     });
     expect(snap.topSources[0]).toEqual({ domain: "yandex.kz", citations: 2, mentionsUs: true });
     expect(snap.topSources.find((s) => s.domain === "2gis.kz")?.mentionsUs).toBe(true);
+  });
+
+  it("restricts per-engine comparison metrics to the shared core prompt set (§2.3)", () => {
+    const prompts: ScoringPrompt[] = [
+      { id: "core1", intent: "branded" },
+      { id: "tail1", intent: "category" },
+      { id: "tail2", intent: "category" },
+    ];
+    const answers = [
+      // Both engines answered the core prompt and mentioned us.
+      answer("core1", "perplexity", true),
+      answer("core1", "chatgpt", true),
+      // Only perplexity ran the tail prompts (both misses).
+      answer("tail1", "perplexity", false),
+      answer("tail2", "perplexity", false),
+    ];
+    const snap = computeSnapshot({
+      brandName: BRAND,
+      configuredCompetitors: [],
+      prompts,
+      answers,
+      corePromptIds: ["core1"],
+    });
+    // Fair comparison: perplexity's tail misses must NOT drag its display
+    // mention rate below chatgpt's — both are 1/1 over the shared core set.
+    const px = snap.perEngine.find((e) => e.engine === "perplexity");
+    const gpt = snap.perEngine.find((e) => e.engine === "chatgpt");
+    expect(px?.mentionRate).toBe(1);
+    expect(gpt?.mentionRate).toBe(1);
+    // The overall score still uses every measured answer (tail misses count).
+    expect(snap.subscores.category).toBe(0);
   });
 
   it("ignores failed answers everywhere", () => {

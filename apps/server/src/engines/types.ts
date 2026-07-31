@@ -22,12 +22,19 @@ export interface EngineAnswer {
   tokensIn: number;
   tokensOut: number;
   costUsd: number;
+  /** Portion of costUsd that is the web_search tool fee. */
+  searchFeeUsd: number;
 }
 
 export interface EngineAdapter {
   id: EngineId;
   available(): boolean;
-  query(prompt: string, opts: EngineQueryOptions): Promise<EngineAnswer>;
+  query(prompt: string, opts?: EngineQueryOptions): Promise<EngineAnswer>;
+}
+
+/** Rough token estimate for responses that carry no usage block. */
+export function estimateTokens(text: string): number {
+  return Math.max(1, Math.ceil(text.length / 4));
 }
 
 export const CONSUMER_SYSTEM_PROMPT =

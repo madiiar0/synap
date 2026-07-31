@@ -201,12 +201,141 @@ interface UsageResponse {
   budget: BudgetStateDto;
 }
 
+interface AdminUserRow {
+  id: string;
+  email: string;
+  name?: string;
+  role: string;
+  emailVerified: boolean;
+  freeScansUsed: number;
+  freeScanLimit: number;
+  unlimitedScans: boolean;
+  createdAt: string;
+}
+
+/** §7 Users: search, grant/revoke unlimited, reset counters, adjust limits. */
+function AdminUsers(): JSX.Element {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const [q, setQ] = useState("");
+  const { data: users, isLoading } = useQuery({
+    queryKey: ["admin-users", q],
+    queryFn: () => apiGet<AdminUserRow[]>(`/api/admin/users${q ? `?q=${encodeURIComponent(q)}` : ""}`),
+  });
+  const patch = useMutation({
+    mutationFn: (input: { id: string; body: Record<string, unknown> }) =>
+      apiPatch(`/api/admin/users/${input.id}`, input.body),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["admin-users"] }),
+  });
+
+  return (
+    <div className="mx-auto max-w-5xl space-y-4">
+      <input
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder={t("admin.users.search")}
+        className="h-11 w-full max-w-sm rounded-xl border border-line bg-surface px-4 text-sm outline-none focus:border-ink"
+      />
+      <Card className="overflow-x-auto">
+        {isLoading ? (
+          <Skeleton className="m-4 h-48" />
+        ) : !users || users.length === 0 ? (
+          <EmptyState title={t("common.notAvailable")} />
+        ) : (
+          <table className="w-full min-w-[720px] text-sm">
+            <thead>
+              <tr className="border-b border-line text-left text-xs text-sub">
+                <th className="px-5 py-3 font-medium">{t("admin.users.colEmail")}</th>
+                <th className="px-2 py-3 font-medium">{t("admin.users.colUsed")}</th>
+                <th className="px-2 py-3 font-medium">{t("admin.users.colLimit")}</th>
+                <th className="px-2 py-3 font-medium">{t("admin.users.colUnlimited")}</th>
+                <th className="px-5 py-3 text-right font-medium" />
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.id} className="border-b border-line last:border-b-0">
+                  <td className="px-5 py-3">
+                    <span className="font-medium">{u.email}</span>
+                    {u.role === "admin" && (
+                      <span className="ml-2 rounded-full bg-accent/10 px-2 py-0.5 text-[10px] text-accent">
+                        admin
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-2 py-3">{u.freeScansUsed}</td>
+                  <td className="px-2 py-3">
+                    <input
+                      type="number"
+                      defaultValue={u.freeScanLimit}
+                      min={0}
+                      onBlur={(e) => {
+                        const v = Number(e.target.value);
+                        if (Number.isFinite(v) && v !== u.freeScanLimit) {
+                          patch.mutate({ id: u.id, body: { freeScanLimit: v } });
+                        }
+                      }}
+                      className="w-16 rounded-lg border border-line bg-base px-2 py-1 text-sm outline-none"
+                    />
+                  </td>
+                  <td className="px-2 py-3">{u.unlimitedScans ? "∞" : "-"}</td>
+                  <td className="whitespace-nowrap px-5 py-3 text-right">
+                    <button
+                      type="button"
+                      onClick={() => patch.mutate({ id: u.id, body: { freeScansUsed: 0 } })}
+                      className="mr-2 rounded-full border border-line px-3 py-1 text-xs"
+                    >
+                      {t("admin.users.reset")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        patch.mutate({ id: u.id, body: { unlimitedScans: !u.unlimitedScans } })
+                      }
+                      className="rounded-full bg-ink px-3 py-1 text-xs text-white"
+                    >
+                      {u.unlimitedScans ? t("admin.users.revoke") : t("admin.users.grant")}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+interface CostsResponse {
+  scans: {
+    id: string;
+    brandName: string;
+    tier: string;
+    status: string;
+    calls: number;
+    tokensIn: number;
+    tokensOut: number;
+    searchFees: number;
+    costUsd: number;
+    createdAt: string;
+  }[];
+  todaySpendUsd: number;
+  monthSpendUsd: number;
+  budget: BudgetStateDto;
+}
+
+/** §7/§8 cost dashboard: spend cards, per-scan costs, provider chart. */
 function AdminUsage(): JSX.Element {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["admin-usage"],
     queryFn: () => apiGet<UsageResponse>("/api/admin/usage?days=14"),
+  });
+  const { data: costs } = useQuery({
+    queryKey: ["admin-costs"],
+    queryFn: () => apiGet<CostsResponse>("/api/admin/costs"),
   });
   const resume = useMutation({
     mutationFn: () => apiPost("/api/admin/usage/resume"),
@@ -226,11 +355,17 @@ function AdminUsage(): JSX.Element {
 
   return (
     <div className="mx-auto max-w-5xl space-y-4">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-4">
         <Card className="p-5">
-          <p className="text-xs text-sub">{t("admin.usage.today")}</p>
+          <p className="text-xs text-sub">{t("admin.costs.today")}</p>
           <p className="mt-1 text-2xl font-semibold">
-            ${data?.budget.todaySpendUsd.toFixed(2) ?? "0.00"}
+            ${(costs?.todaySpendUsd ?? 0).toFixed(2)}
+          </p>
+        </Card>
+        <Card className="p-5">
+          <p className="text-xs text-sub">{t("admin.costs.month")}</p>
+          <p className="mt-1 text-2xl font-semibold">
+            ${(costs?.monthSpendUsd ?? 0).toFixed(2)}
           </p>
         </Card>
         <Card className="p-5">
@@ -257,6 +392,42 @@ function AdminUsage(): JSX.Element {
           )}
         </Card>
       </div>
+
+      {/* §8 per-scan cost breakdown */}
+      <Card className="overflow-x-auto">
+        {costs && costs.scans.length > 0 ? (
+          <table className="w-full min-w-[720px] text-sm">
+            <thead>
+              <tr className="border-b border-line text-left text-xs text-sub">
+                <th className="px-5 py-3 font-medium">{t("admin.costs.colScan")}</th>
+                <th className="px-2 py-3 font-medium">{t("admin.costs.colCalls")}</th>
+                <th className="px-2 py-3 font-medium">{t("admin.costs.colTokens")}</th>
+                <th className="px-2 py-3 font-medium">{t("admin.costs.colSearch")}</th>
+                <th className="px-5 py-3 text-right font-medium">{t("admin.costs.colCost")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {costs.scans.slice(0, 30).map((s) => (
+                <tr key={s.id} className="border-b border-line last:border-b-0">
+                  <td className="px-5 py-3">
+                    <span className="font-medium">{s.brandName}</span>
+                    <span className="ml-2 text-xs uppercase text-sub">{s.tier}</span>
+                    <span className="ml-2 text-xs text-sub">
+                      {new Date(s.createdAt).toLocaleDateString()}
+                    </span>
+                  </td>
+                  <td className="px-2 py-3">{s.calls}</td>
+                  <td className="px-2 py-3 text-sub">{s.tokensIn + s.tokensOut}</td>
+                  <td className="px-2 py-3 text-sub">${s.searchFees.toFixed(4)}</td>
+                  <td className="px-5 py-3 text-right font-medium">${s.costUsd.toFixed(4)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <EmptyState title={t("common.notAvailable")} />
+        )}
+      </Card>
 
       <Card className="p-5">
         {isLoading ? (
@@ -355,6 +526,7 @@ export default function AdminPanel(): JSX.Element {
     <Routes>
       <Route index element={<AdminLeads />} />
       <Route path="scans" element={<AdminScans />} />
+      <Route path="users" element={<AdminUsers />} />
       <Route path="usage" element={<AdminUsage />} />
       <Route path="engines" element={<AdminEngines />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />

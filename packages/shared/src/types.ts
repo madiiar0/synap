@@ -1,4 +1,5 @@
-import type { EngineId, Locale, Market, PromptIntent } from "./constants.js";
+import type { Locale, Market, PromptIntent } from "./constants.js";
+import type { EngineId } from "./engines.js";
 
 export type ScanTier = "free" | "full";
 export type ScanStatus = "queued" | "running" | "done" | "partial" | "failed";
@@ -39,23 +40,6 @@ export interface ScanProgressDto {
   total: number;
   currentPrompt: string | null;
   brandName: string;
-}
-
-export interface TeaserEngineBar {
-  engine: EngineId;
-  mentionRate: number; // 0..1
-}
-
-export interface TeaserDto {
-  scanId: string;
-  brandName: string;
-  status: ScanStatus;
-  overall: number;
-  engines: TeaserEngineBar[];
-  competitorsDetected: number;
-  /** One sample answer where a competitor is named; shown blurred in the teaser. */
-  sampleAnswer: { engine: EngineId; prompt: string; snippet: string } | null;
-  demo: boolean;
 }
 
 export interface PerEngineScore {
@@ -112,12 +96,20 @@ export interface LosePromptDto {
 
 export interface OverviewDto {
   brand: BrandDto;
-  scan: { id: string; status: ScanStatus; tier: ScanTier; finishedAt: string | null };
+  scan: {
+    id: string;
+    status: ScanStatus;
+    tier: ScanTier;
+    finishedAt: string | null;
+    /** Engines actually queried — anything else renders "not checked" (§2.3). */
+    engines: EngineId[];
+  };
   snapshot: ScoreSnapshotDto | null;
   previous: ScoreSnapshotDto | null;
   losePrompts: LosePromptDto[];
   demo: boolean;
-  rescanAvailableAt: string | null; // null => available now
+  /** Remaining free scans; null = unlimited/admin (indicator hidden). */
+  scansLeft: number | null;
 }
 
 export interface AnswerRowDto {
@@ -197,4 +189,7 @@ export interface SessionUserDto {
   name?: string;
   locale: Locale;
   role: UserRole;
+  emailVerified: boolean;
+  /** Remaining free scans; null = unlimited/admin (indicator hidden). */
+  scansLeft: number | null;
 }

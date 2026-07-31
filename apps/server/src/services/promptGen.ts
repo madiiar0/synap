@@ -10,8 +10,9 @@ import {
   type PromptLanguage,
 } from "@synapai/shared";
 import { env } from "../config/env.js";
-import { extractionAdapter } from "../engines/registry.js";
+import { extractionAvailable, extractionModelCall } from "../engines/perplexityAgent.js";
 import { logger } from "../lib/logger.js";
+import { recordUsage } from "./usage.js";
 
 export interface PromptSpec {
   text: string;
@@ -273,10 +274,11 @@ function buildLlmPrompt(brand: PromptGenBrand, n: number): string {
  */
 export async function generatePrompts(brand: PromptGenBrand, n: number): Promise<PromptSpec[]> {
   if (!env.DEMO_MODE) {
-    const adapter = extractionAdapter();
-    if (adapter) {
+    if (extractionAvailable()) {
       try {
-        const resp = await adapter.query(buildLlmPrompt(brand, n), { language: "en" });
+        // Cheap NON-search model call (§3): no web_search, no search fee.
+        const resp = await extractionModelCall(buildLlmPrompt(brand, n), 2500);
+        await recordUsage("prompt-gen", resp);
         const cleaned = resp.text.replace(/```(?:json)?/g, "").trim();
         const start = cleaned.indexOf("{");
         const end = cleaned.lastIndexOf("}");
@@ -306,4 +308,24 @@ export async function generatePrompts(brand: PromptGenBrand, n: number): Promise
     }
   }
   return generateTemplatePrompts(brand, n);
+}
+
+/**
+ * §2.1/§3: pick which prompt indexes form the core set that runs on every
+ * core engine — always ALL branded prompts, then comparison, then the rest
+ * in order until `coreCount` is reached. Pure for unit testing.
+ */
+export function selectCoreIndices(prompts: PromptSpec[], coreCount: number): Set<number> {
+  const byPriority: number[] = [];
+  const push = (predicate: (p: PromptSpec) => boolean): void => {
+    prompts.forEach((p, i) => {
+      if (byPriority.length < coreCount && predicate(p) && !byPriority.includes(i)) {
+        byPriority.push(i);
+      }
+    });
+  };
+  push((p) => p.intent === "branded");
+  push((p) => p.intent === "comparison");
+  push(() => true);
+  return new Set(byPriority.slice(0, coreCount));
 }

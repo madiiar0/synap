@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { EngineId, OverviewDto } from "@synapai/shared";
+import { ENGINE_IDS, type EngineId, type OverviewDto } from "@synapai/shared";
 import BookCallButton from "../../components/BookCallButton";
 import EngineMark from "../../components/EngineMark";
 import ScoreRing from "../../components/ScoreRing";
@@ -118,21 +118,37 @@ export default function Overview(): JSX.Element {
           <ScoreRing value={snapshot.overall} size={190} />
           <DeltaChip overview={overview} />
         </Card>
-        {/* 6 engine cards: 3×2 desktop, 2×3 tablet, stacked on mobile */}
+        {/* Engine cards: only measured engines show numbers; anything not
+            queried in this scan shows a dash + "not checked" (§2.3). */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {snapshot.perEngine.map((engine) => {
-            const prev = prevEngines.get(engine.engine);
+          {ENGINE_IDS.map((engineId) => {
+            const queried = overview.scan.engines.includes(engineId);
+            const entry = snapshot.perEngine.find((e) => e.engine === engineId);
+            if (!queried || !entry) {
+              return (
+                <Card key={engineId} className="flex flex-col justify-between p-5 opacity-60">
+                  <div className="flex items-center justify-between text-sm text-sub">
+                    <EngineMark engine={engineId} size={15} />
+                  </div>
+                  <div className="mt-4">
+                    <p className="text-3xl font-semibold tracking-tight text-sub">-</p>
+                    <p className="mt-0.5 text-xs text-sub">{t("dashboard.notChecked")}</p>
+                  </div>
+                </Card>
+              );
+            }
+            const prev = prevEngines.get(engineId);
             const trend =
-              prev !== undefined ? Math.round((engine.mentionRate - prev) * 1000) / 10 : null;
+              prev !== undefined ? Math.round((entry.mentionRate - prev) * 1000) / 10 : null;
             return (
-              <Card key={engine.engine} className="flex flex-col justify-between p-5">
+              <Card key={engineId} className="flex flex-col justify-between p-5">
                 <div className="flex items-center justify-between text-sm text-sub">
-                  <EngineMark engine={engine.engine} size={15} />
+                  <EngineMark engine={engineId} size={15} />
                   <TrendArrow value={trend} />
                 </div>
                 <div className="mt-4">
                   <p className="text-3xl font-semibold tracking-tight">
-                    {Math.round(engine.mentionRate * 100)}%
+                    {Math.round(entry.mentionRate * 100)}%
                   </p>
                   <p className="mt-0.5 text-xs text-sub">{t("dashboard.mentionRate")}</p>
                 </div>

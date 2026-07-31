@@ -16,7 +16,9 @@ export const AI_PLATFORMS: readonly AiPlatform[] = [
   { id: "claude", name: "Claude", logo: "claude.png", scannable: true },
   { id: "gemini", name: "Gemini", logo: "gemini.png", scannable: true },
   { id: "perplexity", name: "Perplexity", logo: "perplexity.png", scannable: true },
-  { id: "deepseek", name: "DeepSeek", logo: "deepseek.png", scannable: true },
+  // Not offered through Perplexity's Agent API (verified 2026-08-01) —
+  // display-only: hero cycle and marquee, never scan results.
+  { id: "deepseek", name: "DeepSeek", logo: "deepseek.png", scannable: false },
   { id: "grok", name: "Grok", logo: "grok.png", scannable: true },
   { id: "copilot", name: "Copilot", logo: "copilot.png", scannable: false }, // no public API — display only
 ] as const;

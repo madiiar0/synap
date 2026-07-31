@@ -1,4 +1,6 @@
 export * from "./constants.js";
+export * from "./engines.js";
+export * from "./scanConfig.js";
 export * from "./types.js";
 export * from "./schemas.js";
 export * from "./text/normalize.js";

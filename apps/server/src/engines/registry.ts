@@ -1,13 +1,8 @@
 import { ENGINE_IDS, type EngineId } from "@synapai/shared";
 import { env } from "../config/env.js";
 import { getSettings } from "../models/Settings.js";
-import { createChatgptAdapter } from "./chatgpt.js";
-import { createClaudeAdapter } from "./claude.js";
-import { createDeepseekAdapter } from "./deepseek.js";
 import { createDemoAdapter } from "./demo.js";
-import { createGeminiAdapter } from "./gemini.js";
-import { createGrokAdapter } from "./grok.js";
-import { createPerplexityAdapter } from "./perplexity.js";
+import { createAgentEngineAdapter } from "./perplexityAgent.js";
 import { instrumentEngine } from "./wrapper.js";
 import type { EngineAdapter } from "./types.js";
 
@@ -17,15 +12,7 @@ const demoAdapters = new Map<EngineId, EngineAdapter>();
 function realAdapter(id: EngineId): EngineAdapter {
   let adapter = realAdapters.get(id);
   if (!adapter) {
-    const factories: Record<EngineId, () => EngineAdapter> = {
-      perplexity: createPerplexityAdapter,
-      chatgpt: createChatgptAdapter,
-      gemini: createGeminiAdapter,
-      claude: createClaudeAdapter,
-      deepseek: createDeepseekAdapter,
-      grok: createGrokAdapter,
-    };
-    adapter = instrumentEngine(factories[id]());
+    adapter = instrumentEngine(createAgentEngineAdapter(id));
     realAdapters.set(id, adapter);
   }
   return adapter;
@@ -61,22 +48,15 @@ export async function resolveEngines(ids: EngineId[]): Promise<EngineAdapter[]> 
   return out;
 }
 
-/** Engine used for extraction + prompt generation (never in DEMO_MODE). */
-export function extractionAdapter(): EngineAdapter | null {
-  if (env.DEMO_MODE) return null;
-  const adapter = realAdapter(env.EXTRACTION_PROVIDER);
-  return adapter.available() ? adapter : null;
-}
-
 /** Availability map for the admin engines page. */
 export async function engineStatus(): Promise<
   { engine: EngineId; keyPresent: boolean; enabled: boolean }[]
 > {
   const settings = await getSettings();
-  const ids: EngineId[] = [...ENGINE_IDS];
-  return ids.map((id) => ({
+  const keyPresent = env.DEMO_MODE || Boolean(env.PERPLEXITY_API_KEY);
+  return ENGINE_IDS.map((id) => ({
     engine: id,
-    keyPresent: env.DEMO_MODE ? true : realAdapter(id).available(),
+    keyPresent,
     enabled: settings.engineFlags[id] !== false,
   }));
 }

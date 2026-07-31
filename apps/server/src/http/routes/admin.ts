@@ -2,6 +2,7 @@ import { Router } from "express";
 import { ENGINE_IDS, type EngineId, type LeadRowDto, type ScanListItemDto } from "@synapai/shared";
 import { z } from "zod";
 import { env } from "../../config/env.js";
+import { User } from "../../models/User.js";
 import { engineStatus } from "../../engines/registry.js";
 import { AppError } from "../../lib/errors.js";
 import { ApiUsage } from "../../models/ApiUsage.js";
@@ -134,6 +135,7 @@ adminRouter.post("/scans/:id/rerun", async (req, res, next) => {
   }
 });
 
+// §2.2: the full 125-call, 5-engine tier — admin-triggered only.
 adminRouter.post("/brands/:id/full-scan", async (req, res, next) => {
   try {
     const brand = await Brand.findById(req.params.id).catch(() => null);
@@ -141,11 +143,97 @@ adminRouter.post("/brands/:id/full-scan", async (req, res, next) => {
     const scan = await Scan.create({
       brandId: brand._id,
       tier: "full",
-      engines: env.ENGINES_FULL,
+      engines: [...ENGINE_IDS],
+      plan: { coreEngines: [...ENGINE_IDS], tailEngine: env.FREE_TAIL_ENGINE },
       trigger: "admin",
     });
     await enqueue("runScan", { scanId: String(scan._id) });
     res.json({ scanId: String(scan._id) });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// §7 Users: search, grant/revoke unlimited, reset counters, adjust limits.
+adminRouter.get("/users", async (req, res, next) => {
+  try {
+    const q = typeof req.query.q === "string" ? req.query.q.trim() : "";
+    const filter = q
+      ? { email: { $regex: q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" } }
+      : {};
+    const users = await User.find(filter).sort({ createdAt: -1 }).limit(100);
+    res.json(
+      users.map((u) => ({
+        id: String(u._id),
+        email: u.email,
+        name: u.name,
+        role: u.role,
+        emailVerified: u.emailVerified,
+        freeScansUsed: u.freeScansUsed,
+        freeScanLimit: u.freeScanLimit,
+        unlimitedScans: u.unlimitedScans,
+        createdAt: u.createdAt.toISOString(),
+      })),
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
+const userPatchSchema = z.object({
+  unlimitedScans: z.boolean().optional(),
+  freeScansUsed: z.number().int().min(0).optional(),
+  freeScanLimit: z.number().int().min(0).max(1000).optional(),
+});
+
+adminRouter.patch("/users/:id", async (req, res, next) => {
+  try {
+    const patch = userPatchSchema.parse(req.body);
+    const user = await User.findById(req.params.id).catch(() => null);
+    if (!user) throw new AppError("NOT_FOUND", 404, "User not found");
+    if (patch.unlimitedScans !== undefined) user.unlimitedScans = patch.unlimitedScans;
+    if (patch.freeScansUsed !== undefined) user.freeScansUsed = patch.freeScansUsed;
+    if (patch.freeScanLimit !== undefined) user.freeScanLimit = patch.freeScanLimit;
+    await user.save();
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// §7/§8 cost dashboard: per-scan cost + spend today/this month + budget state.
+adminRouter.get("/costs", async (_req, res, next) => {
+  try {
+    const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const scans = await Scan.find({ createdAt: { $gte: monthAgo } })
+      .sort({ createdAt: -1 })
+      .limit(200);
+    const brandNames = new Map(
+      (await Brand.find({ _id: { $in: scans.map((s) => s.brandId) } })).map((b) => [
+        String(b._id),
+        b.name,
+      ]),
+    );
+    const startOfDay = new Date(`${todayKey()}T00:00:00.000Z`);
+    const sum = (list: typeof scans): number =>
+      Math.round(list.reduce((s, x) => s + x.totals.costUsd, 0) * 10000) / 10000;
+    res.json({
+      scans: scans.map((s) => ({
+        id: String(s._id),
+        brandName: brandNames.get(String(s.brandId)) ?? "?",
+        tier: s.tier,
+        status: s.status,
+        calls: s.totals.calls,
+        tokensIn: s.totals.tokensIn,
+        tokensOut: s.totals.tokensOut,
+        searchFees: s.totals.searchFees,
+        costUsd: s.totals.costUsd,
+        createdAt: s.createdAt.toISOString(),
+      })),
+      todaySpendUsd: sum(scans.filter((s) => s.createdAt >= startOfDay)),
+      monthSpendUsd: sum(scans),
+      budget: await getBudgetState(),
+    });
   } catch (err) {
     next(err);
   }
@@ -191,7 +279,7 @@ adminRouter.get("/engines", async (_req, res, next) => {
 });
 
 const engineFlagSchema = z.object({
-  engine: z.enum(ENGINE_IDS),
+  engine: z.enum(ENGINE_IDS as [EngineId, ...EngineId[]]),
   enabled: z.boolean(),
 });
 

@@ -2,7 +2,8 @@ import { useTranslation } from "react-i18next";
 import LandingNav from "./landing/LandingNav";
 import ScanForm from "./landing/ScanForm";
 
-/** The scan form's own light page: every "check" CTA routes here. */
+/** §5.2: the scan page hosts the form; sign-in happens before the scan
+ * starts, with the entered data carried through the redirect. */
 export default function ScanPage(): JSX.Element {
   const { t } = useTranslation();
   return (
@@ -19,7 +20,6 @@ export default function ScanPage(): JSX.Element {
           <ScanForm />
         </div>
       </main>
-      {/* No duplicated nav links here (§12): just the copyright line. */}
       <footer className="border-t border-line py-8 text-center text-xs text-sub">
         {t("common.copyright")}
       </footer>

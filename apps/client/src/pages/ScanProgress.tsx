@@ -23,7 +23,7 @@ export default function ScanProgress(): JSX.Element {
 
   const { data, isError } = useQuery({
     queryKey: ["progress", id],
-    queryFn: () => apiGet<ScanProgressDto>(`/api/public/scan/${id}/progress`),
+    queryFn: () => apiGet<ScanProgressDto>(`/api/scan/${id}/progress`),
     // Stop polling on terminal states and on fetch errors (dead scan id).
     refetchInterval: (query) => {
       if (query.state.error) return false;
@@ -37,19 +37,18 @@ export default function ScanProgress(): JSX.Element {
 
   useEffect(() => {
     if (!leavingRef.current && data && (data.status === "done" || data.status === "partial")) {
-      // Blur-transition into the teaser (§12.10). No cleanup on purpose:
-      // the state change re-runs this effect and a cleanup would cancel
-      // the pending navigation.
+      // Blur-transition into the dashboard. No cleanup on purpose: the state
+      // change re-runs this effect and a cleanup would cancel the navigation.
       leavingRef.current = true;
       setLeaving(true);
-      setTimeout(() => navigate(`/scan/${id}/teaser`, { replace: true }), 550);
+      setTimeout(() => navigate("/app", { replace: true }), 550);
     }
   }, [data, id, navigate]);
 
   const failed = data?.status === "failed" || isError;
   const brandInitial = (data?.brandName || "S").charAt(0).toUpperCase();
-  const fraction = data && data.total > 0 ? data.done / data.total : 0;
-  const filledDots = Math.round(fraction * 5);
+  // §2.5: a percentage only, never prompt/call/engine counts.
+  const pct = data && data.total > 0 ? Math.round((data.done / data.total) * 100) : 0;
 
   return (
     <div
@@ -99,24 +98,8 @@ export default function ScanProgress(): JSX.Element {
             </span>
           </p>
 
-          {/* progress dots + counter */}
-          <div className="mt-8 flex items-center gap-2.5">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <span
-                key={index}
-                className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${
-                  index < filledDots
-                    ? "bg-ink"
-                    : index === filledDots
-                      ? "bg-ink/40"
-                      : "bg-line"
-                }`}
-              />
-            ))}
-          </div>
-          <p className="mt-4 text-sm text-sub">
-            {t("progress.counter", { done: data?.done ?? 0, total: data?.total ?? 0 })}
-          </p>
+          {/* §2.5: percentage only */}
+          <p className="mt-8 text-3xl font-semibold tracking-tight">{pct}%</p>
         </>
       )}
     </div>

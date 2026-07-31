@@ -2,7 +2,15 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
 import { z } from "zod";
-import { ENGINE_IDS, type EngineId } from "@synapai/shared";
+import {
+  DAILY_SCAN_CAP,
+  ENGINE_IDS,
+  FREE_SCAN,
+  FREE_SCANS_PER_ACCOUNT,
+  NEW_ACCOUNTS_PER_IP_PER_DAY,
+  SCAN_STARTS_PER_IP_PER_DAY,
+  type EngineId,
+} from "@synapai/shared";
 
 // Load the repo-root .env (apps/server/src/config -> repo root).
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
@@ -37,28 +45,21 @@ const schema = z.object({
   MONGODB_URI: z.string().optional().default(""),
   REDIS_URL: z.string().optional().default(""),
 
+  // §1: the ONLY AI credential — everything routes through Perplexity's Agent API.
   PERPLEXITY_API_KEY: z.string().optional().default(""),
-  PERPLEXITY_MODEL: z.string().default("sonar"),
-  OPENAI_API_KEY: z.string().optional().default(""),
-  OPENAI_MODEL: z.string().default("gpt-4o-mini"),
-  ANTHROPIC_API_KEY: z.string().optional().default(""),
-  ANTHROPIC_MODEL: z.string().default("claude-haiku-4-5"),
-  GEMINI_API_KEY: z.string().optional().default(""),
-  GEMINI_MODEL: z.string().default("gemini-2.5-flash"),
-  DEEPSEEK_API_KEY: z.string().optional().default(""),
-  DEEPSEEK_MODEL: z.string().default("deepseek-chat"),
-  XAI_API_KEY: z.string().optional().default(""),
-  GROK_MODEL: z.string().default("grok-3-mini"),
-  EXTRACTION_PROVIDER: z.enum(ENGINE_IDS).default("perplexity"),
 
-  SCAN_PROMPTS_FREE: z.coerce.number().int().min(1).max(500).default(25),
-  SCAN_PROMPTS_FULL: z.coerce.number().int().min(1).max(500).default(100),
-  ENGINES_FREE: engineList.default("perplexity"),
-  ENGINES_FULL: engineList.default("perplexity,chatgpt,gemini,claude,deepseek,grok"),
+  // §2: scan shape (defaults from packages/shared/scanConfig; env-overridable).
+  FREE_SCAN_PROMPTS: z.coerce.number().int().min(5).max(100).default(FREE_SCAN.prompts),
+  FREE_CORE_PROMPTS: z.coerce.number().int().min(1).max(50).default(FREE_SCAN.corePrompts),
+  FREE_CORE_ENGINES: engineList.default(FREE_SCAN.coreEngines.join(",")),
+  FREE_TAIL_ENGINE: z.enum(ENGINE_IDS as [EngineId, ...EngineId[]]).default(FREE_SCAN.tailEngine),
+
+  // §6: quotas + abuse controls (server is the authority).
+  FREE_SCANS_PER_ACCOUNT: z.coerce.number().int().min(0).default(FREE_SCANS_PER_ACCOUNT),
+  DAILY_SCAN_CAP: z.coerce.number().int().min(1).default(DAILY_SCAN_CAP),
+  SCAN_STARTS_PER_IP_PER_DAY: z.coerce.number().int().min(1).default(SCAN_STARTS_PER_IP_PER_DAY),
+  NEW_ACCOUNTS_PER_IP_PER_DAY: z.coerce.number().int().min(1).default(NEW_ACCOUNTS_PER_IP_PER_DAY),
   DAILY_LLM_BUDGET_USD: z.coerce.number().min(0).default(10),
-
-  PUBLIC_SCAN_PER_IP_PER_DAY: z.coerce.number().int().min(1).default(3),
-  PUBLIC_SCAN_GLOBAL_PER_DAY: z.coerce.number().int().min(1).default(30),
 
   CALENDLY_URL: z.string().optional().default(""),
   WHATSAPP_URL: z.string().optional().default(""),

@@ -7,6 +7,9 @@ export interface GeneratedPromptDoc extends Document {
   text: string;
   language: PromptLanguage;
   intent: PromptIntent;
+  /** §2.3: core prompts run on every engine of the scan; per-engine metrics
+   * are computed over this shared set only. */
+  core: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,6 +24,7 @@ const generatedPromptSchema = new Schema<GeneratedPromptDoc>(
       enum: ["branded", "category", "best_of", "comparison", "informational", "purchase"],
       required: true,
     },
+    core: { type: Boolean, default: true },
   },
   { timestamps: true },
 );

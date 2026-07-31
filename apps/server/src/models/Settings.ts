@@ -9,6 +9,8 @@ export interface SettingsDoc extends Document {
   budgetNotifiedDate?: string;
   /** YYYY-MM-DD an admin explicitly resumed scans despite the cap. */
   budgetOverrideDate?: string;
+  /** YYYY-MM-DD the daily-scan-cap email was last sent. */
+  scanCapNotifiedDate?: string;
 }
 
 const settingsSchema = new Schema<SettingsDoc>(
@@ -20,6 +22,7 @@ const settingsSchema = new Schema<SettingsDoc>(
     },
     budgetNotifiedDate: { type: String },
     budgetOverrideDate: { type: String },
+    scanCapNotifiedDate: { type: String },
   },
   { timestamps: true, minimize: false },
 );

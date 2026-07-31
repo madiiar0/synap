@@ -1,7 +1,16 @@
 import type { EngineId } from "@synapai/shared";
-import { estimateTokens } from "./cost.js";
 import { buildDemoAnswer } from "./fixtures.js";
-import type { EngineAdapter } from "./types.js";
+import { estimateTokens, type EngineAdapter } from "./types.js";
+
+// Test instrumentation: lets the freshness test assert that every scan
+// issues a complete, fresh set of provider calls (§2.4).
+let demoCallCount = 0;
+export function getDemoCallCount(): number {
+  return demoCallCount;
+}
+export function resetDemoCallCount(): void {
+  demoCallCount = 0;
+}
 
 /**
  * Fixture engine used when DEMO_MODE=true: deterministic, free, offline.
@@ -12,7 +21,8 @@ export function createDemoAdapter(id: EngineId): EngineAdapter {
     id,
     available: () => true,
     async query(prompt, opts) {
-      if (!opts.demo) {
+      demoCallCount += 1;
+      if (!opts?.demo) {
         throw new Error("demo adapter requires a DemoContext");
       }
       const { text, citations } = buildDemoAnswer(id, prompt, opts.language, opts.demo);
@@ -23,6 +33,7 @@ export function createDemoAdapter(id: EngineId): EngineAdapter {
         tokensIn: estimateTokens(prompt),
         tokensOut: estimateTokens(text),
         costUsd: 0,
+        searchFeeUsd: 0,
       };
     },
   };
