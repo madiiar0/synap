@@ -140,7 +140,12 @@ export default function Teaser(): JSX.Element {
           )}
         </div>
 
-        <div className="mt-8 flex items-center justify-between rounded-2xl bg-dark p-8 text-darktext">
+        <div
+          className="mt-8 flex items-center justify-between rounded-2xl p-8 text-darktext"
+          style={{
+            background: "linear-gradient(105deg, #0A0A0A 0%, #141414 55%, #2A2A2A 100%)",
+          }}
+        >
           <p className="max-w-sm text-sm">{t("teaser.bookBanner")}</p>
           <BookCallButton source="report" scanId={data.scanId} brandName={data.brandName} variant="dark" />
         </div>

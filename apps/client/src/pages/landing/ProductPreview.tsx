@@ -4,33 +4,22 @@ import { useTranslation } from "react-i18next";
 interface PreviewRow {
   name: string;
   visibility: number;
-  sentiment: "pos" | "neu";
   trend: "up" | "down";
 }
 
-// Neutral demo names only — mirrors the real Competitors page structure.
+// Fictional names only — numbers/rankings never carry real companies.
 const ROWS: PreviewRow[] = [
-  { name: "Astra", visibility: 74, sentiment: "pos", trend: "up" },
-  { name: "Nurly", visibility: 52, sentiment: "neu", trend: "down" },
-  { name: "Vega", visibility: 38, sentiment: "pos", trend: "up" },
-  { name: "Orion", visibility: 21, sentiment: "neu", trend: "down" },
+  { name: "Astra", visibility: 74, trend: "up" },
+  { name: "Nurly", visibility: 52, trend: "down" },
+  { name: "Vega", visibility: 38, trend: "up" },
+  { name: "Orion", visibility: 21, trend: "down" },
 ];
 
-/**
- * §12.7: an angled dark "dashboard screenshot" built as a real styled div.
- * `angled` is off in the final-CTA peek variant.
- */
-export default function ProductPreview({ angled = true }: { angled?: boolean }): JSX.Element {
+/** Rankings preview panel used inside the final CTA card (localized). */
+export default function ProductPreview(): JSX.Element {
   const { t } = useTranslation();
   return (
-    <div
-      className="w-full max-w-xl rounded-2xl border border-darkline bg-dark p-6 text-darktext shadow-2xl"
-      style={
-        angled
-          ? { transform: "perspective(1200px) rotateX(6deg) rotateY(-8deg) rotateZ(1deg)" }
-          : undefined
-      }
-    >
+    <div className="w-full max-w-xl rounded-2xl border border-darkline bg-dark p-6 text-darktext shadow-lg">
       <div className="flex items-center justify-between border-b border-darkline pb-4">
         <p className="text-sm font-semibold">{t("landing.preview.title")}</p>
         <p className="text-xs text-sub">{t("landing.preview.subtitle")}</p>
@@ -64,8 +53,7 @@ export default function ProductPreview({ angled = true }: { angled?: boolean }):
               <td className="py-3 text-right">
                 {row.trend === "up" ? (
                   <span className="inline-flex items-center gap-1 text-emerald-400">
-                    <ArrowUpRight size={14} />
-                    {row.sentiment === "pos" ? "+" : "·"}
+                    <ArrowUpRight size={14} />+
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 text-red-400">

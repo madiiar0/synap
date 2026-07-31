@@ -45,12 +45,16 @@ const schema = z.object({
   ANTHROPIC_MODEL: z.string().default("claude-haiku-4-5"),
   GEMINI_API_KEY: z.string().optional().default(""),
   GEMINI_MODEL: z.string().default("gemini-2.5-flash"),
+  DEEPSEEK_API_KEY: z.string().optional().default(""),
+  DEEPSEEK_MODEL: z.string().default("deepseek-chat"),
+  XAI_API_KEY: z.string().optional().default(""),
+  GROK_MODEL: z.string().default("grok-3-mini"),
   EXTRACTION_PROVIDER: z.enum(ENGINE_IDS).default("perplexity"),
 
   SCAN_PROMPTS_FREE: z.coerce.number().int().min(1).max(500).default(25),
   SCAN_PROMPTS_FULL: z.coerce.number().int().min(1).max(500).default(100),
   ENGINES_FREE: engineList.default("perplexity"),
-  ENGINES_FULL: engineList.default("perplexity,chatgpt,gemini,claude"),
+  ENGINES_FULL: engineList.default("perplexity,chatgpt,gemini,claude,deepseek,grok"),
   DAILY_LLM_BUDGET_USD: z.coerce.number().min(0).default(10),
 
   PUBLIC_SCAN_PER_IP_PER_DAY: z.coerce.number().int().min(1).default(3),

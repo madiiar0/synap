@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import type { SessionUserDto } from "@synapai/shared";
+import Logo from "../components/Logo";
 import { apiPost } from "../lib/api";
 import { currentLocale } from "../lib/i18n";
 
@@ -25,8 +26,8 @@ export default function Login(): JSX.Element {
   return (
     <div className="flex min-h-screen items-center justify-center bg-base px-6">
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8">
-        <Link to="/" className="text-lg font-bold tracking-tight">
-          {t("common.brand")}
+        <Link to="/" aria-label="SynapAI">
+          <Logo size={18} className="text-lg" />
         </Link>
         <h1 className="mt-6 text-xl font-semibold tracking-tight">
           {adminMode ? t("auth.adminTitle") : t("auth.title")}

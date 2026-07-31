@@ -6,7 +6,7 @@ import type { Market } from "@synapai/shared";
 import { ApiError, apiPost } from "../../lib/api";
 import { currentLocale } from "../../lib/i18n";
 
-/** Inline scan form — a single hairline card on the dark hero (§12.1). */
+/** The scan form — a single hairline card on the light /scan page. */
 export default function ScanForm(): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -52,14 +52,14 @@ export default function ScanForm(): JSX.Element {
   };
 
   const inputCls =
-    "w-full rounded-xl border border-darkline bg-black/30 px-4 py-3 text-sm text-darktext outline-none transition-colors placeholder:text-sub focus:border-darktext/60";
+    "w-full rounded-xl border border-line bg-base px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-sub focus:border-ink";
   const labelCls = "mb-1.5 block text-xs text-sub";
 
   return (
     <form
       id="scan-form"
       onSubmit={submit}
-      className="mx-auto w-full max-w-2xl rounded-2xl border border-darkline bg-white/[0.02] p-6 sm:p-8"
+      className="mx-auto w-full max-w-2xl rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8"
     >
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="sm:col-span-3">
@@ -111,11 +111,11 @@ export default function ScanForm(): JSX.Element {
           />
         </div>
       </div>
-      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
       <button
         type="submit"
         disabled={scan.isPending}
-        className="mt-5 w-full rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-ink transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="mt-5 w-full rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-85 disabled:opacity-50"
       >
         {scan.isPending ? t("landing.form.submitting") : t("landing.form.submit")}
       </button>

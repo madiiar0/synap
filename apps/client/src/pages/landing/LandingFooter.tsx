@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import Logo from "../../components/Logo";
 import { currentLocale, setLocale } from "../../lib/i18n";
 
 export default function LandingFooter(): JSX.Element {
@@ -7,15 +8,12 @@ export default function LandingFooter(): JSX.Element {
   return (
     <footer className="border-t border-line bg-base py-10">
       <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-4 px-6 sm:flex-row">
-        <p className="flex items-center gap-2 text-sm font-bold tracking-tight">
-          <span className="inline-block h-2 w-2 rounded-sm bg-accent" aria-hidden />
-          {t("common.brand")}
-        </p>
+        <Logo size={16} className="text-sm" />
         <div className="flex items-center gap-6 text-sm text-sub">
-          <a href="#how" className="hover:text-ink">
+          <a href="/#how" className="hover:text-ink">
             {t("nav.howItWorks")}
           </a>
-          <a href="#faq" className="hover:text-ink">
+          <a href="/#faq" className="hover:text-ink">
             {t("nav.faq")}
           </a>
           <Link to="/login" className="hover:text-ink">

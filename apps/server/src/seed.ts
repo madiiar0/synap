@@ -1,5 +1,5 @@
 /**
- * Seed: admin user (creds printed), demo user, demo brand «Astra Dental» with
+ * Seed: admin user (creds printed), demo user, demo business «Aroma Coffee» with
  * one completed FULL fixture scan + one older snapshot so trends render.
  *
  * NOTE: with no MONGODB_URI this seeds a throwaway in-memory DB. For a

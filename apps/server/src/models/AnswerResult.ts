@@ -1,5 +1,5 @@
 import mongoose, { Schema, type HydratedDocument, type Types } from "mongoose";
-import type { Citation, EngineId, Extracted } from "@synapai/shared";
+import { ENGINE_IDS, type Citation, type EngineId, type Extracted } from "@synapai/shared";
 
 // Plain data interface (not extending Document): the `model` field would
 // otherwise collide with Document#model().
@@ -36,7 +36,7 @@ const answerResultSchema = new Schema<AnswerResultData>(
   {
     scanId: { type: Schema.Types.ObjectId, ref: "Scan", required: true, index: true },
     promptId: { type: Schema.Types.ObjectId, ref: "GeneratedPrompt", required: true },
-    engine: { type: String, enum: ["perplexity", "chatgpt", "gemini", "claude"], required: true },
+    engine: { type: String, enum: [...ENGINE_IDS], required: true },
     model: { type: String, default: "" },
     rawAnswer: { type: String, default: "" },
     citations: { type: [citationSchema], default: [] },

@@ -51,6 +51,20 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
     credits only one brand. Regression-tested.
 13. **Production refuses the default JWT secret** (`change_me` or <16 chars)
     at startup — forged admin sessions otherwise.
-14. **Cost table is estimates.** Per-1M-token USD prices for sonar /
+14. **DeepSeek/Grok pricing are estimates with source comments**
+    (`deepseek-chat` cache-miss rate; `grok-3-mini` — xAI Live Search is
+    billed extra per source and is NOT in the token cost table). Re-verify
+    when keys are added.
+15. **Copilot is display-only** (`scannable:false` — no public API): it
+    appears in the hero cycle and marquee but never in scan results,
+    weights, or engine cards.
+16. **Real coffee-chain names (Global Coffee, Master Coffee, Coffee Boom)
+    appear ONLY in the mock ChatGPT answer** with neutral, trade-off-balanced
+    descriptions, per the owner's explicit rule; every surface with numbers/
+    rankings uses fictional names (Astra, Nurly, Vega, Orion, Aroma Coffee…).
+17. **Hero minimum font size is 24px** on very small screens — the price of
+    keeping "рекомендует + [longest platform name]" on a single fixed line
+    with zero layout shift during the cycle.
+18. **Cost table is estimates.** Per-1M-token USD prices for sonar /
    gpt-4o-mini / claude-haiku-4-5 / gemini-2.5-flash are constants marked as
    estimates to be re-verified when real keys are added (MANUAL_SETUP step).

@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
-import { normalizedKey } from "@synapai/shared";
+import { ENGINE_IDS, normalizedKey } from "@synapai/shared";
 import { Brand } from "../models/Brand.js";
 import { Scan } from "../models/Scan.js";
 import { ScoreSnapshot } from "../models/ScoreSnapshot.js";
@@ -16,7 +16,7 @@ export interface SeedResult {
 }
 
 /**
- * Demo dataset: admin + demo users, «Astra Dental» with an old fixture
+ * Demo dataset: admin + demo users, «Aroma Coffee» with an old fixture
  * snapshot (trends) and a fresh FULL fixture scan run through the real
  * pipeline. Idempotent; the admin password is regenerated on every run.
  */
@@ -42,24 +42,25 @@ export async function seedDemoData(): Promise<SeedResult> {
     { upsert: true, new: true },
   );
 
-  const brandName = "Astra Dental";
+  // Fictional demo business (coffee niche) — competitors are fictional too.
+  const brandName = "Aroma Coffee";
   let brand = await Brand.findOne({ name: brandName, userId: demoUser._id });
   if (!brand) {
     brand = await Brand.create({
       userId: demoUser._id,
       name: brandName,
-      aliases: ["Астра Дентал"],
-      category: "стоматология",
+      aliases: ["Арома Кофе"],
+      category: "кофейня",
       city: "Алматы",
       country: "KZ",
       market: "kz",
       locale: "ru",
       competitors: [
-        { name: "Дента Люкс", aliases: ["Denta Lux"] },
-        { name: "SmileCity", aliases: ["Смайл Сити"] },
-        { name: "Doctor Dent", aliases: ["Доктор Дент"] },
+        { name: "Nurly Coffee", aliases: ["Нурлы Кофе"] },
+        { name: "Vega Roasters", aliases: ["Вега Ростерс"] },
+        { name: "Orion", aliases: ["Орион"] },
       ],
-      normKey: normalizedKey(brandName, "стоматология", "Алматы"),
+      normKey: normalizedKey(brandName, "кофейня", "Алматы"),
     });
   }
 
@@ -72,12 +73,12 @@ export async function seedDemoData(): Promise<SeedResult> {
         brandId: brand._id,
         tier: "full",
         status: "done",
-        progress: { done: 400, total: 400, currentPrompt: null },
-        engines: ["perplexity", "chatgpt", "gemini", "claude"],
+        progress: { done: 600, total: 600, currentPrompt: null },
+        engines: [...ENGINE_IDS],
         trigger: "admin",
         startedAt: monthAgo,
         finishedAt: monthAgo,
-        totals: { prompts: 100, calls: 400, tokensIn: 52000, tokensOut: 118000, costUsd: 0 },
+        totals: { prompts: 100, calls: 600, tokensIn: 78000, tokensOut: 177000, costUsd: 0 },
         pausedReason: null,
         createdAt: monthAgo,
         updatedAt: monthAgo,
@@ -90,25 +91,27 @@ export async function seedDemoData(): Promise<SeedResult> {
       overall: 21,
       subscores: { branded: 46.2, category: 8.1, comparison: 16.7 },
       perEngine: [
-        { engine: "perplexity", mentionRate: 0.18, score: 22 },
         { engine: "chatgpt", mentionRate: 0.15, score: 20 },
+        { engine: "perplexity", mentionRate: 0.18, score: 22 },
         { engine: "gemini", mentionRate: 0.12, score: 19 },
+        { engine: "deepseek", mentionRate: 0.14, score: 20 },
+        { engine: "grok", mentionRate: 0.13, score: 18 },
         { engine: "claude", mentionRate: 0.1, score: 17 },
       ],
       shareOfVoice: [
-        { name: "Дента Люкс", mentions: 96, pct: 31.2, isUs: false, detected: false },
-        { name: "SmileCity", mentions: 74, pct: 24.1, isUs: false, detected: false },
-        { name: "Nurly", mentions: 52, pct: 16.9, isUs: false, detected: true },
-        { name: "Doctor Dent", mentions: 41, pct: 13.3, isUs: false, detected: false },
-        { name: "Astra Dental", mentions: 28, pct: 9.1, isUs: true, detected: false },
-        { name: "Vega", mentions: 16, pct: 5.2, isUs: false, detected: true },
+        { name: "Nurly Coffee", mentions: 132, pct: 30.8, isUs: false, detected: false },
+        { name: "Vega Roasters", mentions: 104, pct: 24.2, isUs: false, detected: false },
+        { name: "Astra", mentions: 76, pct: 17.7, isUs: false, detected: true },
+        { name: "Orion", mentions: 58, pct: 13.5, isUs: false, detected: false },
+        { name: "Aroma Coffee", mentions: 39, pct: 9.1, isUs: true, detected: false },
+        { name: "Polaris", mentions: 20, pct: 4.7, isUs: false, detected: true },
       ],
       topSources: [
-        { domain: "2gis.kz", citations: 141, mentionsUs: true },
-        { domain: "yandex.kz", citations: 118, mentionsUs: false },
-        { domain: "prodoctorov.kz", citations: 74, mentionsUs: false },
-        { domain: "instagram.com", citations: 51, mentionsUs: true },
-        { domain: "otzovik.com", citations: 33, mentionsUs: false },
+        { domain: "2gis.kz", citations: 205, mentionsUs: true },
+        { domain: "yandex.kz", citations: 171, mentionsUs: false },
+        { domain: "instagram.com", citations: 84, mentionsUs: true },
+        { domain: "tripadvisor.com", citations: 66, mentionsUs: false },
+        { domain: "otzovik.com", citations: 47, mentionsUs: false },
       ],
       avgPosition: 2.7,
     });
@@ -126,7 +129,7 @@ export async function seedDemoData(): Promise<SeedResult> {
     const scan = await Scan.create({
       brandId: brand._id,
       tier: "full",
-      engines: ["perplexity", "chatgpt", "gemini", "claude"],
+      engines: [...ENGINE_IDS],
       trigger: "user",
     });
     await runScan(String(scan._id));

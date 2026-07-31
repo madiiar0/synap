@@ -67,13 +67,13 @@ async function main(): Promise<void> {
     return { status: res.status, json: await res.json() };
   };
 
-  // 1. Public scan
+  // 1. Public scan (fictional coffee business)
   const scanRes = await post("/api/public/scan", {
-    brandName: "Astra Dental",
-    category: "стоматология",
+    brandName: "Coffee Boom",
+    category: "кофейня",
     city: "Алматы",
     market: "kz",
-    competitors: ["Дента Люкс", "SmileCity"],
+    competitors: ["Nurly Coffee", "Vega Roasters"],
   });
   assert.equal(scanRes.status, 200, `scan create failed: ${JSON.stringify(scanRes.json)}`);
   const scanId = scanRes.json.scanId as string;
@@ -167,7 +167,7 @@ async function main(): Promise<void> {
     name: "Smoke Test",
     phone: "+77001234567",
     message: "Хочу разбор отчёта",
-    brandName: "Astra Dental",
+    brandName: "Coffee Boom",
     scanId,
     source: "report",
   });

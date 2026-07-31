@@ -1,7 +1,9 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import BookCallButton from "../../components/BookCallButton";
 import Reveal from "../../components/Reveal";
 
-/** §12.6: the one allowed statistic — oversized centered Gartner quote. */
+/** §10: localized Gartner quote + credibility caption + question + CTAs. */
 export default function StatQuote(): JSX.Element {
   const { t } = useTranslation();
   return (
@@ -15,7 +17,21 @@ export default function StatQuote(): JSX.Element {
             {t("landing.stat.quote")}
           </blockquote>
           <p className="mt-6 text-sm text-sub">{t("landing.stat.source")}</p>
-          <p className="mt-10 text-xl font-medium">{t("landing.stat.question")}</p>
+          <p className="mx-auto mt-2 max-w-md text-sm text-sub">
+            {t("landing.stat.gartnerCaption")}
+          </p>
+          <p className="mt-12 text-2xl font-medium text-ink sm:text-3xl">
+            {t("landing.stat.question")}
+          </p>
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/scan"
+              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+            >
+              {t("landing.ctaCheckFree")}
+            </Link>
+            <BookCallButton source="landing" variant="secondary" />
+          </div>
         </Reveal>
       </div>
     </section>

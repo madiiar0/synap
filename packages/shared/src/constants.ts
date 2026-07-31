@@ -1,4 +1,11 @@
-export const ENGINE_IDS = ["perplexity", "chatgpt", "gemini", "claude"] as const;
+export const ENGINE_IDS = [
+  "perplexity",
+  "chatgpt",
+  "gemini",
+  "claude",
+  "deepseek",
+  "grok",
+] as const;
 export type EngineId = (typeof ENGINE_IDS)[number];
 
 export const ENGINE_LABELS: Record<EngineId, string> = {
@@ -6,6 +13,8 @@ export const ENGINE_LABELS: Record<EngineId, string> = {
   chatgpt: "ChatGPT",
   gemini: "Gemini",
   claude: "Claude",
+  deepseek: "DeepSeek",
+  grok: "Grok",
 };
 
 /**
@@ -13,10 +22,12 @@ export const ENGINE_LABELS: Record<EngineId, string> = {
  * Visibility Score. Renormalized over the engines actually enabled for a scan.
  */
 export const ENGINE_WEIGHTS: Record<EngineId, number> = {
-  perplexity: 0.3,
-  chatgpt: 0.35,
-  gemini: 0.2,
-  claude: 0.15,
+  chatgpt: 0.25,
+  perplexity: 0.2,
+  gemini: 0.15,
+  deepseek: 0.15,
+  grok: 0.15,
+  claude: 0.1,
 };
 
 /**
@@ -82,6 +93,10 @@ export const COST_PER_MTOK: Record<string, { in: number; out: number }> = {
   "gpt-4o-mini": { in: 0.15, out: 0.6 },
   "claude-haiku-4-5": { in: 1, out: 5 },
   "gemini-2.5-flash": { in: 0.3, out: 2.5 },
+  // api-docs.deepseek.com/quick_start/pricing (cache-miss rate)
+  "deepseek-chat": { in: 0.27, out: 1.1 },
+  // docs.x.ai pricing; grok-3-mini is the cheap tier (live search billed extra per source)
+  "grok-3-mini": { in: 0.3, out: 0.5 },
   default: { in: 1, out: 3 },
 };
 

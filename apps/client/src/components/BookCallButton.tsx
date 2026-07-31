@@ -9,15 +9,16 @@ interface BookCallButtonProps {
   source: LeadSource;
   scanId?: string;
   brandName?: string;
-  variant?: "primary" | "secondary" | "dark";
+  variant?: "primary" | "secondary" | "dark" | "dark-outline";
   label?: string;
   className?: string;
 }
 
 const VARIANT_CLASSES: Record<NonNullable<BookCallButtonProps["variant"]>, string> = {
   primary: "bg-ink text-white hover:bg-black",
-  secondary: "bg-transparent border border-line text-ink hover:bg-surface",
+  secondary: "bg-surface border border-line text-ink hover:border-[#D4D4D4]",
   dark: "bg-white text-ink hover:bg-darktext",
+  "dark-outline": "bg-transparent border border-darkline text-darktext hover:bg-white/5",
 };
 
 export function useAppConfig(): AppConfig | undefined {

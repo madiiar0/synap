@@ -14,6 +14,7 @@ import { createContext, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import type { BrandDto } from "@synapai/shared";
+import Logo from "../../components/Logo";
 import { apiPost } from "../../lib/api";
 import { currentLocale, setLocale } from "../../lib/i18n";
 import { useBrands, useMe, useOverview, useRescan } from "../../lib/queries";
@@ -80,8 +81,8 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
       <div className="flex min-h-screen bg-base">
         {/* Sidebar */}
         <aside className="hidden w-56 shrink-0 flex-col border-r border-line bg-surface px-3 py-6 md:flex">
-          <Link to="/" className="mb-8 px-3 text-lg font-bold tracking-tight">
-            {t("common.brand")}
+          <Link to="/" className="mb-8 px-3" aria-label="SynapAI">
+            <Logo size={18} className="text-lg" />
           </Link>
           <nav className="flex flex-col gap-1">
             {admin ? (

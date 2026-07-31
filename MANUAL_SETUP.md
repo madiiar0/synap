@@ -52,6 +52,11 @@ missing key simply switches that engine off (dash in the UI).
 - [ ] **Anthropic**: https://console.anthropic.com/settings/keys →
       `ANTHROPIC_API_KEY=`. Verify the model id in `ANTHROPIC_MODEL` at
       https://docs.claude.com/en/docs/about-claude/models
+- [ ] **DeepSeek**: https://platform.deepseek.com/api_keys →
+      `DEEPSEEK_API_KEY=` (model `deepseek-chat`).
+- [ ] **xAI (Grok)**: https://console.x.ai → `XAI_API_KEY=`. Live Search is
+      requested automatically (`mode: auto`) and billed per source — check
+      https://docs.x.ai for current pricing and the `GROK_MODEL` id.
 - [ ] Pick your extraction provider (the cheap model that parses answers):
       `EXTRACTION_PROVIDER=perplexity` is a fine default.
 

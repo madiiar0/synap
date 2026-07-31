@@ -53,30 +53,30 @@ export default function ScanProgress(): JSX.Element {
 
   return (
     <div
-      className="flex min-h-screen flex-col items-center justify-center bg-dark px-6 text-center text-darktext transition-all duration-500"
+      className="flex min-h-screen flex-col items-center justify-center bg-base px-6 text-center text-ink transition-all duration-500"
       style={leaving ? { opacity: 0, filter: "blur(14px)" } : undefined}
     >
-      {/* Radar */}
+      {/* Radar — light theme: gray rings, black sweep/accents (§Global) */}
       <div className="relative mb-14 h-56 w-56">
-        <div className="absolute inset-0 rounded-full border border-darkline" />
-        <div className="absolute inset-8 rounded-full border border-darkline" />
-        <div className="absolute inset-16 rounded-full border border-darkline" />
+        <div className="absolute inset-0 rounded-full border border-line" />
+        <div className="absolute inset-8 rounded-full border border-line" />
+        <div className="absolute inset-16 rounded-full border border-line" />
         <div
           className="radar-sweep absolute inset-0 rounded-full"
           style={{
             background:
-              "conic-gradient(from 0deg, transparent 0deg, transparent 290deg, rgba(245,245,245,0.16) 360deg)",
+              "conic-gradient(from 0deg, transparent 0deg, transparent 290deg, rgba(0,0,0,0.12) 360deg)",
           }}
         />
         {RING_DOTS.map((dot, index) => (
           <span
             key={index}
-            className="radar-dot absolute h-1.5 w-1.5 rounded-full bg-emerald-400/80"
+            className="radar-dot absolute h-1.5 w-1.5 rounded-full bg-ink/40"
             style={{ top: dot.top, left: dot.left, animationDelay: dot.delay }}
           />
         ))}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent text-2xl font-bold text-white ring-4 ring-dark">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-2xl font-bold text-white ring-4 ring-base">
             {brandInitial}
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function ScanProgress(): JSX.Element {
       </h1>
 
       {failed ? (
-        <Link to="/" className="mt-6 text-sm text-sub underline hover:text-darktext">
+        <Link to="/" className="mt-6 text-sm text-sub underline hover:text-ink">
           {t("common.back")}
         </Link>
       ) : (
@@ -106,10 +106,10 @@ export default function ScanProgress(): JSX.Element {
                 key={index}
                 className={`h-2.5 w-2.5 rounded-full transition-colors duration-500 ${
                   index < filledDots
-                    ? "bg-emerald-400"
+                    ? "bg-ink"
                     : index === filledDots
-                      ? "bg-white"
-                      : "bg-darkline"
+                      ? "bg-ink/40"
+                      : "bg-line"
                 }`}
               />
             ))}

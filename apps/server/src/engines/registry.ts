@@ -1,10 +1,12 @@
-import type { EngineId } from "@synapai/shared";
+import { ENGINE_IDS, type EngineId } from "@synapai/shared";
 import { env } from "../config/env.js";
 import { getSettings } from "../models/Settings.js";
 import { createChatgptAdapter } from "./chatgpt.js";
 import { createClaudeAdapter } from "./claude.js";
+import { createDeepseekAdapter } from "./deepseek.js";
 import { createDemoAdapter } from "./demo.js";
 import { createGeminiAdapter } from "./gemini.js";
+import { createGrokAdapter } from "./grok.js";
 import { createPerplexityAdapter } from "./perplexity.js";
 import { instrumentEngine } from "./wrapper.js";
 import type { EngineAdapter } from "./types.js";
@@ -20,6 +22,8 @@ function realAdapter(id: EngineId): EngineAdapter {
       chatgpt: createChatgptAdapter,
       gemini: createGeminiAdapter,
       claude: createClaudeAdapter,
+      deepseek: createDeepseekAdapter,
+      grok: createGrokAdapter,
     };
     adapter = instrumentEngine(factories[id]());
     realAdapters.set(id, adapter);
@@ -69,7 +73,7 @@ export async function engineStatus(): Promise<
   { engine: EngineId; keyPresent: boolean; enabled: boolean }[]
 > {
   const settings = await getSettings();
-  const ids: EngineId[] = ["perplexity", "chatgpt", "gemini", "claude"];
+  const ids: EngineId[] = [...ENGINE_IDS];
   return ids.map((id) => ({
     engine: id,
     keyPresent: env.DEMO_MODE ? true : realAdapter(id).available(),

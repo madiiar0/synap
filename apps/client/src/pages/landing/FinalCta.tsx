@@ -1,16 +1,26 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import BookCallButton from "../../components/BookCallButton";
 import Reveal from "../../components/Reveal";
 import ProductPreview from "./ProductPreview";
 
-/** §12.9: dark CTA card inside the light section, preview peeking at an angle. */
+/**
+ * §12: the ONLY dark surface on the site — a gradient CTA card whose right
+ * side lightens behind the elevated rankings preview.
+ */
 export default function FinalCta(): JSX.Element {
   const { t } = useTranslation();
   return (
     <section className="hairline-dashed bg-base py-24">
       <div className="guides mx-auto max-w-container px-6">
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-dark px-8 py-14 text-darktext sm:px-14">
+          <div
+            className="relative overflow-hidden rounded-3xl px-8 py-14 text-darktext sm:px-14"
+            style={{
+              background:
+                "linear-gradient(105deg, #0A0A0A 0%, #141414 50%, #2A2A2A 78%, #474747 100%)",
+            }}
+          >
             <div className="relative z-10 max-w-lg">
               <h2
                 className="font-semibold tracking-tight"
@@ -19,22 +29,21 @@ export default function FinalCta(): JSX.Element {
                 {t("landing.finalCta.title")}
               </h2>
               <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href="#scan-form"
+                <Link
+                  to="/scan"
                   className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink transition-opacity hover:opacity-90"
                 >
                   {t("landing.finalCta.start")}
-                </a>
+                </Link>
                 <BookCallButton
                   source="landing"
-                  variant="secondary"
+                  variant="dark-outline"
                   label={t("landing.finalCta.book")}
-                  className="!border-darkline !text-darktext hover:!bg-white/5"
                 />
               </div>
             </div>
-            {/* preview peeking from the right edge */}
-            <div className="pointer-events-none absolute -right-24 top-1/2 hidden w-[560px] -translate-y-1/3 opacity-90 lg:block">
+            {/* preview peeking from the right edge, slightly elevated */}
+            <div className="pointer-events-none absolute -right-20 top-1/2 hidden w-[520px] -translate-y-1/3 rotate-[-1deg] lg:block">
               <ProductPreview />
             </div>
           </div>

@@ -5,3 +5,4 @@ export * from "./text/normalize.js";
 export * from "./text/translit.js";
 export * from "./text/match.js";
 export * from "./marqueeData.js";
+export * from "./aiPlatforms.js";

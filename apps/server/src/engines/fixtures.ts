@@ -8,8 +8,11 @@ import type { DemoContext } from "./types.js";
  * competitors, citations, sentiment variety), not real facts.
  */
 
-/** Non-configured brands the fixtures weave in so auto-detection has work to do. */
-export const DEMO_DETECTED_COMPETITORS = ["Nurly", "Vega"] as const;
+/**
+ * Non-configured, fictional brands the fixtures weave in so auto-detection
+ * has work to do (must not collide with the seeded configured competitors).
+ */
+export const DEMO_DETECTED_COMPETITORS = ["Astra", "Polaris"] as const;
 
 const DOMAINS = [
   "2gis.kz",

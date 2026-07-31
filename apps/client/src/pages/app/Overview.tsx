@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ENGINE_LABELS, type EngineId, type OverviewDto } from "@synapai/shared";
+import type { EngineId, OverviewDto } from "@synapai/shared";
 import BookCallButton from "../../components/BookCallButton";
 import EngineMark from "../../components/EngineMark";
 import ScoreRing from "../../components/ScoreRing";
@@ -118,7 +118,8 @@ export default function Overview(): JSX.Element {
           <ScoreRing value={snapshot.overall} size={190} />
           <DeltaChip overview={overview} />
         </Card>
-        <div className="grid grid-cols-2 gap-4">
+        {/* 6 engine cards: 3×2 desktop, 2×3 tablet, stacked on mobile */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {snapshot.perEngine.map((engine) => {
             const prev = prevEngines.get(engine.engine);
             const trend =
@@ -192,16 +193,18 @@ export default function Overview(): JSX.Element {
         )}
       </Card>
 
-      {/* Persistent book-a-call banner */}
-      <div className="flex flex-col items-start justify-between gap-4 rounded-2xl bg-dark p-8 text-darktext sm:flex-row sm:items-center">
+      {/* Persistent book-a-call banner (CTA cards are the only dark surfaces) */}
+      <div
+        className="flex flex-col items-start justify-between gap-4 rounded-2xl p-8 text-darktext sm:flex-row sm:items-center"
+        style={{
+          background: "linear-gradient(105deg, #0A0A0A 0%, #141414 55%, #2A2A2A 100%)",
+        }}
+      >
         <p className="max-w-md text-sm leading-relaxed">{t("dashboard.bookBanner")}</p>
         <BookCallButton source="dashboard" brandName={brand.name} variant="dark" />
       </div>
 
-      <p className="text-center text-[11px] text-sub">
-        {ENGINE_LABELS.chatgpt}, {ENGINE_LABELS.claude}, {ENGINE_LABELS.gemini},{" "}
-        {ENGINE_LABELS.perplexity} — {t("common.trademarkNote")}
-      </p>
+      <p className="text-center text-[11px] text-sub">{t("common.trademarkNote")}</p>
     </div>
   );
 }

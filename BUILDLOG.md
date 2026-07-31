@@ -113,3 +113,74 @@ Chronological log of the SynapAI v2 build. Newest entries last.
     Kazakh Cyrillic transliteration (ә ғ қ ң ө ұ ү һ і).
 - Final green board: typecheck ✅ lint ✅ 58 tests ✅ i18n sweep ✅ client
   build ✅ offline smoke ✅.
+
+## Iteration 2 — Landing redesign & fixes (2026-07-31)
+
+**Global:** brand→business sweep in both locales (RU «бизнес»/«компания» by
+grammar); dentistry→coffee examples everywhere (placeholders "Coffee Boom" /
+«кофейня» / Алматы); theme inverted to light across the whole site — hero,
+navbar and the scan progress screen included; dark reserved for CTA cards
+(gradient) and black pill buttons.
+
+**What changed:**
+- **Logos & registry:** owner PNGs copied from ~/Desktop/logo_AI to
+  `apps/client/src/assets/ai-logos/` (7: chatgpt, claude, gemini, perplexity,
+  deepseek, grok, copilot); `AI_PLATFORMS` registry in shared with
+  `scannable` flags (Copilot display-only — never in scan results);
+  EngineMark now renders the real images; footer note extended to
+  «…названия и логотипы…».
+- **Two new real engines:** DeepSeek (`deepseek-chat`, OpenAI-compatible) and
+  Grok (xAI, Live Search `mode:auto`, citations mapped) behind
+  `DEEPSEEK_API_KEY` / `XAI_API_KEY`; cost-table entries with source
+  comments; `ENGINES_FULL` = six engines; new weights chatgpt .25 /
+  perplexity .20 / gemini .15 / deepseek .15 / grok .15 / claude .10; demo
+  fixtures cover both (hash-varied per engine); FAQ lists exactly the six.
+- **Navbar:** fixed liquid-glass wrapper; island morph at scrollY≥32
+  (max-w 1200→880, pill radius, hairline, soft shadow, 350ms
+  cubic-bezier(.2,.8,.2,1)), rAF-throttled, no content jump.
+- **Hero:** exactly two lines in both locales; cycles ALL registry platforms
+  (3.5s hold, 900ms overlapping blur crossfade, stacked-grid slot so the
+  widest name reserves width → zero layout shift); form removed from the
+  hero — new light `/scan` page hosts it; every "check" CTA routes there.
+- **Fear line:** RU/EN exactly 3 lines; scroll-linked per-word unblur
+  (p: 85%→35% viewport, rAF), «вашего конкурента.» resolves last;
+  reduced-motion falls back to a single fade.
+- **Mock answer:** one narrative block with the fear line (`#product`,
+  tight pb-8/pt-0); real ChatGPT logo avatar; coffee content per spec
+  (Global Coffee / Master Coffee / Coffee Boom, neutral blurbs with mild
+  trade-offs, initial squares, no invented logos); reference density.
+- **Marquee:** three rows (right/left/right at 42s/50s/46s), bigger chips
+  (text-base/lg, py-3 px-5, h-6 logos), 24 RU + 24 EN prompt sets that swap
+  entirely with the language, logos from the full registry incl. Copilot.
+- **How it works:** new copy (Спрашиваем ИИ / Полная картина / Исправляем за
+  вас + EN), ghost lucide icons (ScanSearch/Gauge/Handshake, 120px,
+  opacity .06, cropped bottom-right), hover/focus lift + icon
+  brighten/scale.
+- **Quote:** localized RU quote, Gartner credibility caption, bigger
+  «Ваш бизнес готов?» + two CTAs.
+- **Removed** the standalone Rankings preview section; nav «Продукт» →
+  `#product`.
+- **Final CTA:** gradient #0A0A0A→#474747, elevated preview (shadow-lg,
+  −1°), localized table («Компания/Видимость/Тональность»), fictional names.
+- **Logo:** black synapse mark (3 nodes, 2 strokes) in one `Logo.tsx`;
+  wordmark black; used in nav, footer, login, dashboard sidebar.
+- **i18n:** fixed terms enforced (Индекс видимости, Тональность, Доля
+  упоминаний, Компания…); new purity tests — RU bundle bans known-English UI
+  terms, EN bundle bans Cyrillic (langRu exempt), key parity; 246 mirrored
+  keys.
+- **Seed:** fictional «Aroma Coffee» (кофейня, Алматы) with fictional
+  competitors Nurly Coffee / Vega Roasters / Orion; detected pool
+  Astra/Polaris; old snapshot covers 6 engines.
+- **Dashboard:** engine cards grid 3×2 desktop / 2×3 tablet / stacked
+  mobile.
+
+**QA (recorded per §15):** typecheck ✅ lint ✅ tests 61 ✅ (incl. new i18n
+purity + hero-cycle tests) i18n sweep ✅ (246 keys) build ✅ smoke ✅ (full
+funnel, Coffee Boom). Browser pass: hero 2 lines RU+EN, cycle without layout
+shift; navbar island morph smooth; /scan → progress (light radar) → teaser →
+dashboard end-to-end; fear-line word unblur verified at 3 lines; mock answer
+density + #product anchor; 3-row marquee localized; ghost-icon hover; quote
+block; rankings section gone; gradient CTA localized; dashboard shows six
+engine cards with real logos («Индекс видимости» 40, +19). Widths 375/768/
+1440: no horizontal overflow (fixed a hero-slot overflow at 375 by lowering
+the clamp minimum, and a 4-line fear wrap at 1440 by widening to max-w-5xl).
