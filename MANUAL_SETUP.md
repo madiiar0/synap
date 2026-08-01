@@ -37,15 +37,34 @@ key. Without it a non-demo scan has no engines at all.
 - [ ] Paste into `PERPLEXITY_API_KEY=`
 
 Model ids and per-token rates live in `packages/shared/src/engines.ts`
-(verified against https://docs.perplexity.ai on 2026-08-01). If Perplexity
-moves prices, update that one file. Web-search calls add a flat $2.50 per
-1000 requests on top of tokens.
+(verified by live call on 2026-08-02, see `pnpm engines:check` below). If
+Perplexity moves prices, update that one file. Web-search calls add a flat
+$2.50 per 1000 requests on top of tokens.
 
-**Cost expectations:** a free scan is 41 engine calls + ~5 extraction calls ≈
-**$0.16–0.30**. The daily hard-stop is `DAILY_LLM_BUDGET_USD` (default $10).
+**Cost expectations:** a free scan is 43 engine calls plus research, prompt
+generation and batched extraction, measured at **$0.16**. The daily hard-stop
+is `DAILY_LLM_BUDGET_USD`.
+
+**Verify model ids before your first real scan:**
+
+```bash
+pnpm engines:check
+```
+
+It makes one tiny live call per model and prints status, latency and cost.
+Anything other than `200` means the model id in
+`packages/shared/src/engines.ts` needs updating; the provider's own error
+message is printed underneath.
 
 **Verify:** with `DEMO_MODE=false`, run one scan and watch Admin → Costs
 show the per-scan cost; `pnpm cost:report` prints the same from the terminal.
+A measured free scan costs about **$0.16** (43 engine calls + research +
+prompt generation + batched extraction).
+
+> **While `DEMO_MODE=true` the app shows an amber «Демо-режим» banner and every
+> scan returns fixtures at zero cost.** Set `DEMO_MODE=false` in `.env` for
+> real results. With demo off and no API key, scans now fail visibly rather
+> than quietly returning fake data.
 
 ---
 

@@ -52,7 +52,7 @@ const schema = z.object({
   FREE_SCAN_PROMPTS: z.coerce.number().int().min(5).max(100).default(FREE_SCAN.prompts),
   FREE_CORE_PROMPTS: z.coerce.number().int().min(1).max(50).default(FREE_SCAN.corePrompts),
   FREE_CORE_ENGINES: engineList.default(FREE_SCAN.coreEngines.join(",")),
-  FREE_TAIL_ENGINE: z.enum(ENGINE_IDS as [EngineId, ...EngineId[]]).default(FREE_SCAN.tailEngine),
+  FREE_TAIL_ENGINES: engineList.default(FREE_SCAN.tailEngines.join(",")),
 
   // §6: quotas + abuse controls (server is the authority).
   FREE_SCANS_PER_ACCOUNT: z.coerce.number().int().min(0).default(FREE_SCANS_PER_ACCOUNT),

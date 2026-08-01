@@ -17,7 +17,7 @@ export default function MockAnswer(): JSX.Element {
 
   return (
     <div className="bg-base pb-24 pt-0">
-      <div className="guides mx-auto max-w-container px-6">
+      <div className="guides mx-auto max-w-container px-4 sm:px-6">
         <Reveal className="mx-auto max-w-2xl">
           {/* user bubble */}
           <div className="flex justify-end">
@@ -28,10 +28,10 @@ export default function MockAnswer(): JSX.Element {
 
           {/* assistant card */}
           <div className="mt-4 flex items-start gap-3">
-            <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-surface">
+            <div className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-surface sm:h-9 sm:w-9">
               <img src={AI_LOGOS.chatgpt} alt="ChatGPT" className="h-5 w-5 object-contain" />
             </div>
-            <div className="flex-1 rounded-2xl rounded-tl-md border border-line bg-surface p-6 shadow-sm">
+            <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md border border-line bg-surface p-4 shadow-sm sm:p-6">
               <p className="text-sm leading-relaxed text-sub">{t("landing.mockAnswer.intro")}</p>
               <div className="mt-4 border-t border-line" />
               {SHOPS.map((name, index) => (

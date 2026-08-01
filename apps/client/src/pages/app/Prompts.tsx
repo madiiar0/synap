@@ -34,12 +34,12 @@ export default function Prompts(): JSX.Element {
           prompts.map((prompt) => (
             <div
               key={prompt.promptId}
-              className={`flex items-center justify-between gap-4 border-b border-line px-4 py-3 last:border-b-0 ${
+              className={`flex items-center justify-between gap-3 border-b border-line px-3 py-3 last:border-b-0 sm:gap-4 sm:px-4 ${
                 prompt.disabled ? "opacity-50" : ""
               }`}
             >
               <div className="min-w-0">
-                <p className="truncate text-sm">«{prompt.text}»</p>
+                <p className="break-words text-sm">«{prompt.text}»</p>
                 <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-sub">
                   <span className="rounded-full border border-line px-1.5 py-0.5">
                     {t(`dashboard.prompts.intent.${prompt.intent}`)}

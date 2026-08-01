@@ -10,6 +10,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import type { Server } from "node:http";
+import { FREE_SCAN_CALLS } from "@synapai/shared";
 
 function step(name: string): void {
   console.log(`✓ ${name}`);
@@ -25,6 +26,11 @@ async function main(): Promise<void> {
   process.env.JWT_SECRET = "smoke_secret_do_not_use";
   process.env.DEMO_SCAN_TOTAL_MS = "1200";
   process.env.SCAN_STARTS_PER_IP_PER_DAY = "10"; // quota test needs 4 starts
+  // Pin the documented scan plan; a local .env must not change the assertion.
+  process.env.FREE_SCAN_PROMPTS = "25";
+  process.env.FREE_CORE_PROMPTS = "9";
+  process.env.FREE_CORE_ENGINES = "chatgpt,gemini,perplexity";
+  process.env.FREE_TAIL_ENGINES = "chatgpt,gemini";
 
   const { connectDb, disconnectDb } = await import("./db/connect.js");
   const { createApp } = await import("./app.js");
@@ -116,9 +122,13 @@ async function main(): Promise<void> {
     status === "done" || status === "partial",
     `scan did not finish (status=${status}, progress=${JSON.stringify(lastProgress)})`,
   );
-  // §2.1: free scan = core×coreEngines + tail = 8×3 + 17 = 41 calls
-  assert.equal(lastProgress.total, 41, `free scan must plan 41 calls, got ${lastProgress.total}`);
-  step(`scan finished: ${status} (41-call free plan confirmed)`);
+  // §2 Stage C: free scan = 9 core × 3 core engines + 16 tail = 43 calls
+  assert.equal(
+    lastProgress.total,
+    FREE_SCAN_CALLS,
+    `free scan must plan ${FREE_SCAN_CALLS} calls, got ${lastProgress.total}`,
+  );
+  step(`scan finished: ${status} (${FREE_SCAN_CALLS}-call free plan confirmed)`);
 
   // 5. Report email links to /login
   const outboxFiles = fs
@@ -217,7 +227,9 @@ async function main(): Promise<void> {
 
   server.close();
   await disconnectDb();
-  console.log("\nSMOKE PASS: authed funnel, 41-call plan, quotas, leads, admin (offline)\n");
+  console.log(
+    `\nSMOKE PASS: authed funnel, ${FREE_SCAN_CALLS}-call plan, quotas, leads, admin (offline)\n`,
+  );
   process.exit(0);
 }
 

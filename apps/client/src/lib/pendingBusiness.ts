@@ -69,3 +69,26 @@ export function onboardingSkipped(): boolean {
     return false;
   }
 }
+
+/**
+ * §3.2: which business the dashboard should select after a scan finishes, so
+ * the user lands on the results they just waited for rather than on whichever
+ * business happens to sort first.
+ */
+const PREFERRED_BRAND_KEY = "synapai:preferredBrand";
+
+export function setPreferredBrand(brandId: string): void {
+  try {
+    sessionStorage.setItem(PREFERRED_BRAND_KEY, brandId);
+  } catch {
+    // ignore
+  }
+}
+
+export function readPreferredBrand(): string | null {
+  try {
+    return sessionStorage.getItem(PREFERRED_BRAND_KEY);
+  } catch {
+    return null;
+  }
+}

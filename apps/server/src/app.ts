@@ -21,6 +21,11 @@ import { mountSeo } from "./http/seo.js";
 
 export function createApp(): Express {
   const app = express();
+  // §3.1: Express sends an ETag for every JSON body, so two users (or the same
+  // user before and after a scan) hitting an identical-looking payload get a
+  // 304 with a stale body. The client then keeps rendering "no businesses" and
+  // bounces to onboarding. User-scoped data must never be conditionally cached.
+  app.set("etag", false);
   app.set("trust proxy", 1);
   // §2.1: helmet's default CSP is `script-src 'self'` / `frame-src 'self'`,
   // which silently breaks the Firebase sign-in popup once the server serves
@@ -65,6 +70,13 @@ export function createApp(): Express {
     }),
   );
   app.use(attachUser);
+
+  // §3.1: belt and braces — mark every API response uncacheable.
+  app.use("/api", (_req, res, next) => {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    next();
+  });
 
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true, demo: env.DEMO_MODE });

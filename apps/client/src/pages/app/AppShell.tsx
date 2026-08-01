@@ -25,9 +25,10 @@ import type { BrandDto } from "@synapai/shared";
 import Logo from "../../components/Logo";
 import { apiPost } from "../../lib/api";
 import { currentLocale, setLocale } from "../../lib/i18n";
-import { onboardingSkipped } from "../../lib/pendingBusiness";
+import { onboardingSkipped, readPreferredBrand } from "../../lib/pendingBusiness";
 import { useBrands, useMe, useOverview, useStartScan } from "../../lib/queries";
 import { DemoBadge, Skeleton } from "../../components/ui";
+import { ErrorPanel } from "../../components/PageState";
 import AdminPanel from "../admin/AdminPanel";
 import Answers from "./Answers";
 import Competitors from "./Competitors";
@@ -59,12 +60,15 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
   const { t } = useTranslation();
   const location = useLocation();
   const { data: user, isLoading: meLoading, isError } = useMe();
-  const { data: brands, isLoading: brandsLoading } = useBrands();
+  const brandsQuery = useBrands();
+  const { data: brands, isLoading: brandsLoading } = brandsQuery;
   const [brandId, setBrandId] = useState<string | null>(null);
 
   const brand = useMemo(() => {
     if (!brands || brands.length === 0) return undefined;
-    return brands.find((b) => b.id === brandId) ?? brands[0];
+    // §3.2: after a scan, select the business that was just scanned.
+    const preferred = brandId ?? readPreferredBrand();
+    return brands.find((b) => b.id === preferred) ?? brands[0];
   }, [brands, brandId]);
 
   const { data: overview } = useOverview(admin ? undefined : brand?.id);
@@ -83,10 +87,18 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
 
   if (admin && user?.role !== "admin") return <Navigate to="/app" replace />;
 
-  // §3: a signed-in user with no business goes straight to onboarding rather
-  // than to an empty dashboard, unless they chose to do it later. Admin keeps
-  // the full panel either way.
-  if (!admin && brands && brands.length === 0 && !onboardingSkipped()) {
+  // §3.3: only ever redirect on a query that SUCCESSFULLY resolved to an empty
+  // list. A pending or failed brands query must render a skeleton instead, or a
+  // stale/failed response sends a user with results back to the form.
+  const brandsResolvedEmpty = brandsQuery.isSuccess && (brands?.length ?? 0) === 0;
+  if (!admin && brandsQuery.isError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-base p-4">
+        <ErrorPanel error={brandsQuery.error} onRetry={() => void brandsQuery.refetch()} />
+      </div>
+    );
+  }
+  if (!admin && brandsResolvedEmpty && !onboardingSkipped()) {
     return <Navigate to="/app/onboarding" replace />;
   }
 
@@ -166,13 +178,13 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
 
         {/* Main column */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-3 border-b border-line bg-base/80 px-4 py-3 backdrop-blur sm:px-8">
+          <header className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-2 border-b border-line bg-base/80 px-3 py-2.5 backdrop-blur sm:gap-3 sm:px-8 sm:py-3">
             <div className="flex items-center gap-3">
               {!admin && brands && brands.length > 0 && (
                 <select
                   value={brand?.id ?? ""}
                   onChange={(e) => setBrandId(e.target.value)}
-                  className="rounded-xl border border-line bg-surface px-3 py-1.5 text-sm font-medium outline-none"
+                  className="max-w-[45vw] truncate rounded-xl border border-line bg-surface px-2.5 py-1.5 text-sm font-medium outline-none sm:max-w-none sm:px-3"
                 >
                   {brands.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -186,8 +198,14 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
             <div className="flex flex-wrap items-center gap-3">
               {/* §6.3 remaining-runs indicator: hidden for admin/unlimited */}
               {!admin && scansLeft !== null && (
-                <span className="rounded-full border border-line bg-surface px-3 py-1 text-xs text-sub">
-                  {t("dashboard.scansLeft", { count: scansLeft })}
+                <span
+                  className="rounded-full border border-line bg-surface px-2.5 py-1 text-xs text-sub"
+                  title={t("dashboard.scansLeft", { count: scansLeft })}
+                >
+                  <span className="sm:hidden">{scansLeft}</span>
+                  <span className="hidden sm:inline">
+                    {t("dashboard.scansLeft", { count: scansLeft })}
+                  </span>
                 </span>
               )}
               {!admin && brand && (
@@ -199,23 +217,24 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
                       onSuccess: (data) => navigate(`/scan/${data.scanId}`),
                     })
                   }
-                  className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium disabled:opacity-40"
+                  aria-label={t("dashboard.rescan")}
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line bg-surface px-3 text-sm font-medium disabled:opacity-40 sm:min-h-0 sm:px-4 sm:py-1.5"
                 >
                   <RefreshCw size={14} className={rescan.isPending ? "animate-spin" : ""} />
-                  {t("dashboard.rescan")}
+                  <span className="hidden sm:inline">{t("dashboard.rescan")}</span>
                 </button>
               )}
               <button
                 type="button"
                 onClick={() => setLocale(currentLocale() === "ru" ? "en" : "ru")}
-                className="text-sm text-sub hover:text-ink"
+                className="flex h-11 w-11 items-center justify-center text-sm text-sub hover:text-ink sm:h-auto sm:w-auto"
               >
                 {currentLocale() === "ru" ? "EN" : "RU"}
               </button>
             </div>
           </header>
 
-          <main className="min-w-0 flex-1 px-4 py-6 sm:px-8">
+          <main className="min-w-0 flex-1 px-3 pb-24 pt-5 sm:px-8 sm:pb-6 sm:pt-6 md:pb-6">
             {admin ? (
               <AdminPanel />
             ) : (
@@ -230,6 +249,41 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
               </Routes>
             )}
           </main>
+
+          {/* §5: the sidebar becomes a bottom tab bar below md. */}
+          {!admin && (
+            <nav
+              className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 border-t border-line bg-surface md:hidden"
+              style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+            >
+              {NAV_ITEMS.filter((i) => i.key !== "settings").map((item) => (
+                <NavLink
+                  key={item.key}
+                  to={`${base}/${item.to}`}
+                  end={item.end}
+                  className={({ isActive }) =>
+                    `flex min-h-[56px] flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] ${
+                      isActive ? "font-semibold text-ink" : "text-sub"
+                    }`
+                  }
+                >
+                  <item.icon size={17} />
+                  <span className="max-w-full truncate">{t(`dashboard.nav.${item.key}`)}</span>
+                </NavLink>
+              ))}
+              <NavLink
+                to={`${base}/settings`}
+                className={({ isActive }) =>
+                  `flex min-h-[56px] flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] ${
+                    isActive ? "font-semibold text-ink" : "text-sub"
+                  }`
+                }
+              >
+                <Settings size={17} />
+                <span className="max-w-full truncate">{t("dashboard.nav.settings")}</span>
+              </NavLink>
+            </nav>
+          )}
         </div>
       </div>
     </BrandContext.Provider>

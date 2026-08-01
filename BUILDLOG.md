@@ -401,3 +401,105 @@ answers, ever** — every scan issues a complete fresh set of provider calls;
   works in Chrome and Safari" is left for the owner; the code path, CSP and
   console steps are in FIREBASE_SETUP.md. Atlas persistence across restarts
   cannot be confirmed until the IP is allowlisted.
+
+## Iteration 6 — Real scans, research-first pipeline, redirect fixes, mobile (2026-08-02)
+
+- **Engine catalogue verified by LIVE call, not by docs (§1.3).** New
+  `pnpm engines:check` makes one minimal real call per model. First run
+  exposed a defect the documentation review had missed: **`perplexity/sonar`
+  returned HTTP 400 `{"message":"invalid request"}`** on every scan, so the
+  Perplexity engine had never produced a single real answer. Body-shape
+  bisection found the cause: **Sonar rejects the `reasoning` parameter**
+  (identical requests succeed with the field omitted; unknown models return a
+  distinguishable "model X is not supported" instead). Fixed with
+  `supportsReasoning(model)` in `packages/shared/engines.ts`. Verified
+  2026-08-02, all six models 200:
+  | engine | model | latency | cost |
+  | --- | --- | --- | --- |
+  | chatgpt | openai/gpt-5.4-nano | 1576ms | $0.00011 |
+  | gemini | google/gemini-3.1-flash-lite | 925ms | $0.00012 |
+  | perplexity | perplexity/sonar | 865ms | $0.00017 |
+  | claude | anthropic/claude-haiku-4-5 | 1740ms | $0.00154 |
+  | grok | xai/grok-4.3 | 2570ms | $0.00131 |
+  | extraction | openai/gpt-5.4-nano | 1401ms | $0.00003 |
+  Rate card unchanged (see iteration 4); web_search stays $2.50/1000 flat.
+- **Cost truth (§1.4), measured on a real scan of Coffee BOOM (Almaty):**
+  43 engine calls, 93 763 in / 18 492 out tokens, $0.105 search fees,
+  **$0.15504 total** plus $0.00503 for research = **$0.160**. That is inside
+  the $0.16-0.25 estimate, so no scan-plan constants were changed. Score 77,
+  wall clock ~170s.
+- **Demo mode is now impossible to miss (§1.1/§1.2).** Boot logs a `warn`
+  line; `/api/config` exposes `demoMode`; an amber «Демо-режим: данные не
+  настоящие» banner renders app-wide. With `DEMO_MODE=false` and no key,
+  `resolveEngines` throws `NoProviderError` and the scan is marked
+  `SCAN_FAILED` with a localized message instead of quietly serving fixtures
+  (`test/noFixtureFallback.test.ts`).
+- **Three-stage pipeline (§2).** Stage A researches the business with Sonar +
+  `web_search` (+`fetch_url` when a site is known) and stores strict JSON on
+  the Scan; unidentifiable businesses degrade to `confidence: "low"` and the
+  scan continues on form fields, never inventing services. Aliases and found
+  competitors merge into the business record without overwriting user input.
+  Stage B feeds that JSON to the cheap non-search model, with near-duplicate
+  rejection (80% significant-word overlap) and the template fallback intact.
+  Stage C fans out 9 core prompts × [chatgpt, gemini, perplexity] plus 16 tail
+  prompts dealt evenly to chatgpt and gemini = **43 calls**.
+  Live verification on Coffee BOOM: research returned confidence `high` with
+  real 2GIS/Wolt/TripAdvisor sources, 6 real services and 5 real Almaty
+  competitors; the generated prompts referenced the *researched* services
+  («доставка Wolt», «собственная обжарка», «завтраки в ТЦ») rather than the
+  category word; execution split exactly chatgpt 17 (9 core + 8 tail),
+  gemini 17 (9 core + 8 tail), perplexity 9 (9 core), so per-engine metrics
+  rest on the 9 shared core prompts. Progress now shows stage labels.
+- **Root cause of the onboarding bounce (§3.1): Express ETags.** Every JSON
+  body carried an ETag, so `GET /api/brands` answered **304** and the client
+  replayed the pre-scan empty `[]`, making the shell redirect a user who had
+  just finished a scan back to the form. Fixed with `app.set("etag", false)`
+  plus `Cache-Control: no-store` on `/api`, locked by `test/noCache.test.ts`.
+  Post-scan routing is now deterministic: brands/overview/session are
+  invalidated and awaited before navigating, the scanned business is
+  preselected, and a failed scan shows retry rather than onboarding. The shell
+  redirects to onboarding only when the brands query has *successfully*
+  resolved empty; pending renders a skeleton and errors render a retry panel.
+- **Google sign-in (§4): could not reproduce a failure.** Verified against the
+  live project: `localhost` is an authorized domain, the Google provider is
+  enabled and `accounts:createAuthUri` returns a valid OAuth URI, and the
+  client config and service account both belong to `synapai-8cc87`. Driving
+  `signInWithPopup` in Chrome opened the real Google account chooser with a
+  correct `redirect_uri`; the only console output was two benign 404s
+  (`favicon.ico`, `__/firebase/init.json`) on Firebase's handler page. The
+  flow then waits for a human to pick an account, which is why it appears to
+  "do nothing". Every Firebase error code is now shown to the user with the
+  raw code beneath it and logged as `[SynapAI auth] <code>: <message>`, so the
+  next real failure is diagnosable; new codes covered:
+  operation-not-allowed, account-exists-with-different-credential,
+  unauthorized-domain, too-many-requests, internal-error, timeout.
+  **Owner action:** add the production domain to Authorized domains before
+  launch, and report the on-screen code if it still fails.
+- **Mobile (§5).** Landing navbar collapses to logo + 44px hamburger opening a
+  full-screen sheet (links, language, Log in, Check your business), island
+  morph disabled below md; hero and CTA buttons stack full width; fear line
+  floor 20px; mock answer and final CTA padding reduced, the rankings panel
+  moves below the text at full width with a vertical gradient; marquee chips
+  shrink; footer links wrap. Dashboard sidebar becomes a 6-tab bottom bar
+  (56px targets, safe-area inset), header switcher truncates, re-scan is an
+  icon button, scans-left shows the bare number; score ring drops to 140px
+  under 400px; engine cards single column; share-of-voice labels sit above the
+  bars with no truncation; Competitors and Sources become labelled stacked
+  cards below md; Answers/Prompts wrap and filters scroll horizontally; radar
+  scales to `min(56vw, 14rem)`. Dev banners were repositioned above the tab
+  bar after QA showed them covering navigation.
+- **QA (§6):** typecheck ✅ lint ✅ **92 tests** ✅ i18n sweep ✅ (311 keys)
+  prerender ✅ smoke ✅ (43-call plan). Browser at true 375 / 414 / 768 CSS px
+  (the harness runs at dpr 0.9, so viewports were corrected) in RU and EN:
+  **zero horizontal overflow** on landing, login, onboarding, and all six
+  dashboard pages; hamburger sheet opens with all actions at ≥44px; bottom tab
+  bar is one row of six, 56px targets, not covered by banners; competitors
+  render as stacked cards.
+- **Not verified here:** completing a Google sign-in needs the owner's Google
+  account; Safari was unavailable in this environment, so cross-browser checks
+  are Chrome-only. Both are called out for the owner.
+- **Config note:** the owner's `.env` pinned `FREE_CORE_PROMPTS=8` and
+  `FREE_TAIL_ENGINE=perplexity` from iteration 4, which would have silently
+  kept the old 41-call plan. Updated to `9` / `FREE_TAIL_ENGINES=chatgpt,gemini`,
+  and both the smoke and freshness tests now pin the plan so a local `.env`
+  can never change what they assert.

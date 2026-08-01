@@ -7,6 +7,7 @@ import {
   type CompetitorRef,
   type Market,
   type PromptIntent,
+  type BusinessResearch,
   type PromptLanguage,
 } from "@synapai/shared";
 import { env } from "../config/env.js";
@@ -27,6 +28,9 @@ export interface PromptGenBrand {
   market: Market;
   competitors: CompetitorRef[];
   disabledPrompts?: string[];
+  website?: string;
+  /** §2 Stage A output: prompts describe what the business actually sells. */
+  research?: BusinessResearch;
 }
 
 interface Ctx {
@@ -258,14 +262,68 @@ function buildLlmPrompt(brand: PromptGenBrand, n: number): string {
     .map(([intent, count]) => `${intent}: ${count}`)
     .join(", ");
   const langMix = LANGUAGE_MIX[brand.market];
-  return [
+  const lines = [
     `Generate ${n} diverse, realistic consumer-style search prompts about a business.`,
     `Business: "${brand.name}", category: "${brand.category}", city: "${brand.city ?? "-"}", competitors: ${competitors}.`,
+  ];
+
+  // §2 Stage B: ground the questions in what research actually found, so they
+  // ask about real services rather than the raw category word.
+  const research = brand.research;
+  if (research && research.confidence !== "low") {
+    if (research.summary) lines.push(`What this business actually does: ${research.summary}`);
+    if (research.services.length > 0) {
+      lines.push(`Concrete services or products found: ${research.services.join("; ")}`);
+    }
+    if (research.audience) lines.push(`Its customers: ${research.audience}`);
+    if (research.differentiators.length > 0) {
+      lines.push(`Differentiators: ${research.differentiators.join("; ")}`);
+    }
+    if (research.likelyCompetitors.length > 0) {
+      lines.push(`Other businesses in this market: ${research.likelyCompetitors.join(", ")}`);
+    }
+    lines.push(
+      "Write the questions a real customer would type when they need those specific services. Do not just repeat the category word.",
+    );
+  }
+
+  lines.push(
     `Intent counts (exact): ${mix}.`,
     `Language mix: ~${Math.round(langMix.ru * 100)}% Russian, ~${Math.round(langMix.en * 100)}% English.`,
     `Comparison prompts must alternate through the competitors.`,
+    `Every prompt must be meaningfully different from the others.`,
     `Return ONLY minified JSON: {"prompts":[{"text":string,"language":"ru"|"en","intent":"branded"|"category"|"best_of"|"comparison"|"informational"|"purchase"}]}`,
-  ].join("\n");
+  );
+  return lines.join("\n");
+}
+
+/**
+ * §2 Stage B: drop near-duplicates the exact-key filter misses ("лучшая
+ * кофейня Алматы" vs "лучшие кофейни в Алматы"). Compares significant-word
+ * sets and rejects anything overlapping an accepted prompt by >= 80%.
+ */
+export function isNearDuplicate(text: string, accepted: Set<string>[]): boolean {
+  const words = new Set(
+    normalizedKey(text)
+      .split(/\s+/)
+      .filter((w) => w.length > 2),
+  );
+  if (words.size === 0) return false;
+  for (const prev of accepted) {
+    let shared = 0;
+    for (const w of words) if (prev.has(w)) shared += 1;
+    const overlap = shared / Math.max(words.size, prev.size);
+    if (overlap >= 0.8) return true;
+  }
+  return false;
+}
+
+function significantWords(text: string): Set<string> {
+  return new Set(
+    normalizedKey(text)
+      .split(/\s+/)
+      .filter((w) => w.length > 2),
+  );
 }
 
 /**
@@ -287,10 +345,13 @@ export async function generatePrompts(brand: PromptGenBrand, n: number): Promise
         );
         if (parsed.success) {
           const used = new Set<string>((brand.disabledPrompts ?? []).map((p) => normalizedKey(p)));
+          const acceptedWords: Set<string>[] = [];
           const unique = parsed.data.prompts.filter((p) => {
             const key = normalizedKey(p.text);
             if (used.has(key)) return false;
+            if (isNearDuplicate(p.text, acceptedWords)) return false;
             used.add(key);
+            acceptedWords.push(significantWords(p.text));
             return true;
           });
           if (unique.length >= n * 0.6) {

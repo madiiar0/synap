@@ -10,6 +10,15 @@ import { setBudgetEmailSender } from "./services/usage.js";
 async function main(): Promise<void> {
   await connectDb();
 
+  // §1.1: demo mode must never be a silent surprise.
+  if (env.DEMO_MODE) {
+    logger.warn(
+      "DEMO MODE: scans return fixtures. No provider calls, no cost. Set DEMO_MODE=false in .env for real scans.",
+    );
+  } else {
+    logger.info("DEMO MODE off: scans make real provider calls and cost money.");
+  }
+
   // §0.2: state the active auth mode on every boot, so mock sign-in is never
   // a silent surprise.
   if (authMode === "mock") {

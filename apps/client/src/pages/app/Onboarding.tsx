@@ -82,7 +82,7 @@ export default function Onboarding(): JSX.Element {
       <Link to="/" aria-label="SynapAI" className="mb-8">
         <Logo size={20} className="text-lg" />
       </Link>
-      <div className="w-full max-w-2xl rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+      <div className="w-full max-w-2xl rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-8">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           {t("onboarding.title")}
         </h1>
@@ -167,7 +167,7 @@ export default function Onboarding(): JSX.Element {
           <button
             type="submit"
             disabled={start.isPending}
-            className="mt-5 w-full rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-85 disabled:opacity-50"
+            className="mt-5 flex min-h-[48px] w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white transition-opacity hover:opacity-85 disabled:opacity-50"
           >
             {start.isPending ? t("landing.form.submitting") : t("onboarding.submit")}
           </button>

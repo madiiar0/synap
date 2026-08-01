@@ -37,8 +37,24 @@ export async function isEngineEnabled(id: EngineId): Promise<boolean> {
   return realAdapter(id).available();
 }
 
+/**
+ * §1.2: a real scan must never silently degrade to fixtures. Demo adapters are
+ * reachable only when DEMO_MODE is on; with it off and no key the scan fails
+ * loudly instead of returning invented answers.
+ */
+export class NoProviderError extends Error {
+  readonly code = "SCAN_FAILED";
+  constructor() {
+    super(
+      "PERPLEXITY_API_KEY is not set and DEMO_MODE is false: refusing to run a scan with fixture data.",
+    );
+    this.name = "NoProviderError";
+  }
+}
+
 /** Resolve the usable adapters for a scan's requested engine list, keeping order. */
 export async function resolveEngines(ids: EngineId[]): Promise<EngineAdapter[]> {
+  if (!env.DEMO_MODE && !env.PERPLEXITY_API_KEY) throw new NoProviderError();
   const out: EngineAdapter[] = [];
   for (const id of ids) {
     if (await isEngineEnabled(id)) {

@@ -29,7 +29,10 @@
     "login": "Log in",
     "checkBrand": "Check your business",
     "dashboard": "Dashboard",
-    "account": "Account"
+    "account": "Account",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "switchLanguage": "Русский"
   },
   "landing": {
     "heroLine1": "Be the answer in",
@@ -124,7 +127,14 @@
   "progress": {
     "title": "Checking what AI says about your business…",
     "failed": "The scan failed. Please try again.",
-    "queued": "Scan queued…"
+    "queued": "Scan queued…",
+    "stage": {
+      "research": "Studying your business",
+      "prompts": "Writing customer questions",
+      "engines": "Asking the AI"
+    },
+    "failedBody": "The check did not finish. Try running it again.",
+    "failedProvider": "The check did not finish: the AI provider is unavailable. We do not show invented data."
   },
   "auth": {
     "title": "Sign in or create an account",
@@ -151,7 +161,8 @@
       "passwordMismatch": "Passwords do not match",
       "differentCredential": "This email is already linked to another sign-in method. Use the method you registered with.",
       "unauthorizedDomain": "This domain is not authorized for sign-in. Add it in Firebase.",
-      "tooManyRequests": "Too many attempts. Wait a moment and try again."
+      "tooManyRequests": "Too many attempts. Wait a moment and try again.",
+      "providerDisabled": "Google sign-in is disabled in the project settings. Enable the Google provider in Firebase."
     },
     "confirmPassword": "Confirm password",
     "passwordHint": "At least 8 characters. Mix letters, numbers and symbols.",
@@ -366,7 +377,8 @@
   },
   "env": {
     "memoryDb": "Local in-memory database. Data is not saved.",
-    "mockAuth": "MOCK AUTH"
+    "mockAuth": "MOCK AUTH",
+    "demoMode": "Demo mode: this data is not real"
   },
   "onboarding": {
     "title": "Let's check your business",

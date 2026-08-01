@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { ENGINE_IDS, type EngineId, type LeadRowDto, type ScanListItemDto } from "@synapai/shared";
 import { z } from "zod";
-import { env } from "../../config/env.js";
 import { User } from "../../models/User.js";
 import { engineStatus } from "../../engines/registry.js";
 import { AppError } from "../../lib/errors.js";
@@ -144,7 +143,7 @@ adminRouter.post("/brands/:id/full-scan", async (req, res, next) => {
       brandId: brand._id,
       tier: "full",
       engines: [...ENGINE_IDS],
-      plan: { coreEngines: [...ENGINE_IDS], tailEngine: env.FREE_TAIL_ENGINE },
+      plan: { coreEngines: [...ENGINE_IDS], tailEngines: [] },
       trigger: "admin",
     });
     await enqueue("runScan", { scanId: String(scan._id) });

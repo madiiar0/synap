@@ -13,14 +13,27 @@ export default function EnvBanners(): JSX.Element | null {
 
   const memory = config.memoryDb;
   const mockAuth = config.isDev && config.authMode === "mock";
-  if (!memory && !mockAuth) return null;
+  const demo = config.demo;
+  if (!memory && !mockAuth && !demo) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-wrap items-center justify-center gap-2 p-2">
+    <div
+      // §5: sit ABOVE the mobile bottom tab bar so navigation is never covered.
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-wrap items-center justify-center gap-1.5 px-2 pb-[calc(4.25rem+env(safe-area-inset-bottom))] pt-2 md:gap-2 md:pb-2"
+    >
+      {/* §1.1: fixtures are not real data, so this says so everywhere. */}
+      {demo && (
+        <p
+          role="status"
+          className="pointer-events-auto rounded-full border border-amber-400 bg-amber-100 px-3 py-1 text-center text-[11px] font-semibold text-amber-900 shadow-sm"
+        >
+          {t("env.demoMode")}
+        </p>
+      )}
       {memory && (
         <p
           role="status"
-          className="pointer-events-auto rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-center text-xs font-medium text-amber-900 shadow-sm"
+          className="pointer-events-auto rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-center text-[11px] font-medium text-amber-900 shadow-sm"
         >
           {t("env.memoryDb")}
         </p>
@@ -28,7 +41,7 @@ export default function EnvBanners(): JSX.Element | null {
       {mockAuth && (
         <p
           role="status"
-          className="pointer-events-auto rounded-full border border-amber-300 bg-amber-100 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-amber-900 shadow-sm"
+          className="pointer-events-auto rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-900 shadow-sm"
         >
           {t("env.mockAuth")}
         </p>

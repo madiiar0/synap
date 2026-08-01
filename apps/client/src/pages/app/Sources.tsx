@@ -28,8 +28,26 @@ export default function Sources(): JSX.Element {
       {status === "empty" && (
         <EmptyPanel title={t("states.emptyTitle")} hint={t("dashboard.sources.empty")} />
       )}
+      {/* §5: stacked cards below md. */}
       {status === "ready" && sources && (
-      <Card className="overflow-x-auto">
+        <div className="space-y-3 md:hidden">
+          {sources.map((source) => (
+            <Card key={source.domain} className="p-4">
+              <p className="break-all text-sm font-medium">{source.domain}</p>
+              <div className="mt-2 flex items-center justify-between text-xs">
+                <span className="text-sub">
+                  {t("dashboard.sources.colCitations")}: <b className="text-ink">{source.citations}</b>
+                </span>
+                <span className={source.mentionsUs ? "text-emerald-600" : "text-sub"}>
+                  {source.mentionsUs ? t("dashboard.sources.yes") : t("dashboard.sources.no")}
+                </span>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+      {status === "ready" && sources && (
+      <Card className="hidden overflow-x-auto md:block">
         {(
           <table className="w-full min-w-[420px] text-sm">
             <thead>

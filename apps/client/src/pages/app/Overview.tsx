@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ENGINE_IDS, type EngineId, type OverviewDto } from "@synapai/shared";
 import BookCallButton from "../../components/BookCallButton";
@@ -58,11 +58,11 @@ function LoseRow({
         className="flex w-full items-center justify-between gap-3 px-1 py-3 text-left"
       >
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">«{text}»</p>
+          <p className="break-words text-sm font-medium">«{text}»</p>
           <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-sub">
             <EngineMark engine={engine} size={12} />
             <span>·</span>
-            <span className="truncate">{competitorNames.join(", ")}</span>
+            <span className="break-words">{competitorNames.join(", ")}</span>
           </p>
         </div>
         <ChevronDown
@@ -88,6 +88,15 @@ function LoseRow({
 }
 
 export default function Overview(): JSX.Element {
+  // §5: the score ring scales down on narrow screens and stays centred.
+  const [ringSize, setRingSize] = useState(190);
+  useEffect(() => {
+    const apply = (): void => setRingSize(window.innerWidth < 400 ? 140 : 190);
+    apply();
+    window.addEventListener("resize", apply);
+    return () => window.removeEventListener("resize", apply);
+  }, []);
+
   const { t } = useTranslation();
   const brand = useActiveBrand();
   const query = useOverview(brand?.id);
@@ -117,14 +126,14 @@ export default function Overview(): JSX.Element {
     <div className="mx-auto max-w-5xl space-y-6">
       {/* Hero: score + engines */}
       <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-        <Card className="flex flex-col items-center px-10 py-8">
+        <Card className="flex flex-col items-center px-4 py-6 sm:px-10 sm:py-8">
           <p className="text-sm font-medium text-sub">{t("dashboard.score")}</p>
-          <ScoreRing value={snapshot.overall} size={190} />
+          <ScoreRing value={snapshot.overall} size={ringSize} />
           <DeltaChip overview={overview} />
         </Card>
         {/* Engine cards: only measured engines show numbers; anything not
             queried in this scan shows a dash + "not checked" (§2.3). */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
           {ENGINE_IDS.map((engineId) => {
             const queried = overview.scan.engines.includes(engineId);
             const entry = snapshot.perEngine.find((e) => e.engine === engineId);
@@ -167,8 +176,11 @@ export default function Overview(): JSX.Element {
         <h2 className="mb-4 text-sm font-semibold">{t("dashboard.shareOfVoice")}</h2>
         <div className="space-y-3">
           {snapshot.shareOfVoice.slice(0, 8).map((entry) => (
-            <div key={entry.name} className="flex items-center gap-3">
-              <div className="w-40 shrink-0 truncate text-sm">
+            <div
+              key={entry.name}
+              className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
+            >
+              <div className="min-w-0 break-words text-sm sm:w-40 sm:shrink-0 sm:truncate">
                 <span className={entry.isUs ? "font-semibold text-accent" : ""}>{entry.name}</span>
                 {entry.isUs && (
                   <span className="ml-1.5 rounded-full bg-accent/10 px-1.5 py-0.5 text-[10px] text-accent">

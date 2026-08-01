@@ -1,3 +1,4 @@
+import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -81,6 +82,7 @@ export default function LandingNav(): JSX.Element {
   const { t } = useTranslation();
   const session = useSession();
   const [island, setIsland] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const ticking = useRef(false);
 
   useEffect(() => {
@@ -97,11 +99,19 @@ export default function LandingNav(): JSX.Element {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const links = [
+    { href: "#product", label: t("nav.product") },
+    { href: "#how", label: t("nav.howItWorks") },
+    { href: "#faq", label: t("nav.faq") },
+  ];
+  const hrefFor = (hash: string): string => `${localizedPath("/")}${hash}`.replace("//#", "/#");
+
   return (
     <nav className="fixed inset-x-0 top-0 z-40">
+      {/* §5: below md the island morph is replaced by a plain solid bar. */}
       <div
-        className={`nav-inner mx-auto flex items-center justify-between px-6 backdrop-blur-xl saturate-150 ${
-          island ? "nav-inner-island" : "nav-inner-top"
+        className={`nav-inner mx-auto flex items-center justify-between px-4 backdrop-blur-xl saturate-150 sm:px-6 ${
+          island ? "md:nav-inner-island nav-inner-top" : "nav-inner-top"
         }`}
       >
         <Link to={localizedPath("/")} aria-label="SynapAI">
@@ -118,7 +128,18 @@ export default function LandingNav(): JSX.Element {
             {t("nav.faq")}
           </a>
         </div>
-        <div className="flex items-center gap-4 text-sm">
+        {/* §5: mobile shows only a hamburger; everything moves into the sheet. */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          aria-label={t("nav.openMenu")}
+          aria-expanded={menuOpen}
+          className="-mr-2 flex h-11 w-11 items-center justify-center rounded-full text-ink md:hidden"
+        >
+          <Menu size={22} />
+        </button>
+
+        <div className="hidden items-center gap-4 text-sm md:flex">
           <button
             type="button"
             onClick={() => setLocale(currentLocale() === "ru" ? "en" : "ru")}
@@ -165,6 +186,79 @@ export default function LandingNav(): JSX.Element {
           )}
         </div>
       </div>
+
+      {/* §5: full-screen mobile sheet with every nav action. */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-base md:hidden"
+          style={{ paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="flex items-center justify-between px-4 py-4">
+            <Logo size={20} className="text-lg" />
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              aria-label={t("nav.closeMenu")}
+              className="flex h-11 w-11 items-center justify-center rounded-full text-ink"
+            >
+              <X size={22} />
+            </button>
+          </div>
+          <div className="flex flex-1 flex-col gap-1 px-4 pt-4">
+            {links.map((link) => (
+              <a
+                key={link.href}
+                href={hrefFor(link.href)}
+                onClick={() => setMenuOpen(false)}
+                className="flex min-h-[44px] items-center border-b border-line py-3 text-lg text-ink"
+              >
+                {link.label}
+              </a>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                setLocale(currentLocale() === "ru" ? "en" : "ru");
+                setMenuOpen(false);
+              }}
+              className="flex min-h-[44px] items-center border-b border-line py-3 text-left text-lg text-sub"
+            >
+              {t("nav.switchLanguage")}
+            </button>
+
+            <div className="mt-auto flex flex-col gap-3 py-6">
+              {session.state === "signedIn" ? (
+                <Link
+                  to="/app"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex min-h-[48px] items-center justify-center rounded-full bg-ink px-6 text-base font-semibold text-white"
+                >
+                  {t("nav.dashboard")}
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to={localizedPath("/login")}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex min-h-[48px] items-center justify-center rounded-full border border-line bg-white px-6 text-base font-medium text-ink"
+                  >
+                    {t("nav.login")}
+                  </Link>
+                  <Link
+                    to={localizedPath("/login")}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex min-h-[48px] items-center justify-center rounded-full bg-ink px-6 text-base font-semibold text-white"
+                  >
+                    {t("nav.checkBrand")}
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

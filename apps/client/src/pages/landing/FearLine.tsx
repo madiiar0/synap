@@ -110,7 +110,7 @@ export default function FearLine(): JSX.Element {
       <div ref={ref} className="guides mx-auto max-w-container px-6">
         <p
           className="mx-auto max-w-5xl text-center font-semibold tracking-tight"
-          style={{ fontSize: "clamp(24px, 3.9vw, 50px)", lineHeight: 1.2 }}
+          style={{ fontSize: "clamp(20px, 5.4vw, 50px)", lineHeight: 1.25 }}
         >
           {lines.map((words, lineIdx) => (
             <span key={lineIdx} className="block">

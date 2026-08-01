@@ -174,6 +174,34 @@ Work through these in order:
   "This email is already linked to another sign-in method". Use the original
   method, or link them in the Firebase Console.
 
+## Checking Google sign-in without guesswork
+
+Every Firebase failure now appears on the sign-in page with its raw code
+underneath the message, and is logged to the browser console as
+`[SynapAI auth] <code>: <message>`. If Google sign-in misbehaves, open the
+console, read the code, and match it here:
+
+| Code | Meaning and fix |
+| --- | --- |
+| `auth/unauthorized-domain` | The domain you are browsing from is not in Authentication → Settings → Authorized domains. Add it. |
+| `auth/operation-not-allowed` | The Google provider is disabled. Enable it in Sign-in method. |
+| `auth/popup-blocked` | The browser blocked the popup; the app falls back to a redirect automatically. Allow popups for a smoother flow. |
+| `auth/popup-closed-by-user` | The account chooser was closed before finishing. Not an error. |
+| `auth/account-exists-with-different-credential` | That email already signed up with a password. Use the original method. |
+| *(no code, nothing happens)* | The popup is open and waiting for you to pick an account. Look for a second browser window. |
+
+You can confirm the project side from a terminal without touching the app:
+
+```bash
+# 1. Which domains may host sign-in?
+curl -s "https://identitytoolkit.googleapis.com/v1/projects?key=YOUR_VITE_FIREBASE_API_KEY"
+
+# 2. Is the Google provider actually enabled? (a valid authUri means yes)
+curl -s -X POST "https://identitytoolkit.googleapis.com/v1/accounts:createAuthUri?key=YOUR_VITE_FIREBASE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"providerId":"google.com","continueUri":"http://localhost:5173"}'
+```
+
 ## Going to production later
 
 When you deploy to a real domain, add it to Firebase or Google sign-in will

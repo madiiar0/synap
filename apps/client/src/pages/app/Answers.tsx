@@ -18,10 +18,10 @@ function AnswerRow({ row, brandName }: { row: AnswerRowDto; brandName: string })
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="grid w-full grid-cols-[1fr_auto] items-center gap-3 px-4 py-3 text-left hover:bg-base/60"
+        className="grid w-full grid-cols-[1fr_auto] items-center gap-3 px-3 py-3 text-left hover:bg-base/60 sm:px-4"
       >
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">«{row.promptText}»</p>
+          <p className="break-words text-sm font-medium">«{row.promptText}»</p>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-sub">
             <EngineMark engine={row.engine} size={12} />
             <span className="rounded-full border border-line px-1.5 py-0.5">
@@ -48,8 +48,8 @@ function AnswerRow({ row, brandName }: { row: AnswerRowDto; brandName: string })
         />
       </button>
       {open && (
-        <div className="mx-4 mb-4 rounded-xl bg-base p-5">
-          <p className="whitespace-pre-line text-sm leading-relaxed">
+        <div className="mx-3 mb-4 overflow-hidden rounded-xl bg-base p-4 sm:mx-4 sm:p-5">
+          <p className="whitespace-pre-line break-words text-sm leading-relaxed">
             <HighlightedText text={row.rawAnswer} names={names} usName={brandName} />
           </p>
           {row.citations.length > 0 && (
@@ -101,7 +101,7 @@ export default function Answers(): JSX.Element {
 
   return (
     <div className="mx-auto max-w-5xl space-y-4">
-      <div className="flex flex-wrap gap-2">
+      <div className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
         <select value={filters.engine ?? ""} onChange={set("engine")} className={selectCls}>
           <option value="">{t("dashboard.answers.filterEngine")}: {t("dashboard.answers.all")}</option>
           {ENGINE_IDS.map((id) => (

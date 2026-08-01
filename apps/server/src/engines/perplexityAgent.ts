@@ -3,6 +3,7 @@ import {
   EXTRACTION_MODEL,
   FALLBACK_RATES,
   SEARCH_FEE_PER_CALL_USD,
+  supportsReasoning,
   type EngineId,
 } from "@synapai/shared";
 import type { Citation } from "@synapai/shared";
@@ -75,24 +76,35 @@ function extractCitations(resp: AgentResponse): Citation[] {
   return out;
 }
 
-interface AgentCallOptions {
+export interface AgentCallOptions {
   model: string;
   webSearch: boolean;
   maxOutputTokens: number;
+  /** Overrides the consumer persona (Stage A research uses its own). */
+  instructions?: string;
+  /** Let the model read specific pages (Stage A uses it on the website). */
+  fetchUrl?: boolean;
 }
 
-async function agentCall(prompt: string, opts: AgentCallOptions): Promise<EngineAnswer> {
+export async function agentCallRaw(
+  prompt: string,
+  opts: AgentCallOptions,
+): Promise<EngineAnswer> {
   const body: Record<string, unknown> = {
     model: opts.model,
     input: prompt,
-    instructions: CONSUMER_SYSTEM_PROMPT,
+    instructions: opts.instructions ?? CONSUMER_SYSTEM_PROMPT,
     max_output_tokens: opts.maxOutputTokens,
-    // §1.5: single-step consumer answers — no deep research, minimal reasoning.
-    reasoning: { effort: "minimal" },
   };
-  if (opts.webSearch) {
-    body.tools = [{ type: "web_search", search_context_size: "low" }];
+  // §1.5: single-step consumer answers, minimal reasoning. Sonar rejects the
+  // field outright, so it is only sent to models that accept it.
+  if (supportsReasoning(opts.model)) {
+    body.reasoning = { effort: "minimal" };
   }
+  const tools: Record<string, unknown>[] = [];
+  if (opts.webSearch) tools.push({ type: "web_search", search_context_size: "low" });
+  if (opts.fetchUrl) tools.push({ type: "fetch_url" });
+  if (tools.length > 0) body.tools = tools;
 
   const res = await fetch(AGENT_URL, {
     method: "POST",
@@ -103,7 +115,15 @@ async function agentCall(prompt: string, opts: AgentCallOptions): Promise<Engine
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(55_000),
   });
-  if (!res.ok) throw new EngineHttpError(res.status, `perplexity-agent http ${res.status}`);
+  if (!res.ok) {
+    // §1.3: surface the provider's own message — a 400 on a model id is
+    // otherwise indistinguishable from a transport failure.
+    const detail = await res.text().catch(() => "");
+    throw new EngineHttpError(
+      res.status,
+      `perplexity-agent http ${res.status} (model ${opts.model})${detail ? `: ${detail.slice(0, 400)}` : ""}`,
+    );
+  }
   const data = (await res.json()) as AgentResponse;
 
   const text = extractText(data);
@@ -139,7 +159,7 @@ export function createAgentEngineAdapter(id: EngineId): EngineAdapter {
   return {
     id,
     available: () => Boolean(env.PERPLEXITY_API_KEY),
-    query: (prompt) => agentCall(prompt, { model, webSearch: true, maxOutputTokens: 500 }),
+    query: (prompt) => agentCallRaw(prompt, { model, webSearch: true, maxOutputTokens: 500 }),
   };
 }
 
@@ -148,7 +168,7 @@ export function createAgentEngineAdapter(id: EngineId): EngineAdapter {
  * the answer text is already in the prompt, so no web_search and no search fee.
  */
 export function extractionModelCall(prompt: string, maxOutputTokens = 1800): Promise<EngineAnswer> {
-  return agentCall(prompt, { model: EXTRACTION_MODEL, webSearch: false, maxOutputTokens });
+  return agentCallRaw(prompt, { model: EXTRACTION_MODEL, webSearch: false, maxOutputTokens });
 }
 
 export function extractionAvailable(): boolean {

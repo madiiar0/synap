@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import type { EngineId } from "@synapai/shared";
 import type { EngineAnswer } from "../engines/types.js";
 import { env } from "../config/env.js";
-import { resolveEngines } from "../engines/registry.js";
+import { NoProviderError, resolveEngines } from "../engines/registry.js";
 import { BudgetExceededError } from "../lib/errors.js";
 import { logger } from "../lib/logger.js";
 import { sendScanReadyEmail } from "../mail/emails.js";
@@ -13,6 +13,7 @@ import { Scan, type EngineCost, type ScanDoc } from "../models/Scan.js";
 import { ScoreSnapshot } from "../models/ScoreSnapshot.js";
 import { User } from "../models/User.js";
 import { batchLlmExtract, demoExtract, deterministicExtract } from "./extraction.js";
+import { researchBusiness } from "./research.js";
 import { generatePrompts, selectCoreIndices } from "./promptGen.js";
 import { computeSnapshot, type ScoringAnswer } from "./scoring.js";
 import { Semaphore } from "../engines/semaphore.js";
@@ -21,9 +22,66 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * §2 Stage A: fold research findings into the business record without ever
+ * overwriting what the owner typed. Competitors found by research are added as
+ * detected entries only when they are genuinely new.
+ */
+async function mergeResearchIntoBrand(
+  brand: BrandDoc,
+  research: { aliases: string[]; likelyCompetitors: string[] },
+): Promise<void> {
+  const known = new Set(
+    [brand.name, ...brand.aliases, ...brand.competitors.map((c) => c.name)].map((n) =>
+      n.trim().toLowerCase(),
+    ),
+  );
+  let changed = false;
+
+  for (const alias of research.aliases) {
+    const key = alias.trim().toLowerCase();
+    if (!key || known.has(key)) continue;
+    brand.aliases.push(alias.trim());
+    known.add(key);
+    changed = true;
+  }
+  for (const name of research.likelyCompetitors) {
+    const key = name.trim().toLowerCase();
+    if (!key || known.has(key)) continue;
+    if (brand.competitors.length >= 12) break;
+    brand.competitors.push({ name: name.trim(), aliases: [] });
+    known.add(key);
+    changed = true;
+  }
+  if (changed) await brand.save();
+}
+
 async function ensurePrompts(scan: ScanDoc, brand: BrandDoc): Promise<GeneratedPromptDoc[]> {
   const existing = await GeneratedPrompt.find({ scanId: scan._id });
   if (existing.length > 0) return existing;
+
+  // --- Stage A: research the business before writing any prompts (§2).
+  scan.progress.stage = "research";
+  await scan.save();
+  const outcome = await researchBusiness({
+    name: brand.name,
+    category: brand.category,
+    city: brand.city,
+    market: brand.market,
+    website: brand.website,
+    competitors: brand.competitors.map((c) => c.name),
+  });
+  scan.research = outcome.research;
+  scan.stageCosts = [
+    ...scan.stageCosts.filter((c) => c.stage !== "research"),
+    { stage: "research", calls: outcome.calls, costUsd: outcome.costUsd },
+  ];
+  await scan.save();
+  await mergeResearchIntoBrand(brand, outcome.research);
+
+  // --- Stage B: generate prompts grounded in the research (§2).
+  scan.progress.stage = "prompts";
+  await scan.save();
   const specs = await generatePrompts(
     {
       name: brand.name,
@@ -32,6 +90,8 @@ async function ensurePrompts(scan: ScanDoc, brand: BrandDoc): Promise<GeneratedP
       market: brand.market,
       competitors: brand.competitors,
       disabledPrompts: brand.disabledPrompts,
+      website: brand.website,
+      research: outcome.research,
     },
     env.FREE_SCAN_PROMPTS,
   );
@@ -168,10 +228,20 @@ export async function runScan(scanId: string): Promise<void> {
     return;
   }
 
-  const engines = await resolveEngines(scan.engines);
+  // §1.2: no provider configured is a visible scan failure, never fixtures.
+  let engines;
+  try {
+    engines = await resolveEngines(scan.engines);
+  } catch (err) {
+    logger.error({ err }, "scan cannot run: no usable provider");
+    scan.status = "failed";
+    scan.error = err instanceof NoProviderError ? err.code : "SCAN_FAILED";
+    await scan.save();
+    return;
+  }
   if (engines.length === 0) {
     scan.status = "failed";
-    scan.error = "NO_ENGINES";
+    scan.error = "SCAN_FAILED";
     await scan.save();
     return;
   }
@@ -189,15 +259,23 @@ export async function runScan(scanId: string): Promise<void> {
   const coreEngineIds = (
     scan.tier === "full" ? scan.engines : scan.plan.coreEngines
   ).filter((id) => byId.has(id));
-  const tailEngineId = scan.tier === "full" ? null : scan.plan.tailEngine;
+  // §2 Stage C: tail prompts are dealt evenly across the tail engines
+  // (chatgpt, gemini), so KZ-popular assistants get the wider coverage.
+  const tailEngineIds =
+    scan.tier === "full" ? [] : scan.plan.tailEngines.filter((id) => byId.has(id));
 
   const items: { prompt: GeneratedPromptDoc; engineId: EngineId }[] = [];
+  let tailIndex = 0;
   for (const prompt of prompts) {
-    const engineIds = prompt.core
-      ? coreEngineIds
-      : tailEngineId && byId.has(tailEngineId)
-        ? [tailEngineId]
-        : [];
+    let engineIds: EngineId[];
+    if (prompt.core) {
+      engineIds = coreEngineIds;
+    } else if (tailEngineIds.length > 0) {
+      engineIds = [tailEngineIds[tailIndex % tailEngineIds.length]];
+      tailIndex += 1;
+    } else {
+      engineIds = [];
+    }
     for (const engineId of engineIds) {
       if (!doneKeys.has(`${prompt._id}|${engineId}`)) {
         items.push({ prompt, engineId });
@@ -207,7 +285,7 @@ export async function runScan(scanId: string): Promise<void> {
 
   const total = existing.length + items.length;
   scan.startedAt = scan.startedAt ?? new Date();
-  scan.progress = { done: existing.length, total, currentPrompt: null };
+  scan.progress = { done: existing.length, total, currentPrompt: null, stage: "engines" };
   await scan.save();
 
   const target = {

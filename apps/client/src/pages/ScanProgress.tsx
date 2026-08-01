@@ -1,9 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { ScanProgressDto } from "@synapai/shared";
 import { apiGet } from "../lib/api";
+import { setPreferredBrand } from "../lib/pendingBusiness";
 
 /** Pulsing dots sitting on the radar rings. */
 const RING_DOTS = [
@@ -18,6 +19,7 @@ export default function ScanProgress(): JSX.Element {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [leaving, setLeaving] = useState(false);
   const leavingRef = useRef(false);
 
@@ -35,15 +37,32 @@ export default function ScanProgress(): JSX.Element {
     meta: { silent: true },
   });
 
+  // §3.2: a finished scan lands on ITS business's dashboard, deterministically.
+  // The brand/overview/session queries are refetched and awaited BEFORE
+  // navigating, so the shell never sees a stale empty list and bounces the
+  // user back to onboarding. No cleanup on purpose: the state change re-runs
+  // this effect and a cleanup would cancel the navigation.
   useEffect(() => {
-    if (!leavingRef.current && data && (data.status === "done" || data.status === "partial")) {
-      // Blur-transition into the dashboard. No cleanup on purpose: the state
-      // change re-runs this effect and a cleanup would cancel the navigation.
-      leavingRef.current = true;
-      setLeaving(true);
-      setTimeout(() => navigate("/app", { replace: true }), 550);
-    }
-  }, [data, id, navigate]);
+    if (leavingRef.current || !data) return;
+    if (data.status !== "done" && data.status !== "partial") return;
+
+    leavingRef.current = true;
+    setLeaving(true);
+    // Remember which business to show, so the shell selects the scanned one.
+    if (data.brandId) setPreferredBrand(data.brandId);
+
+    void (async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["brands"] }),
+        queryClient.invalidateQueries({ queryKey: ["overview"] }),
+        // §3.4: the scans-left chip must decrement immediately.
+        queryClient.invalidateQueries({ queryKey: ["me"] }),
+      ]);
+      // Ensure the brands list has actually resolved before we route.
+      await queryClient.refetchQueries({ queryKey: ["brands"], type: "active" }).catch(() => undefined);
+      navigate("/app", { replace: true });
+    })();
+  }, [data, id, navigate, queryClient]);
 
   const failed = data?.status === "failed" || isError;
   const brandInitial = (data?.brandName || "S").charAt(0).toUpperCase();
@@ -56,7 +75,7 @@ export default function ScanProgress(): JSX.Element {
       style={leaving ? { opacity: 0, filter: "blur(14px)" } : undefined}
     >
       {/* Radar: light theme: gray rings, black sweep/accents (§Global) */}
-      <div className="relative mb-14 h-56 w-56">
+      <div className="relative mb-10 h-[min(56vw,14rem)] w-[min(56vw,14rem)] sm:mb-14">
         <div className="absolute inset-0 rounded-full border border-line" />
         <div className="absolute inset-8 rounded-full border border-line" />
         <div className="absolute inset-16 rounded-full border border-line" />
@@ -86,13 +105,37 @@ export default function ScanProgress(): JSX.Element {
       </h1>
 
       {failed ? (
-        <Link to="/" className="mt-6 text-sm text-sub underline hover:text-ink">
-          {t("common.back")}
-        </Link>
+        <>
+          <p className="mt-4 max-w-md text-sm text-sub">
+            {data?.error === "SCAN_FAILED"
+              ? t("progress.failedProvider")
+              : t("progress.failedBody")}
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigate("/app/onboarding")}
+              className="min-h-[44px] rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+            >
+              {t("states.retry")}
+            </button>
+            <Link
+              to="/app"
+              className="min-h-[44px] rounded-full border border-line bg-surface px-6 py-3 text-sm font-medium text-ink"
+            >
+              {t("nav.dashboard")}
+            </Link>
+          </div>
+        </>
       ) : (
         <>
           {/* currentPrompt, swapped with the blur transition */}
-          <p className="mt-6 flex min-h-[3.5rem] max-w-md items-center justify-center text-sub">
+          {/* §2: stage label, so the wait reads as intentional. */}
+          <p className="mt-3 text-sm font-medium text-sub">
+            {t(`progress.stage.${data?.stage ?? "research"}`)}
+          </p>
+
+          <p className="mt-4 flex min-h-[3.5rem] max-w-md items-center justify-center break-words px-2 text-sub">
             <span key={data?.currentPrompt ?? "queued"} className="blur-in">
               {data?.currentPrompt ? `«${data.currentPrompt}»` : t("progress.queued")}
             </span>

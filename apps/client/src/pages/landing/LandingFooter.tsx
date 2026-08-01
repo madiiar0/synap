@@ -9,7 +9,7 @@ export default function LandingFooter(): JSX.Element {
     <footer className="border-t border-line bg-base py-10">
       <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-4 px-6 sm:flex-row">
         <Logo size={16} className="text-sm" />
-        <div className="flex items-center gap-6 text-sm text-sub">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-sub">
           <a href={`${localizedPath("/")}#how`.replace("//#", "/#")} className="hover:text-ink">
             {t("nav.howItWorks")}
           </a>

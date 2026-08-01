@@ -2,6 +2,9 @@ import type { Locale, Market, PromptIntent } from "./constants.js";
 import type { EngineId } from "./engines.js";
 
 export type ScanTier = "free" | "full";
+/** §2: which pipeline stage a running scan is in. */
+export type ScanStage = "research" | "prompts" | "engines";
+
 export type ScanStatus = "queued" | "running" | "done" | "partial" | "failed";
 export type Sentiment = "pos" | "neu" | "neg" | "na";
 export type LeadType = "scan_email" | "book_call";
@@ -40,6 +43,11 @@ export interface ScanProgressDto {
   total: number;
   currentPrompt: string | null;
   brandName: string;
+  /** §2: drives the staged progress labels. */
+  stage: ScanStage;
+  /** §3.2: where to land when the scan finishes. */
+  brandId: string;
+  error?: string | null;
 }
 
 export interface PerEngineScore {

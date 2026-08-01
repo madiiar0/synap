@@ -27,7 +27,7 @@ function Row({
         {doubled.map((chip, index) => (
           <span
             key={`${chip.text}-${index}`}
-            className="inline-flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full border border-line bg-surface px-5 py-3 text-base text-ink shadow-sm lg:text-lg"
+            className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-line bg-surface px-3.5 py-2 text-xs text-ink shadow-sm sm:gap-2.5 sm:px-5 sm:py-3 sm:text-base lg:text-lg"
           >
             <EngineMark engine={chip.platform} size={24} withLabel={false} />
             {chip.text}
@@ -45,7 +45,7 @@ export default function PromptMarquee(): JSX.Element {
   const [row1, row2, row3] = marqueeRows(locale);
 
   return (
-    <section className="hairline-dashed overflow-hidden bg-base py-24">
+    <section className="hairline-dashed overflow-hidden bg-base py-14 sm:py-24">
       <Reveal className="mx-auto max-w-container px-6 text-center">
         {/* §6: RU wraps to three lines, EN keeps exactly two. */}
         <h2

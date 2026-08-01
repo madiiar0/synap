@@ -54,6 +54,7 @@ export default function Login(): JSX.Element {
   const [confirm, setConfirm] = useState("");
   const [confirmTouched, setConfirmTouched] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const next = params.get("next") ?? "/app";
@@ -82,7 +83,10 @@ export default function Login(): JSX.Element {
         if (idToken) return createSession({ idToken });
         return undefined;
       })
-      .catch((err) => setErrorKey(authErrorKey(err)));
+      .catch((err) => {
+        setErrorKey(authErrorKey(err));
+        setErrorCode((err as { code?: string }).code ?? null);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mock]);
 
@@ -106,6 +110,7 @@ export default function Login(): JSX.Element {
       }
     } catch (err) {
       setErrorKey(mock ? "auth.errors.generic" : authErrorKey(err));
+      setErrorCode((err as { code?: string }).code ?? null);
     } finally {
       setBusy(false);
     }
@@ -121,12 +126,14 @@ export default function Login(): JSX.Element {
 
   const google = async (): Promise<void> => {
     setErrorKey(null);
+    setErrorCode(null);
     setBusy(true);
     try {
       const idToken = await firebaseGoogleSignIn();
       await createSession({ idToken });
     } catch (err) {
       setErrorKey(authErrorKey(err));
+      setErrorCode((err as { code?: string }).code ?? null);
     } finally {
       setBusy(false);
     }
@@ -218,7 +225,13 @@ export default function Login(): JSX.Element {
               </>
             )}
             {mock && <p className="text-xs text-sub">{t("auth.mockHint")}</p>}
-            {errorKey && <p className="text-sm text-red-500">{t(errorKey)}</p>}
+            {errorKey && (
+              <div className="text-sm text-red-500">
+                <p>{t(errorKey)}</p>
+                {/* §4.1: the raw provider code, so a failure is reportable. */}
+                {errorCode && <p className="mt-1 text-xs opacity-70">{errorCode}</p>}
+              </div>
+            )}
             <button
               type="submit"
               disabled={

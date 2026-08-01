@@ -116,3 +116,31 @@ export const llmPromptGenSchema = z.object({
     )
     .min(1),
 });
+
+/**
+ * §2 Stage A: strict JSON the business-research call must return. Every field
+ * is optional-tolerant so a partial answer still yields usable research
+ * instead of failing the whole scan.
+ */
+export const businessResearchSchema = z.object({
+  summary: z.string().max(1200).default(""),
+  services: z.array(z.string().min(1).max(160)).max(20).default([]),
+  audience: z.string().max(600).default(""),
+  differentiators: z.array(z.string().min(1).max(200)).max(20).default([]),
+  likelyCompetitors: z.array(z.string().min(1).max(160)).max(20).default([]),
+  aliases: z.array(z.string().min(1).max(160)).max(20).default([]),
+  confidence: z.enum(["high", "medium", "low"]).default("low"),
+  sourcesUsed: z.array(z.string().max(600)).max(30).default([]),
+});
+export type BusinessResearch = z.infer<typeof businessResearchSchema>;
+
+/** §2 Stage B: strict JSON for generated prompts. */
+export const generatedPromptsSchema = z.array(
+  z.object({
+    text: z.string().min(5).max(300),
+    language: z.enum(["ru", "en"]),
+    intent: z.enum(["branded", "category", "best_of", "comparison", "informational", "purchase"]),
+    scope: z.string().max(120).optional(),
+  }),
+);
+export type GeneratedPromptSpecs = z.infer<typeof generatedPromptsSchema>;

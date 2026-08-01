@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import BookCallButton from "../../components/BookCallButton";
 import Reveal from "../../components/Reveal";
@@ -10,16 +11,29 @@ import StartCta from "../../components/StartCta";
  * side lightens behind the elevated rankings preview.
  */
 export default function FinalCta(): JSX.Element {
+  const [mobile, setMobile] = useState(
+    typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const onChange = (): void => setMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   const { t } = useTranslation();
   return (
-    <section className="hairline-dashed bg-base py-24">
-      <div className="guides mx-auto max-w-container px-6">
+    <section className="hairline-dashed bg-base py-14 sm:py-24">
+      <div className="guides mx-auto max-w-container px-4 sm:px-6">
         <Reveal>
           <div
-            className="relative overflow-hidden rounded-3xl px-8 py-14 text-darktext sm:px-14"
+            className="relative overflow-hidden rounded-3xl px-5 py-10 text-darktext sm:px-14 sm:py-14"
             style={{
-              background:
-                "linear-gradient(105deg, #0A0A0A 0%, #141414 50%, #2A2A2A 78%, #474747 100%)",
+              // §5: horizontal on desktop where the panel sits right; vertical on
+              // mobile where it stacks below.
+              background: mobile
+                ? "linear-gradient(180deg, #0A0A0A 0%, #141414 50%, #2A2A2A 78%, #474747 100%)"
+                : "linear-gradient(105deg, #0A0A0A 0%, #141414 50%, #2A2A2A 78%, #474747 100%)",
             }}
           >
             <div className="relative z-10 max-w-lg">
@@ -29,10 +43,10 @@ export default function FinalCta(): JSX.Element {
               >
                 {t("landing.finalCta.title")}
               </h2>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <StartCta
                   label={t("landing.finalCta.start")}
-                  className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink transition-opacity hover:opacity-90"
+                  className="flex min-h-[48px] items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-ink transition-opacity hover:opacity-90"
                 />
                 <BookCallButton
                   source="landing"
@@ -40,6 +54,10 @@ export default function FinalCta(): JSX.Element {
                   label={t("landing.finalCta.book")}
                 />
               </div>
+            </div>
+            {/* §5: below lg the panel sits under the text, full width and flat. */}
+            <div className="pointer-events-none relative z-10 mt-10 w-full lg:hidden">
+              <ProductPreview />
             </div>
             {/* preview peeking from the right edge, slightly elevated */}
             <div className="pointer-events-none absolute -right-20 top-1/2 hidden w-[520px] -translate-y-1/3 rotate-[-1deg] lg:block">

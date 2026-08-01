@@ -111,9 +111,15 @@ export async function consumeGoogleRedirect(): Promise<string | null> {
   return result.user.getIdToken();
 }
 
-/** Map Firebase error codes to localized message keys (§2.2). */
+/**
+ * Map Firebase error codes to localized message keys (§2.2).
+ * §4.1: every failure is also logged with its raw code and message, because a
+ * silent Google failure is undiagnosable.
+ */
 export function authErrorKey(err: unknown): string {
   const code = (err as { code?: string }).code ?? "";
+  const message = (err as { message?: string }).message ?? String(err);
+  console.error(`[SynapAI auth] ${code || "unknown"}: ${message}`, err);
   switch (code) {
     case "auth/invalid-credential":
     case "auth/wrong-password":
@@ -138,6 +144,11 @@ export function authErrorKey(err: unknown): string {
     case "auth/too-many-requests":
       return "auth.errors.tooManyRequests";
     case "auth/network-request-failed":
+      return "auth.errors.network";
+    case "auth/operation-not-allowed":
+      return "auth.errors.providerDisabled";
+    case "auth/internal-error":
+    case "auth/timeout":
       return "auth.errors.network";
     default:
       return "auth.errors.generic";

@@ -10,6 +10,11 @@ process.env.DEMO_MODE = "true";
 process.env.DEMO_SCAN_TOTAL_MS = "0";
 process.env.MONGODB_URI = "";
 process.env.AUTH_MODE = "mock";
+// Pin the documented plan so a local .env cannot change what this asserts.
+process.env.FREE_SCAN_PROMPTS = "25";
+process.env.FREE_CORE_PROMPTS = "9";
+process.env.FREE_CORE_ENGINES = "chatgpt,gemini,perplexity";
+process.env.FREE_TAIL_ENGINES = "chatgpt,gemini";
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -31,8 +36,8 @@ async function createFreeScan(brandId: unknown): Promise<string> {
   const scan = await Scan.create({
     brandId,
     tier: "free",
-    engines: [...new Set([...env.FREE_CORE_ENGINES, env.FREE_TAIL_ENGINE])],
-    plan: { coreEngines: env.FREE_CORE_ENGINES, tailEngine: env.FREE_TAIL_ENGINE },
+    engines: [...new Set([...env.FREE_CORE_ENGINES, ...env.FREE_TAIL_ENGINES])],
+    plan: { coreEngines: env.FREE_CORE_ENGINES, tailEngines: env.FREE_TAIL_ENGINES },
     trigger: "user",
   });
   return String(scan._id);
@@ -90,7 +95,7 @@ describe("freshness (§2.4): every scan queries live, nothing is reused", () => 
     expect(shared).toHaveLength(0);
   });
 
-  it("the free plan is the documented 41-call plan (§2.1)", () => {
-    expect(FREE_CALLS).toBe(41);
+  it("the free plan is the documented 43-call plan (§2 Stage C)", () => {
+    expect(FREE_CALLS).toBe(43);
   });
 });

@@ -124,13 +124,13 @@ scanRouter.post("/", requireAuth, requireVerifiedEmail, scanStartIpLimit, async 
     }
 
     const engines = [
-      ...new Set([...env.FREE_CORE_ENGINES, env.FREE_TAIL_ENGINE]),
+      ...new Set([...env.FREE_CORE_ENGINES, ...env.FREE_TAIL_ENGINES]),
     ];
     const scan = await Scan.create({
       brandId: brand._id,
       tier: "free",
       engines,
-      plan: { coreEngines: env.FREE_CORE_ENGINES, tailEngine: env.FREE_TAIL_ENGINE },
+      plan: { coreEngines: env.FREE_CORE_ENGINES, tailEngines: env.FREE_TAIL_ENGINES },
       trigger: "user",
     });
 
@@ -167,6 +167,9 @@ scanRouter.get("/:id/progress", requireAuth, async (req, res, next) => {
       total: scan.progress.total,
       currentPrompt: scan.progress.currentPrompt,
       brandName: brand?.name ?? "",
+      stage: scan.progress.stage,
+      brandId: String(scan.brandId),
+      error: scan.error ?? null,
     };
     res.json(dto);
   } catch (err) {

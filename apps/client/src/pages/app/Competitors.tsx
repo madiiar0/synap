@@ -35,8 +35,40 @@ export default function Competitors(): JSX.Element {
       {status === "empty" && (
         <EmptyPanel title={t("states.emptyTitle")} hint={t("dashboard.competitors.empty")} />
       )}
+      {/* §5: below md every row becomes a labelled card, so nothing scrolls sideways. */}
       {status === "ready" && rows && (
-      <Card className="overflow-x-auto">
+        <div className="space-y-3 md:hidden">
+          {rows.map((row, index) => (
+            <Card key={row.name} className={`p-4 ${row.isUs ? "bg-accent/5" : ""}`}>
+              <div className="flex items-start justify-between gap-3">
+                <p className="min-w-0 break-words text-sm font-semibold">
+                  <span className="mr-1.5 text-sub">{index + 1}.</span>
+                  {row.name}
+                </p>
+                <TrendArrow value={row.trend} />
+              </div>
+              <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+                <div>
+                  <dt className="text-sub">{t("dashboard.competitors.colVisibility")}</dt>
+                  <dd className="mt-0.5 font-medium">{Math.round(row.visibilityPct)}%</dd>
+                </div>
+                <div>
+                  <dt className="text-sub">{t("dashboard.competitors.colPosition")}</dt>
+                  <dd className="mt-0.5 font-medium">{row.avgPosition ?? "-"}</dd>
+                </div>
+                <div className="col-span-2">
+                  <dt className="text-sub">{t("dashboard.competitors.colSentiment")}</dt>
+                  <dd className="mt-1">
+                    <SentimentChip value={row.sentiment} />
+                  </dd>
+                </div>
+              </dl>
+            </Card>
+          ))}
+        </div>
+      )}
+      {status === "ready" && rows && (
+      <Card className="hidden overflow-x-auto md:block">
         {(
           <table className="w-full min-w-[560px] text-sm">
             <thead>

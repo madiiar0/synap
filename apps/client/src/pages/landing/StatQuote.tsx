@@ -23,10 +23,10 @@ export default function StatQuote(): JSX.Element {
           <p className="mt-12 text-2xl font-medium text-ink sm:text-3xl">
             {t("landing.stat.question")}
           </p>
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-7 flex w-full flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
             <StartCta
               label={t("landing.ctaCheckFree")}
-              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              className="flex min-h-[48px] items-center justify-center rounded-full bg-ink px-7 text-sm font-semibold text-white transition-opacity hover:opacity-85"
             />
             <BookCallButton source="landing" variant="secondary" />
           </div>

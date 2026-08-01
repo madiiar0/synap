@@ -31,6 +31,19 @@ export const ENGINE_WEIGHTS: Record<EngineId, number> = Object.fromEntries(
 /** Cheap NON-search model for batched extraction and prompt generation. */
 export const EXTRACTION_MODEL = "openai/gpt-5.4-nano";
 
+/** Search-native model used for Stage A business research (§2). */
+export const RESEARCH_MODEL = "perplexity/sonar";
+
+/**
+ * Perplexity's own Sonar models reject the `reasoning` parameter and answer
+ * with a bare `{"error":{"message":"invalid request"}}` when it is present.
+ * Verified live with `pnpm engines:check` on 2026-08-02: identical requests
+ * succeed with the field omitted. Every other provider accepts it.
+ */
+export function supportsReasoning(model: string): boolean {
+  return !model.startsWith("perplexity/");
+}
+
 /**
  * Agent API web_search tool fee: $2.50 per 1000 invocations, flat
  * (search_context_size does not change it). Verified 2026-08-01.
