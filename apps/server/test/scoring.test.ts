@@ -23,14 +23,14 @@ const BRAND = "Astra Dental";
 describe("computeSnapshot", () => {
   it("computes the documented weighted formula on one engine", () => {
     const prompts: ScoringPrompt[] = [
-      { id: "b1", intent: "branded" },
-      { id: "b2", intent: "branded" },
-      { id: "c1", intent: "category" },
-      { id: "c2", intent: "best_of" },
-      { id: "c3", intent: "purchase" },
-      { id: "c4", intent: "category" },
-      { id: "m1", intent: "comparison" },
-      { id: "m2", intent: "comparison" },
+      { id: "b1", intent: "branded", branded: true },
+      { id: "b2", intent: "branded", branded: true },
+      { id: "c1", intent: "category", branded: false },
+      { id: "c2", intent: "best_of", branded: false },
+      { id: "c3", intent: "purchase", branded: false },
+      { id: "c4", intent: "category", branded: false },
+      { id: "m1", intent: "comparison", branded: false },
+      { id: "m2", intent: "comparison", branded: false },
     ];
     const answers = [
       answer("b1", "perplexity", true),
@@ -48,23 +48,23 @@ describe("computeSnapshot", () => {
       prompts,
       answers,
     });
-    // branded 50, category 25, comparison 50 → 0.35·50 + 0.45·25 + 0.20·50 = 38.75 → 39
-    expect(snap.subscores.branded).toBe(50);
+    // §3: branded prompts are excluded entirely. category 25, comparison 50
+    // → 0.6·25 + 0.4·50 = 35
     expect(snap.subscores.category).toBe(25);
     expect(snap.subscores.comparison).toBe(50);
-    expect(snap.overall).toBe(39);
+    expect(snap.overall).toBe(35);
   });
 
   it("applies the +15% position bonus when avg position ≤ 2", () => {
     const prompts: ScoringPrompt[] = [
-      { id: "b1", intent: "branded" },
-      { id: "b2", intent: "branded" },
-      { id: "c1", intent: "category" },
-      { id: "c2", intent: "category" },
-      { id: "c3", intent: "category" },
-      { id: "c4", intent: "category" },
-      { id: "m1", intent: "comparison" },
-      { id: "m2", intent: "comparison" },
+      { id: "b1", intent: "branded", branded: true },
+      { id: "b2", intent: "branded", branded: true },
+      { id: "c1", intent: "category", branded: false },
+      { id: "c2", intent: "category", branded: false },
+      { id: "c3", intent: "category", branded: false },
+      { id: "c4", intent: "category", branded: false },
+      { id: "m1", intent: "comparison", branded: false },
+      { id: "m2", intent: "comparison", branded: false },
     ];
     const answers = [
       answer("b1", "perplexity", true, { position: 1 }),
@@ -82,16 +82,16 @@ describe("computeSnapshot", () => {
       prompts,
       answers,
     });
-    // Same base as above (38.75) with avgPosition ≈ 1.3 → ×1.15 = 44.56 → 45
+    // §3: unbranded only. category 25, comparison 50 → 35, ×1.15 = 40.25 → 40
     expect(snap.avgPosition).toBeLessThanOrEqual(2);
-    expect(snap.overall).toBe(45);
+    expect(snap.overall).toBe(40);
   });
 
   it("renormalizes engine weights over enabled engines", () => {
     const prompts: ScoringPrompt[] = [
-      { id: "b1", intent: "branded" },
-      { id: "c1", intent: "category" },
-      { id: "m1", intent: "comparison" },
+      { id: "b1", intent: "branded", branded: true },
+      { id: "c1", intent: "category", branded: false },
+      { id: "m1", intent: "comparison", branded: false },
     ];
     const answers = [
       // perplexity (weight .20): mentions everything → subscores 100
@@ -111,14 +111,15 @@ describe("computeSnapshot", () => {
     });
     // (100·.20 + 0·.15) / .35 = 57.14 per subscore → overall 57 (no positions → no bonus)
     expect(snap.overall).toBe(57);
+    // §3: the branded prompt contributed nothing to the number above.
     expect(snap.perEngine).toHaveLength(2);
     expect(snap.perEngine.find((e) => e.engine === "perplexity")?.mentionRate).toBe(1);
   });
 
   it("drops absent intent groups from the weighting (free scan without comparison)", () => {
     const prompts: ScoringPrompt[] = [
-      { id: "b1", intent: "branded" },
-      { id: "c1", intent: "category" },
+      { id: "b1", intent: "branded", branded: true },
+      { id: "c1", intent: "category", branded: false },
     ];
     const answers = [
       answer("b1", "perplexity", true),
@@ -130,12 +131,12 @@ describe("computeSnapshot", () => {
       prompts,
       answers,
     });
-    // branded=100, category=0; weights .35/.45 renormalized → 100·(.35/.80) = 43.75 → 44
-    expect(snap.overall).toBe(44);
+    // §3: branded is excluded, so only the category group remains → 0.
+    expect(snap.overall).toBe(0);
   });
 
-  it("share of voice includes configured competitors always, detected ones at ≥3 mentions", () => {
-    const prompts: ScoringPrompt[] = [{ id: "c1", intent: "category" }];
+  it("share of voice includes configured competitors always, plus classified detected ones", () => {
+    const prompts: ScoringPrompt[] = [{ id: "c1", intent: "category", branded: false }];
     const brands = (names: string[]): Partial<Extracted> => ({
       brands: names.map((name, i) => ({ name, position: i + 1 })),
     });
@@ -152,19 +153,21 @@ describe("computeSnapshot", () => {
       answers,
     });
     const names = snap.shareOfVoice.map((e) => e.name);
-    expect(names).toContain("Nurly"); // 3 mentions → detected
+    expect(names).toContain("Nurly");
     expect(names).toContain("Denta Lux"); // configured
     expect(names).toContain("SmileCity"); // configured, zero mentions
     expect(names).toContain(BRAND); // us, zero mentions
-    expect(names).not.toContain("Rare One"); // 2 mentions, not configured
+    // §5: a real named business now qualifies on classification, not on a raw
+    // mention threshold, which is what kept genuine competitors off the tab.
+    expect(names).toContain("Rare One");
     expect(snap.shareOfVoice.find((e) => e.name === "Nurly")?.detected).toBe(true);
     expect(snap.shareOfVoice.find((e) => e.name === BRAND)?.isUs).toBe(true);
   });
 
   it("ranks top sources and flags domains whose answers mention us", () => {
     const prompts: ScoringPrompt[] = [
-      { id: "c1", intent: "category" },
-      { id: "c2", intent: "category" },
+      { id: "c1", intent: "category", branded: false },
+      { id: "c2", intent: "category", branded: false },
     ];
     const answers = [
       answer("c1", "perplexity", true, {}, [
@@ -188,8 +191,8 @@ describe("computeSnapshot", () => {
   it("restricts per-engine comparison metrics to the shared core prompt set (§2.3)", () => {
     const prompts: ScoringPrompt[] = [
       { id: "core1", intent: "branded" },
-      { id: "tail1", intent: "category" },
-      { id: "tail2", intent: "category" },
+      { id: "tail1", intent: "category", branded: false },
+      { id: "tail2", intent: "category", branded: false },
     ];
     const answers = [
       // Both engines answered the core prompt and mentioned us.
@@ -217,7 +220,7 @@ describe("computeSnapshot", () => {
   });
 
   it("ignores failed answers everywhere", () => {
-    const prompts: ScoringPrompt[] = [{ id: "b1", intent: "branded" }];
+    const prompts: ScoringPrompt[] = [{ id: "b1", intent: "branded", branded: true }];
     const answers: ScoringAnswer[] = [
       { ...answer("b1", "perplexity", true), failed: true },
       answer("b1", "chatgpt", false),
@@ -228,6 +231,7 @@ describe("computeSnapshot", () => {
       prompts,
       answers,
     });
-    expect(snap.subscores.branded).toBe(0);
+    // Only a branded prompt existed, and branded is excluded, so nothing scored.
+    expect(snap.overall).toBe(0);
   });
 });

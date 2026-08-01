@@ -1,5 +1,5 @@
 import {
-  AUTO_COMPETITOR_MIN_MENTIONS,
+  METRIC_VERSION,
   CATEGORY_GROUP,
   ENGINE_WEIGHTS,
   POSITION_BONUS,
@@ -12,10 +12,13 @@ import {
   type TopSource,
 } from "@synapai/shared";
 import type { Citation } from "@synapai/shared";
+import { classifyEntity, isCompetitorRow } from "./entityClass.js";
 
 export interface ScoringPrompt {
   id: string;
   intent: PromptIntent;
+  /** §2/§3: persisted at generation time; excludes the prompt from the score. */
+  branded: boolean;
 }
 
 export interface ScoringAnswer {
@@ -40,6 +43,13 @@ export interface ScoringInput {
 }
 
 export interface SnapshotData {
+  /** §3: branded-prompt mention rate, reported separately, never in `overall`. */
+  brandedSubscore?: number | null;
+  /** §12: denominator and numerator behind `overall`. */
+  eligibleResponses?: number;
+  eligibleMentions?: number;
+  /** §12: methodology version this snapshot was produced with. */
+  metricVersion?: number;
   overall: number;
   subscores: { branded: number; category: number; comparison: number };
   perEngine: PerEngineScore[];
@@ -48,10 +58,11 @@ export interface SnapshotData {
   avgPosition: number | null;
 }
 
-type Group = "branded" | "category" | "comparison";
+type Group = "category" | "comparison";
 
 function groupOf(intent: PromptIntent): Group | null {
-  if (intent === "branded") return "branded";
+  // §3: branded prompts belong to no scoring group.
+  if (intent === "branded") return null;
   if ((CATEGORY_GROUP as readonly string[]).includes(intent)) return "category";
   if (intent === "comparison") return "comparison";
   return null; // informational: counted in mentionRate/SoV only
@@ -90,7 +101,6 @@ export function computeSnapshot(input: ScoringInput): SnapshotData {
     answers: ScoringAnswer[],
   ): { subs: Partial<Record<Group, number>>; mentionRate: number } => {
     const byGroup: Record<Group, { total: number; mentioned: number }> = {
-      branded: { total: 0, mentioned: 0 },
       category: { total: 0, mentioned: 0 },
       comparison: { total: 0, mentioned: 0 },
     };
@@ -105,7 +115,7 @@ export function computeSnapshot(input: ScoringInput): SnapshotData {
       }
     }
     const subs: Partial<Record<Group, number>> = {};
-    for (const group of ["branded", "category", "comparison"] as const) {
+    for (const group of ["category", "comparison"] as const) {
       if (byGroup[group].total > 0) {
         subs[group] = (byGroup[group].mentioned / byGroup[group].total) * 100;
       }
@@ -113,8 +123,16 @@ export function computeSnapshot(input: ScoringInput): SnapshotData {
     return { subs, mentionRate: answers.length > 0 ? mentioned / answers.length : 0 };
   };
 
+  // §3: the PRIMARY score measures organic discovery, so branded prompts are
+  // excluded from every figure below. They are reported separately as
+  // `brandedSubscore` and can never lift the primary number.
+  const brandedPrompts = new Set(
+    input.prompts.filter((p) => p.branded).map((p) => p.id),
+  );
+  const eligible = (a: ScoringAnswer): boolean => !a.failed && !brandedPrompts.has(a.promptId);
+
   for (const engine of engines) {
-    const allAnswers = input.answers.filter((a) => a.engine === engine && !a.failed);
+    const allAnswers = input.answers.filter((a) => a.engine === engine && eligible(a));
     // Overall subscores use everything the engine answered (weights applied).
     engineSubscores.set(engine, groupStats(allAnswers).subs);
 
@@ -139,7 +157,7 @@ export function computeSnapshot(input: ScoringInput): SnapshotData {
 
   // Cross-engine subscores (engine weights renormalized over engines present).
   const subscores = { branded: 0, category: 0, comparison: 0 };
-  for (const group of ["branded", "category", "comparison"] as const) {
+  for (const group of ["category", "comparison"] as const) {
     const parts = engines
       .map((engine) => ({ engine, value: engineSubscores.get(engine)?.[group] }))
       .filter((p): p is { engine: EngineId; value: number } => p.value !== undefined)
@@ -147,16 +165,29 @@ export function computeSnapshot(input: ScoringInput): SnapshotData {
     subscores[group] = round1(weightedAverage(parts));
   }
 
+  // §3: branded diagnostic, reported next to the score but never inside it.
+  const brandedAnswers = input.answers.filter(
+    (a) => !a.failed && brandedPrompts.has(a.promptId),
+  );
+  const brandedSubscore =
+    brandedAnswers.length > 0
+      ? round1(
+          (brandedAnswers.filter((a) => a.extracted.mentioned).length / brandedAnswers.length) *
+            100,
+        )
+      : null;
+  const eligibleAnswers = input.answers.filter(eligible);
+
   // Average position where we are mentioned.
   const positions = input.answers
-    .filter((a) => !a.failed && a.extracted.mentioned && a.extracted.position)
+    .filter((a) => eligible(a) && a.extracted.mentioned && a.extracted.position)
     .map((a) => a.extracted.position as number);
   const avgPosition =
     positions.length > 0
       ? round1(positions.reduce((s, p) => s + p, 0) / positions.length)
       : null;
 
-  const groupsPresent = (["branded", "category", "comparison"] as const).filter((group) =>
+  const groupsPresent = (["category", "comparison"] as const).filter((group) =>
     engines.some((e) => engineSubscores.get(e)?.[group] !== undefined),
   );
   let overall = weightedAverage(
@@ -165,17 +196,36 @@ export function computeSnapshot(input: ScoringInput): SnapshotData {
       weight: SUBSCORE_WEIGHTS[group],
     })),
   );
+  // §3: a ranking bonus may improve a partial score but must never turn an
+  // imperfect record into a perfect one. 100 is reserved for full credit on
+  // every successful eligible unbranded response.
+  const baseline = overall;
   if (avgPosition !== null && avgPosition <= POSITION_BONUS.maxAvgPosition) {
     overall *= POSITION_BONUS.multiplier;
   }
   overall = Math.min(100, Math.round(overall));
+  if (baseline < 100 && overall >= 100) overall = 99;
 
-  // Share of voice across every non-failed answer.
+  // §6 Share of Voice: ELIGIBLE UNBRANDED answers only, canonical entities,
+  // directories and descriptive phrases excluded, and an entity counted at
+  // most once per answer so a repeated name cannot inflate its share. One
+  // denominator for every displayed percentage.
   const mentionCounts = new Map<string, { name: string; mentions: number }>();
+  const userCompetitorNames = input.configuredCompetitors;
   for (const answer of input.answers) {
-    if (answer.failed) continue;
+    if (!eligible(answer)) continue;
+    const seenInAnswer = new Set<string>();
     for (const brand of answer.extracted.brands) {
       const key = brand.name.toLowerCase();
+      if (seenInAnswer.has(key)) continue; // no double-counting within one answer
+      const verdict = classifyEntity({
+        name: brand.name,
+        userCompetitors: userCompetitorNames,
+        promptAppearances: 2, // already evidenced by appearing in this answer set
+        inRecommendation: true,
+      });
+      if (!isCompetitorRow(verdict)) continue;
+      seenInAnswer.add(key);
       const entry = mentionCounts.get(key);
       if (entry) entry.mentions += 1;
       else mentionCounts.set(key, { name: brand.name, mentions: 1 });
@@ -194,7 +244,12 @@ export function computeSnapshot(input: ScoringInput): SnapshotData {
   const shareOfVoice: ShareOfVoiceEntry[] = [...mentionCounts.entries()]
     .filter(([key, entry]) => {
       if (key === usKey || configured.has(key)) return true;
-      return entry.mentions >= AUTO_COMPETITOR_MIN_MENTIONS; // auto-detected
+      // §5: entities reaching this point have ALREADY been classified as
+      // genuine competitors, so a raw mention-count threshold is redundant.
+      // It was also the reason real businesses named in answers (appearing
+      // once or twice) never reached the Competitors tab while the Answers
+      // page showed them.
+      return entry.mentions >= 1;
     })
     .map(([key, entry]) => ({
       name: entry.name,
@@ -221,5 +276,18 @@ export function computeSnapshot(input: ScoringInput): SnapshotData {
     .sort((a, b) => b.citations - a.citations)
     .slice(0, 10);
 
-  return { overall, subscores, perEngine, shareOfVoice, topSources, avgPosition };
+  return {
+    overall,
+    subscores,
+    perEngine,
+    shareOfVoice,
+    topSources,
+    avgPosition,
+    // §3/§12: evidence behind the number, so every page can explain it and no
+    // page needs to recompute it.
+    brandedSubscore,
+    eligibleResponses: eligibleAnswers.length,
+    eligibleMentions: eligibleAnswers.filter((a) => a.extracted.mentioned).length,
+    metricVersion: METRIC_VERSION,
+  };
 }

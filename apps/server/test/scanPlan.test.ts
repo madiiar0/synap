@@ -40,15 +40,17 @@ describe("scan plan (§2.1)", () => {
     expect(FREE_SCAN.prompts * 5).toBe(125);
   });
 
-  it("25-prompt intent mix is branded 6 / comparison 2 / category 5 / best_of 4 / purchase 4 / informational 4 (§3)", () => {
-    expect(computeIntentCounts(25, true)).toEqual({
-      branded: 6,
-      comparison: 2,
+  it("25-prompt mix keeps branded at 3 of 25 so 88% is unbranded (§2)", () => {
+    const counts = computeIntentCounts(25, true);
+    expect(counts).toEqual({
+      branded: 3,
+      comparison: 3,
       category: 5,
-      best_of: 4,
-      purchase: 4,
+      best_of: 5,
+      purchase: 5,
       informational: 4,
     });
+    expect(1 - counts.branded / 25).toBeGreaterThanOrEqual(0.8);
   });
 
   it("core-9 always contains every branded prompt (§2 Stage C)", () => {
@@ -62,7 +64,7 @@ describe("scan plan (§2.1)", () => {
     });
     // comparison prompts fill the remaining core slots
     const coreIntents = [...core].map((i) => prompts[i].intent);
-    expect(coreIntents.filter((x) => x === "comparison").length).toBe(2);
+    expect(coreIntents.filter((x) => x === "comparison").length).toBe(3);
   });
 
   it("extraction adds at most ceil(calls/10) LLM calls (§4)", () => {

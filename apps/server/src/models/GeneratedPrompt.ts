@@ -10,6 +10,8 @@ export interface GeneratedPromptDoc extends Document {
   /** §2.3: core prompts run on every engine of the scan; per-engine metrics
    * are computed over this shared set only. */
   core: boolean;
+  /** §2: persisted at generation time; drives score eligibility. */
+  branded: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,6 +27,7 @@ const generatedPromptSchema = new Schema<GeneratedPromptDoc>(
       required: true,
     },
     core: { type: Boolean, default: true },
+    branded: { type: Boolean, default: false, index: true },
   },
   { timestamps: true },
 );

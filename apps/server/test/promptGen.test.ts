@@ -21,23 +21,24 @@ const brand: PromptGenBrand = {
 
 describe("computeIntentCounts", () => {
   it("matches the documented §3 mix exactly for the 25-prompt scan", () => {
+    // §2 (iteration 9): branded capped at 12% so >= 80% of a scan is unbranded.
     expect(computeIntentCounts(25, true)).toEqual({
-      branded: 6,
-      comparison: 2,
+      branded: 3,
+      comparison: 3,
       category: 5,
-      best_of: 4,
-      purchase: 4,
+      best_of: 5,
+      purchase: 5,
       informational: 4,
     });
   });
 
   it("scales the same mix to n=100", () => {
     expect(computeIntentCounts(100, true)).toEqual({
-      branded: 24,
-      comparison: 8,
+      branded: 12,
+      comparison: 12,
       category: 20,
-      best_of: 16,
-      purchase: 16,
+      best_of: 20,
+      purchase: 20,
       informational: 16,
     });
   });
@@ -52,7 +53,7 @@ describe("computeIntentCounts", () => {
   it("folds comparison into category when there are no competitors", () => {
     const counts = computeIntentCounts(25, false);
     expect(counts.comparison).toBe(0);
-    expect(counts.category).toBe(7);
+    expect(counts.category).toBe(8);
     expect(Object.values(counts).reduce((a, b) => a + b, 0)).toBe(25);
   });
 });

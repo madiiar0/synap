@@ -5,6 +5,7 @@ import VerifyEmailModal from "./components/VerifyEmailModal";
 import Toaster from "./components/Toaster";
 import { currentLocale, setLocale } from "./lib/i18n";
 import EnvBanners from "./components/EnvBanners";
+import PublicOnly from "./components/PublicOnly";
 import RequireAuth from "./components/RequireAuth";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -33,8 +34,11 @@ export default function App(): JSX.Element {
         <Route path="/" element={<Landing />} />
         <Route path="/en" element={<EnRoute><Landing /></EnRoute>} />
         <Route path="/scan/:id" element={<ScanProgress />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/en/login" element={<EnRoute><Login /></EnRoute>} />
+        <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
+        <Route
+          path="/en/login"
+          element={<PublicOnly><EnRoute><Login /></EnRoute></PublicOnly>}
+        />
         <Route path="/verify-email" element={<RequireAuth><VerifyEmail /></RequireAuth>} />
         {/* §3: onboarding is authenticated but renders without the dashboard chrome. */}
         <Route path="/app/onboarding" element={<RequireAuth><Onboarding /></RequireAuth>} />

@@ -19,6 +19,11 @@ export interface PromptSpec {
   text: string;
   language: PromptLanguage;
   intent: PromptIntent;
+  /**
+   * §2: stored at generation time, never inferred later from display text.
+   * True when the prompt names the target business (or an alias of it).
+   */
+  branded: boolean;
 }
 
 export interface PromptGenBrand {
@@ -107,15 +112,21 @@ const EN_TEMPLATES: Record<Exclude<PromptIntent, "comparison">, Tpl[]> = {
   ],
 };
 
+/**
+ * §2: comparison prompts are UNBRANDED. They ask the assistant to weigh up
+ * options in the category without naming the target business, which is what a
+ * customer who has not heard of it would actually type.
+ */
 const RU_COMPARISON: ((ctx: Ctx, competitor: string) => string)[] = [
-  (c, comp) => `Сравни ${c.brand} и ${comp}`,
-  (c, comp) => `${c.brand} или ${comp}: что лучше?`,
-  (c, comp) => `Чем ${c.brand} отличается от ${comp}?`,
+  (c, comp) => `${comp} или другие ${c.category} в ${c.place}: что выбрать?`,
+  (c, comp) => `Какие есть альтернативы ${comp} в ${c.place}?`,
+  (c) => `Сравни лучшие ${c.category} в ${c.place}`,
 ];
 
 const EN_COMPARISON: ((ctx: Ctx, competitor: string) => string)[] = [
-  (c, comp) => `${c.brand} vs ${comp}: which is better?`,
-  (c, comp) => `Compare ${c.brand} and ${comp}`,
+  (c, comp) => `${comp} or other ${c.category} in ${c.place}: which should I pick?`,
+  (c, comp) => `What are the alternatives to ${comp} in ${c.place}?`,
+  (c) => `Compare the best ${c.category} in ${c.place}`,
 ];
 
 function placeFor(brand: PromptGenBrand, language: PromptLanguage): string {
@@ -177,7 +188,7 @@ function fillIntent(
       const key = normalizedKey(text);
       if (used.has(key)) continue;
       used.add(key);
-      out.push({ text, language, intent });
+      out.push({ text, language, intent, branded: false });
     }
   }
   return out;
@@ -210,7 +221,7 @@ function fillComparison(
       const key = normalizedKey(text);
       if (used.has(key)) continue;
       used.add(key);
-      res.push({ text, language, intent: "comparison" });
+      res.push({ text, language, intent: "comparison", branded: false });
     }
     return res;
   };
@@ -222,6 +233,30 @@ function fillComparison(
 }
 
 /** Hard-coded template generation: always used in DEMO_MODE and as LLM fallback. */
+/**
+ * §2: a prompt is branded when the business name or any known alias occurs in
+ * it. Checked against the normalized text so casing, punctuation and spacing
+ * differences cannot smuggle a branded prompt into the unbranded pool.
+ */
+export function isBrandedPrompt(text: string, brandName: string, aliases: string[] = []): boolean {
+  const haystack = normalizedKey(text);
+  return [brandName, ...aliases]
+    .map((n) => normalizedKey(n))
+    .filter((n) => n.length >= 3)
+    .some((n) => haystack.includes(n));
+}
+
+function classifySpecs(specs: PromptSpec[], brand: PromptGenBrand): PromptSpec[] {
+  // §2: classification is derived from the text ONCE, at generation time, and
+  // then persisted. Intent alone is not trusted: a template could name the
+  // business without being tagged `branded`.
+  const aliases = brand.research?.aliases ?? [];
+  return specs.map((spec) => ({
+    ...spec,
+    branded: isBrandedPrompt(spec.text, brand.name, aliases),
+  }));
+}
+
 export function generateTemplatePrompts(brand: PromptGenBrand, n: number): PromptSpec[] {
   const counts = computeIntentCounts(n, brand.competitors.length > 0);
   const used = new Set<string>((brand.disabledPrompts ?? []).map((p) => normalizedKey(p)));
@@ -253,7 +288,7 @@ export function generateTemplatePrompts(brand: PromptGenBrand, n: number): Promp
     out.push(...fillIntent(intent, ru, "ru", brand, used));
     out.push(...fillIntent(intent, missing - ru, "en", brand, used));
   }
-  return out.slice(0, n);
+  return classifySpecs(out.slice(0, n), brand);
 }
 
 function buildLlmPrompt(brand: PromptGenBrand, n: number): string {
@@ -359,7 +394,10 @@ export async function generatePrompts(brand: PromptGenBrand, n: number): Promise
             const extra = generateTemplatePrompts(brand, n).filter(
               (p) => !used.has(normalizedKey(p.text)),
             );
-            return [...unique, ...extra].slice(0, n);
+            return classifySpecs(
+              [...unique.map((p) => ({ ...p, branded: false })), ...extra].slice(0, n),
+              brand,
+            );
           }
         }
         logger.warn("prompt-gen LLM output rejected; falling back to templates");

@@ -17,6 +17,7 @@ import { type BrandDoc } from "../models/Brand.js";
 import { GeneratedPrompt } from "../models/GeneratedPrompt.js";
 import { Scan, type ScanDoc } from "../models/Scan.js";
 import { ScoreSnapshot, type ScoreSnapshotDoc } from "../models/ScoreSnapshot.js";
+import { classifyEntity, isCompetitorRow } from "./entityClass.js";
 import { scanAllowance } from "./allowance.js";
 import { keywordSentiment } from "./extraction.js";
 
@@ -193,13 +194,43 @@ export async function competitorRowsForScan(
   scanId: string,
   brand: BrandDoc,
 ): Promise<CompetitorRowDto[]> {
-  const answers = await AnswerResult.find({ scanId, failed: false });
+  // §5/§6: competitors are derived from ELIGIBLE UNBRANDED answers only, and
+  // every candidate is classified before it can become a row. This is the one
+  // canonical pipeline; the Answers page reads the same answers.
+  const brandedIds = new Set(
+    (await GeneratedPrompt.find({ scanId, branded: true }, { _id: 1 })).map((p) => String(p._id)),
+  );
+  const answers = (await AnswerResult.find({ scanId, failed: false })).filter(
+    (a) => !brandedIds.has(String(a.promptId)),
+  );
   if (answers.length === 0) return [];
-  const snapshot = await ScoreSnapshot.findOne({ scanId });
   const names = new Map<string, string>(); // lower -> display
   names.set(brand.name.toLowerCase(), brand.name);
   for (const c of brand.competitors) names.set(c.name.toLowerCase(), c.name);
-  for (const e of snapshot?.shareOfVoice ?? []) names.set(e.name.toLowerCase(), e.name);
+  // §5: names actually spoken by the models in eligible answers.
+  const appearances = new Map<string, Set<string>>();
+  for (const a of answers) {
+    for (const b of a.extracted.brands) {
+      const key = b.name.toLowerCase();
+      if (!appearances.has(key)) appearances.set(key, new Set());
+      appearances.get(key)!.add(String(a.promptId));
+      names.set(key, b.name);
+    }
+  }
+
+  const userCompetitors = brand.competitors.filter((c) => !c.detected).map((c) => c.name);
+  const usKeyLower = brand.name.toLowerCase();
+  for (const [key, display] of [...names]) {
+    if (key === usKeyLower) continue;
+    const verdict = classifyEntity({
+      name: display,
+      userCompetitors,
+      promptAppearances: appearances.get(key)?.size ?? 0,
+      // A name the model listed alongside others is a recommendation context.
+      inRecommendation: (appearances.get(key)?.size ?? 0) > 0,
+    });
+    if (!isCompetitorRow(verdict)) names.delete(key);
+  }
 
   const configured = new Set(brand.competitors.map((c) => c.name.toLowerCase()));
   const usKey = brand.name.toLowerCase();

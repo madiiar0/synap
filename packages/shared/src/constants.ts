@@ -2,10 +2,17 @@
  * overall = round(0.35·branded + 0.45·category + 0.20·comparison), where each
  * subscore is a 0–100 mention rate over its intent group (see scoring.ts).
  */
+/**
+ * §3: subscore weights for the PRIMARY visibility score. Branded prompts are
+ * excluded from it entirely (reported separately), so these weights cover only
+ * unbranded discovery groups and sum to 1.
+ *
+ * Previous weights were branded .35 / category .45 / comparison .20, i.e. 55%
+ * of the score came from prompts that named the business.
+ */
 export const SUBSCORE_WEIGHTS = {
-  branded: 0.35,
-  category: 0.45,
-  comparison: 0.2,
+  category: 0.6,
+  comparison: 0.4,
 } as const;
 
 /**
@@ -30,14 +37,35 @@ export type PromptIntent = (typeof PROMPT_INTENTS)[number];
  * best_of 4, purchase 4, informational 4 (§3). Branded + comparison form
  * the core-8 that every core engine answers.
  */
+/**
+ * §2: the visibility scan must represent customers who do NOT already know the
+ * business. Branded prompts (which name it) are capped at 12%; comparison
+ * prompts are now written between third-party alternatives and carry no brand
+ * name, so >= 88% of every scan is unbranded.
+ *
+ * Previous mix put branded at 24% and comparison at 8% (both named the
+ * business) = 32% branded, which is what inflated the score.
+ */
 export const INTENT_MIX: Record<PromptIntent, number> = {
-  branded: 0.24,
-  comparison: 0.08,
+  branded: 0.12,
+  comparison: 0.12,
   category: 0.2,
-  best_of: 0.16,
-  purchase: 0.16,
+  best_of: 0.2,
+  purchase: 0.2,
   informational: 0.16,
 };
+
+/** §2: intents whose prompts name the target business. */
+export const BRANDED_INTENTS: readonly PromptIntent[] = ["branded"];
+
+/** §2: the minimum share of a scan that must be unbranded. */
+export const MIN_UNBRANDED_SHARE = 0.8;
+
+/**
+ * §12: bump when the scoring or extraction methodology changes, so historical
+ * scans are never silently compared against incompatible numbers.
+ */
+export const METRIC_VERSION = 2;
 
 /** Intents that make up the "category" subscore group. */
 export const CATEGORY_GROUP: readonly PromptIntent[] = [

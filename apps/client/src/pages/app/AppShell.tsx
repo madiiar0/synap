@@ -106,11 +106,16 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
     <BrandContext.Provider value={{ brand }}>
       <div className="flex min-h-screen bg-base">
         {/* Sidebar */}
-        <aside className="hidden w-56 shrink-0 flex-col border-r border-line bg-surface px-3 py-6 md:flex">
+        <aside
+          /* §10: sticky, full viewport height, its own column layout. Without
+             this the sidebar grew with the main content and the logout button
+             was pushed below the fold on long pages. */
+          className="sticky top-0 hidden h-[100dvh] w-56 shrink-0 flex-col border-r border-line bg-surface px-3 py-6 md:flex"
+        >
           <Link to="/" className="mb-8 px-3" aria-label="SynapAI">
             <Logo size={18} className="text-lg" />
           </Link>
-          <nav className="flex flex-col gap-1">
+          <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
             {admin ? (
               <p className="px-3 text-xs font-semibold uppercase tracking-wide text-sub">
                 {t("admin.title")}
@@ -157,7 +162,7 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
               </>
             )}
           </nav>
-          <div className="mt-auto px-3">
+          <div className="mt-auto shrink-0 px-3 pt-4">
             <button
               type="button"
               onClick={() => {

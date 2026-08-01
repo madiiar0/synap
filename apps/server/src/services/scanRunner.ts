@@ -168,7 +168,7 @@ async function finalizeScan(
     const snapshot = computeSnapshot({
       brandName: brand.name,
       configuredCompetitors: brand.competitors.map((c) => c.name),
-      prompts: prompts.map((p) => ({ id: String(p._id), intent: p.intent })),
+      prompts: prompts.map((p) => ({ id: String(p._id), intent: p.intent, branded: p.branded })),
       answers: answers.map(
         (a): ScoringAnswer => ({
           promptId: String(a.promptId),

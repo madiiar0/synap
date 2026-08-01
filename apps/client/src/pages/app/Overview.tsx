@@ -236,7 +236,6 @@ export default function Overview(): JSX.Element {
         <BookCallButton source="dashboard" brandName={brand.name} variant="dark" />
       </div>
 
-      <p className="text-center text-[11px] text-sub">{t("common.trademarkNote")}</p>
     </div>
   );
 }
