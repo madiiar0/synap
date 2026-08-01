@@ -24,6 +24,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       const { openQuotaModal } = await import("./quotaModal");
       openQuotaModal();
     }
+    // §5: the first scan needs a verified email; offer to resend the link.
+    if (code === "EMAIL_NOT_VERIFIED") {
+      const { openVerifyEmailModal } = await import("./quotaModal");
+      openVerifyEmailModal();
+    }
     throw new ApiError(code, res.status, body.error?.message ?? `HTTP ${res.status}`);
   }
   return body as T;

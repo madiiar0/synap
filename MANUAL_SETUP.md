@@ -72,6 +72,10 @@ is how free-scan quotas (3 per account) are enforced. Without Firebase the
 app runs a mock email-only sign-in (dev/demo only; production refuses to
 start in mock mode).
 
+> **See FIREBASE_SETUP.md for the click-by-click version of this step**
+> (screenshots' worth of detail, verification flow, troubleshooting table).
+> The checklist below is the short form.
+
 - [ ] Create a project at https://console.firebase.google.com
 - [ ] Build → Authentication → Sign-in method: enable **Email/Password** and
       **Google**
@@ -85,6 +89,11 @@ start in mock mode).
 - [ ] **Admin access** is automatic: the `ADMIN_EMAIL` account from step 1 is
       promoted on boot. Sign in with that email and open `/admin` (there is
       no admin link in the public UI).
+- [ ] **Production domains:** Authentication → Settings → Authorized domains →
+      add `yourdomain.com`, otherwise Google sign-in fails with
+      `auth/unauthorized-domain`. The four `VITE_FIREBASE_*` values are baked
+      into the bundle at build time, so they must be set when you run
+      `pnpm build`.
 
 **Verify:** sign up with a fresh email → the app asks you to verify the
 email before scanning; verify, run a scan, and confirm the header shows

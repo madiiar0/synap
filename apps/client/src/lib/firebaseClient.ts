@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   GoogleAuthProvider,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signInWithPopup,
   signInWithRedirect,
@@ -41,7 +42,28 @@ export async function firebaseEmailSignIn(email: string, password: string): Prom
 
 export async function firebaseEmailSignUp(email: string, password: string): Promise<string> {
   const cred = await createUserWithEmailAndPassword(auth(), email, password);
+  // §5: the first scan requires a verified email, so send the link right away.
+  // A mail failure must not block sign-in; the modal can resend it.
+  await sendEmailVerification(cred.user).catch(() => undefined);
   return cred.user.getIdToken();
+}
+
+/** Resend the verification link to the currently signed-in Firebase user. */
+export async function firebaseResendVerification(): Promise<void> {
+  const user = firebaseConfigured ? auth().currentUser : null;
+  if (!user) throw new Error("NOT_SIGNED_IN");
+  await sendEmailVerification(user);
+}
+
+/**
+ * Re-read the Firebase user and mint a fresh ID token, so an email verified
+ * in another tab reaches our server (the claim is baked into the token).
+ */
+export async function firebaseRefreshIdToken(): Promise<string | null> {
+  const user = firebaseConfigured ? auth().currentUser : null;
+  if (!user) return null;
+  await user.reload();
+  return user.getIdToken(true);
 }
 
 /** Google popup with a redirect fallback when the popup is blocked (§2.2). */

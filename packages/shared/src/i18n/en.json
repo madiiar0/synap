@@ -343,5 +343,14 @@
     "cta": "Book a call",
     "whatsapp": "Message on WhatsApp",
     "close": "Close"
+  },
+  "verify": {
+    "title": "Verify your email",
+    "body": "We sent a confirmation link to {{email}}. Open the email, follow the link, then come back here.",
+    "done": "I verified it, continue",
+    "resend": "Send the link again",
+    "resent": "Email sent. Check your inbox and the spam folder.",
+    "error": "That did not work. Try again or sign in once more.",
+    "close": "Close"
   }
 }

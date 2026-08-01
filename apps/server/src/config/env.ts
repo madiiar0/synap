@@ -79,7 +79,14 @@ const schema = z.object({
   GOOGLE_APPLICATION_CREDENTIALS: z.string().optional().default(""),
 });
 
-const parsed = schema.safeParse(process.env);
+// A key left blank in .env (`AUTH_MODE=`) means "not set", not "the empty
+// value" — otherwise every commented-out template line fails validation.
+// Keys whose schema allows "" simply fall back to their default of "".
+const rawEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([, value]) => value !== ""),
+);
+
+const parsed = schema.safeParse(rawEnv);
 if (!parsed.success) {
   // Fail fast with a readable message; never print secrets.
   console.error("Invalid environment configuration:", parsed.error.flatten().fieldErrors);

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import QuotaModal from "./components/QuotaModal";
+import VerifyEmailModal from "./components/VerifyEmailModal";
 import Toaster from "./components/Toaster";
 import { currentLocale, setLocale } from "./lib/i18n";
 import Landing from "./pages/Landing";
@@ -23,6 +24,7 @@ export default function App(): JSX.Element {
     <>
       <Toaster />
       <QuotaModal />
+      <VerifyEmailModal />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/en" element={<EnRoute><Landing /></EnRoute>} />
