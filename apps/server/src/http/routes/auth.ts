@@ -116,9 +116,15 @@ authRouter.post("/session", authLimiter, async (req, res, next) => {
     // #9: promote on sign-in as well as on boot, so adding an address to
     // ADMIN_EMAIL takes effect immediately and an account created after boot
     // is still recognised. Driven purely by server env; never by the client.
-    if (isAdminEmail(user.email) && (user.role !== "admin" || !user.unlimitedScans)) {
+    if (
+      isAdminEmail(user.email) &&
+      (user.role !== "admin" || !user.unlimitedScans || !user.emailVerified)
+    ) {
       user.role = "admin";
       user.unlimitedScans = true;
+      // #9: an admin address is trusted by configuration, so it is never sent
+      // through email verification. upsertFirebaseUser copies the provider's
+      // flag, which is false for a password account, so restore it here.
       user.emailVerified = true;
       await user.save();
       logger.info({ email: user.email }, "account promoted to admin from ADMIN_EMAIL");

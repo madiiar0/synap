@@ -67,7 +67,8 @@ export default function Login(): JSX.Element {
       locale: currentLocale(),
     });
     // §2.3: an unverified account goes to the verify screen, not the dashboard.
-    if (!user.emailVerified) {
+    // #9: admin accounts are exempt and go straight through.
+    if (!user.emailVerified && user.role !== "admin") {
       navigate("/verify-email", { replace: true });
       return;
     }

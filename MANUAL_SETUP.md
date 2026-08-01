@@ -105,9 +105,19 @@ start in mock mode).
 - [ ] Project settings → Service accounts → **Generate new private key**;
       encode it: `base64 -i serviceAccount.json | tr -d '\n'` and paste into
       `FIREBASE_SERVICE_ACCOUNT_JSON=` (server `.env`); set `AUTH_MODE=firebase`
-- [ ] **Admin access** is automatic: the `ADMIN_EMAIL` account from step 1 is
-      promoted on boot. Sign in with that email and open `/admin` (there is
-      no admin link in the public UI).
+- [ ] **Admin access** is automatic: every address in `ADMIN_EMAIL` (a
+      comma-separated list) is promoted to admin on boot **and on every
+      sign-in**, so adding one takes effect without a restart. An admin gets
+      unlimited audits, skips email verification, and bypasses the per-IP
+      limit. Sign in with that email and open `/admin` (there is no admin link
+      in the public UI).
+- [ ] **Creating the admin sign-in.** The address does not need a real mailbox
+      or a domain you own, because admins never receive a verification email.
+      Create it once in Firebase Console → Authentication → Users → **Add
+      user**, using the same address as `ADMIN_EMAIL` and any password. That
+      account can then sign in with email and password like any other user.
+      Keep the password out of the repository, and change it before launch:
+      this account has unlimited audits and full admin panel access.
 - [ ] **Production domains:** Authentication → Settings → Authorized domains →
       add `yourdomain.com`, otherwise Google sign-in fails with
       `auth/unauthorized-domain`. The four `VITE_FIREBASE_*` values are baked
