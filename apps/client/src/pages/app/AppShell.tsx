@@ -25,6 +25,7 @@ import type { BrandDto } from "@synapai/shared";
 import Logo from "../../components/Logo";
 import { apiPost } from "../../lib/api";
 import { currentLocale, setLocale } from "../../lib/i18n";
+import { onboardingSkipped } from "../../lib/pendingBusiness";
 import { useBrands, useMe, useOverview, useStartScan } from "../../lib/queries";
 import { DemoBadge, Skeleton } from "../../components/ui";
 import AdminPanel from "../admin/AdminPanel";
@@ -81,6 +82,13 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
   }
 
   if (admin && user?.role !== "admin") return <Navigate to="/app" replace />;
+
+  // §3: a signed-in user with no business goes straight to onboarding rather
+  // than to an empty dashboard, unless they chose to do it later. Admin keeps
+  // the full panel either way.
+  if (!admin && brands && brands.length === 0 && !onboardingSkipped()) {
+    return <Navigate to="/app/onboarding" replace />;
+  }
 
   const base = admin ? "/admin" : "/app";
   const scansLeft = user?.scansLeft ?? null;

@@ -1,8 +1,9 @@
 import { AI_PLATFORMS } from "./aiPlatforms.js";
 import type { Locale } from "./constants.js";
 
-export type PublicPath = "/" | "/scan" | "/login";
-export const PUBLIC_PATHS: readonly PublicPath[] = ["/", "/scan", "/login"];
+// §1 (iteration 5): /scan is gone; the only entry point is sign-in.
+export type PublicPath = "/" | "/login";
+export const PUBLIC_PATHS: readonly PublicPath[] = ["/", "/login"];
 
 export interface RouteMeta {
   title: string;
@@ -20,18 +21,6 @@ const META: Record<PublicPath, Record<Locale, RouteMeta>> = {
       title: "SynapAI | See whether AI recommends your business",
       description:
         "A free check: how ChatGPT, Gemini, Claude, Perplexity, DeepSeek and Grok answer your customers' questions. A 0-100 Visibility Score and your competitor list.",
-    },
-  },
-  "/scan": {
-    ru: {
-      title: "SynapAI | Бесплатный скан видимости вашего бизнеса в ИИ",
-      description:
-        "Запустите бесплатный скан: узнайте за минуту, рекомендует ли ИИ ваш бизнес и кто занимает ваше место в ответах.",
-    },
-    en: {
-      title: "SynapAI | Free AI visibility scan for your business",
-      description:
-        "Run a free scan: see in a minute whether AI recommends your business and who takes your place in the answers.",
     },
   },
   "/login": {
@@ -52,7 +41,7 @@ export function routeMeta(path: PublicPath, locale: Locale): RouteMeta {
   return META[path][locale];
 }
 
-/** /scan + en → /en/scan; / + en → /en */
+/** /login + en → /en/login; / + en → /en */
 export function localizedPublicPath(path: PublicPath, locale: Locale): string {
   if (locale === "ru") return path;
   return path === "/" ? "/en" : `/en${path}`;

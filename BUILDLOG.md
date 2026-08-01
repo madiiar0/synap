@@ -316,3 +316,88 @@ answers, ever** — every scan issues a complete fresh set of provider calls;
   Firebase, MongoDB, SMTP).
 - **Progress UI:** percentage + radar + current question only; counts of
   prompts/engines never shown.
+
+## Iteration 5 — Auth completion, funnel fix, first-run experience (2026-08-01)
+
+- **Atlas diagnosed (§0.1).** The real driver error was
+  `MongooseServerSelectionError / ReplicaSetNoPrimary` with Atlas's own
+  "IP that isn't whitelisted" message: **the current IP is not in Network
+  Access**. Credentials and host are correct; the password needs no encoding.
+  A second defect was found in the same URI: no database name
+  (`...mongodb.net/?appName=SynapAI`), so writes would land in `test`.
+  Both are console/env fixes for the owner, documented in MANUAL_SETUP.
+  Code side: the failure now logs at **error** level with name, code, message
+  and per-cause hints (was a one-line warning); a new `db/diagnose.ts`
+  classifies allowlist / auth / DNS / missing-db-name; `pnpm db:check`
+  connects and prints version, database and collection count or the precise
+  error and remedy, exit 1 on failure; the server-selection timeout went from
+  4s to 10s (too short for SRV plus replica-set discovery); production now
+  refuses to start rather than falling back; and while the in-memory
+  fallback is active the UI shows a persistent amber banner
+  («Локальная база в памяти. Данные не сохраняются.»).
+- **Auth mode is now explicit (§0.2).** Every boot logs the active mode
+  (`AUTH MODE: firebase` / `AUTH MODE: mock` with a warning). `AUTH_MODE=firebase`
+  with no credentials exits with the missing variable names instead of
+  silently degrading. A dev-only **MOCK AUTH** badge sits next to the database
+  banner. The owner completed the Firebase setup during this iteration, so the
+  server now boots in firebase mode and `firebase-admin` verifies every ID
+  token; mock remains impossible in production.
+- **Funnel is authentication first (§1).** `/scan` (page, routes, prerender
+  entry, sitemap, llms.txt, i18n path table, SEO meta) is deleted and now
+  404s; a regression test asserts it never returns to `PUBLIC_PATHS`. All five
+  landing CTAs route through a single `StartCta`: sign-in when signed out,
+  `/app` when signed in, and a same-size neutral placeholder while the session
+  resolves, so the signed-out label cannot flash. The navbar gains
+  «Личный кабинет» plus an avatar menu (email, dashboard, sign out). Typed
+  business details survive the redirect via `synapai:pendingBusiness`.
+- **Auth page completed (§2).** Google sign-in: popup with redirect fallback
+  (`auth/popup-blocked`, unsupported environment, no web storage) plus
+  `getRedirectResult` on mount, `prompt: select_account`, and localized errors
+  for blocked/closed popups, different-credential, unauthorized-domain and
+  rate limiting. **Root cause of a silent production failure found and fixed:**
+  `helmet()` defaults emit `script-src 'self'` / `frame-src 'self'` /
+  `connect-src 'self'`, which blocks the Firebase auth frames once the server
+  serves the built client. The CSP now allows exactly `*.firebaseapp.com`,
+  `*.googleapis.com`, `accounts.google.com`, `apis.google.com`, `gstatic.com`
+  plus Google avatars, with `same-origin-allow-popups`; helmet stays on.
+  Sign-up adds a confirm-password field (validated on blur and submit,
+  «Пароли не совпадают»), an 8-character minimum with an inline hint, correct
+  `autocomplete` values, and both fields clear on mode switch. Verification is
+  a real screen at `/verify-email` (resend rate limited to 60s with a visible
+  countdown, "I have confirmed" reloads the Firebase user and mints a fresh ID
+  token so the claim reaches the server, "change email" signs out back to
+  sign-up); server-side `requireVerifiedEmail` middleware guards the scan
+  endpoint. Quote arrows moved to the vertical centre of the panel's left and
+  right edges as 40px circles, dots stay below, no overflow at `lg`.
+- **Onboarding (§3).** `/app/onboarding` renders the business form outside the
+  dashboard chrome, prefilled from the stash, with remaining free checks
+  (hidden for admin/unlimited) and an "I'll do this later" link. The shell
+  redirects a signed-in user with no business into it; the skip choice is
+  remembered for the session so the link cannot bounce back (found in QA).
+- **Dashboard states (§4).** The infinite loading shell had a specific cause: a
+  React Query with `enabled: false` stays `isPending` forever, so a user with
+  no business saw a permanent skeleton. `resolvePageStatus` now treats a
+  disabled query as empty, an unresolved query as loading, a 10s stall as an
+  error, and errors above all; five unit tests lock this down. All five pages
+  (Overview, Answers, Competitors, Sources, Prompts) use content-shaped
+  skeletons, per-page empty states with a CTA into onboarding, and a retry-able
+  error panel that logs the raw error to the console but never shows it.
+  Answers distinguishes "filters match nothing" from "no scan yet".
+- **Copy fix.** How-it-works still claimed "до 100 вопросов"; a scan is 25
+  prompts, so both locales were corrected (standing anti-fabrication rule).
+- **QA (§5):** typecheck ✅ lint ✅ **86 tests** ✅ i18n sweep ✅ (301 keys)
+  prerender build ✅ (4 pages, /scan gone) smoke ✅. Browser at 375/768/1440 in
+  RU and EN: all CTAs to `/login` signed out and `/app` signed in; navbar
+  «Личный кабинет» with no signed-out flash; `/scan` 404 and absent from
+  sitemap and llms.txt; login → onboarding → progress → dashboard completes
+  with real results and «Осталось проверок: 2»; skip reaches the empty state
+  with a working CTA; all five pages show correct empty states; the error
+  panel appears on a failed first load and Retry issues a fresh request;
+  confirm-password mismatch blocks submit; carousel arrows sit on the panel
+  sides with no overflow at the `lg` breakpoint; both dev banners render; no
+  horizontal overflow at any breakpoint in either locale.
+- **Not verified here:** live Google sign-in and the real verification email
+  require signing into the owner's Google account, so §5's "Google sign-in
+  works in Chrome and Safari" is left for the owner; the code path, CSP and
+  console steps are in FIREBASE_SETUP.md. Atlas persistence across restarts
+  cannot be confirmed until the IP is allowlisted.

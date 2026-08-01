@@ -15,7 +15,7 @@ function initialLocale(): Locale {
   if (!isBrowser) return "ru";
   const path = window.location.pathname;
   if (path === "/en" || path.startsWith("/en/")) return "en";
-  if (path === "/" || path === "/scan" || path === "/login") return "ru";
+  if (path === "/" || path === "/login") return "ru";
   const stored = window.localStorage.getItem(STORAGE_KEY);
   return stored === "en" || stored === "ru" ? stored : "ru";
 }
@@ -37,9 +37,7 @@ if (isBrowser) {
 function publicBasePath(pathname: string): PublicPath | null {
   const stripped =
     pathname === "/en" ? "/" : pathname.startsWith("/en/") ? pathname.slice(3) : pathname;
-  return stripped === "/" || stripped === "/scan" || stripped === "/login"
-    ? (stripped as PublicPath)
-    : null;
+  return stripped === "/" || stripped === "/login" ? (stripped as PublicPath) : null;
 }
 
 export function setLocale(locale: Locale): void {

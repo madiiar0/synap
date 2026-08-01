@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import { authMode } from "../../config/env.js";
 import { AppError } from "../../lib/errors.js";
 import { User, type UserDoc } from "../../models/User.js";
 import { SESSION_COOKIE, verifySessionToken } from "../../services/auth.js";
@@ -34,6 +35,23 @@ export async function attachUser(req: Request, _res: Response, next: NextFunctio
 export function requireAuth(req: Request, _res: Response, next: NextFunction): void {
   if (!req.user) {
     next(new AppError("UNAUTHORIZED", 401, "Sign in required"));
+    return;
+  }
+  next();
+}
+
+/**
+ * §2.3: a scan needs a confirmed address. Google accounts arrive verified, and
+ * mock mode (offline dev) has no verification flow, so both pass through.
+ */
+export function requireVerifiedEmail(req: Request, _res: Response, next: NextFunction): void {
+  const user = req.user;
+  if (!user) {
+    next(new AppError("UNAUTHORIZED", 401, "Sign in required"));
+    return;
+  }
+  if (authMode === "firebase" && !user.emailVerified && user.role !== "admin") {
+    next(new AppError("EMAIL_NOT_VERIFIED", 403, "Verify your email before the first scan"));
     return;
   }
   next();

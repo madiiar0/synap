@@ -138,8 +138,35 @@ database is required for production.
       Leaving it empty is fine — the inline queue works and a sweeper
       re-runs scans stuck by a crash.
 
-**Verify:** restart the server; the log says `mongo connected` (not
-"in-memory").
+**Verify:** run `pnpm db:check`. It prints the server version, the database
+name and the collection count, or the exact error with a fix. Then restart the
+server: the log must say `mongo connected` (not "in-memory").
+
+### Troubleshooting a connection failure
+
+If the server logs `mongo connection FAILED` and falls back to the in-memory
+database, **your data is not being saved** (the app shows an amber
+«Локальная база в памяти» banner while this is true). Run `pnpm db:check` and
+match the error:
+
+- **`MongooseServerSelectionError` / "IP that isn't whitelisted"** — the most
+  common cause by far. Atlas only accepts connections from allowlisted
+  addresses. Open Atlas → **Network Access** → **Add IP Address** → **Add
+  Current IP Address** → Confirm. Home and mobile connections change IP
+  regularly, so this can start failing again later; re-add the new address.
+  (For a deployed server, allowlist the server's fixed IP instead.)
+- **"Authentication failed" / "bad auth"** — the user or password in
+  `MONGODB_URI` is wrong (Atlas → Database Access). If the password contains
+  any of `@ : / ? # %`, it must be percent-encoded in the URI: `@`→`%40`,
+  `:`→`%3A`, `/`→`%2F`, `#`→`%23`, `?`→`%3F`, `%`→`%25`. Or simply reset the
+  password to letters and digits only.
+- **No database name in the URI** — a string ending in `.mongodb.net/?...`
+  writes to the default `test` database. Put the name before the query
+  string: `...mongodb.net/synapai?appName=SynapAI`. `pnpm db:check` warns
+  about this even when the connection succeeds.
+
+In production the server **refuses to start** rather than falling back, so a
+broken database can never masquerade as an empty dashboard.
 
 ---
 

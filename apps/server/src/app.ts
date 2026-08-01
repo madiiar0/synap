@@ -6,7 +6,8 @@ import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
 import { pinoHttp } from "pino-http";
-import { authMode, env, repoRoot } from "./config/env.js";
+import { authMode, env, isProd, repoRoot } from "./config/env.js";
+import { isMemoryDb } from "./db/connect.js";
 import { logger } from "./lib/logger.js";
 import { adminRouter } from "./http/routes/admin.js";
 import { authRouter } from "./http/routes/auth.js";
@@ -21,7 +22,38 @@ import { mountSeo } from "./http/seo.js";
 export function createApp(): Express {
   const app = express();
   app.set("trust proxy", 1);
-  app.use(helmet());
+  // §2.1: helmet's default CSP is `script-src 'self'` / `frame-src 'self'`,
+  // which silently breaks the Firebase sign-in popup once the server serves
+  // the built client. Widen exactly the origins Firebase Auth needs and no
+  // more, rather than turning the header off.
+  const FIREBASE_FRAME = [
+    "https://*.firebaseapp.com",
+    "https://accounts.google.com",
+    "https://*.google.com",
+  ];
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          "script-src": ["'self'", "https://apis.google.com", "https://www.gstatic.com"],
+          "connect-src": [
+            "'self'",
+            "https://*.googleapis.com",
+            "https://*.firebaseapp.com",
+            "https://accounts.google.com",
+            "https://securetoken.googleapis.com",
+          ],
+          "frame-src": ["'self'", ...FIREBASE_FRAME],
+          "form-action": ["'self'", ...FIREBASE_FRAME],
+          // Google account avatars.
+          "img-src": ["'self'", "data:", "https://lh3.googleusercontent.com"],
+        },
+      },
+      // Firebase's popup needs to be able to talk to its opener.
+      crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+    }),
+  );
   app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
   app.use(express.json({ limit: "200kb" }));
   app.use(cookieParser());
@@ -46,6 +78,9 @@ export function createApp(): Express {
       calendlyUrl: env.CALENDLY_URL || null,
       whatsappUrl: env.WHATSAPP_URL || null,
       authMode,
+      // §0.1/§0.2: the UI warns when data is not persisted or auth is mocked.
+      memoryDb: isMemoryDb(),
+      isDev: !isProd,
     });
   });
 

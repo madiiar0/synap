@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import { AI_PLATFORMS } from "@synapai/shared";
 import BookCallButton from "../../components/BookCallButton";
 import { AI_LOGOS } from "../../lib/aiLogos";
-import { localizedPath } from "../../lib/i18n";
+
+import StartCta from "../../components/StartCta";
 
 const HOLD_MS = 3500;
 
@@ -77,12 +77,10 @@ export default function Hero(): JSX.Element {
             {t("landing.heroSub2")}
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to={localizedPath("/scan")}
+            <StartCta
+              label={t("landing.ctaCheckFree")}
               className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
-            >
-              {t("landing.ctaCheckFree")}
-            </Link>
+            />
             <BookCallButton source="landing" variant="secondary" />
           </div>
         </div>

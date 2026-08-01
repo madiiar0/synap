@@ -27,7 +27,9 @@
     "howItWorks": "How it works",
     "faq": "FAQ",
     "login": "Log in",
-    "checkBrand": "Check your business"
+    "checkBrand": "Check your business",
+    "dashboard": "Dashboard",
+    "account": "Account"
   },
   "landing": {
     "heroLine1": "Be the answer in",
@@ -80,7 +82,7 @@
     "how": {
       "title": "How it works",
       "step1Title": "We ask the AIs",
-      "step1Text": "Up to 100 of your customers' questions across ChatGPT, Claude, Gemini, Perplexity and Grok.",
+      "step1Text": "25 of your customers' questions across ChatGPT, Claude, Gemini, Perplexity and Grok.",
       "step2Title": "The full picture",
       "step2Text": "A 0-100 Visibility Score, competitors and the sources AI builds its answers from.",
       "step3Title": "We fix it for you",
@@ -145,8 +147,17 @@
       "popupClosed": "The sign-in window was closed. Please try again.",
       "popupBlocked": "Your browser blocked the sign-in window. Allow pop-ups and retry.",
       "network": "No connection. Check your internet and try again.",
-      "generic": "Could not sign you in. Please try again."
-    }
+      "generic": "Could not sign you in. Please try again.",
+      "passwordMismatch": "Passwords do not match",
+      "differentCredential": "This email is already linked to another sign-in method. Use the method you registered with.",
+      "unauthorizedDomain": "This domain is not authorized for sign-in. Add it in Firebase.",
+      "tooManyRequests": "Too many attempts. Wait a moment and try again."
+    },
+    "confirmPassword": "Confirm password",
+    "passwordHint": "At least 8 characters. Mix letters, numbers and symbols.",
+    "passwordTooShort": "That password is too short: use at least 8 characters.",
+    "quotePrev": "Previous quote",
+    "quoteNext": "Next quote"
   },
   "dashboard": {
     "nav": {
@@ -352,5 +363,31 @@
     "resent": "Email sent. Check your inbox and the spam folder.",
     "error": "That did not work. Try again or sign in once more.",
     "close": "Close"
+  },
+  "env": {
+    "memoryDb": "Local in-memory database. Data is not saved.",
+    "mockAuth": "MOCK AUTH"
+  },
+  "onboarding": {
+    "title": "Let's check your business",
+    "subtitle": "Fill in your company details and we will ask AI what your customers ask.",
+    "submit": "Run the check",
+    "later": "I'll do this later"
+  },
+  "states": {
+    "emptyTitle": "Nothing here yet",
+    "emptyAnswers": "Answers will appear after your first check.",
+    "emptyPrompts": "Questions will appear after your first check.",
+    "errorTitle": "Could not load the data",
+    "errorBody": "Check your connection and try again. If this keeps happening, get in touch.",
+    "retry": "Try again",
+    "support": "Get in touch"
+  },
+  "verifyPage": {
+    "title": "Verify your email",
+    "body": "We sent a link to {{email}}. Follow it, then come back here and press the button below.",
+    "notYet": "We do not see a confirmation yet. Follow the link in the email and try again.",
+    "resendIn": "Resend in {{seconds}}s",
+    "changeEmail": "Use a different email"
   }
 }

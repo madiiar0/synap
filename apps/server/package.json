@@ -11,7 +11,8 @@
     "test": "vitest run",
     "smoke": "tsx src/smoke.ts",
     "seed": "tsx src/seed.ts",
-    "cost:report": "tsx src/costReport.ts"
+    "cost:report": "tsx src/costReport.ts",
+    "db:check": "tsx src/dbCheck.ts"
   },
   "dependencies": {
     "@synapai/shared": "workspace:*",

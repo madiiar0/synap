@@ -6,7 +6,7 @@ import {
   scanRequestSchema,
   type ScanProgressDto,
 } from "@synapai/shared";
-import { authMode, env } from "../../config/env.js";
+import { env } from "../../config/env.js";
 import { AppError } from "../../lib/errors.js";
 import { sendMail } from "../../mail/mailer.js";
 import { Brand } from "../../models/Brand.js";
@@ -15,7 +15,7 @@ import { getSettings } from "../../models/Settings.js";
 import { User } from "../../models/User.js";
 import { enqueue } from "../../queue/index.js";
 import { getBudgetState, todayKey } from "../../services/usage.js";
-import { requireAuth } from "../middleware/auth.js";
+import { requireAuth, requireVerifiedEmail } from "../middleware/auth.js";
 import { scanStartIpLimit } from "../middleware/rateLimits.js";
 import { logger } from "../../lib/logger.js";
 
@@ -69,7 +69,7 @@ async function notifyScanCap(count: number): Promise<void> {
  * §5.2 + §6: scanning requires an account; quota, abuse controls and the
  * daily caps are enforced here, server-side.
  */
-scanRouter.post("/", requireAuth, scanStartIpLimit, async (req, res, next) => {
+scanRouter.post("/", requireAuth, requireVerifiedEmail, scanStartIpLimit, async (req, res, next) => {
   try {
     const user = req.user;
     if (!user) throw new AppError("UNAUTHORIZED", 401);
@@ -85,9 +85,6 @@ scanRouter.post("/", requireAuth, scanStartIpLimit, async (req, res, next) => {
     // §6.5 abuse controls.
     if (isDisposableEmail(user.email)) {
       throw new AppError("DISPOSABLE_EMAIL", 403, "Disposable email addresses cannot run scans");
-    }
-    if (authMode === "firebase" && !user.emailVerified && user.role !== "admin") {
-      throw new AppError("EMAIL_NOT_VERIFIED", 403, "Verify your email before the first scan");
     }
 
     // §6.2 quota (admin/unlimited bypass).

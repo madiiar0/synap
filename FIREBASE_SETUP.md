@@ -130,6 +130,50 @@ Then verify each path:
 
 ---
 
+## Make the verification email Russian and branded
+
+Firebase sends the confirmation email, not your SMTP provider, so the wording
+is configured in the Firebase Console:
+
+1. **Authentication → Templates → Email address verification**.
+2. Click the pencil icon. Set **Sender name** to `SynapAI` (the reply-to
+   address can stay the default).
+3. Change the template language with the dropdown at the top right of the
+   template list: pick **Russian** so Russian-speaking customers get a Russian
+   email. Firebase picks the language per user from `auth.languageCode`, and
+   falls back to this default.
+4. Edit **Subject** and **Message** if you want your own wording. Keep the
+   `%LINK%` placeholder exactly as it is: that is the confirmation link.
+5. If you use a custom domain for the action link, set it under **Action URL**
+   (optional; the default `<project>.firebaseapp.com` works fine).
+
+**Verify:** sign up with a real inbox and confirm the email arrives with your
+sender name and the expected language.
+
+## If Google sign-in does not work
+
+Work through these in order:
+
+- **Provider enabled?** Authentication → Sign-in method → Google must be
+  **Enabled** with a support email set (step 2 above).
+- **Domain authorized?** Authentication → Settings → **Authorized domains**
+  must list the domain you are browsing from. `localhost` is there by default;
+  add your production domain before launch. The symptom is the localized error
+  "This domain is not authorized for sign-in".
+- **Popup blocked?** The app automatically falls back to a full-page redirect
+  and completes the sign-in on return, so this should self-heal. If it does
+  not, allow popups for the site.
+- **Content Security Policy.** The server sends a CSP that explicitly allows
+  the Firebase auth origins (`*.firebaseapp.com`, `*.googleapis.com`,
+  `accounts.google.com`) in `frame-src`, `connect-src`, `script-src` and
+  `form-action`. If you put a proxy or CDN in front that rewrites CSP headers,
+  it must preserve those entries or the popup will fail silently. Check the
+  browser console for a `Refused to frame ...` message.
+- **Same account, different method.** Signing up with a password and later
+  using Google on the same address raises
+  "This email is already linked to another sign-in method". Use the original
+  method, or link them in the Firebase Console.
+
 ## Going to production later
 
 When you deploy to a real domain, add it to Firebase or Google sign-in will

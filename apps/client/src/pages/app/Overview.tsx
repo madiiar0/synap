@@ -5,6 +5,12 @@ import { ENGINE_IDS, type EngineId, type OverviewDto } from "@synapai/shared";
 import BookCallButton from "../../components/BookCallButton";
 import EngineMark from "../../components/EngineMark";
 import ScoreRing from "../../components/ScoreRing";
+import {
+  EmptyPanel,
+  ErrorPanel,
+  OverviewSkeleton,
+  usePageState,
+} from "../../components/PageState";
 import { Card, EmptyState, HighlightedText, Skeleton, TrendArrow } from "../../components/ui";
 import { useAnswers, useOverview } from "../../lib/queries";
 import { useActiveBrand } from "./AppShell";
@@ -84,22 +90,20 @@ function LoseRow({
 export default function Overview(): JSX.Element {
   const { t } = useTranslation();
   const brand = useActiveBrand();
-  const { data: overview, isLoading } = useOverview(brand?.id);
+  const query = useOverview(brand?.id);
+  const overview = query.data;
+  const { status, error, retry } = usePageState(query, {
+    isEmpty: !overview?.snapshot,
+    disabled: !brand,
+  });
 
-  if (isLoading || !brand) {
+  if (status === "loading") return <OverviewSkeleton />;
+  if (status === "error") return <ErrorPanel error={error} onRetry={retry} />;
+  // §3: a business with no completed scan lands here, so the first check is
+  // the single prominent action.
+  if (status === "empty" || !overview?.snapshot || !brand) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-52 w-full" />
-        <Skeleton className="h-32 w-full" />
-      </div>
-    );
-  }
-
-  if (!overview?.snapshot) {
-    return (
-      <Card>
-        <EmptyState title={t("dashboard.empty.noScan")} hint={t("dashboard.empty.runFirst")} />
-      </Card>
+      <EmptyPanel title={t("dashboard.empty.noScan")} hint={t("dashboard.empty.runFirst")} />
     );
   }
 

@@ -27,8 +27,14 @@ describe("SEO meta (§1.2)", () => {
   it("maps locales to URL paths (§1.4)", () => {
     expect(localizedPublicPath("/", "ru")).toBe("/");
     expect(localizedPublicPath("/", "en")).toBe("/en");
-    expect(localizedPublicPath("/scan", "en")).toBe("/en/scan");
+    expect(localizedPublicPath("/login", "en")).toBe("/en/login");
     expect(localizedPublicPath("/login", "ru")).toBe("/login");
+  });
+
+  // Iteration 5 §1: the standalone scan page is gone; it must not reappear in
+  // the sitemap, the prerender list, or any generated link.
+  it("does not expose a /scan route", () => {
+    expect(PUBLIC_PATHS).not.toContain("/scan");
   });
 });
 

@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ENGINE_IDS, ENGINE_LABELS, PROMPT_INTENTS, type AnswerRowDto } from "@synapai/shared";
 import EngineMark from "../../components/EngineMark";
-import { Card, EmptyState, HighlightedText, SentimentChip, Skeleton } from "../../components/ui";
+import { EmptyPanel, ErrorPanel, TableSkeleton, usePageState } from "../../components/PageState";
+import { Card, EmptyState, HighlightedText, SentimentChip } from "../../components/ui";
 import { useAnswers, type AnswerFilterState } from "../../lib/queries";
 import { useActiveBrand } from "./AppShell";
 
@@ -82,7 +83,15 @@ export default function Answers(): JSX.Element {
   const { t } = useTranslation();
   const brand = useActiveBrand();
   const [filters, setFilters] = useState<AnswerFilterState>({});
-  const { data: answers, isLoading } = useAnswers(brand?.id, filters);
+  const query = useAnswers(brand?.id, filters);
+  const answers = query.data;
+  // An active filter that matches nothing is not the same as "no scan yet":
+  // only the unfiltered empty result should offer to run a check.
+  const filtered = Object.values(filters).some(Boolean);
+  const { status, error, retry } = usePageState(query, {
+    isEmpty: !answers || answers.length === 0,
+    disabled: !brand,
+  });
 
   const selectCls =
     "rounded-xl border border-line bg-surface px-3 py-1.5 text-sm outline-none";
@@ -121,19 +130,21 @@ export default function Answers(): JSX.Element {
         </select>
       </div>
 
-      <Card>
-        {isLoading || !brand ? (
-          <div className="space-y-2 p-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full" />
-            ))}
-          </div>
-        ) : !answers || answers.length === 0 ? (
-          <EmptyState title={t("dashboard.answers.empty")} />
+      {status === "loading" && <TableSkeleton rows={6} />}
+      {status === "error" && <ErrorPanel error={error} onRetry={retry} />}
+      {status === "empty" &&
+        (filtered ? (
+          <Card>
+            <EmptyState title={t("dashboard.answers.empty")} />
+          </Card>
         ) : (
-          answers.map((row) => <AnswerRow key={row.id} row={row} brandName={brand.name} />)
-        )}
+          <EmptyPanel title={t("states.emptyTitle")} hint={t("states.emptyAnswers")} />
+        ))}
+      {status === "ready" && answers && brand && (
+      <Card>
+        {answers.map((row) => <AnswerRow key={row.id} row={row} brandName={brand.name} />)}
       </Card>
+      )}
     </div>
   );
 }

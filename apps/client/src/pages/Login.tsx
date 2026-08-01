@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import type { SessionUserDto } from "@synapai/shared";
@@ -8,6 +8,7 @@ import QuoteCarousel from "../components/QuoteCarousel";
 import { apiPost } from "../lib/api";
 import {
   authErrorKey,
+  consumeGoogleRedirect,
   firebaseEmailSignIn,
   firebaseEmailSignUp,
   firebaseGoogleSignIn,
@@ -45,24 +46,53 @@ export default function Login(): JSX.Element {
   const config = useAppConfig();
   const mock = config?.authMode === "mock";
 
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(
+    params.get("mode") === "signup" ? "signup" : "signin",
+  );
   const [email, setEmail] = useState(params.get("email") ?? "");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [confirmTouched, setConfirmTouched] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const next = params.get("next") ?? "/app";
+  // §2.2: sign-up needs 8+ characters and a matching confirmation.
+  const passwordTooShort = mode === "signup" && password.length > 0 && password.length < 8;
+  const mismatch = mode === "signup" && confirm.length > 0 && confirm !== password;
 
   const createSession = async (payload: { idToken?: string; email?: string }): Promise<void> => {
     const user = await apiPost<SessionUserDto>("/api/auth/session", {
       ...payload,
       locale: currentLocale(),
     });
+    // §2.3: an unverified account goes to the verify screen, not the dashboard.
+    if (!user.emailVerified) {
+      navigate("/verify-email", { replace: true });
+      return;
+    }
     navigate(user.role === "admin" ? "/admin" : next);
   };
 
+  // §2.1: finish a redirect-based Google sign-in when the page loads back.
+  useEffect(() => {
+    if (mock) return;
+    void consumeGoogleRedirect()
+      .then((idToken) => {
+        if (idToken) return createSession({ idToken });
+        return undefined;
+      })
+      .catch((err) => setErrorKey(authErrorKey(err)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mock]);
+
   const submit = async (): Promise<void> => {
     setErrorKey(null);
+    if (mode === "signup" && password !== confirm) {
+      setConfirmTouched(true);
+      setErrorKey("auth.errors.passwordMismatch");
+      return;
+    }
     setBusy(true);
     try {
       if (mock) {
@@ -79,6 +109,14 @@ export default function Login(): JSX.Element {
     } finally {
       setBusy(false);
     }
+  };
+
+  const switchMode = (): void => {
+    setMode((m) => (m === "signin" ? "signup" : "signin"));
+    setPassword("");
+    setConfirm("");
+    setConfirmTouched(false);
+    setErrorKey(null);
   };
 
   const google = async (): Promise<void> => {
@@ -158,11 +196,37 @@ export default function Login(): JSX.Element {
                 className={inputCls}
               />
             )}
+            {!mock && mode === "signup" && (
+              <>
+                <input
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  onBlur={() => setConfirmTouched(true)}
+                  type="password"
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  placeholder={t("auth.confirmPassword")}
+                  aria-label={t("auth.confirmPassword")}
+                  className={inputCls}
+                />
+                {confirmTouched && mismatch && (
+                  <p className="text-sm text-red-500">{t("auth.errors.passwordMismatch")}</p>
+                )}
+                <p className="text-xs text-sub">
+                  {passwordTooShort ? t("auth.passwordTooShort") : t("auth.passwordHint")}
+                </p>
+              </>
+            )}
             {mock && <p className="text-xs text-sub">{t("auth.mockHint")}</p>}
             {errorKey && <p className="text-sm text-red-500">{t(errorKey)}</p>}
             <button
               type="submit"
-              disabled={busy || !email.includes("@") || (!mock && password.length < 6)}
+              disabled={
+                busy ||
+                !email.includes("@") ||
+                (!mock && password.length < (mode === "signup" ? 8 : 6)) ||
+                (mode === "signup" && !mock && (confirm.length === 0 || mismatch))
+              }
               className="h-12 w-full rounded-full bg-ink text-sm font-semibold text-white transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-ink/40 disabled:opacity-40"
             >
               {mode === "signup" ? t("auth.signUp") : t("auth.signIn")}
@@ -172,7 +236,7 @@ export default function Login(): JSX.Element {
           {!mock && (
             <button
               type="button"
-              onClick={() => setMode((m) => (m === "signin" ? "signup" : "signin"))}
+              onClick={switchMode}
               className="mt-4 text-sm text-sub underline underline-offset-4 hover:text-ink"
             >
               {mode === "signin" ? t("auth.toggleToSignUp") : t("auth.toggleToSignIn")}

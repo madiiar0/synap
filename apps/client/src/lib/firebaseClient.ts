@@ -2,11 +2,13 @@ import { initializeApp, type FirebaseApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  getRedirectResult,
   GoogleAuthProvider,
   sendEmailVerification,
   signInWithEmailAndPassword,
   signInWithPopup,
   signInWithRedirect,
+  signOut,
   type Auth,
 } from "firebase/auth";
 
@@ -66,20 +68,47 @@ export async function firebaseRefreshIdToken(): Promise<string | null> {
   return user.getIdToken(true);
 }
 
-/** Google popup with a redirect fallback when the popup is blocked (§2.2). */
+/** Sign the Firebase user out (the server session is cleared separately). */
+export async function firebaseSignOut(): Promise<void> {
+  if (!firebaseConfigured) return;
+  await signOut(auth());
+}
+
+/**
+ * §2.1: Google via popup, falling back to a full-page redirect when the popup
+ * is blocked or unsupported (mobile Safari in particular). The redirect path
+ * finishes in consumeGoogleRedirect() on the next mount.
+ */
 export async function firebaseGoogleSignIn(): Promise<string> {
   const provider = new GoogleAuthProvider();
+  // Always ask which account to use; silently reusing one is confusing.
+  provider.setCustomParameters({ prompt: "select_account" });
   try {
     const cred = await signInWithPopup(auth(), provider);
     return await cred.user.getIdToken();
   } catch (err) {
     const code = (err as { code?: string }).code;
-    if (code === "auth/popup-blocked" || code === "auth/operation-not-supported-in-this-environment") {
+    if (
+      code === "auth/popup-blocked" ||
+      code === "auth/operation-not-supported-in-this-environment" ||
+      code === "auth/web-storage-unsupported"
+    ) {
       await signInWithRedirect(auth(), provider); // navigates away
       return new Promise<string>(() => undefined); // never resolves; page redirects
     }
     throw err;
   }
+}
+
+/**
+ * §2.1: on mount, complete a redirect-based Google sign-in if one is pending.
+ * Returns the ID token, or null when this load is not a redirect return.
+ */
+export async function consumeGoogleRedirect(): Promise<string | null> {
+  if (!firebaseConfigured) return null;
+  const result = await getRedirectResult(auth());
+  if (!result) return null;
+  return result.user.getIdToken();
 }
 
 /** Map Firebase error codes to localized message keys (§2.2). */
@@ -101,6 +130,13 @@ export function authErrorKey(err: unknown): string {
       return "auth.errors.popupClosed";
     case "auth/popup-blocked":
       return "auth.errors.popupBlocked";
+    case "auth/account-exists-with-different-credential":
+    case "auth/credential-already-in-use":
+      return "auth.errors.differentCredential";
+    case "auth/unauthorized-domain":
+      return "auth.errors.unauthorizedDomain";
+    case "auth/too-many-requests":
+      return "auth.errors.tooManyRequests";
     case "auth/network-request-failed":
       return "auth.errors.network";
     default:

@@ -15,7 +15,22 @@ export function useMe() {
     queryKey: ["me"],
     queryFn: () => apiGet<SessionUserDto>("/api/auth/me"),
     retry: false,
+    staleTime: 30_000,
   });
+}
+
+export type SessionState = "loading" | "signedIn" | "signedOut";
+
+/**
+ * §1: shared auth state for the public pages. `loading` is a distinct state so
+ * the navbar can render a neutral placeholder instead of flashing the
+ * signed-out CTAs before the session resolves.
+ */
+export function useSession(): { state: SessionState; user: SessionUserDto | undefined } {
+  const { data, isPending, isError } = useMe();
+  if (isPending) return { state: "loading", user: undefined };
+  if (isError || !data) return { state: "signedOut", user: undefined };
+  return { state: "signedIn", user: data };
 }
 
 export function useBrands() {

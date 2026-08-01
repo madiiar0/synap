@@ -1,13 +1,19 @@
 import { useTranslation } from "react-i18next";
 import { ENGINE_LABELS } from "@synapai/shared";
-import { Card, EmptyState, Skeleton } from "../../components/ui";
+import { EmptyPanel, ErrorPanel, TableSkeleton, usePageState } from "../../components/PageState";
+import { Card } from "../../components/ui";
 import { usePrompts, useTogglePrompt } from "../../lib/queries";
 import { useActiveBrand } from "./AppShell";
 
 export default function Prompts(): JSX.Element {
   const { t } = useTranslation();
   const brand = useActiveBrand();
-  const { data: prompts, isLoading } = usePrompts(brand?.id);
+  const query = usePrompts(brand?.id);
+  const prompts = query.data;
+  const { status, error, retry } = usePageState(query, {
+    isEmpty: !prompts || prompts.length === 0,
+    disabled: !brand,
+  });
   const toggle = useTogglePrompt(brand?.id);
 
   return (
@@ -17,16 +23,14 @@ export default function Prompts(): JSX.Element {
         <p className="mt-1 text-sm text-sub">{t("dashboard.prompts.disableHint")}</p>
       </div>
 
+      {status === "loading" && <TableSkeleton rows={8} />}
+      {status === "error" && <ErrorPanel error={error} onRetry={retry} />}
+      {status === "empty" && (
+        <EmptyPanel title={t("states.emptyTitle")} hint={t("states.emptyPrompts")} />
+      )}
+      {status === "ready" && prompts && (
       <Card>
-        {isLoading ? (
-          <div className="space-y-2 p-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-10 w-full" />
-            ))}
-          </div>
-        ) : !prompts || prompts.length === 0 ? (
-          <EmptyState title={t("dashboard.empty.noScan")} />
-        ) : (
+        {(
           prompts.map((prompt) => (
             <div
               key={prompt.promptId}
@@ -81,6 +85,7 @@ export default function Prompts(): JSX.Element {
           ))
         )}
       </Card>
+      )}
     </div>
   );
 }

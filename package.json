@@ -16,7 +16,8 @@
     "smoke": "pnpm --filter @synapai/server smoke",
     "seed": "pnpm --filter @synapai/server seed",
     "check-i18n": "node scripts/check-i18n.mjs",
-    "cost:report": "pnpm --filter @synapai/server cost:report"
+    "cost:report": "pnpm --filter @synapai/server cost:report",
+    "db:check": "pnpm --filter @synapai/server db:check"
   },
   "devDependencies": {
     "eslint": "^9.17.0",

@@ -1,6 +1,7 @@
 import { Check, Minus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Card, EmptyState, Skeleton } from "../../components/ui";
+import { EmptyPanel, ErrorPanel, TableSkeleton, usePageState } from "../../components/PageState";
+import { Card } from "../../components/ui";
 import { useSources } from "../../lib/queries";
 import { useActiveBrand } from "./AppShell";
 
@@ -8,7 +9,12 @@ import { useActiveBrand } from "./AppShell";
 export default function Sources(): JSX.Element {
   const { t } = useTranslation();
   const brand = useActiveBrand();
-  const { data: sources, isLoading } = useSources(brand?.id);
+  const query = useSources(brand?.id);
+  const sources = query.data;
+  const { status, error, retry } = usePageState(query, {
+    isEmpty: !sources || sources.length === 0,
+    disabled: !brand,
+  });
 
   return (
     <div className="mx-auto max-w-4xl space-y-4">
@@ -17,16 +23,14 @@ export default function Sources(): JSX.Element {
         {t("dashboard.sources.insight")}
       </p>
 
+      {status === "loading" && <TableSkeleton rows={6} />}
+      {status === "error" && <ErrorPanel error={error} onRetry={retry} />}
+      {status === "empty" && (
+        <EmptyPanel title={t("states.emptyTitle")} hint={t("dashboard.sources.empty")} />
+      )}
+      {status === "ready" && sources && (
       <Card className="overflow-x-auto">
-        {isLoading ? (
-          <div className="space-y-2 p-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-10 w-full" />
-            ))}
-          </div>
-        ) : !sources || sources.length === 0 ? (
-          <EmptyState title={t("dashboard.sources.empty")} />
-        ) : (
+        {(
           <table className="w-full min-w-[420px] text-sm">
             <thead>
               <tr className="border-b border-line text-left text-xs text-sub">
@@ -71,6 +75,7 @@ export default function Sources(): JSX.Element {
           </table>
         )}
       </Card>
+      )}
     </div>
   );
 }

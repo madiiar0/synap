@@ -121,4 +121,20 @@ if (isProd && authMode === "mock") {
   process.exit(1);
 }
 
+// §0.2: asking for firebase without the credentials to do it must fail loudly,
+// never degrade to password-less mock sign-in.
+if (authMode === "firebase") {
+  const missing: string[] = [];
+  if (!env.FIREBASE_SERVICE_ACCOUNT_JSON && !env.GOOGLE_APPLICATION_CREDENTIALS) {
+    missing.push("FIREBASE_SERVICE_ACCOUNT_JSON (or GOOGLE_APPLICATION_CREDENTIALS)");
+  }
+  if (missing.length > 0) {
+    console.error(
+      `Refusing to start: AUTH_MODE=firebase but these are missing: ${missing.join(", ")}.`,
+    );
+    console.error("See FIREBASE_SETUP.md step 5-6, or set AUTH_MODE=mock for offline development.");
+    process.exit(1);
+  }
+}
+
 export { repoRoot };

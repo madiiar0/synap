@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import BookCallButton from "../../components/BookCallButton";
 import Reveal from "../../components/Reveal";
 import ProductPreview from "./ProductPreview";
-import { localizedPath } from "../../lib/i18n";
+
+import StartCta from "../../components/StartCta";
 
 /**
  * §12: the ONLY dark surface on the site: a gradient CTA card whose right
@@ -30,12 +30,10 @@ export default function FinalCta(): JSX.Element {
                 {t("landing.finalCta.title")}
               </h2>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  to={localizedPath("/scan")}
+                <StartCta
+                  label={t("landing.finalCta.start")}
                   className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink transition-opacity hover:opacity-90"
-                >
-                  {t("landing.finalCta.start")}
-                </Link>
+                />
                 <BookCallButton
                   source="landing"
                   variant="dark-outline"

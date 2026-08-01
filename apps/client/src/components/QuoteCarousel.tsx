@@ -11,6 +11,11 @@ const ADVANCE_MS = 8000;
  * hover/focus, dots + prev/next arrows, arrow-key support, aria-live polite.
  * Every quote is web-verified and links to its public source.
  */
+/** 40px circular control, white, hairline border, subtle shadow. */
+function arrowCls(side: string): string {
+  return `absolute ${side} top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white text-sub shadow-[0_2px_10px_rgba(0,0,0,0.08)] transition-colors hover:border-[#C4C4C4] hover:text-ink focus-visible:ring-2 focus-visible:ring-ink/20`;
+}
+
 export default function QuoteCarousel(): JSX.Element {
   const { t } = useTranslation();
   const locale = currentLocale();
@@ -51,7 +56,7 @@ export default function QuoteCarousel(): JSX.Element {
         if (e.key === "ArrowLeft") go(index - 1);
         if (e.key === "ArrowRight") go(index + 1);
       }}
-      className="w-full max-w-md outline-none"
+      className="relative w-full max-w-md px-2 outline-none"
     >
       <div aria-live="polite">
         <div
@@ -80,37 +85,38 @@ export default function QuoteCarousel(): JSX.Element {
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between">
-        <button
-          type="button"
-          aria-label="Previous"
-          onClick={() => go(index - 1)}
-          className="rounded-full border border-line bg-white p-2 text-sub transition-colors hover:text-ink"
-        >
-          <ChevronLeft size={15} />
-        </button>
-        <div className="flex items-center gap-2">
-          {QUOTES.map((q, i) => (
-            <button
-              key={q.id}
-              type="button"
-              aria-label={`${i + 1} / ${QUOTES.length}`}
-              aria-current={i === index}
-              onClick={() => go(i)}
-              className={`h-2 w-2 rounded-full transition-colors ${
-                i === index ? "bg-ink" : "bg-line hover:bg-sub"
-              }`}
-            />
-          ))}
-        </div>
-        <button
-          type="button"
-          aria-label="Next"
-          onClick={() => go(index + 1)}
-          className="rounded-full border border-line bg-white p-2 text-sub transition-colors hover:text-ink"
-        >
-          <ChevronRight size={15} />
-        </button>
+      {/* §2.4: arrows sit at the vertical centre of the panel's left and right
+          edges, overlapping the card slightly; dots stay below as indicators. */}
+      <button
+        type="button"
+        aria-label={t("auth.quotePrev")}
+        onClick={() => go(index - 1)}
+        className={arrowCls("-left-5")}
+      >
+        <ChevronLeft size={18} />
+      </button>
+      <button
+        type="button"
+        aria-label={t("auth.quoteNext")}
+        onClick={() => go(index + 1)}
+        className={arrowCls("-right-5")}
+      >
+        <ChevronRight size={18} />
+      </button>
+
+      <div className="mt-5 flex items-center justify-center gap-2">
+        {QUOTES.map((q, i) => (
+          <button
+            key={q.id}
+            type="button"
+            aria-label={`${i + 1} / ${QUOTES.length}`}
+            aria-current={i === index}
+            onClick={() => go(i)}
+            className={`h-2 w-2 rounded-full transition-colors ${
+              i === index ? "bg-ink" : "bg-line hover:bg-sub"
+            }`}
+          />
+        ))}
       </div>
     </div>
   );

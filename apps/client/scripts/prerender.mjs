@@ -15,12 +15,12 @@ const { render } = await import(path.join(clientRoot, "dist-ssr/entry.js"));
 
 const shell = fs.readFileSync(path.join(dist, "index.html"), "utf8");
 
+// Iteration 5 §1: /scan no longer exists; the only public routes are the
+// landing and sign-in, in both locales.
 const ROUTES = [
   { url: "/", locale: "ru", out: "index.html", mustContain: "Станьте ответом" },
-  { url: "/scan", locale: "ru", out: "scan/index.html", mustContain: "Проверьте свой бизнес" },
   { url: "/login", locale: "ru", out: "login/index.html", mustContain: "аккаунт" },
   { url: "/en", locale: "en", out: "en/index.html", mustContain: "Be the answer in" },
-  { url: "/en/scan", locale: "en", out: "en/scan/index.html", mustContain: "Check your business" },
   { url: "/en/login", locale: "en", out: "en/login/index.html", mustContain: "account" },
 ];
 

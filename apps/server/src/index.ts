@@ -1,5 +1,5 @@
 import { createApp } from "./app.js";
-import { env } from "./config/env.js";
+import { authMode, env } from "./config/env.js";
 import { connectDb, isMemoryDb } from "./db/connect.js";
 import { logger } from "./lib/logger.js";
 import { sendBudgetPausedEmail } from "./mail/emails.js";
@@ -9,6 +9,16 @@ import { setBudgetEmailSender } from "./services/usage.js";
 
 async function main(): Promise<void> {
   await connectDb();
+
+  // §0.2: state the active auth mode on every boot, so mock sign-in is never
+  // a silent surprise.
+  if (authMode === "mock") {
+    logger.warn(
+      "AUTH MODE: mock — sign-in accepts any email with no password. Development only; set AUTH_MODE=firebase with credentials for real accounts (see FIREBASE_SETUP.md).",
+    );
+  } else {
+    logger.info("AUTH MODE: firebase — ID tokens are verified by firebase-admin.");
+  }
   registerHandler("runScan", ({ scanId }) => runScan(scanId));
   await initQueue();
   setBudgetEmailSender(sendBudgetPausedEmail);
