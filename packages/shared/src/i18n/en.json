@@ -36,8 +36,6 @@
   },
   "landing": {
     "heroLine1": "Be the answer in",
-    "heroSub1": "Millions of people already ask AI what to buy.",
-    "heroSub2": "Find out if it names your business.",
     "ctaCheckFree": "Check for free",
     "ctaBookCall": "Book a call",
     "form": {
@@ -68,9 +66,7 @@
       "authNote": "Running a check requires an account. Your form data is kept, so nothing needs to be retyped."
     },
     "fear": {
-      "line1": "Right now, someone is asking AI",
-      "line2": "about your services. AI recommended",
-      "line3": "your competitor."
+      "text": "Right now, someone is asking AI about your services. AI recommended your competitor."
     },
     "mockAnswer": {
       "userQuestion": "What are the best coffee shops in Almaty?",
@@ -94,7 +90,7 @@
       "step3Text": "A call, a visibility growth plan, and we execute it ourselves."
     },
     "stat": {
-      "quote": "“50% of traditional search traffic will be replaced with generative AI by 2028”",
+      "quote": "50% of traditional search traffic will be replaced with generative AI by 2028",
       "sourceLine": "Source: Gartner - the world's largest technology research and consulting firm.",
       "question": "Is your business ready?"
     },
@@ -124,7 +120,8 @@
       "title": "Find out what AI says about your business",
       "start": "Start the free scan",
       "book": "Book a call"
-    }
+    },
+    "heroSub": "Millions of people already ask AI what to buy. Find out if it names your business."
   },
   "progress": {
     "title": "Checking what AI says about your business…",
@@ -149,7 +146,6 @@
     "toggleToSignUp": "No account? Create one",
     "toggleToSignIn": "Already have an account? Sign in",
     "bookCallLink": "Or book a call",
-    "quoteSource": "Source",
     "mockHint": "Demo mode: enter an email, no password required.",
     "errors": {
       "wrongPassword": "Wrong email or password.",
@@ -170,7 +166,35 @@
     "passwordHint": "At least 8 characters. Mix letters, numbers and symbols.",
     "passwordTooShort": "That password is too short: use at least 8 characters.",
     "quotePrev": "Previous quote",
-    "quoteNext": "Next quote"
+    "quoteNext": "Next quote",
+    "netWorth": "Estimated net worth",
+    "quotes": {
+      "rauch": {
+        "text": "ChatGPT has become one of Vercel's fastest-growing acquisition channels, showing that AI is already changing how customers discover products.",
+        "role": "Founder & CEO, Vercel",
+        "netWorth": "$2.1 billion"
+      },
+      "gates": {
+        "text": "AI agents will do more than improve search. They could replace the need to visit traditional search and shopping websites altogether.",
+        "role": "Co-founder, Microsoft",
+        "netWorth": "$106.9 billion"
+      },
+      "nadella": {
+        "text": "AI is creating a new paradigm for search and will reshape how people navigate and discover information across the web.",
+        "role": "Chairman & CEO, Microsoft",
+        "netWorth": "$1.4 billion"
+      },
+      "pichai": {
+        "text": "Search is changing profoundly as AI allows people to ask more complex questions and receive more direct, useful answers.",
+        "role": "CEO, Alphabet and Google",
+        "netWorth": "$1.7 billion"
+      },
+      "shah": {
+        "text": "Ranking on Google is no longer enough. Businesses must also be understood, cited and recommended inside AI-generated answers.",
+        "role": "Co-founder & CTO, HubSpot",
+        "netWorth": "$1.1 billion"
+      }
+    }
   },
   "dashboard": {
     "nav": {

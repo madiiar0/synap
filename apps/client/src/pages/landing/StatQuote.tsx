@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import BookCallButton from "../../components/BookCallButton";
+import QuoteMark from "../../components/QuoteMark";
 import Reveal from "../../components/Reveal";
 
 import StartCta from "../../components/StartCta";
@@ -11,8 +12,11 @@ export default function StatQuote(): JSX.Element {
     <section className="hairline-dashed bg-base py-28 sm:py-36">
       <div className="guides mx-auto max-w-container px-6">
         <Reveal className="mx-auto max-w-4xl text-center">
+          {/* §5: ONE decorative mark for both languages. The localized string
+              carries no quote glyphs, so RU and EN render identically. */}
+          <QuoteMark className="mx-auto text-line" size={48} />
           <blockquote
-            className="font-semibold tracking-tight text-ink"
+            className="mt-5 text-balance font-semibold tracking-tight text-ink"
             style={{ fontSize: "clamp(28px, 4.4vw, 54px)", lineHeight: 1.18 }}
           >
             {t("landing.stat.quote")}

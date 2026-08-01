@@ -23,15 +23,27 @@ export default function FearLine(): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
-  const lines = useMemo(
-    () => [
-      t("landing.fear.line1").split(" "),
-      t("landing.fear.line2").split(" "),
-      t("landing.fear.line3").split(" "),
-    ],
-    [t],
-  );
-  const totalWords = lines.reduce((sum, words) => sum + words.length, 0);
+  // §4: ONE string, wrapped by the browser. The per-word spans exist only for
+  // the feathering animation; they no longer impose a line structure.
+  const words = useMemo(() => t("landing.fear.text").split(/\s+/).filter(Boolean), [t]);
+  const totalWords = words.length;
+
+  // Group each one or two letter word with the word after it, so it can never
+  // be stranded at the end of a line. Applies to every language.
+  const groups = useMemo(() => {
+    const out: { word: string; index: number }[][] = [];
+    let pending: { word: string; index: number }[] = [];
+    words.forEach((word, index) => {
+      pending.push({ word, index });
+      const letters = word.replace(/[^\p{L}\p{N}]/gu, "").length;
+      if (letters > 2 || index === words.length - 1) {
+        out.push(pending);
+        pending = [];
+      }
+    });
+    if (pending.length > 0) out.push(pending);
+    return out;
+  }, [words]);
 
   useEffect(() => {
     const el = ref.current;
@@ -104,34 +116,41 @@ export default function FearLine(): JSX.Element {
     };
   }, [totalWords]);
 
-  let wordIndex = -1;
   return (
     <section className="hairline-dashed bg-base pb-8 pt-28 sm:pt-32">
-      <div ref={ref} className="guides mx-auto max-w-container px-6">
+      <div ref={ref} className="guides mx-auto max-w-container px-4 sm:px-6">
         <p
-          className="mx-auto max-w-5xl text-center font-semibold tracking-tight"
-          style={{ fontSize: "clamp(20px, 5.4vw, 50px)", lineHeight: 1.25 }}
+          /* `text-balance` evens the lines out where supported; browsers that
+             lack it simply wrap normally, which is still correct. */
+          className="mx-auto max-w-4xl text-balance text-center font-semibold tracking-tight"
+          style={{ fontSize: "clamp(22px, 5.6vw, 50px)", lineHeight: 1.28 }}
         >
-          {lines.map((words, lineIdx) => (
-            <span key={lineIdx} className="block">
-              {words.map((word) => {
-                wordIndex += 1;
-                const idx = wordIndex;
-                return (
-                  <span key={`${lineIdx}-${idx}`}>
-                    <span
-                      ref={(node) => {
-                        wordRefs.current[idx] = node;
-                      }}
-                      className="fear-word"
-                    >
-                      {word}
-                    </span>{" "}
+          {groups.map((group, gi) => (
+            /* `.fear-word` is inline-block for the per-word filter, and browsers
+               may break between adjacent atomic inline boxes even across a
+               non-breaking space. Grouping a short word with the word that
+               follows it in a `nowrap` span is what actually keeps them
+               together. General rule: any word of one or two letters. */
+            <span key={gi} className="whitespace-nowrap">
+              {group.map(({ word, index }, wi) => (
+                <span key={index}>
+                  <span
+                    ref={(node) => {
+                      wordRefs.current[index] = node;
+                    }}
+                    className="fear-word"
+                  >
+                    {word}
                   </span>
-                );
-              })}
+                  {wi < group.length - 1 ? "\u00A0" : ""}
+                </span>
+              ))}
             </span>
-          ))}
+          )).flatMap((node, gi) =>
+            // The separating space must live OUTSIDE the nowrap span, or the
+            // whole paragraph becomes unbreakable.
+            gi < groups.length - 1 ? [node, <span key={`s${gi}`}> </span>] : [node],
+          )}
         </p>
       </div>
     </section>

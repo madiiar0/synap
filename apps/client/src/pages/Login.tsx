@@ -254,9 +254,10 @@ export default function Login(): JSX.Element {
         </div>
       </div>
 
-      {/* Right: quote panel (hidden below lg, §2.3) */}
+      {/* Right on desktop, stacked below the form on smaller screens: ONE
+          carousel instance either way (§2). */}
       <div
-        className="hidden items-center justify-center bg-[#F4F4F4] px-10 lg:flex"
+        className="flex items-center justify-center bg-[#F4F4F4] px-4 py-12 sm:px-8 lg:px-6 lg:py-10 xl:px-10"
         style={{
           backgroundImage: "radial-gradient(rgba(0,0,0,0.07) 1px, transparent 1px)",
           backgroundSize: "22px 22px",

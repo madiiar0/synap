@@ -71,10 +71,10 @@ export default function Hero(): JSX.Element {
             <span className="block">{t("landing.heroLine1")}</span>
             <CyclingPlatform />
           </h1>
-          <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-sub">
-            {t("landing.heroSub1")}
-            <br />
-            {t("landing.heroSub2")}
+          {/* §3: one string, wrapped by the browser. `text-pretty` keeps a
+              single short word off a line of its own without hard breaks. */}
+          <p className="mx-auto mt-8 max-w-[34rem] text-pretty text-lg leading-relaxed text-sub">
+            {t("landing.heroSub")}
           </p>
           <div className="mt-9 flex w-full flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
             <StartCta
