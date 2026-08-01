@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { z } from "zod";
+import { scanAllowance } from "../../services/allowance.js";
 import { isDisposableEmail, type SessionUserDto } from "@synapai/shared";
-import { authMode, env, isProd } from "../../config/env.js";
+import { authMode, env, isAdminEmail, isProd } from "../../config/env.js";
+import { logger } from "../../lib/logger.js";
 import { AppError } from "../../lib/errors.js";
 import { User, type UserDoc } from "../../models/User.js";
 import {
@@ -18,8 +20,9 @@ import {
 
 export const authRouter = Router();
 
-export function toSessionDto(user: UserDoc): SessionUserDto {
-  const unlimited = user.role === "admin" || user.unlimitedScans;
+export function toSessionDto(user: UserDoc, ip?: string): SessionUserDto {
+  // #7: one authoritative allowance, shared with the overview and the gate.
+  const allowance = scanAllowance(user, ip);
   return {
     id: String(user._id),
     email: user.email,
@@ -27,7 +30,9 @@ export function toSessionDto(user: UserDoc): SessionUserDto {
     locale: user.locale,
     role: user.role,
     emailVerified: user.emailVerified,
-    scansLeft: unlimited ? null : Math.max(0, user.freeScanLimit - user.freeScansUsed),
+    scansLeft: allowance.scansLeft,
+    canScan: allowance.canScan,
+    limitReason: allowance.reason,
   };
 }
 
@@ -108,8 +113,19 @@ authRouter.post("/session", authLimiter, async (req, res, next) => {
       }
     }
 
+    // #9: promote on sign-in as well as on boot, so adding an address to
+    // ADMIN_EMAIL takes effect immediately and an account created after boot
+    // is still recognised. Driven purely by server env; never by the client.
+    if (isAdminEmail(user.email) && (user.role !== "admin" || !user.unlimitedScans)) {
+      user.role = "admin";
+      user.unlimitedScans = true;
+      user.emailVerified = true;
+      await user.save();
+      logger.info({ email: user.email }, "account promoted to admin from ADMIN_EMAIL");
+    }
+
     setSessionCookie(res, createSessionToken(user));
-    res.json(toSessionDto(user));
+    res.json(toSessionDto(user, req.ip));
   } catch (err) {
     next(err);
   }
@@ -125,5 +141,5 @@ authRouter.get("/me", (req, res) => {
     res.status(401).json({ error: { code: "UNAUTHORIZED", message: "Not signed in" } });
     return;
   }
-  res.json(toSessionDto(req.user));
+  res.json(toSessionDto(req.user, req.ip));
 });

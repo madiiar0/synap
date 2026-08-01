@@ -503,3 +503,86 @@ answers, ever** — every scan issues a complete fresh set of provider calls;
   kept the old 41-call plan. Updated to `9` / `FREE_TAIL_ENGINES=chatgpt,gemini`,
   and both the smoke and freshness tests now pin the plan so a local `.env`
   can never change what they assert.
+
+## Iteration 7 — Post-launch defect fixes (2026-08-02)
+
+- **#1 marquee invisible on desktop (root cause).** The Tailwind theme defines a
+  COLOR named `base` (#FAFAFA), so `text-base` emits both a font-size and a
+  text-colour utility and the colour wins. `sm:text-base` on the chips therefore
+  set `color:#FAFAFA` on a white chip from the `sm` breakpoint up, overriding
+  `text-ink` — readable on mobile, invisible on laptop/desktop. Measured
+  `rgb(250,250,250)` on `rgb(255,255,255)` before, `rgb(23,23,23)` after, across
+  all 48 duplicated chips. Replaced with `text-[1rem]`; a new client test fails
+  the build if `text-base` reappears anywhere.
+- **#1 hero / CTA.** Mobile hero `clamp(30px,6.2vw,84px)` → `clamp(38px,9.2vw,84px)`
+  (38px at 375, still two lines, right edge 352/375). Sample-data badge removed
+  from the rankings panel. On mobile the panel is now rotated -3deg and bleeds
+  past the CTA card, clipped by the card's `overflow:hidden`; the bleed uses a
+  negative margin rather than a transform offset so the document scroll width is
+  unchanged (375/375, no page overflow).
+- **#2 Sources tab removed** from nav, routes, mobile tab bar (6 → 5 columns),
+  the `/api/brands/:id/sources` route, `useSources`, and both i18n bundles.
+  `topSources` data continues to feed scoring, citations and research.
+- **#3 Settings before the first audit.** `if (!brand) return <Skeleton/>` was an
+  indefinite loading shell. Now renders the same `EmptyPanel` the other tabs use,
+  verified on direct navigation to `/app/settings`: no skeleton, CTA present.
+- **#4 post-audit redirect (root cause).** Iteration 6 called
+  `refetchQueries({queryKey:["brands"], type:"active"})`, but the brands query is
+  not mounted on the progress screen, so it was a no-op; the shell then read the
+  pre-scan empty list from cache and bounced to onboarding. Replaced with
+  `removeQueries` + `fetchQuery`, which bypasses the cache and RESOLVES before
+  navigating, and the scanned business is preselected. Verified live: progress →
+  `/app` with a populated dashboard, and a hard refresh stays there.
+- **#5 form parity.** The first-audit form now collects website and alternative
+  names alongside name/category/city/market/competitors, carried through the auth
+  redirect in `synapai:pendingBusiness` and persisted on the brand; a rescan
+  applies updated identity fields without clobbering detected data.
+- **#6 identity resolution.** New `services/identity.ts` splits research output
+  into "us" and "rivals" structurally, with no per-company exceptions: a
+  candidate whose token sequence BEGINS with the business's full name is a
+  sub-brand ("Kaspi" ⊃ "Kaspi Bank", "Kaspi Red", "Kaspi.kz"), anything else is a
+  genuine competitor ("Halyk Bank", "Jusan Bank"); generic leading words cannot
+  anchor a match ("Coffee" never swallows "Coffee House") and a competitor the
+  owner typed is always respected. Research now also returns `subBrands`
+  explicitly. 6 unit tests.
+- **#7 audit allowance (root cause).** Two independent computations agreed
+  numerically, so the 3-vs-2 mismatch was client caching (`useMe` had
+  `staleTime: 30_000`), and "actually zero" was the per-IP gate, which no surface
+  reported. New `services/allowance.ts` is the single source used by the session
+  endpoint, the overview and the server gate; it reports the IP gate as
+  `limitReason: "ip_limit"`. `useMe` is `staleTime: 0` and invalidated after
+  every scan. 5 unit tests including an off-by-one sweep against the gate.
+- **#8 limit wording.** "Today's free scans are used up. Try tomorrow." replaced
+  in both locales with a permanent-limit message plus a book-a-call action; a
+  separate message covers the network limit. No copy promises a daily reset.
+- **#9 admin access.** `ADMIN_EMAIL` now accepts a comma-separated list and
+  promotion happens on EVERY sign-in as well as at boot, so adding an address
+  takes effect without a restart and an account created after boot is still
+  recognised. Enforced entirely server-side from env; nothing client-settable.
+- **#10 settings save (root cause).** Stage A research appends discovered
+  competitors up to 12, but `brandSettingsSchema` caps the array at
+  MAX_USER_COMPETITORS (5), so saving an enriched business returned 400 — and
+  when it did succeed it replaced the whole array, silently deleting every
+  detected competitor. Competitors now carry a `detected` flag, the DTO exposes
+  `competitors` (editable, ≤5) and `detectedCompetitors` (read-only), and PATCH
+  preserves detected entries.
+- **#11 rescan (root cause, verified independently).** Same underlying data, a
+  different code path: `useStartScan` resent every stored competitor name, so
+  `scanRequestSchema.max(5)` rejected it with 400. It also dropped the website.
+  Now sends only the owner's competitors plus the website.
+- **#12 raw codes removed** from the auth UI; `authErrorKey` logs code and
+  message to the console only under `import.meta.env.DEV`.
+- **#13 Google sign-in.** Verified again against the live project: `localhost`
+  authorized, provider enabled, valid OAuth URI, popup opens correctly. Fixed two
+  real hazards found by inspection: `initializeApp` is now guarded with
+  `getApps()`/`getApp()` (a duplicate init under Vite HMR throws
+  `auth/duplicate-app` and breaks every subsequent sign-in), and persistence is
+  set explicitly to `browserLocalPersistence`. Also confirmed the project has
+  **Email Enumeration Protection enabled**, which is why a wrong password
+  surfaces as `auth/invalid-credential`.
+- **QA:** typecheck ✅ lint ✅ **113 tests** ✅ (was 92) i18n ✅ (305 keys)
+  prerender ✅ smoke ✅. New: `firstAuditFlow.test.ts` (6 HTTP-level tests through
+  the real endpoints), `brandCompetitors.test.ts`, `allowance.test.ts`,
+  `identity.test.ts`, `tailwindTokens.test.ts`.
+- **Not verified:** a real Google sign-in still requires the owner's Google
+  account; Safari was unavailable in this environment.

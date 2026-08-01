@@ -24,7 +24,11 @@ export const apiLimiter = rateLimit({
 function makeIpLimiter(
   limit: () => number,
   message: string,
-): { check: (req: Request, _res: Response, next: NextFunction) => void; consume: (ip: string | undefined) => void } {
+): {
+  check: (req: Request, _res: Response, next: NextFunction) => void;
+  consume: (ip: string | undefined) => void;
+  remaining: (ip: string | undefined) => number;
+} {
   const counters = new Map<string, { day: string; count: number }>();
   return {
     check(req, _res, next) {
@@ -38,6 +42,12 @@ function makeIpLimiter(
         return;
       }
       next();
+    },
+    /** #7: read the remaining allowance WITHOUT consuming it. */
+    remaining(ip) {
+      const entry = counters.get(ip ?? "unknown");
+      if (!entry || entry.day !== todayKey()) return limit();
+      return Math.max(0, limit() - entry.count);
     },
     consume(ip) {
       const key = ip ?? "unknown";
@@ -81,4 +91,9 @@ export function newAccountIpAllowed(req: Request): boolean {
 
 export function consumeNewAccountQuota(ip: string | undefined): void {
   newAccounts.consume(ip);
+}
+
+/** #7: scan starts still available from this network today. */
+export function scanStartsRemainingForIp(ip: string | undefined): number {
+  return scanStarts.remaining(ip);
 }

@@ -233,7 +233,7 @@ export default function LandingNav(): JSX.Element {
                 <Link
                   to="/app"
                   onClick={() => setMenuOpen(false)}
-                  className="flex min-h-[48px] items-center justify-center rounded-full bg-ink px-6 text-base font-semibold text-white"
+                  className="flex min-h-[48px] items-center justify-center rounded-full bg-ink px-6 text-[1rem] font-semibold text-white"
                 >
                   {t("nav.dashboard")}
                 </Link>
@@ -242,14 +242,14 @@ export default function LandingNav(): JSX.Element {
                   <Link
                     to={localizedPath("/login")}
                     onClick={() => setMenuOpen(false)}
-                    className="flex min-h-[48px] items-center justify-center rounded-full border border-line bg-white px-6 text-base font-medium text-ink"
+                    className="flex min-h-[48px] items-center justify-center rounded-full border border-line bg-white px-6 text-[1rem] font-medium text-ink"
                   >
                     {t("nav.login")}
                   </Link>
                   <Link
                     to={localizedPath("/login")}
                     onClick={() => setMenuOpen(false)}
-                    className="flex min-h-[48px] items-center justify-center rounded-full bg-ink px-6 text-base font-semibold text-white"
+                    className="flex min-h-[48px] items-center justify-center rounded-full bg-ink px-6 text-[1rem] font-semibold text-white"
                   >
                     {t("nav.checkBrand")}
                   </Link>

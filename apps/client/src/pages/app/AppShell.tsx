@@ -2,7 +2,6 @@ import {
   BarChart3,
   Globe2,
   LayoutDashboard,
-  Link2,
   ListChecks,
   LogOut,
   MessageSquareText,
@@ -35,7 +34,6 @@ import Competitors from "./Competitors";
 import Overview from "./Overview";
 import Prompts from "./Prompts";
 import SettingsPage from "./SettingsPage";
-import Sources from "./Sources";
 
 interface BrandContextValue {
   brand: BrandDto | undefined;
@@ -51,7 +49,6 @@ const NAV_ITEMS = [
   { to: "", key: "overview", icon: LayoutDashboard, end: true },
   { to: "answers", key: "answers", icon: MessageSquareText, end: false },
   { to: "competitors", key: "competitors", icon: Swords, end: false },
-  { to: "sources", key: "sources", icon: Link2, end: false },
   { to: "prompts", key: "prompts", icon: ListChecks, end: false },
   { to: "settings", key: "settings", icon: Settings, end: false },
 ] as const;
@@ -242,7 +239,6 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
                 <Route index element={<Overview />} />
                 <Route path="answers" element={<Answers />} />
                 <Route path="competitors" element={<Competitors />} />
-                <Route path="sources" element={<Sources />} />
                 <Route path="prompts" element={<Prompts />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="*" element={<Navigate to={base} replace />} />
@@ -253,7 +249,7 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
           {/* §5: the sidebar becomes a bottom tab bar below md. */}
           {!admin && (
             <nav
-              className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 border-t border-line bg-surface md:hidden"
+              className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-surface md:hidden"
               style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
             >
               {NAV_ITEMS.filter((i) => i.key !== "settings").map((item) => (
@@ -262,7 +258,7 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
                   to={`${base}/${item.to}`}
                   end={item.end}
                   className={({ isActive }) =>
-                    `flex min-h-[56px] flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] ${
+                    `flex min-h-[56px] flex-col items-center justify-center gap-0.5 px-0.5 text-[10px] ${
                       isActive ? "font-semibold text-ink" : "text-sub"
                     }`
                   }
@@ -274,7 +270,7 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
               <NavLink
                 to={`${base}/settings`}
                 className={({ isActive }) =>
-                  `flex min-h-[56px] flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] ${
+                  `flex min-h-[56px] flex-col items-center justify-center gap-0.5 px-0.5 text-[10px] ${
                     isActive ? "font-semibold text-ink" : "text-sub"
                   }`
                 }

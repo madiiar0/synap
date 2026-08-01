@@ -66,7 +66,7 @@ export default function Hero(): JSX.Element {
         <div className="mx-auto max-w-5xl text-center">
           <h1
             className="font-semibold tracking-tight"
-            style={{ fontSize: "clamp(30px, 6.2vw, 84px)", lineHeight: 1.12 }}
+            style={{ fontSize: "clamp(38px, 9.2vw, 84px)", lineHeight: 1.1 }}
           >
             <span className="block">{t("landing.heroLine1")}</span>
             <CyclingPlatform />

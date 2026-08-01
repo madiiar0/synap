@@ -54,11 +54,13 @@
       "competitorsLabel": "Competitors (up to 5, comma-separated)",
       "competitorsPlaceholder": "Optional",
       "websiteLabel": "Website",
-      "websitePlaceholder": "Optional",
+      "websitePlaceholder": "example.com",
       "submit": "Run the scan",
       "submitting": "Starting…",
-      "rateLimited": "Today's free scans are used up. Try tomorrow or book a call.",
-      "validation": "Fill in the business name and category (at least 2 characters)."
+      "rateLimited": "Your free audit limit has been reached. Book a call and we will review your case.",
+      "validation": "Fill in the business name and category (at least 2 characters).",
+      "websiteHint": "We read the site to understand your services.",
+      "aliasesPlaceholder": "Other names, comma separated"
     },
     "scanPage": {
       "title": "Check your business",
@@ -175,7 +177,6 @@
       "overview": "Overview",
       "answers": "Answers",
       "competitors": "Competitors",
-      "sources": "Sources",
       "prompts": "Prompts",
       "settings": "Settings"
     },
@@ -218,16 +219,6 @@
       "colTrend": "Trend",
       "edit": "Edit competitors",
       "empty": "Competitors will appear after the first scan."
-    },
-    "sources": {
-      "title": "Sources",
-      "colDomain": "Domain",
-      "colCitations": "Citations",
-      "colMentionsUs": "Cites you",
-      "insight": "AI answers in your category are built from these sites: being present there is what visibility means.",
-      "yes": "Yes",
-      "no": "No",
-      "empty": "Sources will appear after the first scan."
     },
     "prompts": {
       "title": "Prompts",
@@ -364,7 +355,8 @@
     "body": "You have used all your free checks. To get an extended analysis across all AI models and a visibility growth plan, book a call. We will review your case and do the work for you.",
     "cta": "Book a call",
     "whatsapp": "Message on WhatsApp",
-    "close": "Close"
+    "close": "Close",
+    "ipBody": "The maximum number of free audits has already been started from this network. Book a call and we will review your case."
   },
   "verify": {
     "title": "Verify your email",

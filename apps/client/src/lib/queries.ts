@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { MAX_USER_COMPETITORS } from "@synapai/shared";
 import type {
   AnswerRowDto,
   BrandDto,
@@ -6,7 +7,6 @@ import type {
   OverviewDto,
   PromptRowDto,
   SessionUserDto,
-  TopSource,
 } from "@synapai/shared";
 import { apiGet, apiPatch, apiPost } from "./api";
 
@@ -15,7 +15,9 @@ export function useMe() {
     queryKey: ["me"],
     queryFn: () => apiGet<SessionUserDto>("/api/auth/me"),
     retry: false,
-    staleTime: 30_000,
+    // #7: the audit allowance lives here and must never be served stale, or the
+    // form and the dashboard show different numbers.
+    staleTime: 0,
   });
 }
 
@@ -76,14 +78,6 @@ export function useCompetitors(brandId: string | undefined) {
   });
 }
 
-export function useSources(brandId: string | undefined) {
-  return useQuery({
-    queryKey: ["sources", brandId],
-    queryFn: () => apiGet<TopSource[]>(`/api/brands/${brandId}/sources`),
-    enabled: Boolean(brandId),
-  });
-}
-
 export function usePrompts(brandId: string | undefined) {
   return useQuery({
     queryKey: ["prompts", brandId],
@@ -102,11 +96,18 @@ export function useStartScan(brand: BrandDto | undefined) {
         category: brand?.category,
         city: brand?.city || undefined,
         market: brand?.market,
-        competitors: brand?.competitors.map((c) => c.name),
+        website: brand?.website || undefined,
+        // #11: only the owner's own competitors round-trip. Research-detected
+        // ones live on the brand and would blow past MAX_USER_COMPETITORS.
+        competitors: (brand?.competitors ?? [])
+          .filter((c) => !c.detected)
+          .map((c) => c.name)
+          .slice(0, MAX_USER_COMPETITORS),
         idempotencyKey: crypto.randomUUID(),
       }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["overview", brand?.id] });
+      void queryClient.invalidateQueries({ queryKey: ["brands"] });
       void queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });

@@ -8,6 +8,8 @@ import {
 } from "@synapai/shared";
 import { env } from "../../config/env.js";
 import { AppError } from "../../lib/errors.js";
+import { scanAllowance } from "../../services/allowance.js";
+import type { UserDoc } from "../../models/User.js";
 import { sendMail } from "../../mail/mailer.js";
 import { Brand } from "../../models/Brand.js";
 import { Scan } from "../../models/Scan.js";
@@ -43,14 +45,14 @@ function idempotencyStore(userId: string, key: string | undefined, scanId: strin
   }
 }
 
-/** §6.2 quota: the server is the only authority. */
-export function quotaAllows(user: {
-  role: string;
-  unlimitedScans: boolean;
-  freeScansUsed: number;
-  freeScanLimit: number;
-}): boolean {
-  return user.role === "admin" || user.unlimitedScans || user.freeScansUsed < user.freeScanLimit;
+/**
+ * §6.2/#7 quota: the server is the only authority, and it uses the SAME
+ * allowance function every UI surface reads.
+ */
+export function quotaAllows(user: UserDoc): boolean {
+  // Account gate only: the IP gate is enforced by scanStartIpLimit middleware
+  // and produces its own 429, so it must not be double-counted here.
+  return scanAllowance(user).reason !== "account_limit";
 }
 
 async function notifyScanCap(count: number): Promise<void> {
@@ -117,10 +119,30 @@ scanRouter.post("/", requireAuth, requireVerifiedEmail, scanStartIpLimit, async 
         category: input.category,
         city: input.city,
         market: input.market,
-        competitors: (input.competitors ?? []).map((name) => ({ name, aliases: [] })),
+        aliases: input.aliases ?? [],
+        competitors: (input.competitors ?? []).map((name) => ({
+          name,
+          aliases: [],
+          detected: false,
+        })),
         locale: input.locale ?? user.locale,
         normKey,
       });
+    } else {
+      // #5/#11: a rescan may carry updated identity fields; apply them so the
+      // audit uses what the owner last entered without losing detected data.
+      let touched = false;
+      if (input.website && input.website !== brand.website) {
+        brand.website = input.website;
+        touched = true;
+      }
+      for (const alias of input.aliases ?? []) {
+        if (!brand.aliases.some((a) => a.toLowerCase() === alias.toLowerCase())) {
+          brand.aliases.push(alias);
+          touched = true;
+        }
+      }
+      if (touched) await brand.save();
     }
 
     const engines = [

@@ -9,7 +9,7 @@ import type {
   ScoreSnapshotDto,
   Sentiment,
 } from "@synapai/shared";
-import { normalizedKey } from "@synapai/shared";
+import { MAX_USER_COMPETITORS, normalizedKey } from "@synapai/shared";
 import { env } from "../config/env.js";
 import type { UserDoc } from "../models/User.js";
 import { AnswerResult } from "../models/AnswerResult.js";
@@ -17,6 +17,7 @@ import { type BrandDoc } from "../models/Brand.js";
 import { GeneratedPrompt } from "../models/GeneratedPrompt.js";
 import { Scan, type ScanDoc } from "../models/Scan.js";
 import { ScoreSnapshot, type ScoreSnapshotDoc } from "../models/ScoreSnapshot.js";
+import { scanAllowance } from "./allowance.js";
 import { keywordSentiment } from "./extraction.js";
 
 export function toBrandDto(brand: BrandDoc): BrandDto {
@@ -29,7 +30,11 @@ export function toBrandDto(brand: BrandDoc): BrandDto {
     city: brand.city,
     country: brand.country,
     market: brand.market,
-    competitors: brand.competitors,
+    // §6/#10: the editable list stays inside MAX_USER_COMPETITORS; research
+    // findings are surfaced separately so a save can never exceed the cap or
+    // silently delete them.
+    competitors: brand.competitors.filter((c) => !c.detected).slice(0, MAX_USER_COMPETITORS),
+    detectedCompetitors: brand.competitors.filter((c) => c.detected),
     locale: brand.locale,
   };
 }
@@ -105,11 +110,11 @@ export async function buildOverview(brand: BrandDoc, user: UserDoc): Promise<Ove
       }));
   }
 
-  // §6.3: remaining free scans; null hides the indicator (admin/unlimited).
-  const unlimited = user.role === "admin" || user.unlimitedScans;
-  const scansLeft = unlimited
-    ? null
-    : Math.max(0, user.freeScanLimit - user.freeScansUsed);
+  // §6.3/#7: the SAME allowance the session and the gate use, so the chip and
+  // the form can never disagree. The IP gate is deliberately not applied here:
+  // the overview reports the account balance, `canScan` on the session carries
+  // the network state.
+  const scansLeft = scanAllowance(user).scansLeft;
 
   return {
     brand: toBrandDto(brand),

@@ -27,6 +27,10 @@ const competitorSchema = new Schema<CompetitorRef>(
   {
     name: { type: String, required: true },
     aliases: { type: [String], default: [] },
+    // §6: true when Stage A research found this competitor rather than the
+    // owner typing it. Detected entries are shown read-only and are NOT
+    // counted against the user-facing MAX_USER_COMPETITORS cap.
+    detected: { type: Boolean, default: false },
   },
   { _id: false },
 );

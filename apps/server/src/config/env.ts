@@ -68,6 +68,12 @@ const schema = z.object({
   SMTP_USER: z.string().optional().default(""),
   SMTP_PASS: z.string().optional().default(""),
   MAIL_FROM: z.string().default("SynapAI <no-reply@synapai.app>"),
+  /**
+   * #9: comma-separated list. Every address here is promoted to admin
+   * (unlimited audits, bypasses the per-IP gate) on boot AND on each sign-in,
+   * so adding one takes effect without a restart. Server-side only: a client
+   * can never set this.
+   */
   ADMIN_EMAIL: z.string().default("admin@synapai.app"),
 
   DEMO_MODE: bool.default("true"),
@@ -135,6 +141,15 @@ if (authMode === "firebase") {
     console.error("See FIREBASE_SETUP.md step 5-6, or set AUTH_MODE=mock for offline development.");
     process.exit(1);
   }
+}
+
+/** #9: every configured admin address, lower-cased. */
+export const adminEmails: string[] = env.ADMIN_EMAIL.split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+
+export function isAdminEmail(email: string): boolean {
+  return adminEmails.includes(email.trim().toLowerCase());
 }
 
 export { repoRoot };

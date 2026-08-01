@@ -34,6 +34,8 @@ export interface Extracted {
 export interface CompetitorRef {
   name: string;
   aliases: string[];
+  /** §6: found by research rather than typed by the owner (read-only in UI). */
+  detected?: boolean;
 }
 
 export interface ScanProgressDto {
@@ -91,6 +93,8 @@ export interface BrandDto {
   country: string;
   market: Market;
   competitors: CompetitorRef[];
+  /** §6: competitors discovered by research; read-only, never sent back. */
+  detectedCompetitors?: CompetitorRef[];
   locale?: Locale;
 }
 
@@ -198,6 +202,10 @@ export interface SessionUserDto {
   locale: Locale;
   role: UserRole;
   emailVerified: boolean;
-  /** Remaining free scans; null = unlimited/admin (indicator hidden). */
+  /** #7: audits left on the account; null = unlimited (admin). */
   scansLeft: number | null;
+  /** #7: false when the account OR the network gate blocks a new audit. */
+  canScan: boolean;
+  /** #7: why a scan is blocked, so the message can be accurate. */
+  limitReason: "ok" | "account_limit" | "ip_limit";
 }

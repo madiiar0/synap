@@ -55,8 +55,11 @@ export default function FinalCta(): JSX.Element {
                 />
               </div>
             </div>
-            {/* §5: below lg the panel sits under the text, full width and flat. */}
-            <div className="pointer-events-none relative z-10 mt-10 w-full lg:hidden">
+            {/* #1: on mobile the panel is rotated and bleeds off the right edge,
+                echoing the desktop composition. The parent card clips it, and a
+                negative right margin (not a transform offset) keeps it out of
+                the document's scroll width, so there is no page overflow. */}
+            <div className="pointer-events-none relative z-10 -mr-16 mt-10 w-[130%] max-w-none origin-top-left rotate-[-3deg] sm:-mr-24 lg:hidden">
               <ProductPreview />
             </div>
             {/* preview peeking from the right edge, slightly elevated */}

@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import type { Market } from "@synapai/shared";
+import BookCallButton from "../../components/BookCallButton";
 import Logo from "../../components/Logo";
 import { ApiError, apiPost } from "../../lib/api";
 import { currentLocale } from "../../lib/i18n";
@@ -30,6 +31,10 @@ export default function Onboarding(): JSX.Element {
   const [city, setCity] = useState(pending.current?.city ?? "");
   const [market, setMarket] = useState<Market>(pending.current?.market ?? "kz");
   const [competitors, setCompetitors] = useState(pending.current?.competitors ?? "");
+  // #5: the same business identity fields Settings collects, so the audit is
+  // grounded in the full picture from the very first run.
+  const [website, setWebsite] = useState(pending.current?.website ?? "");
+  const [aliases, setAliases] = useState(pending.current?.aliases ?? "");
   const [error, setError] = useState<string | null>(null);
 
   const start = useMutation({
@@ -39,6 +44,12 @@ export default function Onboarding(): JSX.Element {
         category: category.trim(),
         city: city.trim() || undefined,
         market,
+        website: website.trim() || undefined,
+        aliases: aliases
+          .split(/[\n,]/)
+          .map((a) => a.trim())
+          .filter(Boolean)
+          .slice(0, 20),
         competitors: competitors
           .split(",")
           .map((c) => c.trim())
@@ -76,6 +87,9 @@ export default function Onboarding(): JSX.Element {
     "h-12 w-full rounded-xl border border-line bg-base px-4 text-sm text-ink outline-none transition-colors placeholder:text-sub focus:border-ink";
   const labelCls = "mb-1.5 block text-xs text-sub";
   const scansLeft = me?.scansLeft ?? null;
+  // #7/#8: the same allowance the backend enforces, so the form never invites
+  // an audit that will be rejected.
+  const blocked = me ? !me.canScan : false;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-base px-4 py-12">
@@ -149,6 +163,33 @@ export default function Onboarding(): JSX.Element {
               </div>
             </div>
             <div className="sm:col-span-3">
+              <label htmlFor="ob-website" className={labelCls}>
+                {t("landing.form.websiteLabel")}
+              </label>
+              <input
+                id="ob-website"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                placeholder={t("landing.form.websitePlaceholder")}
+                inputMode="url"
+                className={inputCls}
+              />
+              <p className="mt-1 text-xs text-sub">{t("landing.form.websiteHint")}</p>
+            </div>
+            <div className="sm:col-span-3">
+              <label htmlFor="ob-aliases" className={labelCls}>
+                {t("dashboard.settings.aliases")}
+              </label>
+              <input
+                id="ob-aliases"
+                value={aliases}
+                onChange={(e) => setAliases(e.target.value)}
+                placeholder={t("landing.form.aliasesPlaceholder")}
+                className={inputCls}
+              />
+              <p className="mt-1 text-xs text-sub">{t("dashboard.settings.aliasesHint")}</p>
+            </div>
+            <div className="sm:col-span-3">
               <label htmlFor="ob-competitors" className={labelCls}>
                 {t("landing.form.competitorsLabel")}
               </label>
@@ -166,15 +207,27 @@ export default function Onboarding(): JSX.Element {
 
           <button
             type="submit"
-            disabled={start.isPending}
+            disabled={start.isPending || blocked}
             className="mt-5 flex min-h-[48px] w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white transition-opacity hover:opacity-85 disabled:opacity-50"
           >
             {start.isPending ? t("landing.form.submitting") : t("onboarding.submit")}
           </button>
         </form>
 
+        {/* #8: a permanent limit, never "comes back tomorrow". */}
+        {blocked && (
+          <div className="mt-4 rounded-xl border border-line bg-base p-4 text-center">
+            <p className="text-sm text-ink">
+              {me?.limitReason === "ip_limit" ? t("quota.ipBody") : t("quota.body")}
+            </p>
+            <div className="mt-3 flex justify-center">
+              <BookCallButton source="dashboard" variant="primary" label={t("quota.cta")} />
+            </div>
+          </div>
+        )}
+
         {/* §3: remaining free checks, hidden for admin and unlimited accounts. */}
-        {scansLeft !== null && (
+        {!blocked && scansLeft !== null && (
           <p className="mt-4 text-center text-xs text-sub">
             {t("dashboard.scansLeft", { count: scansLeft })}
           </p>

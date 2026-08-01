@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CompetitorRef, Locale, Market } from "@synapai/shared";
 import { MAX_USER_COMPETITORS } from "@synapai/shared";
-import { Card, Skeleton } from "../../components/ui";
+import { EmptyPanel } from "../../components/PageState";
+import { Card } from "../../components/ui";
 import { useSaveBrand } from "../../lib/queries";
 import { setLocale } from "../../lib/i18n";
 import { useActiveBrand } from "./AppShell";
@@ -30,11 +31,15 @@ export default function SettingsPage(): JSX.Element {
     setCity(brand.city ?? "");
     setMarket(brand.market);
     setAliases(brand.aliases.join("\n"));
-    setCompetitors(brand.competitors);
+    setCompetitors(brand.competitors.filter((c) => !c.detected));
     setLocaleState(brand.locale ?? "ru");
   }, [brand]);
 
-  if (!brand) return <Skeleton className="h-80 w-full max-w-2xl" />;
+  // #3: with no business yet there is nothing loading, so show the same
+  // first-audit empty state the other tabs use instead of a forever-skeleton.
+  if (!brand) {
+    return <EmptyPanel title={t("dashboard.empty.noScan")} hint={t("dashboard.empty.runFirst")} />;
+  }
 
   const inputCls =
     "w-full rounded-xl border border-line bg-base px-4 py-2.5 text-sm outline-none focus:border-ink";
@@ -51,7 +56,10 @@ export default function SettingsPage(): JSX.Element {
         .split("\n")
         .map((a) => a.trim())
         .filter(Boolean),
-      competitors: competitors.filter((c) => c.name.trim().length >= 2),
+      competitors: competitors
+        .filter((c) => c.name.trim().length >= 2)
+        .slice(0, MAX_USER_COMPETITORS)
+        .map((c) => ({ name: c.name.trim(), aliases: c.aliases })),
       locale,
     });
     setLocale(locale);

@@ -23,11 +23,12 @@ const RESEARCH_INSTRUCTIONS = `You are a market researcher. Investigate the busi
 Report only what you can actually find. If you cannot identify the business, say so with confidence "low" and leave the lists empty.
 Never invent services, competitors or facts. Prefer sources about this exact business in this exact city.
 Reply with ONE JSON object and nothing else, matching exactly:
-{"summary":string,"services":string[],"audience":string,"differentiators":string[],"likelyCompetitors":string[],"aliases":string[],"confidence":"high"|"medium"|"low","sourcesUsed":string[]}
+{"summary":string,"services":string[],"audience":string,"differentiators":string[],"likelyCompetitors":string[],"aliases":string[],"subBrands":string[],"confidence":"high"|"medium"|"low","sourcesUsed":string[]}
 - summary: 2 to 3 sentences on what this business actually does.
 - services: concrete services or products you found.
-- likelyCompetitors: real businesses in the same category and city.
-- aliases: name variants, transliterations, legal name.
+- aliases: OTHER NAMES FOR THE SAME COMPANY: spelling and language variants, transliterations, the legal entity name, the domain name.
+- subBrands: official products, apps, services or sub-brands OWNED BY this business. For a company called X, names like "X Bank", "X Pay", "X Red" almost always belong here, NOT in likelyCompetitors.
+- likelyCompetitors: SEPARATE, INDEPENDENT companies competing with this business. Never list a product, sub-brand, division or alternative name of the business itself. If unsure whether a name is a rival or part of this business, put it in subBrands.
 - sourcesUsed: URLs you relied on.`;
 
 export interface ResearchInput {

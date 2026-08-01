@@ -1,10 +1,12 @@
-import { initializeApp, type FirebaseApp } from "firebase/app";
+import { getApp, getApps, initializeApp, type FirebaseApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   getAuth,
   getRedirectResult,
   GoogleAuthProvider,
+  browserLocalPersistence,
   sendEmailVerification,
+  setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
   signInWithRedirect,
@@ -24,17 +26,33 @@ export const firebaseConfigured = Boolean(
 );
 
 let app: FirebaseApp | null = null;
+let persistenceSet = false;
 
+/**
+ * #13: reuse an already-initialised app. Calling initializeApp twice (module
+ * re-evaluation under Vite HMR, or a second import path) throws
+ * `auth/duplicate-app` and every subsequent sign-in fails with an opaque
+ * internal error.
+ */
 function auth(): Auth {
   if (!app) {
-    app = initializeApp({
-      apiKey: config.apiKey,
-      authDomain: config.authDomain,
-      projectId: config.projectId,
-      appId: config.appId,
-    });
+    app = getApps().length > 0
+      ? getApp()
+      : initializeApp({
+          apiKey: config.apiKey,
+          authDomain: config.authDomain,
+          projectId: config.projectId,
+          appId: config.appId,
+        });
   }
-  return getAuth(app);
+  const instance = getAuth(app);
+  if (!persistenceSet) {
+    persistenceSet = true;
+    // #13: survive a refresh explicitly rather than relying on the default,
+    // which some privacy modes downgrade to in-memory.
+    void setPersistence(instance, browserLocalPersistence).catch(() => undefined);
+  }
+  return instance;
 }
 
 export async function firebaseEmailSignIn(email: string, password: string): Promise<string> {
@@ -119,7 +137,10 @@ export async function consumeGoogleRedirect(): Promise<string | null> {
 export function authErrorKey(err: unknown): string {
   const code = (err as { code?: string }).code ?? "";
   const message = (err as { message?: string }).message ?? String(err);
-  console.error(`[SynapAI auth] ${code || "unknown"}: ${message}`, err);
+  // #12: technical detail stays in the development console only.
+  if (import.meta.env.DEV) {
+    console.error(`[SynapAI auth] ${code || "unknown"}: ${message}`, err);
+  }
   switch (code) {
     case "auth/invalid-credential":
     case "auth/wrong-password":

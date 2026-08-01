@@ -13,6 +13,7 @@ import { Scan, type EngineCost, type ScanDoc } from "../models/Scan.js";
 import { ScoreSnapshot } from "../models/ScoreSnapshot.js";
 import { User } from "../models/User.js";
 import { batchLlmExtract, demoExtract, deterministicExtract } from "./extraction.js";
+import { resolveIdentity } from "./identity.js";
 import { researchBusiness } from "./research.js";
 import { generatePrompts, selectCoreIndices } from "./promptGen.js";
 import { computeSnapshot, type ScoringAnswer } from "./scoring.js";
@@ -29,29 +30,48 @@ function sleep(ms: number): Promise<void> {
  */
 async function mergeResearchIntoBrand(
   brand: BrandDoc,
-  research: { aliases: string[]; likelyCompetitors: string[] },
+  research: { aliases: string[]; likelyCompetitors: string[]; subBrands: string[] },
 ): Promise<void> {
-  const known = new Set(
+  // #6: decide what is US and what is a RIVAL before anything is stored, so a
+  // sub-brand ("X Bank", "X Red") is never scored as an independent competitor.
+  const resolved = resolveIdentity({
+    brandName: brand.name,
+    userAliases: brand.aliases,
+    researchAliases: research.aliases,
+    declaredSubBrands: research.subBrands,
+    candidateCompetitors: research.likelyCompetitors,
+    userCompetitors: brand.competitors.filter((c) => !c.detected).map((c) => c.name),
+  });
+
+  let changed = false;
+  const knownAliases = new Set(brand.aliases.map((a) => a.trim().toLowerCase()));
+  for (const alias of resolved.aliases) {
+    const key = alias.trim().toLowerCase();
+    if (!key || knownAliases.has(key)) continue;
+    brand.aliases.push(alias.trim());
+    knownAliases.add(key);
+    changed = true;
+  }
+
+  const knownCompetitors = new Set(
     [brand.name, ...brand.aliases, ...brand.competitors.map((c) => c.name)].map((n) =>
       n.trim().toLowerCase(),
     ),
   );
-  let changed = false;
-
-  for (const alias of research.aliases) {
-    const key = alias.trim().toLowerCase();
-    if (!key || known.has(key)) continue;
-    brand.aliases.push(alias.trim());
-    known.add(key);
+  for (const name of resolved.competitors) {
+    const key = name.trim().toLowerCase();
+    if (!key || knownCompetitors.has(key)) continue;
+    if (brand.competitors.length >= 12) break;
+    brand.competitors.push({ name: name.trim(), aliases: [], detected: true });
+    knownCompetitors.add(key);
     changed = true;
   }
-  for (const name of research.likelyCompetitors) {
-    const key = name.trim().toLowerCase();
-    if (!key || known.has(key)) continue;
-    if (brand.competitors.length >= 12) break;
-    brand.competitors.push({ name: name.trim(), aliases: [] });
-    known.add(key);
-    changed = true;
+
+  if (resolved.reclaimed.length > 0) {
+    logger.info(
+      { business: brand.name, reclaimed: resolved.reclaimed },
+      "#6: names reclaimed from the competitor list as the same business",
+    );
   }
   if (changed) await brand.save();
 }

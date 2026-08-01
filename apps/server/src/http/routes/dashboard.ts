@@ -121,16 +121,6 @@ dashboardRouter.get("/brands/:id/competitors", async (req, res, next) => {
   }
 });
 
-dashboardRouter.get("/brands/:id/sources", async (req, res, next) => {
-  try {
-    const brand = await loadOwnedBrand(req);
-    const latest = await latestScoredScan(String(brand._id));
-    res.json(latest?.snapshot.topSources ?? []);
-  } catch (err) {
-    next(err);
-  }
-});
-
 dashboardRouter.get("/brands/:id/prompts", async (req, res, next) => {
   try {
     const brand = await loadOwnedBrand(req);
@@ -155,7 +145,15 @@ dashboardRouter.patch("/brands/:id", async (req, res, next) => {
     if (input.category !== undefined) brand.category = input.category;
     if (input.city !== undefined) brand.city = input.city ?? undefined;
     if (input.market !== undefined) brand.market = input.market;
-    if (input.competitors !== undefined) brand.competitors = input.competitors;
+    if (input.competitors !== undefined) {
+      // #10: the form only ever edits the user's own competitors, so keep the
+      // research-detected ones instead of replacing the whole array.
+      const detected = brand.competitors.filter((c) => c.detected);
+      brand.competitors = [
+        ...input.competitors.map((c) => ({ ...c, detected: false })),
+        ...detected,
+      ];
+    }
     if (input.locale !== undefined) brand.locale = input.locale;
     brand.normKey = normalizedKey(brand.name, brand.category, brand.city);
     await brand.save();

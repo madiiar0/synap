@@ -20,6 +20,8 @@ export const scanRequestSchema = z.object({
   city: trimmed(2, 60).optional().or(z.literal("").transform(() => undefined)),
   market: z.enum(MARKETS).default("kz"),
   competitors: z.array(trimmed(2, 80)).max(MAX_USER_COMPETITORS).optional(),
+  /** #5: alternative business names, same field Settings edits. */
+  aliases: z.array(trimmed(1, 80)).max(20).optional(),
   locale: z.enum(LOCALES).optional(),
   /** §2.4 idempotency: same key within 60s returns the existing scanId. */
   idempotencyKey: trimmed(8, 64).optional(),
@@ -129,6 +131,8 @@ export const businessResearchSchema = z.object({
   differentiators: z.array(z.string().min(1).max(200)).max(20).default([]),
   likelyCompetitors: z.array(z.string().min(1).max(160)).max(20).default([]),
   aliases: z.array(z.string().min(1).max(160)).max(20).default([]),
+  /** #6: official products/sub-brands OF this business, never competitors. */
+  subBrands: z.array(z.string().min(1).max(160)).max(20).default([]),
   confidence: z.enum(["high", "medium", "low"]).default("low"),
   sourcesUsed: z.array(z.string().max(600)).max(30).default([]),
 });

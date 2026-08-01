@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import type { ScanProgressDto } from "@synapai/shared";
+import type { BrandDto, OverviewDto, ScanProgressDto } from "@synapai/shared";
 import { apiGet } from "../lib/api";
 import { setPreferredBrand } from "../lib/pendingBusiness";
 
@@ -52,14 +52,35 @@ export default function ScanProgress(): JSX.Element {
     if (data.brandId) setPreferredBrand(data.brandId);
 
     void (async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["brands"] }),
-        queryClient.invalidateQueries({ queryKey: ["overview"] }),
-        // §3.4: the scans-left chip must decrement immediately.
-        queryClient.invalidateQueries({ queryKey: ["me"] }),
-      ]);
-      // Ensure the brands list has actually resolved before we route.
-      await queryClient.refetchQueries({ queryKey: ["brands"], type: "active" }).catch(() => undefined);
+      // #4: `refetchQueries({type:"active"})` was a no-op here, because the
+      // brands query is not mounted on this page. The shell then read the
+      // pre-scan empty list from cache and bounced back to onboarding.
+      // fetchQuery bypasses the cache and RESOLVES before we navigate.
+      queryClient.removeQueries({ queryKey: ["brands"] });
+      queryClient.removeQueries({ queryKey: ["overview"] });
+      try {
+        const brands = await queryClient.fetchQuery({
+          queryKey: ["brands"],
+          queryFn: () => apiGet<BrandDto[]>("/api/brands"),
+          staleTime: 0,
+        });
+        // Only route once the scanned business is actually present.
+        const target = brands.find((b) => b.id === data.brandId) ?? brands[0];
+        if (target) {
+          await queryClient
+            .fetchQuery({
+              queryKey: ["overview", target.id],
+              queryFn: () => apiGet<OverviewDto>(`/api/brands/${target.id}/overview`),
+              staleTime: 0,
+            })
+            .catch(() => undefined);
+        }
+      } catch {
+        // A failed prefetch must not strand the user on the radar screen;
+        // the dashboard has its own loading and error states.
+      }
+      // #7: the audit balance must be current the moment the dashboard renders.
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
       navigate("/app", { replace: true });
     })();
   }, [data, id, navigate, queryClient]);

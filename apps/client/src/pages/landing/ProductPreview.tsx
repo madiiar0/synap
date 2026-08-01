@@ -9,7 +9,7 @@ interface PreviewRow {
 }
 
 // Real coffee brands with their real logos; the percentages are illustrative,
-// which is why the panel header carries a visible "Sample data" tag (§10).
+// The figures are illustrative; no badge is rendered (iteration 7 #1).
 const ROWS: PreviewRow[] = [
   { name: "Global Coffee", visibility: 74, trend: "up" },
   { name: "Master Coffee", visibility: 52, trend: "down" },
@@ -22,12 +22,7 @@ export default function ProductPreview(): JSX.Element {
   return (
     <div className="w-full max-w-xl rounded-2xl border border-darkline bg-dark p-6 text-darktext shadow-lg">
       <div className="flex items-center justify-between border-b border-darkline pb-4">
-        <p className="flex items-center gap-2 text-sm font-semibold">
-          {t("landing.preview.title")}
-          <span className="rounded-full border border-darkline px-2 py-0.5 text-[10px] font-normal text-sub">
-            {t("common.sampleData")}
-          </span>
-        </p>
+        <p className="text-sm font-semibold">{t("landing.preview.title")}</p>
         <p className="text-xs text-sub">{t("landing.preview.subtitle")}</p>
       </div>
       <table className="mt-2 w-full text-sm">

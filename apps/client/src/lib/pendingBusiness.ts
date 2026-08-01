@@ -12,6 +12,9 @@ export interface PendingBusiness {
   city: string;
   market: Market;
   competitors: string;
+  /** #5: same identity fields as Settings. */
+  website?: string;
+  aliases?: string;
 }
 
 export function savePendingBusiness(value: PendingBusiness): void {
@@ -34,6 +37,8 @@ export function readPendingBusiness(): PendingBusiness | null {
       city: typeof parsed.city === "string" ? parsed.city : "",
       market: (parsed.market ?? "kz") as Market,
       competitors: typeof parsed.competitors === "string" ? parsed.competitors : "",
+      website: typeof parsed.website === "string" ? parsed.website : "",
+      aliases: typeof parsed.aliases === "string" ? parsed.aliases : "",
     };
   } catch {
     return null;
