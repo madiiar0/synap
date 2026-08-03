@@ -1,5 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import ru from "@synapai/shared/i18n/ru.json";
 import i18n from "../../lib/i18n";
 import MockAnswer from "./MockAnswer";
 import ProductPreview from "./ProductPreview";
@@ -35,7 +36,7 @@ describe("ProductPreview sample businesses", () => {
     await i18n.changeLanguage("ru");
     const preview = render(<ProductPreview />);
 
-    expect(preview.getByText("Пример рейтинга")).toBeTruthy();
-    expect(preview.queryByText("Пример данных")).toBeNull();
+    expect(preview.getByText(ru.landing.preview.title)).toBeTruthy();
+    expect("sampleData" in ru.common).toBe(false);
   });
 });

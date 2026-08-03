@@ -2,6 +2,7 @@ import { once } from "node:events";
 import type { Server } from "node:http";
 import {
   INDEXABLE_PUBLIC_PATHS,
+  LEGACY_PUBLIC_REDIRECTS,
   PUBLIC_PATHS,
   localizedPublicPath,
   routeMeta,
@@ -123,6 +124,22 @@ async function run(): Promise<void> {
     assert(new Set(indexed.map((page) => page.title)).size === indexed.length, "Indexable page titles are not unique");
     assert(new Set(indexed.map((page) => page.description)).size === indexed.length, "Indexable page descriptions are not unique");
 
+    const ruBlog = pages.find((page) => page.path === "/blogs")?.html ?? "";
+    const enBlog = pages.find((page) => page.path === "/en/blogs")?.html ?? "";
+    assert(ruBlog.includes("Как проверить информацию о бренде в ответах ИИ"), "/blogs: article list is missing from initial HTML");
+    assert(enBlog.includes("How to audit AI-generated brand information"), "/en/blogs: article list is missing from initial HTML");
+
+    for (const { from, to } of LEGACY_PUBLIC_REDIRECTS) {
+      for (const locale of ["ru", "en"] as const) {
+        const source = locale === "ru" ? from : `/en${from}`;
+        const target = localizedPublicPath(to, locale);
+        const response = await get(origin, `${source}?audit=1`);
+        assert(response.status === 308, `${source}: legacy guide redirect is not permanent`);
+        assert(response.headers.get("location") === `${target}?audit=1`, `${source}: redirect target is incorrect`);
+        assert(target !== source, `${source}: redirect loop detected`);
+      }
+    }
+
     const knownLinks = new Set([
       ...publicRoutePairs().map((route) => route.path),
       "/app",
@@ -150,6 +167,8 @@ async function run(): Promise<void> {
     const sitemapLocations = [...sitemapBody.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
     assert(sitemap.status === 200, "sitemap.xml did not return 200");
     assert(sitemapLocations.length === INDEXABLE_PUBLIC_PATHS.length * 2, "sitemap.xml has the wrong URL count");
+    assert(sitemapBody.includes("/blogs"), "sitemap.xml is missing the blog hub");
+    assert(!sitemapBody.includes("/guides"), "sitemap.xml contains a legacy guide URL");
     assert(!sitemapBody.match(/\/login<|\/app<|\/api\//), "sitemap.xml contains a private or noindex URL");
 
     for (const resource of ["/llms.txt", "/llms-full.txt"]) {

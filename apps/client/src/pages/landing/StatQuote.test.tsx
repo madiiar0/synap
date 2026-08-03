@@ -39,12 +39,11 @@ describe("StatQuote", () => {
     const { getByText, queryByText } = render(<StatQuote />);
     const source = getByText(ru.landing.stat.sourceLine);
 
-    expect(getByText("К 2028 году ИИ заменит 50% традиционного поискового трафика")).toBeTruthy();
-    expect(
-      queryByText(
-        "К 2028 году органический поисковый трафик брендов снизится на 50% или более по мере перехода пользователей к поиску с ИИ.",
-      ),
-    ).toBeNull();
+    expect(ru.landing.stat.quote).toBe(
+      "\u041a 2028 \u0433\u043e\u0434\u0443 \u0418\u0418 \u0437\u0430\u043c\u0435\u043d\u0438\u0442 50% \u0442\u0440\u0430\u0434\u0438\u0446\u0438\u043e\u043d\u043d\u043e\u0433\u043e \u043f\u043e\u0438\u0441\u043a\u043e\u0432\u043e\u0433\u043e \u0442\u0440\u0430\u0444\u0438\u043a\u0430",
+    );
+    expect(getByText(ru.landing.stat.quote)).toBeTruthy();
+    expect(queryByText(en.landing.stat.quote)).toBeNull();
     expect(source.tagName).toBe("P");
     expect(source.closest("a")).toBeNull();
   });

@@ -1,6 +1,10 @@
 import { lazy, Suspense, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
-import { INDEXABLE_PUBLIC_PATHS } from "@synapai/shared";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import {
+  INDEXABLE_PUBLIC_PATHS,
+  LEGACY_PUBLIC_REDIRECTS,
+  localizedPublicPath,
+} from "@synapai/shared";
 import QuotaModal from "./components/QuotaModal";
 import VerifyEmailModal from "./components/VerifyEmailModal";
 import Toaster from "./components/Toaster";
@@ -27,6 +31,11 @@ function EnRoute({ children }: { children: JSX.Element }): JSX.Element {
   return children;
 }
 
+function LegacyPublicRedirect({ to }: { to: string }): JSX.Element {
+  const location = useLocation();
+  return <Navigate replace to={`${to}${location.search}${location.hash}`} />;
+}
+
 export default function App(): JSX.Element {
   const contentPaths = INDEXABLE_PUBLIC_PATHS.filter((path) => path !== "/");
   return (
@@ -43,6 +52,20 @@ export default function App(): JSX.Element {
         ))}
         {contentPaths.map((path) => (
           <Route key={`/en${path}`} path={`/en${path}`} element={<EnRoute><PublicPage /></EnRoute>} />
+        ))}
+        {LEGACY_PUBLIC_REDIRECTS.map(({ from, to }) => (
+          <Route
+            key={from}
+            path={from}
+            element={<LegacyPublicRedirect to={localizedPublicPath(to, "ru")} />}
+          />
+        ))}
+        {LEGACY_PUBLIC_REDIRECTS.map(({ from, to }) => (
+          <Route
+            key={`/en${from}`}
+            path={`/en${from}`}
+            element={<LegacyPublicRedirect to={localizedPublicPath(to, "en")} />}
+          />
         ))}
         <Route path="/scan/:id" element={<Suspense fallback={null}><ScanProgress /></Suspense>} />
         <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />

@@ -1,9 +1,15 @@
+import { once } from "node:events";
+import type { AddressInfo } from "node:net";
+import type { Server } from "node:http";
+import express from "express";
 import { describe, expect, it } from "vitest";
 import { INDEXABLE_PUBLIC_PATHS, PUBLIC_PATHS } from "@synapai/shared";
 import {
   buildHeadTags,
   llmsFullText,
   llmsText,
+  mountSeo,
+  publicRedirects,
   publicRoutes,
   robotsText,
   sitemapXml,
@@ -39,7 +45,32 @@ describe("crawl and retrieval resources", () => {
     expect(locations).toHaveLength(INDEXABLE_PUBLIC_PATHS.length * 2);
     expect(new Set(locations).size).toBe(locations.length);
     expect(xml).toContain('hreflang="x-default"');
+    expect(xml).toContain(`${BASE}/blogs`);
+    expect(xml).toContain(`${BASE}/en/blogs`);
+    expect(xml).not.toContain(`${BASE}/guides`);
     expect(xml).not.toMatch(/\/login<|\/app<|\/api\//);
+  });
+
+  it("permanently redirects every localized guide URL without loops", async () => {
+    expect(publicRedirects()).toHaveLength(6);
+    expect(publicRedirects().every(({ targetPath }) => !targetPath.includes("/guides"))).toBe(true);
+
+    const app = express();
+    mountSeo(app);
+    const server = app.listen(0, "127.0.0.1") as Server;
+    await once(server, "listening");
+    const address = server.address() as AddressInfo;
+    const origin = `http://127.0.0.1:${address.port}`;
+    try {
+      for (const { urlPath, targetPath } of publicRedirects()) {
+        const response = await fetch(`${origin}${urlPath}?source=test`, { redirect: "manual" });
+        expect(response.status).toBe(308);
+        expect(response.headers.get("location")).toBe(`${targetPath}?source=test`);
+      }
+    } finally {
+      server.close();
+      await once(server, "close");
+    }
   });
 
   it("creates unique index directives and valid JSON-LD boundaries", () => {
@@ -60,6 +91,8 @@ describe("crawl and retrieval resources", () => {
     expect(concise).toContain("# Synap");
     expect(concise).toContain("llms.txt is supplemental");
     expect(concise).toContain(`${BASE}/en/methodology`);
+    expect(concise).toContain(`${BASE}/en/blogs`);
+    expect(concise).not.toContain(`${BASE}/en/guides`);
     expect(full).toContain("does not guarantee indexing");
     expect(`${concise}\n${full}`).not.toMatch(/sk-[A-Za-z0-9]|BEGIN PRIVATE KEY/);
   });

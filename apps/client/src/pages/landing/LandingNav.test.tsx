@@ -9,9 +9,9 @@ vi.mock("../../lib/queries", () => ({
   useSession: () => ({ state: "signedOut", user: undefined }),
 }));
 
-function renderNav() {
+function renderNav(initialEntry = "/") {
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <LandingNav />
     </MemoryRouter>,
   );
@@ -29,11 +29,13 @@ describe("LandingNav section anchors", () => {
       "/#how",
     );
     expect(getAllByRole("link", { name: "FAQ" })[0].getAttribute("href")).toBe("/#faq");
+    expect(getAllByRole("link", { name: ru.nav.blogs })[0].getAttribute("href")).toBe("/blogs");
 
     fireEvent.click(getByRole("button", { name: ru.nav.openMenu }));
     expect(getAllByRole("link", { name: ru.nav.product })[1].getAttribute("href")).toBe(
       "/#product",
     );
+    expect(getAllByRole("link", { name: ru.nav.blogs })[1].getAttribute("href")).toBe("/blogs");
     fireEvent.click(getAllByRole("link", { name: ru.nav.product })[1]);
     expect(getByRole("button", { name: ru.nav.openMenu }).getAttribute("aria-expanded")).toBe(
       "false",
@@ -48,6 +50,16 @@ describe("LandingNav section anchors", () => {
     expect(getAllByRole("link", { name: "How it works" })[0].getAttribute("href")).toBe(
       "/en#how",
     );
+    expect(getAllByRole("link", { name: "FAQ" })[0].getAttribute("href")).toBe("/en#faq");
+    expect(getAllByRole("link", { name: "Blogs" })[0].getAttribute("href")).toBe("/en/blogs");
+  });
+
+  it("returns from an English blog page to localized landing anchors", async () => {
+    await i18n.changeLanguage("en");
+    const { getAllByRole } = renderNav("/en/blogs");
+
+    expect(getAllByRole("link", { name: "Product" })[0].getAttribute("href")).toBe("/en#product");
+    expect(getAllByRole("link", { name: "How it works" })[0].getAttribute("href")).toBe("/en#how");
     expect(getAllByRole("link", { name: "FAQ" })[0].getAttribute("href")).toBe("/en#faq");
   });
 });

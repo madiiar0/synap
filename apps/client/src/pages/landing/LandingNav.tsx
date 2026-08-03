@@ -103,6 +103,7 @@ export default function LandingNav(): JSX.Element {
     { href: `${localizedPath("/")}#product`, label: t("nav.product") },
     { href: `${localizedPath("/")}#how`, label: t("nav.howItWorks") },
     { href: `${localizedPath("/")}#faq`, label: t("nav.faq") },
+    { href: localizedPath("/blogs"), label: t("nav.blogs") },
   ];
 
   return (

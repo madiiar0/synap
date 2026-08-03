@@ -13,6 +13,7 @@ export default function LandingFooter(): JSX.Element {
           <Link to={localizedPath("/product")} className="hover:text-ink">{t("nav.product")}</Link>
           <Link to={localizedPath("/methodology")} className="hover:text-ink">{t("nav.methodology")}</Link>
           <Link to={localizedPath("/docs")} className="hover:text-ink">{t("nav.docs")}</Link>
+          <Link to={localizedPath("/blogs")} className="hover:text-ink">{t("nav.blogs")}</Link>
           <Link to={localizedPath("/about")} className="hover:text-ink">{t("nav.about")}</Link>
           <Link to={localizedPath("/faq")} className="hover:text-ink">{t("nav.faq")}</Link>
           <Link to={localizedPath("/contact")} className="hover:text-ink">{t("nav.contact")}</Link>

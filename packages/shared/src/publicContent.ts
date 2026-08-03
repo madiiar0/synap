@@ -3,6 +3,11 @@ import type { IndexablePublicPath } from "./seo.js";
 
 export type ContentPagePath = Exclude<IndexablePublicPath, "/">;
 
+export const BLOG_ARTICLE_PATHS = [
+  "/blogs/audit-ai-generated-brand-information",
+  "/blogs/why-ai-recommends-competitors",
+] as const satisfies readonly ContentPagePath[];
+
 export interface ContentLink {
   path: IndexablePublicPath;
   label: string;
@@ -40,13 +45,15 @@ export interface PublicFaqItem {
 
 export interface PublicUiText {
   useCases: string;
-  guides: string;
+  blogs: string;
   breadcrumbs: string;
   home: string;
   answers: string;
   publisher: string;
   published: string;
   updated: string;
+  articles: string;
+  readArticle: string;
   examples: string;
   contactHeading: string;
   contactBody: string;
@@ -60,13 +67,15 @@ export interface PublicUiText {
 const PUBLIC_UI: Record<Locale, PublicUiText> = {
   en: {
     useCases: "Use cases",
-    guides: "Guides",
+    blogs: "Blogs",
     breadcrumbs: "Breadcrumbs",
     home: "Home",
     answers: "Answers",
     publisher: "Published by Synap",
     published: "Published",
     updated: "Updated",
+    articles: "Articles",
+    readArticle: "Read article",
     examples: "Examples",
     contactHeading: "Discuss your question",
     contactBody: "Send a short description without passwords, tokens or private customer data.",
@@ -78,13 +87,15 @@ const PUBLIC_UI: Record<Locale, PublicUiText> = {
   },
   ru: {
     useCases: "Сценарии",
-    guides: "Руководства",
+    blogs: "Блог",
     breadcrumbs: "Хлебные крошки",
     home: "Главная",
     answers: "Ответы",
     publisher: "Издатель: Synap",
     published: "Опубликовано",
     updated: "Обновлено",
+    articles: "Статьи",
+    readArticle: "Читать статью",
     examples: "Примеры",
     contactHeading: "Обсудить задачу",
     contactBody: "Отправьте краткое описание без паролей, токенов и приватных данных клиентов.",
@@ -709,7 +720,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/ai-visibility", label: "Define the outcome being measured" },
-        { path: "/guides/audit-ai-brand-information", label: "Run a factual entity audit" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Run a factual entity audit" },
         { path: "/product", label: "See the Synap measurement product" },
       ],
     }),
@@ -756,7 +767,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/ai-visibility", label: "Что измеряет GEO" },
-        { path: "/guides/audit-ai-brand-information", label: "Фактический аудит сущности" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Фактический аудит сущности" },
         { path: "/product", label: "Измерительный продукт Synap" },
       ],
     }),
@@ -872,7 +883,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
-        { path: "/guides/audit-ai-brand-information", label: "Audit local entity facts" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Audit local entity facts" },
         { path: "/methodology", label: "See how directories are filtered" },
         { path: "/product", label: "Review the report outputs" },
       ],
@@ -913,7 +924,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
-        { path: "/guides/audit-ai-brand-information", label: "Аудит локальных фактов" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Аудит локальных фактов" },
         { path: "/methodology", label: "Фильтрация каталогов" },
         { path: "/product", label: "Разделы отчёта" },
       ],
@@ -957,7 +968,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/generative-engine-optimization", label: "Build a GEO work plan" },
-        { path: "/guides/why-ai-recommends-competitors", label: "Diagnose competitor recommendations" },
+        { path: "/blogs/why-ai-recommends-competitors", label: "Diagnose competitor recommendations" },
         { path: "/docs", label: "Read provider and citation results" },
       ],
     }),
@@ -998,7 +1009,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/generative-engine-optimization", label: "План GEO" },
-        { path: "/guides/why-ai-recommends-competitors", label: "Почему появляются конкуренты" },
+        { path: "/blogs/why-ai-recommends-competitors", label: "Почему появляются конкуренты" },
         { path: "/docs", label: "Результаты моделей и источники" },
       ],
     }),
@@ -1041,7 +1052,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/methodology", label: "Understand entity filtering" },
-        { path: "/guides/audit-ai-brand-information", label: "Audit product and brand facts" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Audit product and brand facts" },
         { path: "/product", label: "See measured outputs" },
       ],
     }),
@@ -1082,7 +1093,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/methodology", label: "Классификация сущностей" },
-        { path: "/guides/audit-ai-brand-information", label: "Аудит фактов о товаре и бренде" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Аудит фактов о товаре и бренде" },
         { path: "/product", label: "Измеряемые результаты" },
       ],
     }),
@@ -1125,7 +1136,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/privacy", label: "Review report privacy" },
-        { path: "/guides/audit-ai-brand-information", label: "Run a factual accuracy audit" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Run a factual accuracy audit" },
         { path: "/methodology", label: "Understand extraction limits" },
       ],
     }),
@@ -1166,7 +1177,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/privacy", label: "Приватность отчёта" },
-        { path: "/guides/audit-ai-brand-information", label: "Аудит фактической точности" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Аудит фактической точности" },
         { path: "/methodology", label: "Ограничения извлечения" },
       ],
     }),
@@ -1557,65 +1568,43 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
     }),
   },
-  "/guides": {
-    en: en({
-      eyebrow: "Guides",
-      h1: "Practical guides to AI visibility and entity clarity",
+  "/blogs": {
+    en: {
+      eyebrow: "Synap Blog",
+      h1: "Synap Blog — AI Visibility in Kazakhstan",
       lead:
-        "Each guide answers one operational question and connects the action back to inspectable evidence.",
-      summaryTitle: "Available guides",
+        "Practical articles for business owners who want to understand and improve how their companies appear in AI-generated answers.",
+      summaryTitle: "Start with the evidence",
       summary:
-        "Start with a factual brand-information audit, then investigate why competitors appear. Use the methodology page when you need the exact Synap calculation.",
-      sections: [
-        {
-          heading: "Audit AI-generated brand information",
-          paragraphs: ["Check identity, factual consistency, citations and entity confusion with a repeatable evidence table."],
-        },
-        {
-          heading: "Why AI recommends competitors",
-          paragraphs: ["Separate prompt fit, source evidence, entity clarity and model variability before choosing corrective work."],
-        },
-        {
-          heading: "Editorial standard",
-          paragraphs: [
-            "Synap guides avoid unsupported statistics, fake examples and promises of recommendation. Examples are illustrative and clearly labeled. External factual claims should use primary sources when added.",
-          ],
-        },
-      ],
+        "Audit what AI systems currently say about your business, then compare the evidence and prompts that may cause competitors to appear.",
+      updated: "August 3, 2026",
+      sections: [],
       related: [
-        { path: "/guides/audit-ai-brand-information", label: "Audit brand information" },
-        { path: "/guides/why-ai-recommends-competitors", label: "Diagnose competitor recommendations" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Audit brand information" },
+        { path: "/blogs/why-ai-recommends-competitors", label: "Diagnose competitor recommendations" },
         { path: "/generative-engine-optimization", label: "Read the GEO guide" },
       ],
-    }),
-    ru: ru({
-      eyebrow: "Руководства",
-      h1: "Практические руководства по видимости и ясности сущности",
+    },
+    ru: {
+      eyebrow: "Блог Synap",
+      h1: "Блог Synap — видимость бизнеса в ответах ИИ",
       lead:
-        "Каждое руководство отвечает на один рабочий вопрос и связывает действия с проверяемыми доказательствами.",
-      summaryTitle: "Доступные руководства",
+        "Практические статьи для владельцев бизнеса, которые хотят понять и улучшить представление своей компании в ответах ИИ.",
+      summaryTitle: "Начните с фактов",
       summary:
-        "Начните с аудита фактов о бренде, затем разберите причины появления конкурентов. За точным расчётом Synap обращайтесь к методологии.",
-      sections: [
-        { heading: "Аудит информации о бренде", paragraphs: ["Проверьте идентичность, согласованность фактов, источники и смешение сущностей по повторяемой таблице."] },
-        { heading: "Почему ИИ рекомендует конкурентов", paragraphs: ["Разделите соответствие вопросу, доказательства, ясность сущности и изменчивость модели до выбора действий."] },
-        {
-          heading: "Редакционный стандарт",
-          paragraphs: [
-            "Руководства Synap не используют неподтверждённую статистику, выдуманные результаты и обещания рекомендации. Примеры помечаются как иллюстративные. Внешние факты при добавлении должны ссылаться на первичные источники.",
-          ],
-        },
-      ],
+        "Проверьте, что ИИ сейчас говорит о вашем бизнесе, а затем сравните доказательства и вопросы, из-за которых в ответах могут появляться конкуренты.",
+      updated: "3 августа 2026 года",
+      sections: [],
       related: [
-        { path: "/guides/audit-ai-brand-information", label: "Аудит информации о бренде" },
-        { path: "/guides/why-ai-recommends-competitors", label: "Причины рекомендаций конкурентов" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Аудит информации о бренде" },
+        { path: "/blogs/why-ai-recommends-competitors", label: "Причины рекомендаций конкурентов" },
         { path: "/generative-engine-optimization", label: "Руководство по GEO" },
       ],
-    }),
+    },
   },
-  "/guides/audit-ai-brand-information": {
+  "/blogs/audit-ai-generated-brand-information": {
     en: en({
-      eyebrow: "Guide",
+      eyebrow: "Article",
       h1: "How to audit AI-generated brand information",
       lead:
         "A useful audit checks identity and claims answer by answer instead of reducing accuracy to one score.",
@@ -1662,13 +1651,13 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
-        { path: "/guides/why-ai-recommends-competitors", label: "Analyze competitor appearances" },
+        { path: "/blogs/why-ai-recommends-competitors", label: "Analyze competitor appearances" },
         { path: "/methodology", label: "Use Synap's extraction definitions" },
         { path: "/generative-engine-optimization", label: "Turn findings into a GEO plan" },
       ],
     }),
     ru: ru({
-      eyebrow: "Руководство",
+      eyebrow: "Статья",
       h1: "Как проверить информацию о бренде в ответах ИИ",
       lead:
         "Полезный аудит проверяет сущность и утверждения по каждому ответу, а не сводит точность к одному числу.",
@@ -1715,15 +1704,15 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
-        { path: "/guides/why-ai-recommends-competitors", label: "Анализ конкурентов" },
+        { path: "/blogs/why-ai-recommends-competitors", label: "Анализ конкурентов" },
         { path: "/methodology", label: "Определения извлечения Synap" },
         { path: "/generative-engine-optimization", label: "План GEO по результатам" },
       ],
     }),
   },
-  "/guides/why-ai-recommends-competitors": {
+  "/blogs/why-ai-recommends-competitors": {
     en: en({
-      eyebrow: "Guide",
+      eyebrow: "Article",
       h1: "Why AI answers recommend competitors",
       lead:
         "A competitor can appear because it fits the prompt, has clearer evidence, is easier to resolve as an entity or simply surfaced in a variable model run.",
@@ -1765,13 +1754,13 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
-        { path: "/guides/audit-ai-brand-information", label: "Audit factual brand information" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Audit factual brand information" },
         { path: "/docs", label: "Use Where you lose and citations" },
         { path: "/use-cases", label: "Apply industry-specific context" },
       ],
     }),
     ru: ru({
-      eyebrow: "Руководство",
+      eyebrow: "Статья",
       h1: "Почему ИИ рекомендует конкурентов",
       lead:
         "Конкурент может появиться из-за лучшего соответствия вопросу, более ясных доказательств, простой идентификации сущности или изменчивости конкретного запуска.",
@@ -1813,7 +1802,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
-        { path: "/guides/audit-ai-brand-information", label: "Аудит фактов о бренде" },
+        { path: "/blogs/audit-ai-generated-brand-information", label: "Аудит фактов о бренде" },
         { path: "/docs", label: "Источники и «Где вы проигрываете»" },
         { path: "/use-cases", label: "Отраслевой контекст" },
       ],

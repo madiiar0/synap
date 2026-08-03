@@ -6,7 +6,7 @@ describe("privacy-safe public referrer classification", () => {
 
   it.each([
     ["", "direct"],
-    ["https://synap.example/guides", "internal"],
+    ["https://synap.example/blogs", "internal"],
     ["https://www.google.com/search?q=synap", "search"],
     ["https://chatgpt.com/c/example", "chatgpt"],
     ["https://www.perplexity.ai/search/example", "perplexity"],

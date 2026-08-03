@@ -2,10 +2,12 @@ import { ChevronRight } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
+  BLOG_ARTICLE_PATHS,
   publicFaqItems,
   publicPageContent,
   publicUiText,
   parseLocalizedPublicPath,
+  routeMeta,
   type ContentPagePath,
   type IndexablePublicPath,
   type Locale,
@@ -26,8 +28,8 @@ function Breadcrumbs({ path, locale, h1 }: { path: ContentPagePath; locale: Loca
   const ui = publicUiText(locale);
   const parent = path.startsWith("/use-cases/")
     ? { path: "/use-cases" as const, label: ui.useCases }
-    : path.startsWith("/guides/")
-      ? { path: "/guides" as const, label: ui.guides }
+    : path.startsWith("/blogs/")
+      ? { path: "/blogs" as const, label: ui.blogs }
       : null;
   return (
     <nav aria-label={ui.breadcrumbs} className="text-sm text-sub">
@@ -43,6 +45,53 @@ function Breadcrumbs({ path, locale, h1 }: { path: ContentPagePath; locale: Loca
         <li aria-current="page" className="max-w-[60ch] truncate text-ink">{h1}</li>
       </ol>
     </nav>
+  );
+}
+
+function BlogList({ locale }: { locale: Locale }): JSX.Element {
+  const ui = publicUiText(locale);
+  return (
+    <section aria-labelledby="blog-articles" className="mt-14">
+      <h2 id="blog-articles" className="text-2xl font-semibold tracking-tight sm:text-3xl">
+        {ui.articles}
+      </h2>
+      <div className="mt-6 grid gap-5 sm:grid-cols-2">
+        {BLOG_ARTICLE_PATHS.map((articlePath) => {
+          const article = publicPageContent(articlePath, locale);
+          const meta = routeMeta(articlePath, locale);
+          return (
+            <article key={articlePath} className="flex flex-col rounded-2xl border border-line bg-surface p-6 sm:p-7">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-sub">
+                {article.eyebrow}
+              </p>
+              <h3 className="mt-3 text-xl font-semibold tracking-tight">
+                <Link to={linkFor(articlePath)} className="hover:underline">
+                  {article.h1}
+                </Link>
+              </h3>
+              <p className="mt-4 flex-1 text-[15px] leading-7 text-sub">{article.lead}</p>
+              <div className="mt-6 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-4 text-xs text-sub">
+                {article.published && (
+                  <span>
+                    {ui.published}: <time dateTime={meta.lastModified}>{article.published}</time>
+                  </span>
+                )}
+                <span>
+                  {ui.updated}: <time dateTime={meta.lastModified}>{article.updated}</time>
+                </span>
+              </div>
+              <Link
+                to={linkFor(articlePath)}
+                className="mt-5 inline-flex min-h-[44px] items-center justify-between gap-3 rounded-full border border-line bg-white px-5 text-sm font-semibold hover:border-[#CFCFCF]"
+              >
+                {ui.readArticle}
+                <ChevronRight size={16} aria-hidden />
+              </Link>
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -82,6 +131,7 @@ export default function PublicPage(): JSX.Element {
   const path = parsed.path as ContentPagePath;
   const { locale } = parsed;
   const content = publicPageContent(path, locale);
+  const meta = routeMeta(path, locale);
   const ui = publicUiText(locale);
   const showContactAction = path === "/contact" || path === "/pricing";
 
@@ -101,7 +151,7 @@ export default function PublicPage(): JSX.Element {
             <div className="mt-6 flex flex-wrap gap-x-5 gap-y-1 text-xs text-sub">
               <span>{ui.publisher}</span>
               {content.published && <span>{ui.published}: {content.published}</span>}
-              <span>{ui.updated}: <time dateTime="2026-08-02">{content.updated}</time></span>
+              <span>{ui.updated}: <time dateTime={meta.lastModified}>{content.updated}</time></span>
             </div>
           </header>
 
@@ -110,9 +160,10 @@ export default function PublicPage(): JSX.Element {
             <p className="mt-3 leading-7 text-sub">{content.summary}</p>
           </aside>
 
+          {path === "/blogs" && <BlogList locale={locale} />}
           {path === "/faq" && <FaqList locale={locale} />}
 
-          <div className="mt-14 space-y-14">
+          {path !== "/blogs" && <div className="mt-14 space-y-14">
             {content.sections.map((section) => (
               <section key={section.heading}>
                 <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{section.heading}</h2>
@@ -158,7 +209,7 @@ export default function PublicPage(): JSX.Element {
                 )}
               </section>
             ))}
-          </div>
+          </div>}
 
           {showContactAction && (
             <section aria-labelledby="contact-action" className="mt-16 rounded-2xl bg-ink p-8 text-white">
@@ -172,7 +223,7 @@ export default function PublicPage(): JSX.Element {
             </section>
           )}
 
-          <section aria-labelledby="related-pages" className="mt-16 border-t border-line pt-10">
+          {path !== "/blogs" && <section aria-labelledby="related-pages" className="mt-16 border-t border-line pt-10">
             <h2 id="related-pages" className="text-xl font-semibold">
               {ui.related}
             </h2>
@@ -185,7 +236,7 @@ export default function PublicPage(): JSX.Element {
                 </li>
               ))}
             </ul>
-          </section>
+          </section>}
 
           {!showContactAction && path !== "/privacy" && path !== "/terms" && (
             <section className="mt-16 flex flex-col items-start justify-between gap-5 rounded-2xl border border-line bg-surface p-7 sm:flex-row sm:items-center">

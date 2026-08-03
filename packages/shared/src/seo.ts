@@ -23,9 +23,9 @@ export const INDEXABLE_PUBLIC_PATHS = [
   "/about",
   "/contact",
   "/docs",
-  "/guides",
-  "/guides/audit-ai-brand-information",
-  "/guides/why-ai-recommends-competitors",
+  "/blogs",
+  "/blogs/audit-ai-generated-brand-information",
+  "/blogs/why-ai-recommends-competitors",
   "/changelog",
   "/privacy",
   "/terms",
@@ -36,6 +36,20 @@ export const PUBLIC_PATHS = [...INDEXABLE_PUBLIC_PATHS, ...NOINDEX_PUBLIC_PATHS]
 
 export type IndexablePublicPath = (typeof INDEXABLE_PUBLIC_PATHS)[number];
 export type PublicPath = (typeof PUBLIC_PATHS)[number];
+
+export const LEGACY_PUBLIC_REDIRECTS = [
+  { from: "/guides", to: "/blogs" },
+  {
+    from: "/guides/audit-ai-brand-information",
+    to: "/blogs/audit-ai-generated-brand-information",
+  },
+  {
+    from: "/guides/why-ai-recommends-competitors",
+    to: "/blogs/why-ai-recommends-competitors",
+  },
+] as const satisfies ReadonlyArray<{ from: string; to: IndexablePublicPath }>;
+
+export type LegacyPublicPath = (typeof LEGACY_PUBLIC_REDIRECTS)[number]["from"];
 export type PageKind =
   | "home"
   | "product"
@@ -340,23 +354,23 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       lastModified: UPDATED,
     },
   },
-  "/guides": {
+  "/blogs": {
     en: {
-      title: "AI Visibility Guides | Synap",
+      title: "Synap Blog — AI Visibility in Kazakhstan",
       description:
-        "Practical, evidence-led guides to auditing AI-generated brand information, understanding competitor recommendations and improving entity clarity.",
+        "Practical Synap articles about auditing AI-generated brand information, understanding competitor recommendations and improving AI visibility in Kazakhstan.",
       kind: "webpage",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
-      title: "Руководства по видимости в ИИ | Synap",
+      title: "Блог Synap — видимость бизнеса в ответах ИИ",
       description:
-        "Практические руководства по аудиту информации о бренде в ответах ИИ, анализу рекомендаций конкурентов и улучшению ясности сущности.",
+        "Практические статьи Synap об аудите информации о бренде, причинах рекомендаций конкурентов и улучшении видимости бизнеса в ответах ИИ в Казахстане.",
       kind: "webpage",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
-  "/guides/audit-ai-brand-information": {
+  "/blogs/audit-ai-generated-brand-information": {
     en: {
       title: "How to Audit AI-Generated Brand Information | Synap",
       description:
@@ -372,7 +386,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       lastModified: UPDATED,
     },
   },
-  "/guides/why-ai-recommends-competitors": {
+  "/blogs/why-ai-recommends-competitors": {
     en: {
       title: "Why AI Answers Recommend Competitors | Synap",
       description:
@@ -628,8 +642,8 @@ function breadcrumbNames(path: PublicPath, locale: Locale): Array<{ name: string
   if (path.startsWith("/use-cases/")) {
     crumbs.push({ name: locale === "ru" ? "Сценарии" : "Use cases", path: "/use-cases" });
   }
-  if (path.startsWith("/guides/")) {
-    crumbs.push({ name: locale === "ru" ? "Руководства" : "Guides", path: "/guides" });
+  if (path.startsWith("/blogs/")) {
+    crumbs.push({ name: locale === "ru" ? "Блог" : "Blogs", path: "/blogs" });
   }
   crumbs.push({ name: routeMeta(path, locale).title.replace(/ \| Synap$/, ""), path });
   return crumbs;

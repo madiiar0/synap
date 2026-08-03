@@ -3,6 +3,7 @@ import path from "node:path";
 import type { Express, Request, Response } from "express";
 import {
   INDEXABLE_PUBLIC_PATHS,
+  LEGACY_PUBLIC_REDIRECTS,
   localizedPublicPath,
   PRODUCT_POSITIONING,
   PUBLIC_PATHS,
@@ -24,6 +25,11 @@ interface PublicRoute {
   locale: Locale;
 }
 
+interface PublicRedirect {
+  urlPath: string;
+  targetPath: string;
+}
+
 export function publicRoutes(): PublicRoute[] {
   const out: PublicRoute[] = [];
   for (const basePath of PUBLIC_PATHS) {
@@ -31,6 +37,15 @@ export function publicRoutes(): PublicRoute[] {
     out.push({ urlPath: localizedPublicPath(basePath, "en"), basePath, locale: "en" });
   }
   return out;
+}
+
+export function publicRedirects(): PublicRedirect[] {
+  return LEGACY_PUBLIC_REDIRECTS.flatMap(({ from, to }) =>
+    (["ru", "en"] as const).map((locale) => ({
+      urlPath: locale === "ru" ? from : `/en${from}`,
+      targetPath: localizedPublicPath(to, locale),
+    })),
+  );
 }
 
 function escapeHtml(value: string): string {
@@ -209,7 +224,7 @@ export function llmsText(baseUrl: string): string {
     `- [AI visibility](${base}/en/ai-visibility)`,
     `- [Generative Engine Optimization](${base}/en/generative-engine-optimization)`,
     `- [Use cases](${base}/en/use-cases)`,
-    `- [Guides](${base}/en/guides)`,
+    `- [Blog](${base}/en/blogs)`,
     "",
     "## Entity and trust",
     "",
@@ -266,6 +281,15 @@ export function llmsFullText(baseUrl: string): string {
 
 /** Public HTML, crawl resources and response-level indexing controls. */
 export function mountSeo(app: Express): void {
+  for (const redirect of publicRedirects()) {
+    app.get(redirect.urlPath, (req: Request, res: Response) => {
+      const queryIndex = req.originalUrl.indexOf("?");
+      const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : "";
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      res.redirect(308, `${redirect.targetPath}${query}`);
+    });
+  }
+
   for (const route of publicRoutes()) {
     app.get(route.urlPath, (_req: Request, res: Response, next) => {
       const shell = shellFor(route);

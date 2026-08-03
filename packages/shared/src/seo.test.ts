@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   INDEXABLE_PUBLIC_PATHS,
+  LEGACY_PUBLIC_REDIRECTS,
   NOINDEX_PUBLIC_PATHS,
   PUBLIC_PATHS,
   faqLd,
@@ -57,6 +58,26 @@ describe("public information architecture", () => {
     expect(PUBLIC_PATHS).not.toContain("/app");
     expect(PUBLIC_PATHS).not.toContain("/admin");
   });
+
+  it("publishes canonical blog routes while retaining only redirect metadata for guides", () => {
+    expect(INDEXABLE_PUBLIC_PATHS).toContain("/blogs");
+    expect(INDEXABLE_PUBLIC_PATHS).toContain("/blogs/audit-ai-generated-brand-information");
+    expect(INDEXABLE_PUBLIC_PATHS).toContain("/blogs/why-ai-recommends-competitors");
+    expect(INDEXABLE_PUBLIC_PATHS as readonly string[]).not.toContain("/guides");
+    expect(LEGACY_PUBLIC_REDIRECTS).toEqual([
+      { from: "/guides", to: "/blogs" },
+      {
+        from: "/guides/audit-ai-brand-information",
+        to: "/blogs/audit-ai-generated-brand-information",
+      },
+      {
+        from: "/guides/why-ai-recommends-competitors",
+        to: "/blogs/why-ai-recommends-competitors",
+      },
+    ]);
+    expect(routeMeta("/blogs", "en").title).toBe("Synap Blog — AI Visibility in Kazakhstan");
+    expect(routeMeta("/blogs", "ru").title).toBe("Блог Synap — видимость бизнеса в ответах ИИ");
+  });
 });
 
 describe("structured data", () => {
@@ -104,5 +125,17 @@ describe("structured data", () => {
       "@graph": Array<Record<string, unknown>>;
     })["@graph"];
     expect(graph.map((node) => node["@type"])).toEqual(["Organization", "WebSite"]);
+  });
+
+  it("uses visible article schema for migrated blog posts", () => {
+    const graph = (structuredDataForRoute(
+      BASE,
+      "/blogs/audit-ai-generated-brand-information",
+      "en",
+    ) as { "@graph": Array<Record<string, unknown>> })["@graph"];
+    const article = graph.find((node) => node["@type"] === "Article");
+
+    expect(article?.url).toBe(`${BASE}/en/blogs/audit-ai-generated-brand-information`);
+    expect(article?.publisher).toEqual({ "@id": `${BASE}/#organization` });
   });
 });
