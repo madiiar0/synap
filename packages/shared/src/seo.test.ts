@@ -23,8 +23,8 @@ const BASE = "https://synap.example";
 const FORMER_NAME = ["Synap", "AI"].join("");
 
 describe("public information architecture", () => {
-  it("keeps only consolidated canonical use-case routes", () => {
-    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(20);
+  it("keeps only consolidated and complete canonical routes", () => {
+    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(17);
     expect(PUBLIC_PATHS).toHaveLength(21);
     expect(INDEXABLE_PUBLIC_PATHS).toContain("/use-cases");
     expect(INDEXABLE_PUBLIC_PATHS).toContain("/use-cases/local-businesses");
@@ -86,10 +86,13 @@ describe("public information architecture", () => {
     }
   });
 
-  it("keeps sign-in noindex and excludes all private routes", () => {
-    expect(NOINDEX_PUBLIC_PATHS).toEqual(["/login"]);
-    expect(isIndexablePublicPath("/login")).toBe(false);
-    expect(INDEXABLE_PUBLIC_PATHS).not.toContain("/login");
+  it("retains incomplete legal and history pages as noindex alongside sign-in", () => {
+    expect(NOINDEX_PUBLIC_PATHS).toEqual(["/login", "/changelog", "/privacy", "/terms"]);
+    for (const path of NOINDEX_PUBLIC_PATHS) {
+      expect(isIndexablePublicPath(path)).toBe(false);
+      expect(INDEXABLE_PUBLIC_PATHS).not.toContain(path);
+      expect(PUBLIC_PATHS).toContain(path);
+    }
     expect(PUBLIC_PATHS).not.toContain("/scan");
     expect(PUBLIC_PATHS).not.toContain("/app");
     expect(PUBLIC_PATHS).not.toContain("/admin");

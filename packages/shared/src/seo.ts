@@ -26,12 +26,9 @@ export const INDEXABLE_PUBLIC_PATHS = [
   "/blogs",
   "/blogs/audit-ai-generated-brand-information",
   "/blogs/why-ai-recommends-competitors",
-  "/changelog",
-  "/privacy",
-  "/terms",
 ] as const;
 
-export const NOINDEX_PUBLIC_PATHS = ["/login"] as const;
+export const NOINDEX_PUBLIC_PATHS = ["/login", "/changelog", "/privacy", "/terms"] as const;
 export const PUBLIC_PATHS = [...INDEXABLE_PUBLIC_PATHS, ...NOINDEX_PUBLIC_PATHS] as const;
 
 export type IndexablePublicPath = (typeof INDEXABLE_PUBLIC_PATHS)[number];

@@ -9,8 +9,8 @@ import {
   parseLocalizedPublicPath,
   routeMeta,
   type ContentPagePath,
-  type IndexablePublicPath,
   type Locale,
+  type PublicPath,
 } from "@synapai/shared";
 import BookCallButton from "../components/BookCallButton";
 import { PublicPageMetadata } from "../components/PageMetadata";
@@ -20,7 +20,7 @@ import { trackPublicEvent } from "../lib/publicAnalytics";
 import LandingFooter from "./landing/LandingFooter";
 import LandingNav from "./landing/LandingNav";
 
-function linkFor(path: IndexablePublicPath): string {
+function linkFor(path: PublicPath): string {
   return localizedPath(path);
 }
 

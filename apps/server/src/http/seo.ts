@@ -71,6 +71,11 @@ export function buildHeadTags(basePath: PublicPath, locale: Locale): string {
   const base = env.APP_BASE_URL.replace(/\/$/, "");
   const meta = routeMeta(basePath, locale);
   const indexable = meta.indexable && !env.SITE_NOINDEX;
+  const robots = indexable
+    ? "index,follow,max-image-preview:large"
+    : env.SITE_NOINDEX || basePath === "/login"
+      ? "noindex,nofollow,noarchive"
+      : "noindex,follow,noarchive";
   const canonical = `${base}${localizedPublicPath(basePath, locale)}`;
   const ruUrl = `${base}${localizedPublicPath(basePath, "ru")}`;
   const enUrl = `${base}${localizedPublicPath(basePath, "en")}`;
@@ -87,7 +92,7 @@ export function buildHeadTags(basePath: PublicPath, locale: Locale): string {
     `<meta name="description" content="${escapeHtml(meta.description)}">`,
     `<meta name="author" content="Synap">`,
     `<meta name="publisher" content="Synap">`,
-    `<meta name="robots" content="${indexable ? "index,follow,max-image-preview:large" : "noindex,nofollow,noarchive"}">`,
+    `<meta name="robots" content="${robots}">`,
     `<link rel="canonical" href="${escapeHtml(canonical)}">`,
     `<link rel="alternate" hreflang="ru" href="${escapeHtml(ruUrl)}">`,
     `<link rel="alternate" hreflang="en" href="${escapeHtml(enUrl)}">`,
@@ -241,9 +246,6 @@ export function llmsText(baseUrl: string): string {
     "",
     `- [About Synap](${base}/en/about)`,
     `- [Contact](${base}/en/contact)`,
-    `- [Privacy](${base}/en/privacy)`,
-    `- [Terms](${base}/en/terms)`,
-    `- [Changelog](${base}/en/changelog)`,
     "",
     "## Data boundary",
     "",
@@ -303,7 +305,6 @@ export function llmsFullText(baseUrl: string): string {
     `- Audit interface: ${base}/en/product`,
     `- Documentation: ${base}/en/docs`,
     `- FAQ: ${base}/en/faq`,
-    `- Privacy boundary: ${base}/en/privacy`,
     `- Full sitemap: ${base}/sitemap.xml`,
     "",
     "Updated: 2026-08-03",
@@ -332,7 +333,12 @@ export function mountSeo(app: Express): void {
       res.setHeader("Content-Language", route.locale);
       res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
       if (!meta.indexable || env.SITE_NOINDEX) {
-        res.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive");
+        res.setHeader(
+          "X-Robots-Tag",
+          env.SITE_NOINDEX || route.basePath === "/login"
+            ? "noindex, nofollow, noarchive"
+            : "noindex, follow, noarchive",
+        );
       }
       res.status(200).type("html").send(injectHead(shell, route.basePath, route.locale));
     });

@@ -1,9 +1,9 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import {
-  INDEXABLE_PUBLIC_PATHS,
   LEGACY_PUBLIC_REDIRECTS,
   localizedPublicPath,
+  PUBLIC_PATHS,
 } from "@synapai/shared";
 import QuotaModal from "./components/QuotaModal";
 import VerifyEmailModal from "./components/VerifyEmailModal";
@@ -37,7 +37,7 @@ function LegacyPublicRedirect({ to }: { to: string }): JSX.Element {
 }
 
 export default function App(): JSX.Element {
-  const contentPaths = INDEXABLE_PUBLIC_PATHS.filter((path) => path !== "/");
+  const contentPaths = PUBLIC_PATHS.filter((path) => path !== "/" && path !== "/login");
   return (
     <>
       <Toaster />

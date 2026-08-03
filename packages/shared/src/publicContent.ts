@@ -1,7 +1,7 @@
 import type { Locale } from "./constants.js";
-import type { IndexablePublicPath } from "./seo.js";
+import type { PublicPath } from "./seo.js";
 
-export type ContentPagePath = Exclude<IndexablePublicPath, "/">;
+export type ContentPagePath = Exclude<PublicPath, "/" | "/login">;
 
 export const BLOG_ARTICLE_PATHS = [
   "/blogs/ai-visibility-kazakhstan",
@@ -10,7 +10,7 @@ export const BLOG_ARTICLE_PATHS = [
 ] as const satisfies readonly ContentPagePath[];
 
 export interface ContentLink {
-  path: IndexablePublicPath;
+  path: Exclude<PublicPath, "/login">;
   label: string;
 }
 

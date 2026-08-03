@@ -50,7 +50,9 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
       content:
         meta.indexable && !stagingNoindex
           ? "index,follow,max-image-preview:large"
-          : "noindex,nofollow,noarchive",
+          : stagingNoindex || path === "/login"
+            ? "noindex,nofollow,noarchive"
+            : "noindex,follow,noarchive",
     });
     upsertLink('link[rel="canonical"]', { rel: "canonical", href: canonical });
     for (const [hreflang, href] of [["ru", ruUrl], ["en", enUrl], ["x-default", ruUrl]]) {

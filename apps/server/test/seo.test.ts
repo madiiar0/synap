@@ -28,7 +28,7 @@ const FORMER_NAME = ["Synap", "AI"].join("");
 
 describe("crawl and retrieval resources", () => {
   it("preserves route counts and compatibility-sensitive internal identifiers", () => {
-    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(20);
+    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(17);
     expect(PUBLIC_PATHS).toHaveLength(21);
     expect(SESSION_COOKIE).toBe(["synap", "ai_session"].join(""));
   });
@@ -83,7 +83,7 @@ describe("crawl and retrieval resources", () => {
     expect(xml).toContain(`${BASE}/en/services`);
     expect(xml).not.toContain(`${BASE}/guides`);
     expect(xml).not.toMatch(/use-cases\/(?:saas|ecommerce|professional-services)/);
-    expect(xml).not.toMatch(/\/login<|\/app<|\/api\//);
+    expect(xml).not.toMatch(/\/(?:login|privacy|terms|changelog)<|\/app<|\/api\//);
   });
 
   it("permanently redirects every localized legacy content URL without loops", async () => {
@@ -111,6 +111,11 @@ describe("crawl and retrieval resources", () => {
   it("creates unique index directives and valid JSON-LD boundaries", () => {
     const homepage = buildHeadTags("/", "en");
     const login = buildHeadTags("/login", "en");
+    const retainedNoindex = [
+      buildHeadTags("/privacy", "en"),
+      buildHeadTags("/terms", "en"),
+      buildHeadTags("/changelog", "en"),
+    ];
     expect(homepage).toContain('content="index,follow,max-image-preview:large"');
     expect(homepage).toContain('hreflang="ru"');
     expect(homepage).toContain('hreflang="en"');
@@ -118,6 +123,10 @@ describe("crawl and retrieval resources", () => {
     expect(homepage).toContain('type="application/ld+json"');
     expect(login).toContain('content="noindex,nofollow,noarchive"');
     expect(login).not.toContain('type="application/ld+json"');
+    for (const head of retainedNoindex) {
+      expect(head).toContain('content="noindex,follow,noarchive"');
+      expect(head).toContain('type="application/ld+json"');
+    }
   });
 
   it("keeps homepage FAQ JSON-LD synchronized with the visible localized landing copy", () => {

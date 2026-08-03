@@ -18,6 +18,7 @@ interface PageResult {
   html: string;
   title: string;
   description: string;
+  indexable: boolean;
 }
 
 const failures: string[] = [];
@@ -93,9 +94,18 @@ async function auditPage(
       }
     }
   } else {
-    assert(robots.startsWith("noindex,nofollow"), `${route.path}: sign-in route is indexable`);
+    const expectedRobots = route.basePath === "/login" ? "noindex,nofollow" : "noindex,follow";
+    assert(robots.startsWith(expectedRobots), `${route.path}: incorrect noindex follow policy`);
     assert(response.headers.get("x-robots-tag")?.includes("noindex"), `${route.path}: missing noindex response header`);
-    assert(!html.includes("synap-structured-data"), `${route.path}: sign-in route exposes page schema`);
+    assert(
+      response.headers.get("x-robots-tag")?.includes(route.basePath === "/login" ? "nofollow" : "follow"),
+      `${route.path}: response-level follow policy is incorrect`,
+    );
+    if (route.basePath === "/login") {
+      assert(!html.includes("synap-structured-data"), `${route.path}: sign-in route exposes page schema`);
+    } else {
+      assert(html.includes("synap-structured-data"), `${route.path}: retained noindex page lost visible page schema`);
+    }
   }
 
   const withoutScripts = html.replace(/<script\b[\s\S]*?<\/script>/gi, "");
@@ -104,7 +114,7 @@ async function auditPage(
   for (const image of html.match(/<img\b[^>]*>/gi) ?? []) {
     assert(/\salt="[^"]*"/i.test(image), `${route.path}: image is missing alt text`);
   }
-  return { path: route.path, html, title, description };
+  return { path: route.path, html, title, description, indexable: expectedMeta.indexable };
 }
 
 async function run(): Promise<void> {
@@ -120,7 +130,7 @@ async function run(): Promise<void> {
     const pages: PageResult[] = [];
     for (const route of publicRoutePairs()) pages.push(await auditPage(origin, route));
 
-    const indexed = pages.filter((page) => !page.path.endsWith("/login") && page.path !== "/login");
+    const indexed = pages.filter((page) => page.indexable);
     assert(new Set(indexed.map((page) => page.title)).size === indexed.length, "Indexable page titles are not unique");
     assert(new Set(indexed.map((page) => page.description)).size === indexed.length, "Indexable page descriptions are not unique");
 
@@ -178,7 +188,10 @@ async function run(): Promise<void> {
     assert(sitemapLocations.length === INDEXABLE_PUBLIC_PATHS.length * 2, "sitemap.xml has the wrong URL count");
     assert(sitemapBody.includes("/blogs"), "sitemap.xml is missing the blog hub");
     assert(!sitemapBody.includes("/guides"), "sitemap.xml contains a legacy guide URL");
-    assert(!sitemapBody.match(/\/login<|\/app<|\/api\//), "sitemap.xml contains a private or noindex URL");
+    assert(
+      !sitemapBody.match(/\/(?:login|privacy|terms|changelog)<|\/app<|\/api\//),
+      "sitemap.xml contains a private or noindex URL",
+    );
 
     for (const resource of ["/llms.txt", "/llms-full.txt"]) {
       const response = await get(origin, resource);
