@@ -18,9 +18,7 @@ for (const file of files) {
   lines.forEach((line, index) => {
     forbidden.lastIndex = 0;
     if (!forbidden.test(line)) return;
-    const allowedEntityContinuity =
-      file === "packages/shared/src/seo.ts" && line.includes("alternateName:");
-    if (!allowedEntityContinuity) violations.push(`${file}:${index + 1}: ${line.trim()}`);
+    violations.push(`${file}:${index + 1}: ${line.trim()}`);
   });
 }
 
@@ -28,4 +26,4 @@ if (violations.length > 0) {
   console.error("Obsolete visible brand references found:\n" + violations.join("\n"));
   process.exit(1);
 }
-console.log("Brand check passed: the former name appears only as structured-data entity continuity.");
+console.log("Brand check passed: no obsolete visible or machine-readable former-brand references found.");

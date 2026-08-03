@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import {
   localizedPublicPath,
+  landingFaqItems,
   publicFaqItems,
-  publicUiText,
   routeMeta,
+  SOCIAL_IMAGE_ALT,
   structuredDataForRoute,
   type Locale,
   type PublicPath,
@@ -39,7 +40,6 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
     const enUrl = `${base}${localizedPublicPath(path, "en")}`;
     const description = meta.description;
     const image = `${base}/og-image.png`;
-    const ui = publicUiText(locale);
 
     document.title = meta.title;
     document.documentElement.lang = locale;
@@ -67,7 +67,7 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
       ["og:description", description],
       ["og:url", canonical],
       ["og:image", image],
-      ["og:image:alt", ui.socialImageAlt],
+      ["og:image:alt", SOCIAL_IMAGE_ALT[locale]],
       ["og:locale", locale === "ru" ? "ru_RU" : "en_US"],
       ["og:locale:alternate", locale === "ru" ? "en_US" : "ru_RU"],
     ];
@@ -79,7 +79,7 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
       ["twitter:title", meta.title],
       ["twitter:description", description],
       ["twitter:image", image],
-      ["twitter:image:alt", ui.socialImageAlt],
+      ["twitter:image:alt", SOCIAL_IMAGE_ALT[locale]],
     ];
     for (const [name, content] of twitter) {
       upsertMeta(`meta[name="${name}"]`, { name, content });
@@ -93,7 +93,7 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
       script.dataset.synapManaged = "true";
       document.head.appendChild(script);
     }
-    const faq = path === "/" ? publicFaqItems(locale).slice(0, 6) : path === "/faq" ? publicFaqItems(locale) : [];
+    const faq = path === "/" ? landingFaqItems(locale) : path === "/faq" ? publicFaqItems(locale) : [];
     script.textContent = JSON.stringify(structuredDataForRoute(base, path, locale, faq));
   }, [locale, path]);
   return null;

@@ -1,9 +1,16 @@
 import { once } from "node:events";
+import fs from "node:fs";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 import express from "express";
 import { describe, expect, it } from "vitest";
-import { INDEXABLE_PUBLIC_PATHS, PUBLIC_PATHS } from "@synapai/shared";
+import {
+  INDEXABLE_PUBLIC_PATHS,
+  landingFaqItems,
+  PRODUCT_POSITIONING,
+  PUBLIC_PATHS,
+  structuredDataForRoute,
+} from "@synapai/shared";
 import {
   buildHeadTags,
   llmsFullText,
@@ -14,10 +21,35 @@ import {
   robotsText,
   sitemapXml,
 } from "../src/http/seo.js";
+import { SESSION_COOKIE } from "../src/services/auth.js";
 
 const BASE = "https://synap.example";
+const FORMER_NAME = ["Synap", "AI"].join("");
 
 describe("crawl and retrieval resources", () => {
+  it("preserves route counts and compatibility-sensitive internal identifiers", () => {
+    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(22);
+    expect(PUBLIC_PATHS).toHaveLength(23);
+    expect(SESSION_COOKIE).toBe(["synap", "ai_session"].join(""));
+  });
+
+  it("uses service-led package and manifest descriptions without changing icon references", () => {
+    const manifest = JSON.parse(
+      fs.readFileSync(new URL("../../client/public/site.webmanifest", import.meta.url), "utf8"),
+    ) as { description: string; icons: Array<{ src: string; sizes: string }> };
+    const packageMetadata = JSON.parse(
+      fs.readFileSync(new URL("../../../package.json", import.meta.url), "utf8"),
+    ) as { description: string };
+
+    expect(manifest.description).toContain("бизнес в Казахстане");
+    expect(manifest.description).toContain("вручную помогает");
+    expect(manifest.icons).toEqual([
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ]);
+    expect(packageMetadata.description).toBe(PRODUCT_POSITIONING.en.short);
+  });
+
   it("registers both locales for every public route", () => {
     expect(publicRoutes()).toHaveLength(PUBLIC_PATHS.length * 2);
     expect(new Set(publicRoutes().map((route) => route.urlPath)).size).toBe(PUBLIC_PATHS.length * 2);
@@ -85,15 +117,71 @@ describe("crawl and retrieval resources", () => {
     expect(login).not.toContain('type="application/ld+json"');
   });
 
+  it("keeps homepage FAQ JSON-LD synchronized with the visible localized landing copy", () => {
+    for (const locale of ["en", "ru"] as const) {
+      const head = buildHeadTags("/", locale);
+      const raw = head.match(
+        /<script id="synap-structured-data" type="application\/ld\+json">([\s\S]*?)<\/script>/,
+      )?.[1];
+      expect(raw).toBeTruthy();
+      const graph = (JSON.parse(raw ?? "{}") as { "@graph": Array<Record<string, unknown>> })[
+        "@graph"
+      ];
+      const faq = graph.find((node) => node["@type"] === "FAQPage") as {
+        mainEntity: Array<{ name: string; acceptedAnswer: { text: string } }>;
+      };
+      expect(
+        faq.mainEntity.map((item) => ({
+          question: item.name,
+          answer: item.acceptedAnswer.text,
+        })),
+      ).toEqual(landingFaqItems(locale));
+    }
+  });
+
+  it("publishes a service-led graph without former-brand, Product, or price claims", () => {
+    const graph = (structuredDataForRoute(BASE, "/", "en", landingFaqItems("en")) as {
+      "@graph": Array<Record<string, unknown>>;
+    })["@graph"];
+    const service = graph.find((node) => node["@type"] === "Service");
+    const application = graph.find((node) => node["@type"] === "SoftwareApplication");
+    const serialized = JSON.stringify(graph);
+
+    expect(service?.areaServed).toEqual({ "@type": "Country", name: "Kazakhstan" });
+    expect(service?.provider).toEqual({ "@id": `${BASE}/#organization` });
+    expect(application?.isPartOf).toEqual({ "@id": `${BASE}/#service` });
+    expect(serialized).toContain(PRODUCT_POSITIONING.en.full);
+    expect(serialized).not.toContain(FORMER_NAME);
+    expect(serialized).not.toMatch(/"Product"|"Offer"|priceCurrency|"price"/);
+    expect(serialized).not.toContain("synapai.app");
+  });
+
   it("keeps llms resources factual, supplemental and outside private data", () => {
     const concise = llmsText(BASE);
     const full = llmsFullText(BASE);
     expect(concise).toContain("# Synap");
     expect(concise).toContain("llms.txt is supplemental");
+    expect(concise).toContain("Primary market: businesses in Kazakhstan");
+    expect(concise).toContain("Normal free-audit model families: ChatGPT, Gemini, Perplexity");
+    expect(concise).toContain("early testing stage");
+    expect(concise).toContain("user-initiated");
+    expect(concise).toContain("manually carries out separately scoped improvement work");
     expect(concise).toContain(`${BASE}/en/methodology`);
     expect(concise).toContain(`${BASE}/en/blogs`);
     expect(concise).not.toContain(`${BASE}/en/guides`);
     expect(full).toContain("does not guarantee indexing");
-    expect(`${concise}\n${full}`).not.toMatch(/sk-[A-Za-z0-9]|BEGIN PRIVATE KEY/);
+    expect(full).toMatch(/Authenticated business profiles/);
+    const combined = `${concise}\n${full}`;
+    expect(combined).not.toMatch(/Claude|Grok/);
+    expect(combined).not.toMatch(/analytics platform|self-service SaaS|automated optimization/i);
+    expect(combined).not.toMatch(/provides (?:continuous|real-time) monitoring/i);
+    expect(combined).not.toMatch(
+      /(?<!not )guarantees? (?:indexing|mentions|citations|positions|rankings|recommendations)/i,
+    );
+    expect(combined).not.toMatch(/sk-[A-Za-z0-9]|BEGIN PRIVATE KEY|synapai_session|synapai\.app/);
+    expect(llmsText(BASE)).toContain(`Canonical website: ${BASE}`);
+    expect(llmsText("https://another.example")).toContain(
+      "Canonical website: https://another.example",
+    );
   });
 });

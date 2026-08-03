@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   INDEXABLE_PUBLIC_PATHS,
+  landingFaqItems,
   LEGACY_PUBLIC_REDIRECTS,
   NOINDEX_PUBLIC_PATHS,
   PUBLIC_PATHS,
@@ -9,7 +10,9 @@ import {
   localizedPublicPath,
   organizationLd,
   parseLocalizedPublicPath,
+  PRODUCT_POSITIONING,
   routeMeta,
+  serviceLd,
   softwareApplicationLd,
   structuredDataForRoute,
   webSiteLd,
@@ -19,6 +22,33 @@ const BASE = "https://synap.example";
 const FORMER_NAME = ["Synap", "AI"].join("");
 
 describe("public information architecture", () => {
+  it("keeps the canonical route inventory unchanged", () => {
+    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(22);
+    expect(PUBLIC_PATHS).toHaveLength(23);
+  });
+
+  it("defines Synap as a human-assisted Kazakhstan service in primary metadata", () => {
+    expect(PRODUCT_POSITIONING.en.short).toBe(
+      "Synap gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
+    );
+    expect(PRODUCT_POSITIONING.ru.short).toBe(
+      "Synap бесплатно проверяет, как бизнес в Казахстане представлен в ответах ИИ, а затем команда вручную помогает с улучшениями. Позиции в ИИ не гарантируются.",
+    );
+    expect(PRODUCT_POSITIONING.en.full).toContain("human-assisted");
+    expect(PRODUCT_POSITIONING.en.full).toContain("manually carries out agreed improvement work");
+    expect(PRODUCT_POSITIONING.en.full).not.toMatch(/analytics platform|continuous|real-time/i);
+    expect(routeMeta("/", "en")).toMatchObject({
+      title: "Synap — Improve AI Visibility in Kazakhstan",
+      description:
+        "Get a free audit of how your business appears in AI answers. Synap’s team helps Kazakhstan businesses carry out agreed improvements; AI placement is not guaranteed.",
+    });
+    expect(routeMeta("/", "ru")).toMatchObject({
+      title: "Synap — улучшение видимости бизнеса в ИИ в Казахстане",
+      description:
+        "Получите бесплатный аудит представленности бизнеса в ответах ИИ. Команда Synap помогает компаниям Казахстана с улучшениями; позиции в ИИ не гарантируются.",
+    });
+  });
+
   it("has unique localized titles and descriptions for every public route", () => {
     const titles = new Set<string>();
     const descriptions = new Set<string>();
@@ -81,28 +111,40 @@ describe("public information architecture", () => {
 });
 
 describe("structured data", () => {
-  it("uses a stable Synap organization identity with machine-readable continuity", () => {
+  it("uses a stable Synap organization identity without unsupported former-name continuity", () => {
     const ld = organizationLd(BASE) as Record<string, unknown>;
     expect(ld["@type"]).toBe("Organization");
     expect(ld["@id"]).toBe(`${BASE}/#organization`);
     expect(ld.name).toBe("Synap");
-    expect(ld.alternateName).toBe(FORMER_NAME);
+    expect(ld).not.toHaveProperty("alternateName");
     expect(ld.url).toBe(BASE);
+    expect(ld.description).toContain("Kazakhstan");
+    expect(JSON.stringify(ld)).not.toContain(FORMER_NAME);
     expect(JSON.stringify(ld)).not.toContain("ratingValue");
   });
 
-  it("describes the real browser product without reviews or invented ratings", () => {
+  it("makes the Kazakhstan Service primary and the browser audit application secondary", () => {
+    const service = serviceLd(BASE, "en") as Record<string, unknown>;
     const ld = softwareApplicationLd(BASE, "en") as {
-      "@type": string[];
+      "@type": string;
+      "@id": string;
       applicationCategory: string;
       operatingSystem: string;
-      offers: { price: string };
+      isPartOf: { "@id": string };
     };
-    expect(ld["@type"]).toEqual(["SoftwareApplication", "Product"]);
+    expect(service["@type"]).toBe("Service");
+    expect(service["@id"]).toBe(`${BASE}/#service`);
+    expect(service.areaServed).toEqual({ "@type": "Country", name: "Kazakhstan" });
+    expect(service.provider).toEqual({ "@id": `${BASE}/#organization` });
+    expect(service.description).toContain("human-assisted");
+    expect(service.description).toContain("does not guarantee indexing");
+    expect(ld["@type"]).toBe("SoftwareApplication");
+    expect(ld["@id"]).toBe(`${BASE}/#audit-application`);
     expect(ld.applicationCategory).toBe("BusinessApplication");
     expect(ld.operatingSystem).toBe("Web browser");
-    expect(ld.offers.price).toBe("0");
-    expect(JSON.stringify(ld)).not.toMatch(/aggregateRating|reviewCount/);
+    expect(ld.isPartOf).toEqual({ "@id": `${BASE}/#service` });
+    expect(ld).not.toHaveProperty("offers");
+    expect(JSON.stringify(ld)).not.toMatch(/Product|priceCurrency|aggregateRating|reviewCount/);
   });
 
   it("declares both supported public languages on the WebSite", () => {
@@ -118,6 +160,69 @@ describe("structured data", () => {
     expect(ld.mainEntity).toHaveLength(1);
     expect(ld.mainEntity[0].name).toBe("Visible question");
     expect(ld.mainEntity[0].acceptedAnswer.text).toBe("Visible answer");
+  });
+
+  it("reads the homepage FAQ from the exact localized landing translation keys", () => {
+    expect(landingFaqItems("en")).toEqual([
+      {
+        question: "How is the Visibility Score calculated?",
+        answer:
+          "The main score measures how often and how prominently your business appears in successful unbranded AI answers. Branded recognition is measured separately, so asking directly about your business does not inflate the main score.",
+      },
+      {
+        question: "Which AI systems do you check?",
+        answer:
+          "The free audit currently evaluates model families associated with ChatGPT, Gemini and Perplexity. The results are a measured sample and may differ from answers shown in individual consumer applications.",
+      },
+      {
+        question: "How long does the audit take?",
+        answer:
+          "A free audit usually completes within a few minutes. Timing can vary depending on provider availability, and we email you the report link when it is ready.",
+      },
+      {
+        question: "Is the data accurate?",
+        answer:
+          "AI answers can change with the model, time, wording and retrieved sources. Your audit is a dated sample that shows the current situation, not a guaranteed or permanent ranking.",
+      },
+      {
+        question: "What happens after the call?",
+        answer:
+          "We review your report, identify why competitors appear instead of you, and propose an improvement plan covering content, business information, sources and external mentions. If we agree on the scope, our team carries out the work.",
+      },
+      {
+        question: "How much does it cost?",
+        answer:
+          "The AI visibility audit is free. Improvement work is priced separately after the call because the required scope depends on your industry, current online presence and competition.",
+      },
+    ]);
+    expect(landingFaqItems("ru")).toHaveLength(6);
+    expect(landingFaqItems("ru")[0].question).toBe("Как считается Индекс видимости?");
+  });
+
+  it("emits a complete graph with no Product, offer, or dangling entity references", () => {
+    const graph = (structuredDataForRoute(BASE, "/", "en", landingFaqItems("en")) as {
+      "@graph": Array<Record<string, unknown>>;
+    })["@graph"];
+    const ids = new Set<string>();
+    const referencedIds: string[] = [];
+    const visit = (value: unknown): void => {
+      if (Array.isArray(value)) value.forEach(visit);
+      else if (value && typeof value === "object") {
+        const record = value as Record<string, unknown>;
+        if (typeof record["@id"] === "string" && record["@type"]) ids.add(record["@id"]);
+        else if (typeof record["@id"] === "string") referencedIds.push(record["@id"]);
+        Object.values(record).forEach(visit);
+      }
+    };
+    graph.forEach(visit);
+
+    expect(graph.some((node) => node["@type"] === "Service")).toBe(true);
+    expect(graph.some((node) => node["@type"] === "SoftwareApplication")).toBe(true);
+    expect(JSON.stringify(graph)).not.toMatch(/"Product"|"Offer"|priceCurrency/);
+    expect(JSON.stringify(graph)).not.toContain(FORMER_NAME);
+    for (const id of referencedIds.filter((id) => id.startsWith(`${BASE}/#`))) {
+      expect(ids.has(id), `missing graph node for ${id}`).toBe(true);
+    }
   });
 
   it("does not attach product or page schema to the noindex sign-in page", () => {

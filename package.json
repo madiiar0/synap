@@ -1,6 +1,6 @@
 {
   "name": "synap",
-  "description": "AI visibility analytics for businesses",
+  "description": "Synap gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
   "version": "2.0.0",
   "private": true,
   "type": "module",

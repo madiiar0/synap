@@ -1,5 +1,7 @@
 import { ENGINE_LABELS, type EngineId } from "./engines.js";
 import type { Locale } from "./constants.js";
+import enTranslations from "./i18n/en.json" with { type: "json" };
+import ruTranslations from "./i18n/ru.json" with { type: "json" };
 
 /**
  * Public information architecture. Keep this registry authoritative: routing,
@@ -79,20 +81,25 @@ export const PRODUCT_POSITIONING: Record<Locale, {
 }> = {
   en: {
     sentence:
-      "Synap is a browser-based AI visibility analytics platform that shows businesses when, where and how they are mentioned, ranked and recommended in AI-generated answers.",
+      "Synap gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
     short:
-      "Measure business mentions, recommendation positions, competitors, citations and Share of Voice across supported AI-generated answers with Synap.",
+      "Synap gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
     full:
-      "Synap is a browser-based AI visibility analytics platform for businesses, marketing teams and agencies. It researches a business, generates realistic branded and unbranded customer prompts, queries supported AI model families, and analyzes the resulting answers for business mentions, recommendation positions, competitors and cited sources. Synap reports an unbranded Visibility Score, a separate branded diagnostic, provider-level results and Share of Voice. It complements traditional SEO analytics by measuring answers rather than search-result rankings.",
+      "Synap is a human-assisted AI-visibility audit and improvement service for businesses in Kazakhstan. The free audit provides a dated sample of how a business appears in supported AI-generated answers, including visibility metrics, branded recognition, competitors, answer-level positions and cited sources. Business owners can review the private report and book a call with Synap. The team then plans and manually carries out agreed improvement work. AI answers vary by model, wording, date and retrieved sources, so Synap does not guarantee indexing, mentions, citations, rankings or recommendations.",
   },
   ru: {
     sentence:
-      "Synap — браузерная платформа аналитики видимости в ИИ, которая показывает бизнесу, когда, где и как его упоминают, ранжируют и рекомендуют в сгенерированных ответах.",
+      "Synap бесплатно проверяет, как бизнес в Казахстане представлен в ответах ИИ, а затем команда вручную помогает с улучшениями. Позиции в ИИ не гарантируются.",
     short:
-      "Synap измеряет упоминания бизнеса, позиции в рекомендациях, конкурентов, источники и долю голоса в ответах поддерживаемых ИИ-моделей.",
+      "Synap бесплатно проверяет, как бизнес в Казахстане представлен в ответах ИИ, а затем команда вручную помогает с улучшениями. Позиции в ИИ не гарантируются.",
     full:
-      "Synap — браузерная платформа аналитики видимости в ИИ для компаний, маркетинговых команд и агентств. Она исследует бизнес, формирует реалистичные брендовые и небрендовые вопросы клиентов, запрашивает поддерживаемые семейства ИИ-моделей и анализирует ответы: упоминания бизнеса, позиции в рекомендациях, конкурентов и процитированные источники. Synap показывает основной Индекс видимости по небрендовым вопросам, отдельный брендовый показатель, результаты по моделям и долю голоса. Платформа дополняет традиционную SEO-аналитику, потому что измеряет ответы, а не позиции в поисковой выдаче.",
+      "Synap — сервис аудита и улучшения видимости бизнеса в ответах ИИ для компаний Казахстана с участием команды специалистов. Бесплатный аудит показывает датированную выборку ответов поддерживаемых ИИ-моделей, включая метрики видимости, узнаваемость бренда, конкурентов, позиции в отдельных ответах и процитированные источники. Владелец бизнеса может изучить закрытый отчёт и записаться на созвон с Synap. Затем команда составляет и вручную выполняет согласованный план улучшений. Ответы ИИ зависят от модели, формулировки, даты и найденных источников, поэтому Synap не гарантирует индексацию, упоминания, цитирование, позиции или рекомендации.",
   },
+};
+
+export const SOCIAL_IMAGE_ALT: Record<Locale, string> = {
+  en: "Synap — AI-visibility audit and human-assisted improvement in Kazakhstan",
+  ru: "Synap — аудит и улучшение видимости бизнеса в ИИ в Казахстане",
 };
 
 const UPDATED = "2026-08-02";
@@ -100,32 +107,32 @@ const UPDATED = "2026-08-02";
 const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   "/": {
     en: {
-      title: "Synap — AI Visibility Analytics for Businesses",
+      title: "Synap — Improve AI Visibility in Kazakhstan",
       description:
-        "Measure how often your business is mentioned, ranked and recommended in AI-generated answers. Track competitors, prompts, citations and Share of Voice with Synap.",
+        "Get a free audit of how your business appears in AI answers. Synap’s team helps Kazakhstan businesses carry out agreed improvements; AI placement is not guaranteed.",
       kind: "home",
       lastModified: UPDATED,
     },
     ru: {
-      title: "Synap — Аналитика видимости бизнеса в ответах ИИ",
+      title: "Synap — улучшение видимости бизнеса в ИИ в Казахстане",
       description:
-        "Измеряйте, как часто ИИ упоминает, ранжирует и рекомендует ваш бизнес. Отслеживайте конкурентов, вопросы, источники и долю голоса в Synap.",
+        "Получите бесплатный аудит представленности бизнеса в ответах ИИ. Команда Synap помогает компаниям Казахстана с улучшениями; позиции в ИИ не гарантируются.",
       kind: "home",
       lastModified: UPDATED,
     },
   },
   "/product": {
     en: {
-      title: "AI Visibility Analytics Product | Synap",
+      title: "AI Visibility Audit for Kazakhstan | Synap",
       description:
-        "See what Synap measures: unbranded visibility, branded recognition, provider results, AI answers, competitors, citations and Share of Voice.",
+        "Review the dated answers and visibility metrics included in Synap’s free Kazakhstan audit. Human-assisted improvement work is scoped separately after a call.",
       kind: "product",
       lastModified: UPDATED,
     },
     ru: {
-      title: "Продукт для аналитики видимости в ИИ | Synap",
+      title: "Аудит видимости бизнеса в ИИ в Казахстане | Synap",
       description:
-        "Узнайте, что измеряет Synap: небрендовую видимость, узнаваемость бренда, ответы моделей, конкурентов, источники и долю голоса.",
+        "Изучите ответы и метрики бесплатного аудита Synap для бизнеса Казахстана. Дальнейшая работа команды согласовывается отдельно после созвона.",
       kind: "product",
       lastModified: UPDATED,
     },
@@ -230,14 +237,14 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
     en: {
       title: "AI Visibility Analytics for SaaS Companies | Synap",
       description:
-        "Track how AI answers describe a SaaS product, surface it for unbranded category questions, compare alternatives and cite product documentation.",
+        "Audit a dated sample of how AI answers describe a SaaS product, surface it for unbranded questions, compare alternatives and cite documentation.",
       kind: "article",
       lastModified: UPDATED,
     },
     ru: {
       title: "Аналитика видимости SaaS-продуктов в ИИ | Synap",
       description:
-        "Отслеживайте, как ИИ описывает SaaS-продукт, показывает его в небрендовых вопросах, сравнивает альтернативы и цитирует документацию.",
+        "Проверьте датированную выборку ответов: как ИИ описывает SaaS-продукт, показывает его по небрендовым вопросам и цитирует документацию.",
       kind: "article",
       lastModified: UPDATED,
     },
@@ -308,16 +315,16 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/about": {
     en: {
-      title: "About Synap — AI Visibility Analytics",
+      title: "About Synap — AI Visibility Service in Kazakhstan",
       description:
-        "Learn what Synap is, who it serves, what a scan measures, how AI visibility differs from search visibility and which product facts are publicly verified.",
+        "Learn how Synap combines a free, dated AI-visibility audit with separately scoped human-assisted improvement work for businesses in Kazakhstan.",
       kind: "about",
       lastModified: UPDATED,
     },
     ru: {
-      title: "О Synap — платформе аналитики видимости в ИИ",
+      title: "О Synap — сервисе видимости бизнеса в ИИ в Казахстане",
       description:
-        "Что такое Synap, для кого создана платформа, что измеряет проверка, чем видимость в ИИ отличается от поисковой и какие факты подтверждены.",
+        "Узнайте, как Synap сочетает бесплатный датированный аудит видимости в ИИ с отдельно согласуемой помощью команды для бизнеса Казахстана.",
       kind: "about",
       lastModified: UPDATED,
     },
@@ -340,14 +347,14 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/docs": {
     en: {
-      title: "Synap Product Documentation",
+      title: "AI Visibility Audit Documentation | Synap",
       description:
         "Learn to create a business profile, run and repeat a scan, read Visibility Score and provider results, inspect answers, prompts, competitors and Share of Voice.",
       kind: "docs",
       lastModified: UPDATED,
     },
     ru: {
-      title: "Документация продукта Synap",
+      title: "Документация по аудиту видимости Synap",
       description:
         "Как создать профиль, запустить и повторить проверку, прочитать Индекс видимости и результаты моделей, изучить ответы, вопросы и конкурентов.",
       kind: "docs",
@@ -500,6 +507,15 @@ export interface FaqItem {
   answer: string;
 }
 
+/** Homepage FAQ copy comes from the same localization keys rendered by FaqSection. */
+export function landingFaqItems(locale: Locale): FaqItem[] {
+  const faq = locale === "ru" ? ruTranslations.landing.faq : enTranslations.landing.faq;
+  return [1, 2, 3, 4, 5, 6].map((number) => ({
+    question: faq[`q${number}` as keyof typeof faq],
+    answer: faq[`a${number}` as keyof typeof faq],
+  }));
+}
+
 export function faqLd(items: FaqItem[]): Record<string, unknown> {
   return {
     "@type": "FAQPage",
@@ -515,13 +531,12 @@ function cleanBase(baseUrl: string): string {
   return baseUrl.replace(/\/$/, "");
 }
 
-export function organizationLd(baseUrl: string): Record<string, unknown> {
+export function organizationLd(baseUrl: string, locale: Locale = "en"): Record<string, unknown> {
   const base = cleanBase(baseUrl);
   return {
     "@type": "Organization",
     "@id": `${base}/#organization`,
     name: "Synap",
-    alternateName: "SynapAI",
     url: base,
     logo: {
       "@type": "ImageObject",
@@ -531,7 +546,7 @@ export function organizationLd(baseUrl: string): Record<string, unknown> {
       height: 512,
       caption: "Synap",
     },
-    description: PRODUCT_POSITIONING.en.sentence,
+    description: PRODUCT_POSITIONING[locale].short,
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer support",
@@ -541,16 +556,42 @@ export function organizationLd(baseUrl: string): Record<string, unknown> {
   };
 }
 
-export function webSiteLd(baseUrl: string): Record<string, unknown> {
+export function webSiteLd(baseUrl: string, locale: Locale = "en"): Record<string, unknown> {
   const base = cleanBase(baseUrl);
   return {
     "@type": "WebSite",
     "@id": `${base}/#website`,
     name: "Synap",
     url: base,
-    description: PRODUCT_POSITIONING.en.short,
+    description: PRODUCT_POSITIONING[locale].short,
     inLanguage: ["en", "ru"],
     publisher: { "@id": `${base}/#organization` },
+  };
+}
+
+export function serviceLd(baseUrl: string, locale: Locale): Record<string, unknown> {
+  const base = cleanBase(baseUrl);
+  return {
+    "@type": "Service",
+    "@id": `${base}/#service`,
+    name: "Synap",
+    url: `${base}${localizedPublicPath("/", locale)}`,
+    mainEntityOfPage: `${base}${localizedPublicPath("/", locale)}`,
+    serviceType:
+      locale === "ru"
+        ? "Бесплатный аудит видимости бизнеса в ИИ и отдельно согласуемая помощь команды"
+        : "Free AI-visibility audit with separately scoped human-assisted improvement",
+    areaServed: {
+      "@type": "Country",
+      name: locale === "ru" ? "Казахстан" : "Kazakhstan",
+    },
+    provider: { "@id": `${base}/#organization` },
+    description: PRODUCT_POSITIONING[locale].full,
+    availableChannel: {
+      "@type": "ServiceChannel",
+      serviceUrl: `${base}${localizedPublicPath("/contact", locale)}`,
+      availableLanguage: locale === "ru" ? "Russian" : "English",
+    },
   };
 }
 
@@ -572,29 +613,25 @@ export function softwareApplicationLd(baseUrl: string, locale: Locale): Record<s
       "Просмотр вопросов и источников",
     ],
   };
+  const descriptions: Record<Locale, string> = {
+    en: "The browser-based Synap audit interface lets authenticated business owners review a private, dated sample of supported AI-generated answers and related visibility metrics.",
+    ru: "Браузерный интерфейс аудита Synap позволяет авторизованному владельцу бизнеса изучить закрытую датированную выборку ответов поддерживаемых ИИ-моделей и связанные метрики видимости.",
+  };
   return {
-    "@type": ["SoftwareApplication", "Product"],
-    "@id": `${base}/#software`,
-    name: "Synap",
-    url: `${base}/product`,
-    mainEntityOfPage: `${base}/product`,
+    "@type": "SoftwareApplication",
+    "@id": `${base}/#audit-application`,
+    name: locale === "ru" ? "Интерфейс аудита Synap" : "Synap audit interface",
+    url: `${base}${localizedPublicPath("/product", locale)}`,
+    mainEntityOfPage: `${base}${localizedPublicPath("/product", locale)}`,
     applicationCategory: "BusinessApplication",
-    applicationSubCategory: "AI visibility analytics",
+    applicationSubCategory: "AI visibility audit and report interface",
     operatingSystem: "Web browser",
     browserRequirements: "A modern browser with JavaScript enabled for authenticated reports",
     isAccessibleForFree: true,
-    description: PRODUCT_POSITIONING[locale].full,
+    description: descriptions[locale],
     featureList: features[locale],
-    image: `${base}/og-image.png`,
+    isPartOf: { "@id": `${base}/#service` },
     publisher: { "@id": `${base}/#organization` },
-    offers: {
-      "@type": "Offer",
-      name: locale === "ru" ? "Бесплатная проверка видимости" : "Free visibility scan",
-      price: "0",
-      priceCurrency: "USD",
-      url: `${base}${localizedPublicPath("/pricing", locale)}`,
-      availability: "https://schema.org/OnlineOnly",
-    },
   };
 }
 
@@ -622,9 +659,13 @@ export function webPageLd(
     description: meta.description,
     inLanguage: locale,
     isPartOf: { "@id": `${base}/#website` },
-    about: { "@id": `${base}/#software` },
+    about: { "@id": `${base}/#service` },
     publisher: { "@id": `${base}/#organization` },
   };
+  if (path === "/") page.mainEntity = { "@id": `${base}/#service` };
+  if (path === "/product" || path === "/docs" || path === "/methodology") {
+    page.mainEntity = { "@id": `${base}/#audit-application` };
+  }
   if (meta.lastModified) page.dateModified = meta.lastModified;
   if (meta.kind === "article") {
     page.headline = meta.title;
@@ -673,13 +714,15 @@ export function structuredDataForRoute(
   locale: Locale,
   faqItems: FaqItem[] = [],
 ): Record<string, unknown> {
-  const graph: Record<string, unknown>[] = [organizationLd(baseUrl), webSiteLd(baseUrl)];
+  const graph: Record<string, unknown>[] = [
+    organizationLd(baseUrl, locale),
+    webSiteLd(baseUrl, locale),
+  ];
   if (path !== "/login") {
+    graph.push(serviceLd(baseUrl, locale));
+    graph.push(softwareApplicationLd(baseUrl, locale));
     graph.push(webPageLd(baseUrl, path, locale));
     graph.push(breadcrumbLd(baseUrl, path, locale));
-  }
-  if (path === "/" || path === "/product" || path === "/pricing") {
-    graph.push(softwareApplicationLd(baseUrl, locale));
   }
   if ((path === "/" || path === "/faq") && faqItems.length > 0) {
     const page = graph.find((node) => node["@id"] === `${cleanBase(baseUrl)}${localizedPublicPath(path, locale)}#webpage`);
@@ -701,5 +744,11 @@ export function structuredDataForRoute(
 /** Supported model-family labels, in the public product order. */
 export function scannedEngineNames(): string[] {
   const order: EngineId[] = ["chatgpt", "gemini", "perplexity", "claude", "grok"];
+  return order.map((id) => ENGINE_LABELS[id]);
+}
+
+/** Model families included in the normal public free-audit flow. */
+export function publicFreeAuditEngineNames(): string[] {
+  const order: EngineId[] = ["chatgpt", "gemini", "perplexity"];
   return order.map((id) => ENGINE_LABELS[id]);
 }

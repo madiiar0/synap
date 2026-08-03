@@ -3,13 +3,15 @@ import path from "node:path";
 import type { Express, Request, Response } from "express";
 import {
   INDEXABLE_PUBLIC_PATHS,
+  landingFaqItems,
   LEGACY_PUBLIC_REDIRECTS,
   localizedPublicPath,
   PRODUCT_POSITIONING,
   PUBLIC_PATHS,
+  publicFreeAuditEngineNames,
   publicFaqItems,
   routeMeta,
-  scannedEngineNames,
+  SOCIAL_IMAGE_ALT,
   structuredDataForRoute,
   type Locale,
   type PublicPath,
@@ -73,9 +75,9 @@ export function buildHeadTags(basePath: PublicPath, locale: Locale): string {
   const ruUrl = `${base}${localizedPublicPath(basePath, "ru")}`;
   const enUrl = `${base}${localizedPublicPath(basePath, "en")}`;
   const ogImage = `${base}/og-image.png`;
-  const ogAlt = locale === "ru" ? "Synap — аналитика видимости в ИИ" : "Synap visibility analytics for AI answers";
+  const ogAlt = SOCIAL_IMAGE_ALT[locale];
   const faq = basePath === "/"
-    ? publicFaqItems(locale).slice(0, 6)
+    ? landingFaqItems(locale)
     : basePath === "/faq"
       ? publicFaqItems(locale)
       : [];
@@ -203,20 +205,28 @@ export function llmsText(baseUrl: string): string {
   return [
     "# Synap",
     "",
-    `> ${PRODUCT_POSITIONING.en.sentence}`,
-    "> Synap reports an unbranded Visibility Score, separate branded recognition, provider results, competitors, citations and Share of Voice.",
+    `> ${PRODUCT_POSITIONING.en.short}`,
     "",
     `Canonical website: ${base}`,
+    "Primary market: businesses in Kazakhstan",
     "Languages: English and Russian",
-    `Supported model families: ${scannedEngineNames().join(", ")}`,
+    `Normal free-audit model families: ${publicFreeAuditEngineNames().join(", ")}`,
     "",
-    "## Product and methodology",
+    "## Current service",
     "",
-    `- [Product](${base}/en/product): measured outputs and availability`,
+    "Synap is in an early testing stage. A business owner can start a free, user-initiated AI-visibility audit, review the private dated report, and book a call. The Synap team then plans and manually carries out separately scoped improvement work.",
+    "",
+    "The free audit uses model families associated with ChatGPT, Gemini and Perplexity through configured provider APIs. It does not claim to reproduce every answer shown in the consumer applications.",
+    "",
+    "Scans and rescans are started by users. Synap does not currently provide continuous or real-time monitoring.",
+    "",
+    "## Audit and methodology",
+    "",
+    `- [Audit interface](${base}/en/product): measured outputs and availability`,
     `- [How it works](${base}/en/how-it-works): scan workflow`,
     `- [Methodology](${base}/en/methodology): prompts, formulas, exclusions and limitations`,
-    `- [Pricing](${base}/en/pricing): free-scan access and separately scoped work`,
-    `- [FAQ](${base}/en/faq): concise product answers`,
+    `- [Pricing](${base}/en/pricing): free-audit access and separately scoped work`,
+    `- [FAQ](${base}/en/faq): concise service and audit answers`,
     `- [Documentation](${base}/en/docs): using a private report`,
     "",
     "## Concepts and use cases",
@@ -236,20 +246,37 @@ export function llmsText(baseUrl: string): string {
     "",
     "## Data boundary",
     "",
-    "Public resources describe Synap and its methodology. Customer business profiles, account prompts, generated answers, competitor reports, emails and scan data are authenticated and are not included in public resources.",
+    "Public resources describe Synap and its methodology. Customer business profiles, account prompts, generated answers, competitor reports, emails and scan data remain authenticated and are not included in public resources.",
     "",
-    "llms.txt is supplemental. The canonical HTML pages, metadata, structured data, robots rules and sitemap remain authoritative.",
+    "A Synap audit is a dated sample. Synap does not guarantee indexing, mentions, citations, positions, rankings or recommendations in any AI system.",
+    "",
+    "llms.txt is supplemental and experimental. It does not guarantee discovery, indexing or citation. Canonical HTML pages, metadata, structured data, robots rules and the sitemap remain authoritative.",
   ].join("\n");
 }
 
 export function llmsFullText(baseUrl: string): string {
   const base = baseUrl.replace(/\/$/, "");
   return [
-    "# Synap: public product reference",
+    "# Synap: public service reference",
     "",
     PRODUCT_POSITIONING.en.full,
     "",
-    "## Measurement summary",
+    "## Availability and service workflow",
+    "",
+    "Synap is currently in an early testing stage and primarily serves businesses in Kazakhstan.",
+    "",
+    "1. A business owner starts a free AI-visibility audit.",
+    "2. Synap makes fresh provider requests and produces a private, dated report.",
+    "3. The owner reviews the report and can book a call with Synap.",
+    "4. The Synap team plans and manually performs agreed improvement work. This work is separately scoped from the free audit.",
+    "",
+    "Scans and rescans are user-initiated. Synap does not currently provide continuous or real-time monitoring, and future automation is not described as a current capability.",
+    "",
+    "## Public free-audit coverage",
+    "",
+    `The normal free audit covers model families associated with ${publicFreeAuditEngineNames().join(", ")}. Requests use configured provider APIs rather than direct automation of consumer chat applications, so a scan should not be treated as a reproduction of every consumer-interface answer.`,
+    "",
+    "## Audit measurement summary",
     "",
     "- A scan researches the submitted business and generates 25 prompts under the current default configuration.",
     "- Prompts are stored as branded or unbranded from their actual text and known aliases.",
@@ -260,22 +287,24 @@ export function llmsFullText(baseUrl: string): string {
     "",
     "## Supported outputs",
     "",
-    "Visibility Score; branded recognition; provider-level results; prompts; generated answers; recommendation position; competitors; Share of Voice; cited domains; and prompts where competitors appear without the target business.",
+    "Visibility metrics; branded recognition; provider-level results; prompts; generated answers; answer-level recommendation position; competitors; Share of Voice; cited domains; and prompts where competitors appear without the target business.",
     "",
-    "## Limitations",
+    "## Limitations and privacy boundary",
     "",
-    "Generated answers vary by model, retrieval, date and wording. Provider-hosted model behavior can differ from consumer interfaces. A Synap scan does not guarantee indexing, citation, inclusion in training data, ranking, recommendation or commercial results.",
+    "Generated answers vary by model, retrieval, date and wording. Provider-hosted model behavior can differ from consumer interfaces. A Synap audit is a dated sample and does not guarantee indexing, mentions, citations, positions, rankings, recommendations, inclusion in training data or commercial results.",
+    "",
+    "Authenticated business profiles, prompts, answers, competitor reports, account details and customer scan data remain private. They are not exposed in this file or other public crawl resources.",
     "",
     "## Canonical references",
     "",
     `- Methodology: ${base}/en/methodology`,
-    `- Product: ${base}/en/product`,
+    `- Audit interface: ${base}/en/product`,
     `- Documentation: ${base}/en/docs`,
     `- FAQ: ${base}/en/faq`,
     `- Privacy boundary: ${base}/en/privacy`,
     `- Full sitemap: ${base}/sitemap.xml`,
     "",
-    "Updated: 2026-08-02",
+    "Updated: 2026-08-03",
   ].join("\n");
 }
 
