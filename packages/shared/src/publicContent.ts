@@ -121,104 +121,124 @@ export const PUBLIC_FAQ_ITEMS: Record<Locale, PublicFaqItem[]> = {
     {
       question: "What is Synap?",
       answer:
-        "Synap is a browser-based AI visibility analytics platform. It measures how a business appears in generated answers, including unbranded visibility, branded recognition, recommendation position, competitors, citations and Share of Voice.",
+        "Synap is an early-stage, human-assisted AI-visibility audit and improvement service for businesses in Kazakhstan. The browser application provides the free diagnostic audit; the Synap team separately plans and performs agreed improvement work after a call.",
     },
     {
-      question: "How is the primary Visibility Score calculated?",
+      question: "Who is Synap for?",
       answer:
-        "The primary score uses successful unbranded answers only. Category, best-of and purchase prompts form a category subscore weighted at 60%; unbranded comparison prompts form a comparison subscore weighted at 40%. Results are weighted across the model families actually queried. A limited position bonus applies when the average organic mention position is two or better. Branded and informational prompts do not raise the primary score.",
+        "Synap currently focuses on business owners in Kazakhstan who want evidence about how their company appears when people ask AI systems about a category, need, location or comparison. The audit is most useful when the business already has public information that can be checked.",
     },
     {
-      question: "Which AI systems does Synap evaluate?",
+      question: "What does the free audit include?",
       answer:
-        "Synap currently supports model families associated with ChatGPT, Gemini, Perplexity, Claude and Grok. The free scan uses ChatGPT, Gemini and Perplexity coverage; the full internal tier can add Claude and Grok. Requests run through Perplexity's Agent API, not the consumer chat interfaces, so results should be interpreted as a measured sample rather than a reproduction of every public product experience.",
+        "The audit creates a dated sample of customer-style prompts and AI-generated answers. The private report can include visibility metrics, separate branded recognition, provider-level results, competitor appearances, answer-level positions, Share of Voice and cited sources. Coverage and failed requests are shown rather than replaced with invented data.",
     },
     {
-      question: "What is Share of Voice in Synap?",
+      question: "Which AI model families are included in the free audit?",
       answer:
-        "Share of Voice is each qualifying business entity's share of all qualifying entity mentions across successful unbranded answers. An entity counts at most once per answer. Directories, marketplaces, sources and generic phrases are filtered from the competitor table.",
+        "The normal free audit covers model families associated with ChatGPT, Gemini and Perplexity. The report records the family used for each sampled answer, and provider availability can affect coverage or timing.",
     },
     {
-      question: "Are AI answers stable or guaranteed?",
+      question: "Does Synap directly scan the consumer ChatGPT, Gemini or Perplexity apps?",
       answer:
-        "No. Generated answers vary with model version, retrieval results, time, wording and provider behavior. A Synap scan is a dated sample. Rescanning can reveal movement, but neither a score nor an optimization guarantees that an AI system will recommend a business.",
+        "No. The audit uses configured provider APIs and model families associated with those products; it does not automate each consumer chat application. Personalization, interface features and model changes can therefore produce different answers for an individual user.",
     },
     {
-      question: "How long does a scan take?",
+      question: "What happens after the audit?",
       answer:
-        "A free scan usually completes in minutes, but timing depends on provider latency and request availability. Synap shows progress and emails the report link when processing finishes.",
+        "The owner reviews the private report and may book a call. Synap can explain the evidence, identify practical gaps and propose a scope of work. If both sides agree, the team manually performs the agreed improvements; this work is separate from the free audit.",
     },
     {
-      question: "Is a Synap scan free?",
+      question: "What can manual improvement work involve?",
       answer:
-        "Free scans are available subject to account, network, daily and provider-budget limits. Improvement planning or implementation is scoped separately after a review call; no fixed paid price is currently published.",
+        "Depending on the audit, work may include correcting inconsistent business facts, improving crawlability and entity clarity, improving service, About or FAQ pages, creating useful factual content, strengthening relevant local listings and sources, and reviewing citation or competitor gaps. Not every engagement includes every activity.",
     },
     {
-      question: "Are scan results public?",
+      question: "Does Synap guarantee indexing, citations, rankings or recommendations?",
       answer:
-        "No. Business profiles, generated prompts tied to an account, model answers, competitor reports and scan results are authenticated data. Public pages explain the product and methodology without exposing customer reports.",
+        "No. AI systems remain independent, and answers vary by model, wording, date and retrieved sources. Synap cannot purchase or guarantee indexing, mentions, citations, positions, rankings or recommendations.",
     },
     {
-      question: "Which languages and markets are supported?",
+      question: "Does Synap provide continuous or real-time monitoring?",
       answer:
-        "The interface and public documentation support English and Russian. Prompt language mix is configured for Kazakhstan, Russia or a global market, and a city can be added for local discovery questions.",
+        "No. Scans and rescans are started by the user and produce dated samples. A later scan can show directional movement, but Synap does not currently run continuous monitoring or automatic optimization.",
     },
     {
-      question: "Does Synap replace traditional SEO analytics?",
+      question: "Are audit reports public?",
       answer:
-        "No. Search analytics measures indexed pages, queries, impressions, clicks and rankings. Synap measures generated answers, mentions, recommendation order, competitors and cited sources. The two evidence sets are complementary.",
+        "No. Business profiles, account prompts, sampled answers, competitor reports and scan results remain behind authentication. Public pages explain the service and methodology without exposing customer reports.",
+    },
+    {
+      question: "Does Synap currently focus on Kazakhstan?",
+      answer:
+        "Yes. Businesses in Kazakhstan are the primary market. The interface and public information are currently available in Russian and English, and a city can be supplied for local discovery questions.",
+    },
+    {
+      question: "Is Synap still in testing?",
+      answer:
+        "Yes. Synap is in an early testing stage. The initial audit is currently free within application and provider limits, while optional improvement work is scoped separately. Availability and the service process may evolve as the model is validated.",
     },
   ],
   ru: [
     {
       question: "Что такое Synap?",
       answer:
-        "Synap — браузерная платформа аналитики видимости в ИИ. Она измеряет появление бизнеса в сгенерированных ответах: небрендовую видимость, узнаваемость бренда, позицию в рекомендациях, конкурентов, источники и долю голоса.",
+        "Synap — сервис аудита и улучшения видимости бизнеса в ответах ИИ для компаний Казахстана на раннем этапе тестирования. Браузерное приложение проводит бесплатную диагностику, а команда отдельно планирует и вручную выполняет согласованные работы после созвона.",
     },
     {
-      question: "Как рассчитывается основной Индекс видимости?",
+      question: "Для кого предназначен Synap?",
       answer:
-        "Основной индекс использует только успешные ответы на небрендовые вопросы. Вопросы о категории, лучших вариантах и покупке формируют показатель категории с весом 60%; небрендовые сравнения — показатель сравнения с весом 40%. Результаты взвешиваются по фактически запрошенным семействам моделей. Если средняя органическая позиция не ниже второй, применяется ограниченный бонус. Брендовые и информационные вопросы не повышают основной индекс.",
+        "Сейчас Synap ориентирован на владельцев бизнеса в Казахстане, которым нужны факты о том, как компания появляется в вопросах ИИ о категории, задаче, локации или сравнении. Аудит особенно полезен, когда у бизнеса уже есть публичная информация, которую можно проверить.",
     },
     {
-      question: "Какие ИИ-системы оценивает Synap?",
+      question: "Что входит в бесплатный аудит?",
       answer:
-        "Synap поддерживает семейства моделей, связанные с ChatGPT, Gemini, Perplexity, Claude и Grok. Бесплатная проверка использует ChatGPT, Gemini и Perplexity; полный внутренний уровень может добавлять Claude и Grok. Запросы выполняются через Agent API Perplexity, а не через потребительские чат-интерфейсы, поэтому результат — измеренная выборка, а не точная копия каждого публичного продукта.",
+        "Аудит создаёт датированную выборку клиентских вопросов и ответов ИИ. Закрытый отчёт может включать метрики видимости, отдельную узнаваемость бренда, результаты по моделям, появления конкурентов, позиции в отдельных ответах, долю голоса и источники. Неполное покрытие и ошибки показываются, а не заменяются выдуманными данными.",
     },
     {
-      question: "Что означает доля голоса в Synap?",
+      question: "Какие семейства ИИ-моделей входят в бесплатный аудит?",
       answer:
-        "Доля голоса — доля каждой подходящей бизнес-сущности среди всех подходящих упоминаний в успешных небрендовых ответах. В одном ответе сущность учитывается не более одного раза. Каталоги, маркетплейсы, источники и общие фразы исключаются из таблицы конкурентов.",
+        "Обычный бесплатный аудит охватывает семейства моделей, связанные с ChatGPT, Gemini и Perplexity. В отчёте сохраняется семейство каждого ответа, а доступность провайдера может влиять на покрытие и время проверки.",
     },
     {
-      question: "Стабильны ли ответы ИИ и гарантирован ли результат?",
+      question: "Synap напрямую проверяет приложения ChatGPT, Gemini и Perplexity?",
       answer:
-        "Нет. Ответы меняются из-за версии модели, результатов поиска, времени, формулировки и поведения провайдера. Проверка Synap — датированная выборка. Повторные проверки показывают движение, но ни индекс, ни оптимизация не гарантируют рекомендацию бизнеса.",
+        "Нет. Аудит использует настроенные API провайдеров и семейства моделей, связанные с этими продуктами, но не автоматизирует каждое пользовательское приложение. Персонализация, функции интерфейса и обновления моделей могут дать отдельному пользователю другой ответ.",
     },
     {
-      question: "Сколько длится проверка?",
+      question: "Что происходит после аудита?",
       answer:
-        "Бесплатная проверка обычно завершается за несколько минут, но время зависит от задержки и доступности провайдера. Synap показывает прогресс и отправляет ссылку на отчёт после завершения.",
+        "Владелец изучает закрытый отчёт и при желании записывается на созвон. Synap может разобрать факты, найти практические пробелы и предложить объём работы. Если стороны договорятся, команда вручную выполняет согласованные улучшения; эта работа не входит в бесплатный аудит.",
     },
     {
-      question: "Проверка Synap бесплатная?",
+      question: "Что может входить в ручную работу по улучшению?",
       answer:
-        "Бесплатные проверки доступны с лимитами аккаунта, сети, дня и бюджета провайдера. План улучшений и внедрение оцениваются отдельно после разбора; фиксированная платная цена сейчас не опубликована.",
+        "В зависимости от аудита работа может включать исправление противоречивых фактов о бизнесе, улучшение доступности сайта и ясности сущности, доработку страниц услуг, «О компании» или FAQ, создание полезного фактического контента, укрепление локальных карточек и источников, а также разбор пробелов в цитировании и появлениях конкурентов. Не каждый проект включает все действия.",
     },
     {
-      question: "Публикуются ли результаты проверок?",
+      question: "Synap гарантирует индексацию, цитирование, позиции или рекомендации?",
       answer:
-        "Нет. Профили бизнеса, вопросы аккаунта, ответы моделей, отчёты о конкурентах и результаты проверок доступны только после авторизации. Публичные страницы объясняют продукт и методологию без раскрытия клиентских отчётов.",
+        "Нет. ИИ-системы независимы, а ответы меняются в зависимости от модели, формулировки, даты и найденных источников. Synap не может купить или гарантировать индексацию, упоминания, цитирование, позиции, рейтинги и рекомендации.",
     },
     {
-      question: "Какие языки и рынки поддерживаются?",
+      question: "Есть ли в Synap постоянный мониторинг в реальном времени?",
       answer:
-        "Интерфейс и публичная документация доступны на русском и английском. Языковая пропорция вопросов настраивается для Казахстана, России или глобального рынка; для локального поиска можно указать город.",
+        "Нет. Проверки и повторные проверки запускает пользователь, и каждая из них создаёт датированную выборку. Более поздний аудит может показать направление изменений, но постоянного мониторинга и автоматической оптимизации сейчас нет.",
     },
     {
-      question: "Заменяет ли Synap традиционную SEO-аналитику?",
+      question: "Публикуются ли отчёты аудита?",
       answer:
-        "Нет. Поисковая аналитика измеряет индексируемые страницы, запросы, показы, клики и позиции. Synap измеряет сгенерированные ответы, упоминания, порядок рекомендаций, конкурентов и источники. Эти наборы данных дополняют друг друга.",
+        "Нет. Профили бизнеса, вопросы аккаунта, выборка ответов, отчёты о конкурентах и результаты проверок доступны только после авторизации. Публичные страницы объясняют сервис и методологию без раскрытия клиентских отчётов.",
+    },
+    {
+      question: "Synap сейчас ориентирован на Казахстан?",
+      answer:
+        "Да. Основной рынок — бизнес в Казахстане. Интерфейс и публичная информация сейчас доступны на русском и английском, а для локальных вопросов можно указать город.",
+    },
+    {
+      question: "Synap находится на этапе тестирования?",
+      answer:
+        "Да. Synap находится на раннем этапе тестирования. Начальный аудит сейчас бесплатный в рамках лимитов приложения и провайдера, а дополнительные работы согласовываются отдельно. Доступность и процесс оказания услуги могут меняться по мере проверки модели.",
     },
   ],
 };
@@ -242,49 +262,66 @@ const ruPhase2b = (content: Omit<PublicPageContent, "updated">): PublicPageConte
 
 export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicPageContent>> = {
   "/product": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "Product",
-      h1: "AI visibility analytics built around actual answers",
+      h1: "The diagnostic application behind Synap's free audit",
       lead:
-        "Synap turns a controlled set of customer-style prompts and generated answers into a report that a business can inspect, question and repeat.",
-      summaryTitle: "Product in one sentence",
+        "The browser application collects a dated sample of AI-generated answers and turns it into a private report. It diagnoses the current situation; it does not automatically improve or continuously monitor a business.",
+      summaryTitle: "Audit software and service are different",
       summary:
-        "Synap measures when, where and how a business is mentioned, ranked and recommended in supported AI-generated answers, alongside competitors, citations and Share of Voice.",
+        "The application provides the free diagnostic audit. After reviewing the report, a business owner may book a call and separately agree on human-assisted improvement work with Synap.",
       sections: [
         {
-          heading: "What a scan produces",
+          heading: "Create a project and define the business",
           paragraphs: [
-            "The report is evidence-first: every high-level metric can be traced back to the prompts and answers collected for that scan.",
+            "A project records the business name and category, with optional website, city, market, aliases and known competitors. These details help Synap resolve the intended entity and create relevant buyer questions; they do not become a public customer profile.",
+            "When provider access is available, the scan researches public information about the business before generating prompts. Low-confidence research does not replace the owner's submitted facts with guesses.",
           ],
+        },
+        {
+          heading: "Generate prompts and collect sampled answers",
+          paragraphs: [
+            "The current default audit creates 25 customer-style prompts across branded, category, best-of, comparison, purchase and informational intents. Each prompt stores whether it actually names the business or a known alias.",
+            "The normal free audit collects answers from model families associated with ChatGPT, Gemini and Perplexity through configured provider APIs. It does not directly automate the consumer chat applications, so the report is a dated sample rather than a universal AI ranking.",
+          ],
+        },
+        {
+          heading: "What the private report can contain",
           bullets: [
             "A primary Visibility Score based on successful unbranded discovery answers.",
-            "A separate branded-recognition diagnostic that cannot inflate the primary score.",
-            "Provider-level mention rates and scores over a shared prompt set where comparisons are valid.",
-            "The generated prompt list, answer text, recommendation position and cited domains.",
-            "Competitor entities, Share of Voice and a ‘Where you lose’ view for answers that name rivals but not the target business.",
+            "A separate branded-recognition diagnostic that does not inflate the primary score.",
+            "Provider-level results over comparable prompts, with missing coverage identified rather than treated as zero.",
+            "The prompt, sampled answer, answer-level position and cited sources returned for that answer.",
+            "Configured and detected competitor appearances, Share of Voice and prompts where competitors appear without the target business.",
           ],
         },
         {
-          heading: "What Synap evaluates",
+          heading: "Interpret extracted entities with care",
           paragraphs: [
-            "Synap supports model families associated with ChatGPT, Gemini, Perplexity, Claude and Grok. The free plan concentrates coverage on ChatGPT, Gemini and Perplexity; a full internal tier can query all five.",
-            "Those requests are made through Perplexity's Agent API rather than by automating consumer chat products. This makes the run reproducible inside Synap's provider setup, but it does not imply that every consumer interface will return the same answer.",
+            "Known businesses are matched through submitted names and aliases, while an extraction pass can identify additional company names. Directories, marketplaces, sources and generic phrases are filtered where possible. Competitor identification can still be imperfect and should be checked against the original answer.",
           ],
         },
         {
-          heading: "Who it is for",
+          heading: "Audit application versus improvement service",
           paragraphs: [
-            "Synap is designed for businesses with a public identity that customers may discover by category, need, location or comparison. Marketing teams can monitor visibility; agencies can diagnose client evidence gaps; owners can inspect which competitors and sources shape answers.",
-            "The product is browser-based. Public explanations are available without an account; scans and customer reports require authentication.",
+            "The software observes sampled answers and records evidence. It does not edit AI answers, publish website changes or automatically optimize the business.",
+            "If the owner books a call, Synap can review the report and propose separately scoped manual work. The team manually carries out only the activities agreed with the business.",
           ],
         },
         {
-          heading: "How it differs from rank tracking",
+          heading: "Fresh rescans, private reports and limitations",
+          paragraphs: [
+            "Scans and rescans are started by the user. A new scan sends fresh requests rather than reusing prior answers, so it can show directional movement while remaining subject to model, prompt, date and retrieval variability.",
+            "Reports require authentication. Synap does not currently provide continuous monitoring and does not guarantee indexing, mentions, citations, positions, rankings or recommendations.",
+          ],
+        },
+        {
+          heading: "How the audit differs from rank tracking",
           table: {
             headers: ["Question", "Traditional rank tracking", "Synap"],
             rows: [
               ["Measured surface", "Search-result pages", "Generated answer text"],
-              ["Primary unit", "URL position", "Business mention and recommendation position"],
+              ["Primary unit", "URL position", "Business mention and answer-level position"],
               ["Competitive view", "Domains ranking for a query", "Entities named across answers"],
               ["Evidence", "Result URL and position", "Prompt, answer and citations"],
             ],
@@ -295,52 +332,68 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         { path: "/services", label: "See Synap's audit and improvement services" },
         { path: "/how-it-works", label: "Follow a scan step by step" },
         { path: "/methodology", label: "Read the scoring methodology" },
-        { path: "/pricing", label: "Review access and pricing" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "Продукт",
-      h1: "Аналитика видимости в ИИ на основе реальных ответов",
+      h1: "Диагностическое приложение для бесплатного аудита Synap",
       lead:
-        "Synap превращает контролируемый набор клиентских вопросов и сгенерированных ответов в отчёт, который можно проверить, разобрать и повторить.",
-      summaryTitle: "Продукт одним предложением",
+        "Браузерное приложение собирает датированную выборку ответов ИИ и формирует закрытый отчёт. Оно диагностирует текущую ситуацию, но не улучшает бизнес автоматически и не ведёт постоянный мониторинг.",
+      summaryTitle: "Приложение и услуга — разные части Synap",
       summary:
-        "Synap измеряет, когда, где и как бизнес упоминают, ранжируют и рекомендуют в ответах поддерживаемых ИИ-моделей, а также показывает конкурентов, источники и долю голоса.",
+        "Приложение проводит бесплатный диагностический аудит. После разбора отчёта владелец может записаться на созвон и отдельно согласовать с Synap ручную работу по улучшению.",
       sections: [
         {
-          heading: "Что выдаёт проверка",
+          heading: "Создание проекта и описание бизнеса",
           paragraphs: [
-            "Отчёт строится от доказательств: каждый верхнеуровневый показатель можно связать с вопросами и ответами конкретной проверки.",
+            "В проекте сохраняются название и категория бизнеса, а при необходимости — сайт, город, рынок, варианты названия и известные конкуренты. Эти сведения помогают определить нужную сущность и создать релевантные вопросы, но не становятся публичным профилем клиента.",
+            "Если провайдер доступен, перед генерацией вопросов проверка изучает публичную информацию о бизнесе. Данные с низкой уверенностью не заменяют факты владельца догадками.",
           ],
+        },
+        {
+          heading: "Генерация вопросов и выборка ответов",
+          paragraphs: [
+            "Текущий стандартный аудит создаёт 25 клиентских вопросов с намерениями: бренд, категория, лучшие варианты, сравнение, покупка и информация. Для каждого вопроса сохраняется фактический признак наличия названия бизнеса или известного варианта.",
+            "Обычный бесплатный аудит получает ответы семейств моделей, связанных с ChatGPT, Gemini и Perplexity, через настроенные API провайдеров. Он не автоматизирует пользовательские чат-приложения, поэтому отчёт является датированной выборкой, а не универсальным рейтингом ИИ.",
+          ],
+        },
+        {
+          heading: "Что может содержать закрытый отчёт",
           bullets: [
             "Основной Индекс видимости по успешным небрендовым ответам.",
             "Отдельный показатель узнаваемости бренда, который не завышает основной индекс.",
-            "Доля упоминаний и показатели по моделям на общем наборе вопросов, где сравнение корректно.",
-            "Список вопросов, тексты ответов, позиции в рекомендациях и процитированные домены.",
-            "Сущности конкурентов, доля голоса и раздел «Где вы проигрываете» для ответов с конкурентами без целевого бизнеса.",
+            "Результаты по моделям на сопоставимых вопросах; отсутствие покрытия отмечается и не считается нулём.",
+            "Вопрос, выборка ответа, позиция в отдельном ответе и возвращённые с ним источники.",
+            "Заданные и найденные появления конкурентов, доля голоса и вопросы, где конкуренты есть, а целевого бизнеса нет.",
           ],
         },
         {
-          heading: "Что оценивает Synap",
+          heading: "Сущности и конкуренты требуют проверки",
           paragraphs: [
-            "Synap поддерживает семейства моделей, связанные с ChatGPT, Gemini, Perplexity, Claude и Grok. Бесплатный уровень сосредоточен на ChatGPT, Gemini и Perplexity; полный внутренний уровень может запросить все пять.",
-            "Запросы выполняются через Agent API Perplexity, а не через автоматизацию потребительских чатов. Это делает запуск воспроизводимым в среде провайдера Synap, но не означает, что каждый публичный интерфейс даст тот же ответ.",
+            "Известные компании сопоставляются по введённым названиям и вариантам, а отдельный проход может найти дополнительные компании. Каталоги, маркетплейсы, источники и общие фразы по возможности фильтруются. Определение конкурента остаётся несовершенным и должно проверяться по исходному ответу.",
           ],
         },
         {
-          heading: "Для кого создан продукт",
+          heading: "Приложение аудита и работа команды",
           paragraphs: [
-            "Synap подходит компаниям с публичной идентичностью, которые клиенты ищут по категории, задаче, локации или сравнению. Маркетинговые команды отслеживают видимость, агентства диагностируют пробелы в доказательствах, а владельцы видят конкурентов и источники ответов.",
-            "Продукт работает в браузере. Публичные объяснения доступны без аккаунта; проверки и клиентские отчёты требуют авторизации.",
+            "Приложение наблюдает выборку ответов и сохраняет доказательства. Оно не редактирует ответы ИИ, не публикует изменения на сайте и не оптимизирует бизнес автоматически.",
+            "Если владелец записывается на созвон, Synap может разобрать отчёт и предложить отдельный объём ручных работ. Команда вручную выполняет только согласованные с бизнесом действия.",
           ],
         },
         {
-          heading: "Отличие от отслеживания поисковых позиций",
+          heading: "Свежие проверки, приватность и ограничения",
+          paragraphs: [
+            "Проверки и повторные проверки запускает пользователь. Новый запуск отправляет свежие запросы и не использует старые ответы, поэтому может показать направление изменений с учётом изменчивости модели, вопроса, даты и поиска.",
+            "Отчёты доступны после авторизации. Synap пока не ведёт постоянный мониторинг и не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации.",
+          ],
+        },
+        {
+          heading: "Отличие аудита от поискового трекинга",
           table: {
             headers: ["Вопрос", "Поисковые позиции", "Synap"],
             rows: [
               ["Измеряемая поверхность", "Поисковая выдача", "Текст сгенерированного ответа"],
-              ["Основная единица", "Позиция URL", "Упоминание бизнеса и позиция рекомендации"],
+              ["Основная единица", "Позиция URL", "Упоминание бизнеса и позиция в ответе"],
               ["Конкурентный срез", "Домены по запросу", "Сущности во множестве ответов"],
               ["Доказательства", "URL и позиция", "Вопрос, ответ и источники"],
             ],
@@ -351,7 +404,6 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         { path: "/services", label: "Услуги аудита и улучшения" },
         { path: "/how-it-works", label: "Этапы проверки" },
         { path: "/methodology", label: "Методология расчёта" },
-        { path: "/pricing", label: "Доступ и тарифы" },
       ],
     }),
   },
@@ -480,14 +532,14 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
   },
   "/how-it-works": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "Workflow",
-      h1: "How a Synap visibility scan works",
+      h1: "How the Synap audit and improvement service works",
       lead:
-        "A scan moves through business research, prompt generation, model requests, extraction and scoring. Failed stages are labeled rather than silently replaced with invented data.",
+        "The process begins with a free diagnostic audit, continues with a private report and optional review call, and leads to manual improvement work only when Synap and the business agree on a scope.",
       summaryTitle: "Direct answer",
       summary:
-        "Synap researches the submitted business, writes a dated prompt set, collects fresh answers for that scan, detects business entities and citations, then calculates versioned metrics and stores the underlying evidence in a private report.",
+        "Synap researches the submitted business, creates customer-style prompts, analyses a dated sample of AI-generated answers and stores the evidence in a private report. Later human work and rescans are separate, agreed steps rather than automatic optimization.",
       sections: [
         {
           heading: "1. Create a business profile",
@@ -513,33 +565,52 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           ],
         },
         {
-          heading: "4. Collect fresh generated answers",
+          heading: "4. Collect and analyse sampled answers",
           paragraphs: [
-            "Answers are never reused across scans. The free plan sends a shared core prompt set to ChatGPT, Gemini and Perplexity model families, then distributes the remaining prompts across ChatGPT and Gemini coverage. The full internal tier can run every prompt across all five supported model families.",
+            "Answers are not reused across scans. The normal free audit sends the configured prompt plan to model families associated with ChatGPT, Gemini and Perplexity through provider APIs. It does not directly automate the consumer applications.",
+            "Synap matches known entities and their order, can extract additional company names, filters common non-competitor entities, records cited sources and calculates versioned metrics. Failed requests remain failures and are excluded from score denominators.",
           ],
         },
         {
-          heading: "5. Extract entities and calculate the report",
+          heading: "5. Review the private report",
           paragraphs: [
-            "Deterministic alias matching identifies known businesses and their order of appearance. A batched language-model pass can add sentiment and previously unknown company names. Entity classification removes directories, marketplaces, sources and generic phrases before competitor reporting.",
-            "Successful answers feed the versioned Visibility Score, branded diagnostic, provider cards, citations and Share of Voice. Failed requests remain failures and are excluded from score denominators.",
+            "The owner can inspect the Visibility Score, separate branded recognition, provider-level results, prompts, sampled answers, competitor appearances, answer-level positions, Share of Voice and cited sources. The report is authenticated and is not published as a customer page.",
+          ],
+        },
+        {
+          heading: "6. Book an optional review call",
+          paragraphs: [
+            "A business owner may book a call after reading the report. Synap reviews the evidence, explains important limitations and identifies gaps that may be practical to address. Booking a call does not guarantee that every project will be accepted.",
+          ],
+        },
+        {
+          heading: "7. Agree on and perform improvement work",
+          paragraphs: [
+            "Synap and the business decide which actions are relevant and agree on the scope separately from the free audit. The Synap team then manually performs the agreed work; the audit application does not implement changes automatically.",
+          ],
+        },
+        {
+          heading: "8. Use later scans for directional comparison",
+          paragraphs: [
+            "A later user-initiated scan sends fresh requests and can compare the same types of buyer questions. Results can move because of website or source changes, but also because of models, wording, dates and retrieval. Synap cannot guarantee that the next scan will improve.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "Review Synap's human-assisted services" },
         { path: "/methodology", label: "Inspect formulas and exclusions" },
         { path: "/docs", label: "Use the report" },
         { path: "/privacy", label: "See how scan data is protected" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "Процесс",
-      h1: "Как проходит проверка видимости Synap",
+      h1: "Как проходит аудит и работа команды Synap",
       lead:
-        "Проверка проходит через исследование бизнеса, генерацию вопросов, запросы к моделям, извлечение данных и расчёт. Ошибки помечаются, а не заменяются выдуманными данными.",
+        "Процесс начинается с бесплатного диагностического аудита, продолжается закрытым отчётом и необязательным созвоном, а ручная работа начинается только после согласования объёма с бизнесом.",
       summaryTitle: "Краткий ответ",
       summary:
-        "Synap исследует указанный бизнес, создаёт датированный набор вопросов, получает свежие ответы для этой проверки, находит бизнес-сущности и источники, затем рассчитывает версионированные метрики и сохраняет доказательства в приватном отчёте.",
+        "Synap исследует указанный бизнес, создаёт клиентские вопросы, анализирует датированную выборку ответов ИИ и сохраняет доказательства в закрытом отчёте. Дальнейшая работа команды и повторные проверки являются отдельными согласованными шагами, а не автоматической оптимизацией.",
       sections: [
         {
           heading: "1. Создание профиля бизнеса",
@@ -565,20 +636,39 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           ],
         },
         {
-          heading: "4. Свежие сгенерированные ответы",
+          heading: "4. Сбор и анализ выборки ответов",
           paragraphs: [
-            "Ответы никогда не переиспользуются между проверками. Бесплатный уровень отправляет общий набор вопросов семействам ChatGPT, Gemini и Perplexity, затем распределяет остальные вопросы между покрытием ChatGPT и Gemini. Полный внутренний уровень может прогнать каждый вопрос через все пять поддерживаемых семейств.",
+            "Ответы не переиспользуются между проверками. Обычный бесплатный аудит отправляет настроенный план вопросов семействам моделей, связанным с ChatGPT, Gemini и Perplexity, через API провайдеров и не автоматизирует пользовательские приложения напрямую.",
+            "Synap сопоставляет известные сущности и порядок их появления, может извлечь дополнительные названия компаний, фильтрует распространённые неконкурентные сущности, сохраняет источники и рассчитывает версионированные метрики. Ошибочные запросы остаются ошибками и не входят в знаменатели.",
           ],
         },
         {
-          heading: "5. Извлечение сущностей и отчёт",
+          heading: "5. Разбор закрытого отчёта",
           paragraphs: [
-            "Детерминированное сопоставление вариантов названия находит известные компании и порядок появления. Пакетный проход языковой модели может добавить тональность и ранее неизвестные названия. Классификация исключает каталоги, маркетплейсы, источники и общие фразы.",
-            "Успешные ответы формируют версионированный Индекс видимости, брендовый показатель, карточки моделей, источники и долю голоса. Ошибочные запросы остаются ошибками и не входят в знаменатели.",
+            "Владелец может изучить Индекс видимости, отдельную узнаваемость бренда, результаты по моделям, вопросы, выборку ответов, появления конкурентов, позиции в отдельных ответах, долю голоса и источники. Отчёт доступен после авторизации и не публикуется как клиентская страница.",
+          ],
+        },
+        {
+          heading: "6. Необязательный созвон",
+          paragraphs: [
+            "После изучения отчёта владелец может записаться на созвон. Synap разбирает доказательства, объясняет важные ограничения и определяет пробелы, с которыми можно работать. Запись на созвон не означает, что Synap примет любой проект.",
+          ],
+        },
+        {
+          heading: "7. Согласование и выполнение работ",
+          paragraphs: [
+            "Synap и бизнес определяют релевантные действия и отдельно от бесплатного аудита согласуют объём. Затем команда Synap вручную выполняет согласованные работы; приложение аудита не внедряет изменения автоматически.",
+          ],
+        },
+        {
+          heading: "8. Повторная проверка направления изменений",
+          paragraphs: [
+            "Более поздняя проверка по инициативе пользователя отправляет свежие запросы и позволяет сравнить те же типы вопросов покупателей. Результат меняется не только из-за сайта и источников, но и из-за моделей, формулировок, дат и поиска. Synap не гарантирует улучшение следующего результата.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "Услуги команды Synap" },
         { path: "/methodology", label: "Формулы и исключения" },
         { path: "/docs", label: "Работа с отчётом" },
         { path: "/privacy", label: "Защита данных проверки" },
@@ -586,11 +676,11 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
   },
   "/methodology": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "Methodology version 2",
       h1: "How Synap measures AI visibility",
       lead:
-        "This page documents the implemented calculation rather than a marketing approximation. It explains what enters each metric, what is excluded and why results remain a sample.",
+        "This page documents the diagnostic application's implemented calculation rather than a marketing approximation. It explains what enters each metric, what is excluded and why the audit remains a dated sample rather than a promised service outcome.",
       summaryTitle: "Primary measurement rule",
       summary:
         "The primary Visibility Score measures discovery: successful unbranded category and comparison answers. Branded prompts are reported separately and cannot increase that score; failed model requests are excluded.",
@@ -643,16 +733,17 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
+        { path: "/services", label: "See how measurements inform agreed service work" },
         { path: "/docs", label: "Interpret each report view" },
         { path: "/ai-visibility", label: "Understand the measured concept" },
         { path: "/changelog", label: "Review methodology changes" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "Методология, версия 2",
       h1: "Как Synap измеряет видимость в ИИ",
       lead:
-        "Здесь описан реализованный расчёт, а не маркетинговое приближение: какие данные входят в метрики, что исключается и почему результат остаётся выборкой.",
+        "Здесь описан реализованный расчёт диагностического приложения, а не маркетинговое приближение: какие данные входят в метрики, что исключается и почему аудит остаётся датированной выборкой, а не обещанным результатом услуги.",
       summaryTitle: "Главное правило измерения",
       summary:
         "Основной Индекс видимости измеряет обнаружение бизнеса по успешным небрендовым ответам категории и сравнения. Брендовые вопросы показываются отдельно и не повышают индекс; ошибочные запросы исключаются.",
@@ -705,6 +796,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
+        { path: "/services", label: "Как измерения помогают согласовать работу" },
         { path: "/docs", label: "Как читать разделы отчёта" },
         { path: "/ai-visibility", label: "Что именно измеряется" },
         { path: "/changelog", label: "Изменения методологии" },
@@ -820,11 +912,11 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
   },
   "/generative-engine-optimization": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "Guide",
-      h1: "What is Generative Engine Optimization?",
+      h1: "How Generative Engine Optimization improves public business information",
       lead:
-        "Generative Engine Optimization, or GEO, is the practice of making public information easier for answer-generating systems to retrieve, resolve to the correct entity, verify and cite.",
+        "Generative Engine Optimization, or GEO, is human-led work that makes public business information easier for answer-generating systems to retrieve, connect to the correct entity, verify and cite.",
       summaryTitle: "Practical definition",
       summary:
         "GEO combines crawlable content, technical SEO, entity consistency, useful answers, primary evidence and measurement of generated outputs. It does not guarantee inclusion in training data or a recommendation.",
@@ -838,7 +930,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           ],
         },
         {
-          heading: "A verifiable GEO workflow",
+          heading: "A practical GEO workflow",
           bullets: [
             "Audit branded and unbranded answers before making changes.",
             "Correct contradictory names, descriptions, locations and product facts across authoritative pages.",
@@ -846,6 +938,13 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
             "Support claims with first-party evidence and cite primary external sources when external facts are necessary.",
             "Make public pages crawlable while keeping accounts, prompts, reports and APIs access-controlled.",
             "Rescan comparable prompts and record what changed; do not attribute every movement to one edit.",
+          ],
+        },
+        {
+          heading: "What human-led improvement can change",
+          paragraphs: [
+            "For a Kazakhstan business, practical work may correct inconsistent names, services, locations and contact facts; improve crawlability and structured identity; strengthen service, About and FAQ pages; publish useful explanations; and improve relevant local listings or third-party sources.",
+            "The right action depends on the audit evidence. Publishing more pages is not automatically useful, and no single checklist applies to every company or industry.",
           ],
         },
         {
@@ -857,21 +956,22 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "How Synap fits",
           paragraphs: [
-            "Synap is the measurement layer: it stores prompts and answers, separates branded from unbranded discovery, identifies competing entities and sources, and produces versioned metrics. The resulting evidence can prioritize work, but the scan itself is not an optimization guarantee.",
+            "The Synap audit stores prompts and sampled answers, separates branded recognition from unbranded discovery, identifies competing entities and sources, and produces versioned metrics. After a call, the team can use that evidence to plan and manually perform agreed work.",
+            "Later user-initiated audits can show directional movement, but AI systems remain independent. Synap cannot guarantee that an edit will produce a mention, citation, position or recommendation.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "See what Synap offers commercially" },
         { path: "/ai-visibility", label: "Define the outcome being measured" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Run a factual entity audit" },
-        { path: "/product", label: "See the Synap measurement product" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "Руководство",
-      h1: "Что такое Generative Engine Optimization?",
+      h1: "Как Generative Engine Optimization улучшает публичную информацию о бизнесе",
       lead:
-        "Generative Engine Optimization, или GEO, — практика, которая делает публичную информацию удобной для поиска, сопоставления с правильной сущностью, проверки и цитирования системами генерации ответов.",
+        "Generative Engine Optimization, или GEO, — ручная работа, которая делает публичную информацию о бизнесе удобнее для поиска, сопоставления с правильной сущностью, проверки и цитирования системами генерации ответов.",
       summaryTitle: "Практическое определение",
       summary:
         "GEO объединяет доступный контент, техническое SEO, согласованность сущности, полезные ответы, первичные доказательства и измерение сгенерированных результатов. Оно не гарантирует попадание в обучающие данные или рекомендацию.",
@@ -885,7 +985,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           ],
         },
         {
-          heading: "Проверяемый процесс GEO",
+          heading: "Практический процесс GEO",
           bullets: [
             "Проверьте брендовые и небрендовые ответы до изменений.",
             "Устраните противоречия в названиях, описаниях, локациях и фактах на авторитетных страницах.",
@@ -893,6 +993,13 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
             "Подтверждайте заявления первичными данными и ссылайтесь на первичные внешние источники, когда они нужны.",
             "Откройте публичные страницы для обхода, но защитите аккаунты, вопросы, отчёты и API.",
             "Повторяйте сопоставимые проверки и фиксируйте изменения, не приписывая любое движение одной правке.",
+          ],
+        },
+        {
+          heading: "Что можно улучшить ручной работой",
+          paragraphs: [
+            "Для бизнеса в Казахстане практическая работа может исправлять противоречия в названиях, услугах, локациях и контактах; улучшать обход сайта и структурированную идентичность; усиливать страницы услуг, «О компании» и FAQ; публиковать полезные объяснения; дорабатывать релевантные локальные карточки и внешние источники.",
+            "Подходящие действия определяются фактами аудита. Большее число страниц само по себе не приносит пользы, а единый список не подходит каждой компании и отрасли.",
           ],
         },
         {
@@ -904,14 +1011,15 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Роль Synap",
           paragraphs: [
-            "Synap — измерительный слой: сохраняет вопросы и ответы, разделяет брендовый и небрендовый поиск, определяет конкурирующие сущности и источники и рассчитывает версионированные метрики. Данные помогают расставить приоритеты, но проверка не гарантирует результат оптимизации.",
+            "Аудит Synap сохраняет вопросы и выборку ответов, отделяет узнаваемость бренда от небрендового обнаружения, определяет конкурирующие сущности и источники и рассчитывает версионированные метрики. После созвона команда может использовать эти данные для планирования и ручного выполнения согласованной работы.",
+            "Более поздние проверки по инициативе пользователя могут показать направление изменений, но ИИ-системы остаются независимыми. Synap не гарантирует, что правка приведёт к упоминанию, цитированию, позиции или рекомендации.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "Коммерческие услуги Synap" },
         { path: "/ai-visibility", label: "Что измеряет GEO" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Фактический аудит сущности" },
-        { path: "/product", label: "Измерительный продукт Synap" },
       ],
     }),
   },
@@ -1326,77 +1434,79 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
   },
   "/pricing": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "Pricing",
       h1: "Start with a free visibility scan",
       lead:
-        "Synap separates the measurable scan from any later advisory or implementation work.",
+        "The initial AI-visibility audit is free during Synap's current testing stage. Optional human-assisted improvement work is reviewed and scoped separately.",
       summaryTitle: "Current pricing status",
       summary:
-        "Visibility scans are free subject to account, network, daily and provider-budget limits. No fixed paid subscription or guaranteed outcome is currently published.",
+        "Synap does not currently publish a fixed subscription or universal service price. The work required depends on the audit, the business and the competitive evidence; no AI placement is guaranteed.",
       sections: [
         {
-          heading: "Free scan",
+          heading: "Free initial audit during testing",
           bullets: [
-            "Business research and a 25-prompt set under the current default configuration.",
+            "Business research and a 25-prompt set under the current default configuration, subject to application and provider limits.",
             "Coverage across ChatGPT, Gemini and Perplexity model families using the configured free-scan plan.",
             "Visibility Score, branded diagnostic, answers, prompts, competitors, citations and Share of Voice.",
             "Private report access through a verified account in production.",
           ],
         },
         {
-          heading: "Review and implementation",
+          heading: "Optional improvement work",
           paragraphs: [
-            "A review call can scope work such as correcting public entity facts, improving crawlability, strengthening first-party documentation or measuring changes. Price and deliverables depend on the business and are not implied by the free scan.",
-            "Synap does not sell a guarantee that a model will cite or recommend a business. Providers, model versions and retrieval systems remain outside Synap's control.",
+            "After reviewing the private report, a business owner may book a call. Synap can propose manual work such as correcting public entity facts, improving crawlability, strengthening useful first-party information or reviewing source gaps. Price, deliverables and timing are agreed separately and are not implied by the free audit.",
+            "Booking a call does not guarantee that Synap will accept every project. The team first checks whether there is a useful and responsible scope of work.",
           ],
         },
         {
-          heading: "Limits are part of the service",
+          heading: "No fixed public package or guaranteed placement",
           paragraphs: [
-            "Account quotas, network abuse controls, a global daily cap and a provider-cost budget protect service availability. If a limit is reached, the application reports the condition instead of generating placeholder results.",
+            "There is currently no public fixed subscription, currency-based package or universal price for improvement work. Synap does not sell or guarantee indexing, mentions, citations, positions, rankings or recommendations because providers and AI systems remain independent.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "Review the available service process" },
         { path: "/product", label: "See what the scan includes" },
         { path: "/methodology", label: "Read how metrics are calculated" },
         { path: "/contact", label: "Discuss a report" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "Тарифы",
       h1: "Начните с бесплатной проверки видимости",
       lead:
-        "Synap отделяет измеримую проверку от последующей консультационной работы или внедрения.",
+        "Начальный аудит видимости в ИИ бесплатный на текущем этапе тестирования Synap. Необязательная ручная работа команды разбирается и оценивается отдельно.",
       summaryTitle: "Текущий статус цены",
       summary:
-        "Проверки видимости бесплатны в рамках лимитов аккаунта, сети, дня и бюджета провайдера. Фиксированная платная подписка и гарантированный результат сейчас не заявлены.",
+        "Synap пока не публикует фиксированную подписку или универсальную цену услуги. Необходимый объём зависит от аудита, бизнеса и конкурентных данных; позиции в ИИ не гарантируются.",
       sections: [
         {
-          heading: "Бесплатная проверка",
+          heading: "Бесплатный начальный аудит на этапе тестирования",
           bullets: [
-            "Исследование бизнеса и набор из 25 вопросов в текущей стандартной конфигурации.",
+            "Исследование бизнеса и набор из 25 вопросов в текущей стандартной конфигурации с учётом лимитов приложения и провайдера.",
             "Покрытие семейств ChatGPT, Gemini и Perplexity по настроенному бесплатному плану.",
             "Индекс видимости, брендовый показатель, ответы, вопросы, конкуренты, источники и доля голоса.",
             "Приватный отчёт через подтверждённый аккаунт в рабочей среде.",
           ],
         },
         {
-          heading: "Разбор и внедрение",
+          heading: "Необязательная работа по улучшению",
           paragraphs: [
-            "На созвоне можно оценить исправление публичных фактов о сущности, доступность для обхода, первичную документацию и измерение изменений. Цена и состав зависят от бизнеса и не следуют автоматически из бесплатной проверки.",
-            "Synap не продаёт гарантию цитирования или рекомендации. Провайдеры, версии моделей и системы извлечения находятся вне контроля Synap.",
+            "После изучения закрытого отчёта владелец может записаться на созвон. Synap может предложить ручную работу: исправление публичных фактов о сущности, улучшение обхода сайта, усиление полезной информации или разбор пробелов в источниках. Цена, результат работ и сроки согласуются отдельно и не следуют из бесплатного аудита.",
+            "Запись на созвон не означает, что Synap примет любой проект. Сначала команда проверяет, существует ли полезный и ответственный объём работы.",
           ],
         },
         {
-          heading: "Лимиты — часть сервиса",
+          heading: "Нет фиксированного пакета и гарантии позиции",
           paragraphs: [
-            "Квоты аккаунта, защита от злоупотреблений по сети, общий дневной предел и бюджет провайдера сохраняют доступность. При достижении лимита приложение сообщает об этом и не генерирует подставные результаты.",
+            "Сейчас нет публичной фиксированной подписки, пакета в определённой валюте или универсальной цены на улучшения. Synap не продаёт и не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации, потому что провайдеры и ИИ-системы независимы.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "Как устроена услуга" },
         { path: "/product", label: "Состав проверки" },
         { path: "/methodology", label: "Расчёт метрик" },
         { path: "/contact", label: "Обсудить отчёт" },
@@ -1404,29 +1514,31 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
   },
   "/faq": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "FAQ",
       h1: "Frequently asked questions about Synap",
-      lead: "Concise answers about the product, methodology, availability and privacy.",
+      lead: "Practical answers about the free audit, human-assisted service, model coverage, privacy, pricing and limitations.",
       summaryTitle: "Start here",
       summary:
-        "Synap measures a dated sample of generated answers. It improves evidence and visibility measurement; it does not guarantee training-data inclusion, citations or recommendations.",
+        "Synap provides businesses in Kazakhstan with a free, dated AI-visibility audit and can separately perform agreed improvement work. AI placement and future scan results are not guaranteed.",
       sections: [],
       related: [
+        { path: "/services", label: "Review Synap's service" },
         { path: "/methodology", label: "Read the full methodology" },
         { path: "/docs", label: "Open product documentation" },
         { path: "/contact", label: "Ask a product question" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "FAQ",
       h1: "Частые вопросы о Synap",
-      lead: "Краткие ответы о продукте, методологии, доступности и приватности.",
+      lead: "Практические ответы о бесплатном аудите, помощи команды, покрытии моделей, приватности, цене и ограничениях.",
       summaryTitle: "Главное",
       summary:
-        "Synap измеряет датированную выборку сгенерированных ответов. Платформа улучшает доказательность и измерение видимости, но не гарантирует попадание в обучающие данные, цитирование или рекомендацию.",
+        "Synap проводит для бизнеса в Казахстане бесплатный датированный аудит видимости в ИИ и может отдельно выполнить согласованные работы по улучшению. Позиции и будущий результат проверки не гарантируются.",
       sections: [],
       related: [
+        { path: "/services", label: "Услуги Synap" },
         { path: "/methodology", label: "Полная методология" },
         { path: "/docs", label: "Документация продукта" },
         { path: "/contact", label: "Задать вопрос" },
@@ -1434,163 +1546,177 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
   },
   "/about": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "About",
-      h1: "Synap makes AI visibility inspectable",
+      h1: "Synap helps Kazakhstan businesses understand and improve AI visibility",
       lead:
-        "The product exists to replace vague claims about ‘being visible in AI’ with prompts, answers, entities, sources and versioned measurements that a business can review.",
+        "Synap combines a free diagnostic audit with separately agreed, human-assisted improvement work for business owners in Kazakhstan.",
       summaryTitle: "What Synap is",
       summary:
-        "Synap is a browser-based software product and analytics platform for businesses, marketing teams and agencies. It also offers an optional review route for separately scoped improvement work.",
+        "Synap is an early-stage AI-visibility audit and improvement service. The browser application creates the private report; the team manually plans and performs agreed work after a call.",
       sections: [
         {
-          heading: "The problem",
+          heading: "Why Synap exists",
           paragraphs: [
-            "Traditional search tools show where URLs rank. They do not directly show whether a generated answer identifies a business, recommends it among alternatives, describes it correctly or relies on a competitor's sources. Synap collects that missing answer-level evidence.",
+            "A business owner can often see search rankings but not the exact AI-generated answers in which the company is absent, confused with another entity or described using weak sources. Synap provides a dated evidence set of prompts, sampled answers, business appearances, competitors and citations.",
           ],
         },
         {
-          heading: "What a scan means",
+          heading: "The free-audit entry point",
           paragraphs: [
-            "A scan is a dated measurement run. It researches the business, generates realistic prompts, queries supported model families and extracts mentions, positions, entities and citations. The primary Visibility Score focuses on unbranded discovery; Share of Voice shows each qualifying business's share of qualifying entity mentions.",
+            "The current entry point is a free, user-initiated audit covering model families associated with ChatGPT, Gemini and Perplexity. It researches the submitted business, creates customer-style prompts and stores a dated sample of answers and metrics in a private authenticated report.",
           ],
         },
         {
-          heading: "Availability",
+          heading: "Human-assisted improvement",
           paragraphs: [
-            "Synap is available through a web browser. The interface and public documentation support English and Russian. Prompt mixes support Kazakhstan, Russia and a global market setting, with an optional city for local questions. Authenticated reports remain private.",
+            "After reviewing the report, the owner may book a call. Synap can identify practical gaps, agree on a relevant scope and manually perform the work. The service is not a fully automated optimization system, and implementation is separate from the free audit.",
           ],
         },
         {
-          heading: "Product record",
+          heading: "Kazakhstan focus and current stage",
           paragraphs: [
-            "The current public methodology is version 2. This public changelog begins on August 2, 2026 and records only repository-verified updates. Founding date, legal operator details, team biographies, registered location and official social profiles are not present in the repository and are not invented here.",
+            "Businesses in Kazakhstan are Synap's primary market. The interface and public information are currently available in Russian and English, and local audits can use a city to make buyer questions more relevant.",
+            "Synap is in an early testing stage. The service process and availability may evolve as the team validates the work with businesses.",
+          ],
+        },
+        {
+          heading: "Honest limits",
+          paragraphs: [
+            "AI answers change with the model, prompt, date and retrieved sources. Synap observes and works on public evidence but does not control AI systems and cannot guarantee indexing, mentions, citations, positions, rankings or recommendations.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "See the audit and improvement service" },
+        { path: "/product", label: "Understand the diagnostic application" },
         { path: "/methodology", label: "Verify the metric definitions" },
-        { path: "/changelog", label: "See dated product updates" },
-        { path: "/contact", label: "Contact Synap" },
       ],
     }),
-    ru: ru({
-      eyebrow: "О продукте",
-      h1: "Synap делает видимость в ИИ проверяемой",
+    ru: ruPhase2b({
+      eyebrow: "О Synap",
+      h1: "Synap помогает бизнесу Казахстана понять и улучшить видимость в ИИ",
       lead:
-        "Продукт заменяет расплывчатые заявления о «видимости в ИИ» вопросами, ответами, сущностями, источниками и версионированными измерениями, которые бизнес может проверить.",
+        "Synap сочетает бесплатный диагностический аудит с отдельно согласуемой помощью команды для владельцев бизнеса в Казахстане.",
       summaryTitle: "Что такое Synap",
       summary:
-        "Synap — браузерный программный продукт и аналитическая платформа для компаний, маркетинговых команд и агентств. Отдельно доступен разбор для оценки работ по улучшению.",
+        "Synap — сервис аудита и улучшения видимости в ИИ на раннем этапе. Браузерное приложение создаёт закрытый отчёт, а команда вручную планирует и выполняет согласованные работы после созвона.",
       sections: [
         {
-          heading: "Проблема",
+          heading: "Зачем существует Synap",
           paragraphs: [
-            "Традиционные поисковые инструменты показывают позиции URL. Они не отвечают напрямую, распознаёт ли сгенерированный ответ бизнес, рекомендует ли среди альтернатив, корректно ли описывает и использует ли источники конкурента. Synap собирает недостающие доказательства на уровне ответа.",
+            "Владелец может видеть поисковые позиции, но не конкретные ответы ИИ, в которых компания отсутствует, перепутана с другой сущностью или описана по слабым источникам. Synap создаёт датированный набор доказательств: вопросы, выборку ответов, появления бизнеса, конкурентов и источники.",
           ],
         },
         {
-          heading: "Что означает проверка",
+          heading: "Вход через бесплатный аудит",
           paragraphs: [
-            "Проверка — датированный запуск измерения. Она исследует бизнес, создаёт реалистичные вопросы, запрашивает поддерживаемые модели и извлекает упоминания, позиции, сущности и источники. Основной Индекс видимости сосредоточен на небрендовом обнаружении; доля голоса показывает долю бизнеса среди подходящих упоминаний.",
+            "Сейчас первый шаг — бесплатный аудит по инициативе пользователя с семействами моделей, связанными с ChatGPT, Gemini и Perplexity. Он исследует указанный бизнес, создаёт клиентские вопросы и сохраняет датированную выборку ответов и метрик в закрытом отчёте.",
           ],
         },
         {
-          heading: "Доступность",
+          heading: "Помощь команды",
           paragraphs: [
-            "Synap работает в браузере. Интерфейс и публичная документация доступны на русском и английском. Вопросы настраиваются для Казахстана, России и глобального рынка; для локальных запросов можно указать город. Отчёты доступны только после авторизации.",
+            "После изучения отчёта владелец может записаться на созвон. Synap определяет практические пробелы, согласует релевантный объём и вручную выполняет работу. Сервис не является полностью автоматизированной оптимизацией, а внедрение отделено от бесплатного аудита.",
           ],
         },
         {
-          heading: "История продукта",
+          heading: "Фокус на Казахстане и текущий этап",
           paragraphs: [
-            "Текущая публичная методология имеет версию 2. Журнал публичных изменений начинается 2 августа 2026 года и содержит только подтверждённые репозиторием обновления. Дата основания, юридический оператор, биографии команды, адрес регистрации и официальные социальные профили в репозитории отсутствуют и здесь не выдумываются.",
+            "Основной рынок Synap — бизнес в Казахстане. Интерфейс и публичная информация сейчас доступны на русском и английском, а в локальном аудите можно указать город для более релевантных вопросов покупателей.",
+            "Synap находится на раннем этапе тестирования. Процесс и доступность услуги могут меняться по мере проверки работы с бизнесом.",
+          ],
+        },
+        {
+          heading: "Честные ограничения",
+          paragraphs: [
+            "Ответы ИИ меняются в зависимости от модели, вопроса, даты и найденных источников. Synap наблюдает результат и работает с публичными доказательствами, но не контролирует ИИ-системы и не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "Аудит и услуги по улучшению" },
+        { path: "/product", label: "Диагностическое приложение" },
         { path: "/methodology", label: "Определения метрик" },
-        { path: "/changelog", label: "Датированные обновления" },
-        { path: "/contact", label: "Связаться с Synap" },
       ],
     }),
   },
   "/contact": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "Contact",
       h1: "Contact Synap",
       lead:
-        "Use the in-product request form to discuss access, a visibility report, support or separately scoped implementation work.",
-      summaryTitle: "Before you send",
+        "Start the free audit to create a private report, or use the existing Book a call flow to discuss the report and possible improvement work.",
+      summaryTitle: "Choose the appropriate next step",
       summary:
-        "Describe the business and the question you want to resolve. Do not send passwords, access tokens, billing details, private scan answers or customer personal data.",
+        "The audit is the diagnostic starting point. A call is useful when you already have a report or want to understand whether Synap can responsibly help with an agreed scope.",
       sections: [
         {
-          heading: "Product and report questions",
+          heading: "Start with the free audit",
           paragraphs: [
-            "A review request can cover scan access, an unexpected metric, a competitor classification or the scope of an improvement plan. Include the business name and a non-sensitive summary; authenticated report details can be reviewed after access is confirmed.",
+            "Create or sign in to an account, provide the business information and start a user-initiated audit. The resulting report remains private and gives both the owner and Synap a dated evidence set for any later discussion.",
           ],
         },
         {
-          heading: "Availability and response route",
+          heading: "Book a call",
           paragraphs: [
-            "The current public contact route is the Book a call form available on this page and inside the product. A public support email, legal operator address and office location are not configured in this repository, so they are not displayed as facts.",
+            "Use the Book a call button to discuss a completed report, an important measurement question or possible manual improvement work. Describe the business and the question without including sensitive account or customer information.",
           ],
         },
         {
-          heading: "Security reports",
+          heading: "Protect private information",
           paragraphs: [
-            "Do not include exploit details or credentials in a general lead form. A dedicated public security contact has not yet been supplied; the product owner should add one before a broad launch.",
+            "Do not place passwords, access tokens, billing details, private scan answers or customer personal data in the general call-request form. Authenticated report details should remain inside the protected workflow.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "Review what Synap can help with" },
         { path: "/faq", label: "Check common questions first" },
-        { path: "/privacy", label: "Review data handling" },
         { path: "/pricing", label: "Understand current access" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "Контакты",
       h1: "Связаться с Synap",
       lead:
-        "Используйте форму обращения в продукте, чтобы обсудить доступ, отчёт о видимости, поддержку или отдельно оцениваемое внедрение.",
-      summaryTitle: "Перед отправкой",
+        "Запустите бесплатный аудит, чтобы получить закрытый отчёт, или используйте существующую форму записи на созвон для обсуждения отчёта и возможных работ.",
+      summaryTitle: "Выберите подходящий следующий шаг",
       summary:
-        "Опишите бизнес и вопрос, который хотите решить. Не отправляйте пароли, токены доступа, платёжные данные, приватные ответы проверки и персональные данные клиентов.",
+        "Аудит — начальная диагностика. Созвон полезен, когда отчёт уже готов или вы хотите понять, может ли Synap ответственно помочь в рамках согласованной работы.",
       sections: [
         {
-          heading: "Вопросы о продукте и отчёте",
+          heading: "Начните с бесплатного аудита",
           paragraphs: [
-            "Обращение может касаться доступа, неожиданной метрики, классификации конкурента или объёма плана улучшений. Укажите название бизнеса и нечувствительное описание; детали отчёта можно разобрать после подтверждения доступа.",
+            "Создайте аккаунт или войдите, укажите информацию о бизнесе и запустите проверку. Отчёт останется закрытым и даст владельцу и Synap датированный набор фактов для дальнейшего обсуждения.",
           ],
         },
         {
-          heading: "Канал связи",
+          heading: "Запишитесь на созвон",
           paragraphs: [
-            "Текущий публичный канал — форма «Записаться на созвон» на этой странице и внутри продукта. Публичная почта поддержки, юридический адрес оператора и офис в репозитории не настроены, поэтому не отображаются как факты.",
+            "Используйте кнопку записи, чтобы обсудить готовый отчёт, важный вопрос о метрике или возможную ручную работу по улучшению. Опишите бизнес и вопрос без чувствительных данных аккаунта или клиентов.",
           ],
         },
         {
-          heading: "Сообщения о безопасности",
+          heading: "Защитите приватную информацию",
           paragraphs: [
-            "Не отправляйте детали уязвимости и учётные данные через общую форму. Отдельный публичный контакт безопасности пока не указан; владелец продукта должен добавить его до широкого запуска.",
+            "Не отправляйте через общую форму пароли, токены доступа, платёжные данные, приватные ответы аудита или персональные данные клиентов. Детали закрытого отчёта должны оставаться в защищённом процессе.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "Чем может помочь Synap" },
         { path: "/faq", label: "Частые вопросы" },
-        { path: "/privacy", label: "Обработка данных" },
         { path: "/pricing", label: "Текущий доступ" },
       ],
     }),
   },
   "/docs": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "Documentation",
-      h1: "Using Synap reports",
+      h1: "Using the Synap diagnostic audit report",
       lead:
-        "This guide covers the current authenticated workflow and explains what each report view can and cannot tell you.",
+        "This guide documents the authenticated diagnostic application and explains what each report view can and cannot tell you. It does not describe the full human-assisted Synap service.",
       summaryTitle: "Quick start",
       summary:
         "Create or sign in to an account, add a business profile, run a scan, wait for fresh provider requests to finish, then inspect the score together with prompts, answers, competitors and citations.",
@@ -1641,18 +1767,25 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
             "No report guarantees indexing, citation, training-data inclusion, ranking or recommendation.",
           ],
         },
+        {
+          heading: "From report to optional service work",
+          paragraphs: [
+            "The report is the diagnostic output. A business owner can separately book a call, agree on a relevant scope and ask the Synap team to perform improvement work. No application metric automatically triggers implementation or guarantees a future AI outcome.",
+          ],
+        },
       ],
       related: [
+        { path: "/services", label: "Understand the human-assisted service" },
         { path: "/methodology", label: "Check the implemented formula" },
         { path: "/faq", label: "Read common product answers" },
         { path: "/contact", label: "Request help with a report" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "Документация",
-      h1: "Работа с отчётами Synap",
+      h1: "Работа с диагностическим отчётом Synap",
       lead:
-        "Руководство описывает текущий процесс после авторизации и объясняет, что каждый раздел отчёта показывает и чего не доказывает.",
+        "Руководство описывает диагностическое приложение после авторизации и объясняет, что каждый раздел отчёта показывает и чего не доказывает. Оно не описывает всю услугу Synap с участием команды.",
       summaryTitle: "Быстрый старт",
       summary:
         "Создайте аккаунт или войдите, добавьте профиль бизнеса, запустите проверку, дождитесь свежих запросов к провайдеру, затем изучите индекс вместе с вопросами, ответами, конкурентами и источниками.",
@@ -1703,8 +1836,15 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
             "Отчёт не гарантирует индексацию, цитирование, попадание в обучающие данные, позицию или рекомендацию.",
           ],
         },
+        {
+          heading: "От отчёта к необязательной работе команды",
+          paragraphs: [
+            "Отчёт — результат диагностики. Владелец может отдельно записаться на созвон, согласовать релевантный объём и поручить Synap работу по улучшению. Метрика приложения не запускает внедрение автоматически и не гарантирует будущий результат в ИИ.",
+          ],
+        },
       ],
       related: [
+        { path: "/services", label: "Услуга с участием команды" },
         { path: "/methodology", label: "Реализованная формула" },
         { path: "/faq", label: "Частые вопросы" },
         { path: "/contact", label: "Помощь с отчётом" },

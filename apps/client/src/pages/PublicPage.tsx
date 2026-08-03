@@ -220,7 +220,15 @@ export default function PublicPage(): JSX.Element {
               <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
                 {ui.contactBody}
               </p>
-              <div className="mt-6"><BookCallButton source="landing" variant="secondary" /></div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                {path === "/contact" && (
+                  <StartCta
+                    label={ui.serviceCtaButton}
+                    className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-ink hover:bg-darktext"
+                  />
+                )}
+                <BookCallButton source="landing" variant="secondary" />
+              </div>
             </section>
           )}
 

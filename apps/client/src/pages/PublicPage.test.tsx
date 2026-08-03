@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
-import { publicPageContent, routeMeta } from "@synapai/shared";
+import { publicFaqItems, publicPageContent, routeMeta } from "@synapai/shared";
 import i18n from "../lib/i18n";
 import PublicPage from "./PublicPage";
 
@@ -80,7 +80,37 @@ describe("localized Services page", () => {
     servicePage.unmount();
 
     const productPage = renderPage("/product");
-    expect(productPage.getByRole("link", { name: "Услуги аудита и улучшения" }).getAttribute("href"))
+    const serviceLink = publicPageContent("/product", "ru").related.find(({ path }) => path === "/services");
+    expect(serviceLink).toBeTruthy();
+    expect(productPage.getByRole("link", { name: serviceLink?.label }).getAttribute("href"))
       .toBe("/services");
+  });
+});
+
+describe("service-led public informational pages", () => {
+  it("renders the public FAQ from the same source used by JSON-LD", async () => {
+    await i18n.changeLanguage("en");
+    const page = renderPage("/en/faq");
+    const items = publicFaqItems("en");
+
+    expect(page.container.querySelectorAll("details")).toHaveLength(items.length);
+    for (const item of items) {
+      expect(page.getByText(item.question)).toBeTruthy();
+      expect(page.getByText(item.answer)).toBeTruthy();
+    }
+  });
+
+  it("renders service-led About, Product, workflow, Pricing and Contact content", async () => {
+    await i18n.changeLanguage("en");
+    for (const path of ["/en/about", "/en/product", "/en/how-it-works", "/en/pricing"] as const) {
+      const page = renderPage(path);
+      const basePath = path.slice(3) as "/about" | "/product" | "/how-it-works" | "/pricing";
+      expect(page.getByRole("heading", { level: 1, name: publicPageContent(basePath, "en").h1 })).toBeTruthy();
+      page.unmount();
+    }
+
+    const contact = renderPage("/en/contact");
+    expect(contact.getByRole("link", { name: "Start the free audit" }).getAttribute("href")).toBe("/en/login");
+    expect(contact.getByRole("button", { name: "Book a call" })).toBeTruthy();
   });
 });

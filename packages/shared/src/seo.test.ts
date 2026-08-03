@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { publicPageContent } from "./publicContent.js";
 import {
   INDEXABLE_PUBLIC_PATHS,
   landingFaqItems,
@@ -159,6 +160,19 @@ describe("structured data", () => {
     expect(ld.isPartOf).toEqual({ "@id": `${BASE}/#service` });
     expect(ld).not.toHaveProperty("offers");
     expect(JSON.stringify(ld)).not.toMatch(/Product|priceCurrency|aggregateRating|reviewCount/);
+  });
+
+  it("keeps the Services schema aligned with the visible commercial explanation", () => {
+    const service = serviceLd(BASE, "en") as { description: string; areaServed: { name: string } };
+    const visible = JSON.stringify(publicPageContent("/services", "en"));
+
+    expect(service.description).toContain("free audit");
+    expect(service.description).toContain("manually carries out agreed improvement work");
+    expect(service.areaServed.name).toBe("Kazakhstan");
+    expect(visible).toContain("free audit");
+    expect(visible).toContain("Human-assisted improvement work");
+    expect(visible).toContain("businesses in Kazakhstan");
+    expect(visible).toContain("cannot purchase or guarantee indexing");
   });
 
   it("declares both supported public languages on the WebSite", () => {

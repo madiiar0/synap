@@ -126,16 +126,16 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
     en: {
       title: "AI Visibility Audit for Kazakhstan | Synap",
       description:
-        "Review the dated answers and visibility metrics included in Synap’s free Kazakhstan audit. Human-assisted improvement work is scoped separately after a call.",
+        "See how Synap’s browser application creates a private, dated AI-visibility audit for Kazakhstan businesses before any separately scoped manual service work.",
       kind: "product",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
       title: "Аудит видимости бизнеса в ИИ в Казахстане | Synap",
       description:
-        "Изучите ответы и метрики бесплатного аудита Synap для бизнеса Казахстана. Дальнейшая работа команды согласовывается отдельно после созвона.",
+        "Узнайте, как приложение Synap создаёт закрытый датированный аудит видимости для бизнеса Казахстана до отдельно согласуемой ручной работы команды.",
       kind: "product",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/services": {
@@ -156,34 +156,34 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/how-it-works": {
     en: {
-      title: "How Synap Visibility Scans Work | Synap",
+      title: "How Synap's AI Visibility Service Works",
       description:
-        "Follow a Synap scan from business research and prompt generation through model requests, entity extraction, scoring and the final visibility report.",
+        "Follow the full Synap process: free audit, private report, optional call, agreed human-led improvement work and later user-initiated rescans.",
       kind: "webpage",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
-      title: "Как работает проверка видимости в ИИ | Synap",
+      title: "Как работает аудит и помощь команды Synap",
       description:
-        "Проследите путь проверки Synap: исследование бизнеса, генерация вопросов, запросы к моделям, извлечение сущностей, расчёт и итоговый отчёт.",
+        "Полный процесс Synap: бесплатный аудит, закрытый отчёт, необязательный созвон, согласованная ручная работа и повторные проверки.",
       kind: "webpage",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/methodology": {
     en: {
       title: "AI Visibility Scoring Methodology | Synap",
       description:
-        "Read the factual Synap methodology for prompts, mentions, positions, competitors, failed requests, Visibility Score, Share of Voice and metric versions.",
+        "Read the implemented methodology behind Synap’s dated diagnostic audit: prompts, mentions, positions, failed requests, Visibility Score and Share of Voice.",
       kind: "methodology",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
       title: "Методология расчёта видимости в ИИ | Synap",
       description:
-        "Методология Synap: вопросы, упоминания, позиции, конкуренты, ошибки запросов, Индекс видимости, доля голоса и версии метрик.",
+        "Реализованная методология датированного аудита Synap: вопросы, упоминания, позиции, ошибки, Индекс видимости и доля голоса.",
       kind: "methodology",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/ai-visibility": {
@@ -204,18 +204,18 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/generative-engine-optimization": {
     en: {
-      title: "Generative Engine Optimization (GEO) Guide | Synap",
+      title: "GEO for Kazakhstan Businesses: A Practical Guide | Synap",
       description:
-        "Learn what Generative Engine Optimization means, how it relates to technical SEO and entity clarity, and which measurable actions improve answer visibility.",
+        "Learn how human-led GEO work can improve crawlability, entity clarity, useful content and sources for Kazakhstan businesses without guaranteed AI placement.",
       kind: "article",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
-      title: "Что такое Generative Engine Optimization (GEO) | Synap",
+      title: "GEO для бизнеса Казахстана: практическое руководство | Synap",
       description:
-        "Что означает GEO, как оно связано с техническим SEO и ясностью сущности и какие измеримые действия улучшают видимость в ответах ИИ.",
+        "Как ручная GEO-работа улучшает обход сайта, ясность сущности, полезный контент и источники бизнеса без гарантии позиции в ИИ.",
       kind: "article",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/use-cases": {
@@ -300,34 +300,34 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/pricing": {
     en: {
-      title: "Synap Pricing and Free AI Visibility Scan",
+      title: "Free AI Visibility Audit and Service Pricing | Synap",
       description:
-        "Synap offers free visibility scans subject to account limits. Improvement planning and implementation are scoped separately after a review call.",
+        "The initial audit is free during testing. Synap has no fixed public subscription or universal service price; optional manual work is scoped after review.",
       kind: "pricing",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
-      title: "Тарифы Synap и бесплатная проверка видимости",
+      title: "Бесплатный аудит и стоимость услуг Synap",
       description:
-        "Synap предлагает бесплатные проверки с лимитами аккаунта. План улучшений и внедрение оцениваются отдельно после разбора результатов.",
+        "Начальный аудит бесплатный на этапе тестирования. Фиксированной подписки и универсальной цены нет; ручная работа оценивается после разбора.",
       kind: "pricing",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/faq": {
     en: {
-      title: "Synap Frequently Asked Questions",
+      title: "Synap Service and AI Visibility Audit FAQ",
       description:
-        "Answers about Synap scans, supported model families, Visibility Score, Share of Voice, data variability, privacy, availability and pricing.",
+        "Answers about Synap’s free audit, Kazakhstan focus, private reports, model coverage, human-assisted work, testing stage and limitations.",
       kind: "faq",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
-      title: "Частые вопросы о Synap",
+      title: "Частые вопросы об аудите и услугах Synap",
       description:
-        "Ответы о проверках Synap, поддерживаемых моделях, Индексе видимости, доле голоса, изменчивости данных, приватности, доступности и цене.",
+        "Ответы о бесплатном аудите, фокусе на Казахстане, приватных отчётах, моделях, ручной работе команды, тестировании и ограничениях.",
       kind: "faq",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/about": {
@@ -336,46 +336,46 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       description:
         "Learn how Synap combines a free, dated AI-visibility audit with separately scoped human-assisted improvement work for businesses in Kazakhstan.",
       kind: "about",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
       title: "О Synap — сервисе видимости бизнеса в ИИ в Казахстане",
       description:
         "Узнайте, как Synap сочетает бесплатный датированный аудит видимости в ИИ с отдельно согласуемой помощью команды для бизнеса Казахстана.",
       kind: "about",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/contact": {
     en: {
       title: "Contact Synap",
       description:
-        "Contact Synap about product access, a visibility report, support or an implementation review. Do not send credentials or private customer scan data.",
+        "Start a free AI-visibility audit or use Synap’s existing call-booking flow to discuss a private report and possible agreed improvement work.",
       kind: "contact",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
       title: "Связаться с Synap",
       description:
-        "Свяжитесь с Synap по вопросам доступа, отчёта, поддержки или разбора внедрения. Не отправляйте пароли и приватные данные клиентских проверок.",
+        "Запустите бесплатный аудит или используйте форму записи Synap, чтобы обсудить закрытый отчёт и возможные согласованные работы.",
       kind: "contact",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/docs": {
     en: {
       title: "AI Visibility Audit Documentation | Synap",
       description:
-        "Learn to create a business profile, run and repeat a scan, read Visibility Score and provider results, inspect answers, prompts, competitors and Share of Voice.",
+        "Documentation for Synap’s diagnostic application: create a profile, run an audit and interpret scores, prompts, sampled answers, competitors and sources.",
       kind: "docs",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
       title: "Документация по аудиту видимости Synap",
       description:
-        "Как создать профиль, запустить и повторить проверку, прочитать Индекс видимости и результаты моделей, изучить ответы, вопросы и конкурентов.",
+        "Документация диагностического приложения Synap: профиль, аудит, Индекс видимости, вопросы, выборка ответов, конкуренты и источники.",
       kind: "docs",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/blogs": {
