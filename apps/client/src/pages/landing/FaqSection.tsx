@@ -1,13 +1,14 @@
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { publicFaqItems } from "@synapai/shared";
 import Reveal from "../../components/Reveal";
-import { currentLocale } from "../../lib/i18n";
 
 /** §12.8: 6-item accordion with hairline dividers and rotating chevrons. */
 export default function FaqSection(): JSX.Element {
   const { t } = useTranslation();
-  const items = publicFaqItems(currentLocale()).slice(0, 6);
+  const items = [1, 2, 3, 4, 5, 6].map((number) => ({
+    question: t(`landing.faq.q${number}`),
+    answer: t(`landing.faq.a${number}`),
+  }));
 
   return (
     <section id="faq" className="hairline-dashed bg-base py-24">

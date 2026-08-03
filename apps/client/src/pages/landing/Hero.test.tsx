@@ -1,7 +1,17 @@
 import { act, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AI_PLATFORMS } from "@synapai/shared";
-import { CyclingPlatform } from "./Hero";
+import ru from "@synapai/shared/i18n/ru.json";
+import i18n from "../../lib/i18n";
+import Hero, { CyclingPlatform } from "./Hero";
+
+vi.mock("../../components/StartCta", () => ({
+  default: ({ label }: { label: string }) => <a href="/login">{label}</a>,
+}));
+
+vi.mock("../../components/BookCallButton", () => ({
+  default: () => <button type="button">Book a call</button>,
+}));
 
 function visibleName(el: HTMLElement): string {
   const active = el.querySelector(".hero-swap-in");
@@ -40,5 +50,25 @@ describe("CyclingPlatform (hero §3)", () => {
     }
     act(() => vi.advanceTimersByTime(3500));
     expect(visibleName(el)).toContain(scannablePlatforms[0].name);
+  });
+
+  it("uses the service-led English landing copy", async () => {
+    await i18n.changeLanguage("en");
+    const { getByText } = render(<Hero />);
+    expect(getByText("Be the answer in")).toBeTruthy();
+    expect(
+      getByText(
+        "See how your business appears in AI answers. Get a free visibility audit, then our team can help improve your visibility in Kazakhstan.",
+      ),
+    ).toBeTruthy();
+    expect(getByText("Check for free")).toBeTruthy();
+  });
+
+  it("uses the service-led Russian landing copy", async () => {
+    await i18n.changeLanguage("ru");
+    const { getByText } = render(<Hero />);
+    expect(getByText(ru.landing.heroLine1)).toBeTruthy();
+    expect(getByText(ru.landing.heroSub)).toBeTruthy();
+    expect(getByText(ru.landing.ctaCheckFree)).toBeTruthy();
   });
 });

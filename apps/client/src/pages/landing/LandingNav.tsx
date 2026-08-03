@@ -100,10 +100,9 @@ export default function LandingNav(): JSX.Element {
   }, []);
 
   const links = [
-    { href: localizedPath("/product"), label: t("nav.product") },
-    { href: localizedPath("/methodology"), label: t("nav.methodology") },
-    { href: localizedPath("/guides"), label: t("nav.guides") },
-    { href: localizedPath("/pricing"), label: t("nav.pricing") },
+    { href: `${localizedPath("/")}#product`, label: t("nav.product") },
+    { href: `${localizedPath("/")}#how`, label: t("nav.howItWorks") },
+    { href: `${localizedPath("/")}#faq`, label: t("nav.faq") },
   ];
 
   return (
@@ -119,9 +118,9 @@ export default function LandingNav(): JSX.Element {
         </Link>
         <div className="hidden items-center gap-8 text-sm text-sub md:flex">
           {links.map((link) => (
-            <Link key={link.href} to={link.href} className="transition-colors hover:text-ink">
+            <a key={link.href} href={link.href} className="transition-colors hover:text-ink">
               {link.label}
-            </Link>
+            </a>
           ))}
         </div>
         {/* §5: mobile shows only a hamburger; everything moves into the sheet. */}
@@ -204,14 +203,14 @@ export default function LandingNav(): JSX.Element {
           </div>
           <div className="flex flex-1 flex-col gap-1 px-4 pt-4">
             {links.map((link) => (
-              <Link
+              <a
                 key={link.href}
-                to={link.href}
+                href={link.href}
                 onClick={() => setMenuOpen(false)}
                 className="flex min-h-[44px] items-center border-b border-line py-3 text-lg text-ink"
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
             <button
               type="button"

@@ -43,7 +43,7 @@
     "switchLanguage": "Русский"
   },
   "landing": {
-    "heroLine1": "Measure visibility across",
+    "heroLine1": "Be the answer in",
     "ctaCheckFree": "Check for free",
     "ctaBookCall": "Book a call",
     "form": {
@@ -70,7 +70,7 @@
     },
     "scanPage": {
       "title": "Check your business",
-      "subtitle": "A free one-minute check: see whether AI recommends your business and who takes your place.",
+      "subtitle": "Run a free AI visibility audit to see how your business appears in AI answers and which competitors appear.",
       "authNote": "Running a check requires an account. Your form data is kept, so nothing needs to be retyped."
     },
     "fear": {
@@ -91,11 +91,11 @@
     "how": {
       "title": "How it works",
       "step1Title": "We ask the AIs",
-      "step1Text": "We generate 25 customer-style prompts and query the supported model families configured for your scan.",
+      "step1Text": "We test 25 customer-style questions across the AI model families included in your free audit.",
       "step2Title": "The full picture",
-      "step2Text": "Inspect the unbranded Visibility Score, branded recognition, answers, competitors and cited sources.",
-      "step3Title": "We fix it for you",
-      "step3Text": "Review where competitors appear, verify the evidence and scope measurable improvement work."
+      "step2Text": "See your unbranded Visibility Score, branded recognition, competitors, AI answers and cited sources.",
+      "step3Title": "We help improve it",
+      "step3Text": "On a call, we review your report, create an improvement plan, and our team carries out the agreed work."
     },
     "stat": {
       "quote": "Gartner predicted brands' organic search traffic would decrease by 50% or more by 2028 as consumers adopt generative AI search",
@@ -112,24 +112,24 @@
     "faq": {
       "title": "FAQ",
       "q1": "How is the Visibility Score calculated?",
-      "a1": "The primary score uses successful unbranded category and comparison answers. Branded recognition is reported separately and cannot raise the primary score.",
-      "q2": "Which models do you check?",
-      "a2": "Synap supports model families associated with ChatGPT, Gemini, Perplexity, Claude and Grok. The free plan uses ChatGPT, Gemini and Perplexity coverage.",
-      "q3": "How long does a scan take?",
-      "a3": "A free scan usually completes in minutes, depending on provider latency and availability. We email the report link when it finishes.",
+      "a1": "The main score measures how often and how prominently your business appears in successful unbranded AI answers. Branded recognition is measured separately, so asking directly about your business does not inflate the main score.",
+      "q2": "Which AI systems do you check?",
+      "a2": "The free audit currently evaluates model families associated with ChatGPT, Gemini and Perplexity. The results are a measured sample and may differ from answers shown in individual consumer applications.",
+      "q3": "How long does the audit take?",
+      "a3": "A free audit usually completes within a few minutes. Timing can vary depending on provider availability, and we email you the report link when it is ready.",
       "q4": "Is the data accurate?",
-      "a4": "AI answers vary by model, retrieval, time and wording. A Synap scan is a dated sample; rescanning can show movement but does not guarantee the same answer.",
+      "a4": "AI answers can change with the model, time, wording and retrieved sources. Your audit is a dated sample that shows the current situation, not a guaranteed or permanent ranking.",
       "q5": "What happens after the call?",
-      "a5": "A review call can examine your report and scope evidence, content or technical work. Deliverables and pricing are agreed separately; outcomes are not guaranteed.",
+      "a5": "We review your report, identify why competitors appear instead of you, and propose an improvement plan covering content, business information, sources and external mentions. If we agree on the scope, our team carries out the work.",
       "q6": "How much does it cost?",
-      "a6": "Scans are free within account and service limits. Improvement planning or implementation is scoped separately after a review call."
+      "a6": "The AI visibility audit is free. Improvement work is priced separately after the call because the required scope depends on your industry, current online presence and competition."
     },
     "finalCta": {
       "title": "Find out what AI says about your business",
       "start": "Start the free scan",
       "book": "Book a call"
     },
-    "heroSub": "Synap shows when, where and how your business is mentioned, ranked and recommended in AI-generated answers."
+    "heroSub": "See how your business appears in AI answers. Get a free visibility audit, then our team can help improve your visibility in Kazakhstan."
   },
   "progress": {
     "title": "Checking what AI says about your business…",
