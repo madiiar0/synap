@@ -28,8 +28,8 @@ const FORMER_NAME = ["Synap", "AI"].join("");
 
 describe("crawl and retrieval resources", () => {
   it("preserves route counts and compatibility-sensitive internal identifiers", () => {
-    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(23);
-    expect(PUBLIC_PATHS).toHaveLength(24);
+    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(20);
+    expect(PUBLIC_PATHS).toHaveLength(21);
     expect(SESSION_COOKIE).toBe(["synap", "ai_session"].join(""));
   });
 
@@ -82,11 +82,12 @@ describe("crawl and retrieval resources", () => {
     expect(xml).toContain(`${BASE}/services`);
     expect(xml).toContain(`${BASE}/en/services`);
     expect(xml).not.toContain(`${BASE}/guides`);
+    expect(xml).not.toMatch(/use-cases\/(?:saas|ecommerce|professional-services)/);
     expect(xml).not.toMatch(/\/login<|\/app<|\/api\//);
   });
 
   it("permanently redirects every localized legacy content URL without loops", async () => {
-    expect(publicRedirects()).toHaveLength(8);
+    expect(publicRedirects()).toHaveLength(14);
     expect(publicRedirects().every(({ targetPath }) => !targetPath.includes("/guides"))).toBe(true);
 
     const app = express();

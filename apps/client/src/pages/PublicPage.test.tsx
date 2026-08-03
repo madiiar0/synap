@@ -117,4 +117,19 @@ describe("service-led public informational pages", () => {
     expect(contact.getByRole("link", { name: "Start the free audit" }).getAttribute("href")).toBe("/en/login");
     expect(contact.getByRole("button", { name: "Book a call" })).toBeTruthy();
   });
+
+  it("renders the consolidated use cases and Kazakhstan local-business guidance", async () => {
+    await i18n.changeLanguage("en");
+    const hub = renderPage("/en/use-cases");
+    for (const heading of ["Local businesses", "Ecommerce", "Professional services", "SaaS and digital products"]) {
+      expect(hub.getByRole("heading", { name: heading })).toBeTruthy();
+    }
+    expect(hub.getByRole("link", { name: "Detailed local-business guidance" }).getAttribute("href"))
+      .toBe("/en/use-cases/local-businesses");
+    hub.unmount();
+
+    const local = renderPage("/en/use-cases/local-businesses");
+    expect(local.getByRole("heading", { level: 1, name: /local businesses in Kazakhstan/i })).toBeTruthy();
+    expect(local.container.textContent).toContain("Russian, Kazakh and English public information");
+  });
 });

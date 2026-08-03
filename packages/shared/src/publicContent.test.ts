@@ -18,6 +18,8 @@ const changedPaths = [
   "/methodology",
   "/generative-engine-optimization",
   "/contact",
+  "/use-cases",
+  "/use-cases/local-businesses",
 ] as const satisfies readonly ContentPagePath[];
 
 function pageText(path: ContentPagePath, locale: Locale): string {
@@ -121,6 +123,30 @@ describe("Phase 2B public service content", () => {
     expect(pageText("/methodology", "en")).toContain("comparison rate 0.40");
     expect(pageText("/generative-engine-optimization", "en")).toContain("human-led work");
     expect(pageText("/generative-engine-optimization", "en")).toContain("For a Kazakhstan business");
+  });
+
+  it("consolidates four distinct use-case categories without presenting case studies", () => {
+    for (const locale of ["en", "ru"] as const) {
+      const content = publicPageContent("/use-cases", locale);
+      expect(content.sections.slice(0, 4).map((section) => section.heading)).toEqual(
+        locale === "en"
+          ? ["Local businesses", "Ecommerce", "Professional services", "SaaS and digital products"]
+          : ["Локальный бизнес", "Электронная торговля", "Профессиональные услуги", "SaaS и цифровые продукты"],
+      );
+      expect(JSON.stringify(content)).toMatch(locale === "en" ? /not Synap client case studies/ : /не кейсы клиентов Synap/);
+    }
+  });
+
+  it("provides substantive Kazakhstan local-business guidance without claiming a Kazakh platform", () => {
+    const en = pageText("/use-cases/local-businesses", "en");
+    const ru = pageText("/use-cases/local-businesses", "ru");
+    for (const phrase of ["service area", "Russian, Kazakh and English", "local listings", "Rescan after agreed improvements"]) {
+      expect(en).toContain(phrase);
+    }
+    expect(ru).toContain("русские, казахские и английские источники");
+    expect(ru).toContain("Повторите аудит после согласованных улучшений");
+    expect(`${en}\n${ru}`).not.toMatch(/supports? (?:a )?full Kazakh|полноценн(?:ая|ую) казахск(?:ая|ую) (?:версия|платформа) доступна/i);
+    expect(`${en}\n${ru}`).not.toMatch(/guarantees? (?:an? )?AI recommendation|гарантирует рекомендацию ИИ/i);
   });
 
   it("uses only existing safe contact paths and excludes unsupported public facts", () => {

@@ -1107,30 +1107,58 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
   },
   "/use-cases": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "Use cases",
-      h1: "Different businesses need different AI visibility questions",
+      h1: "AI-visibility audit questions by business type",
       lead:
-        "A useful use-case page changes the discovery model, prompt examples and evidence requirements—not just the industry name.",
-      summaryTitle: "Where Synap is useful",
+        "Different businesses need different buyer questions and evidence checks. These examples show how an audit can be adapted; they are not Synap client case studies or promised outcomes.",
+      summaryTitle: "How to use these examples",
       summary:
-        "Synap is most useful when customers may ask an AI system to recommend, compare or explain providers and the business has enough public information to identify and verify it.",
+        "Start with the real way customers discover the business, then review the sampled answer, competitors and citations. The appropriate improvement work depends on the evidence and is agreed separately after the free audit.",
       sections: [
         {
           heading: "Local businesses",
-          paragraphs: ["Measure category-plus-location discovery, local competitors and directory evidence."],
+          paragraphs: [
+            "Local discovery usually combines a service or category with a city, district, opening need or practical constraint. Audit questions should check whether the correct business appears, which nearby alternatives recur, and whether answers rely on the business website, maps, directories or editorial sources.",
+            "Name, service, city, service-area and contact consistency are especially important. The dedicated local-business guide covers Kazakhstan-specific review steps in more detail.",
+          ],
+          examples: [
+            "“Recommend a coffee shop in Almaty for a quiet meeting.”",
+            "“Which dental clinic in Astana offers weekend appointments?”",
+          ],
         },
         {
-          heading: "SaaS companies",
-          paragraphs: ["Measure category, workflow and alternative prompts, with product documentation as key evidence."],
-        },
-        {
-          heading: "Ecommerce brands",
-          paragraphs: ["Measure product-discovery prompts, brand-versus-retailer ambiguity and cited catalog evidence."],
+          heading: "Ecommerce",
+          paragraphs: [
+            "Product-discovery answers can mix a manufacturer, product, retailer and marketplace. Review category and purchase questions separately, check whether availability or specifications are current, and do not treat every marketplace as a competing brand.",
+            "Useful evidence includes current product pages, delivery or warranty information and truthful third-party reviews. Synap exposes returned citations but does not ingest a private product feed or guarantee that generated availability information is current.",
+          ],
+          examples: [
+            "“Compare refillable skincare brands available in Kazakhstan.”",
+            "“Where can I buy a compact espresso machine with a local warranty?”",
+          ],
         },
         {
           heading: "Professional services",
-          paragraphs: ["Measure expertise, location and trust-sensitive recommendations without treating generated answers as professional advice."],
+          paragraphs: [
+            "Expertise-led services are often discovered through specialty, location, eligibility and trust. Review names, service scope, locations and any material credentials against current authoritative sources, and do not treat generated legal, medical or financial text as professional advice.",
+            "The audit records prompts, sampled answers, entities, positions and citations. It does not validate professional qualifications or certify an answer; sensitive facts require a competent human review.",
+          ],
+          examples: [
+            "“Which firms handle cross-border tax for small exporters?”",
+            "“Find a clinic in Almaty offering the stated service.”",
+          ],
+        },
+        {
+          heading: "SaaS and digital products",
+          paragraphs: [
+            "Discovery often begins with a workflow, audience, integration or alternative rather than the product name. Compare unbranded category and alternative prompts with the current product definition, documentation, availability and dated comparison criteria.",
+            "Old names, conflicting homepage and documentation claims, or unsupported feature statements can make the product harder to resolve. The audit can show which public sources an answer used, but it does not prove product-market fit or automate changes.",
+          ],
+          examples: [
+            "“Which tools track brand appearances in AI-generated answers?”",
+            "“Compare tools for reviewing competitor recommendations in AI search.”",
+          ],
         },
         {
           heading: "Shared starting point",
@@ -1139,29 +1167,70 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
             "Use prompts grounded in actual services and customer needs.",
             "Review the answer and citations, not only the score.",
             "Separate model variability from correctable source gaps.",
+            "Treat every later audit as a fresh dated sample, not proof that one change caused the result.",
           ],
         },
       ],
       related: [
-        { path: "/use-cases/local-businesses", label: "Local business visibility" },
-        { path: "/use-cases/saas", label: "SaaS visibility" },
-        { path: "/use-cases/ecommerce", label: "Ecommerce visibility" },
-        { path: "/use-cases/professional-services", label: "Professional services visibility" },
+        { path: "/use-cases/local-businesses", label: "Detailed local-business guidance" },
+        { path: "/services", label: "How Synap's service works" },
+        { path: "/blogs/ai-visibility-kazakhstan", label: "Understand AI visibility in Kazakhstan" },
+        { path: "/methodology", label: "Review measurement rules" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "Сценарии",
-      h1: "Разным бизнесам нужны разные вопросы о видимости",
+      h1: "Вопросы аудита видимости в ИИ для разных типов бизнеса",
       lead:
-        "Полезный сценарий меняет модель обнаружения, примеры вопросов и требования к доказательствам, а не только название отрасли.",
-      summaryTitle: "Когда Synap полезен",
+        "Разным компаниям нужны разные клиентские вопросы и проверки источников. Это примеры настройки аудита, а не кейсы клиентов Synap и не обещанные результаты.",
+      summaryTitle: "Как использовать примеры",
       summary:
-        "Synap особенно полезен, когда клиенты могут попросить ИИ порекомендовать, сравнить или объяснить поставщиков, а у бизнеса достаточно публичной информации для идентификации и проверки.",
+        "Начните с реального способа поиска бизнеса клиентами, затем изучите выборку ответов, конкурентов и источников. Подходящая работа по улучшению определяется доказательствами и согласуется отдельно после бесплатного аудита.",
       sections: [
-        { heading: "Локальный бизнес", paragraphs: ["Измерение вопросов категории и места, локальных конкурентов и данных каталогов."] },
-        { heading: "SaaS-компании", paragraphs: ["Измерение категории, рабочих задач и альтернатив, где ключевым доказательством становится документация продукта."] },
-        { heading: "Электронная торговля", paragraphs: ["Измерение выбора товаров, неоднозначности между брендом и продавцом и данных каталогов."] },
-        { heading: "Профессиональные услуги", paragraphs: ["Измерение экспертных, локальных и чувствительных к доверию рекомендаций без подмены профессиональной консультации."] },
+        {
+          heading: "Локальный бизнес",
+          paragraphs: [
+            "Локальное обнаружение обычно объединяет услугу или категорию с городом, районом, временем работы или практическим условием. Вопросы должны показывать, появляется ли правильный бизнес, какие местные альтернативы повторяются и использует ли ответ сайт компании, карты, каталоги или редакционные источники.",
+            "Особенно важны единые название, услуги, город, зона обслуживания и контакты. В отдельном руководстве для локального бизнеса собраны подробные шаги с учётом Казахстана.",
+          ],
+          examples: [
+            "«Посоветуйте тихую кофейню в Алматы для встречи».",
+            "«Какая стоматология в Астане работает по выходным?»",
+          ],
+        },
+        {
+          heading: "Электронная торговля",
+          paragraphs: [
+            "В ответах о выборе товара могут смешиваться производитель, продукт, продавец и маркетплейс. Анализируйте вопросы категории и покупки отдельно, проверяйте актуальность наличия и характеристик и не считайте каждый маркетплейс конкурирующим брендом.",
+            "Полезные доказательства — актуальные страницы товаров, условия доставки или гарантии и достоверные внешние отзывы. Synap показывает возвращённые источники, но не загружает приватный товарный фид и не гарантирует актуальность наличия в ответе ИИ.",
+          ],
+          examples: [
+            "«Сравните бренды многоразовой косметической упаковки в Казахстане».",
+            "«Где купить компактную кофемашину с местной гарантией?»",
+          ],
+        },
+        {
+          heading: "Профессиональные услуги",
+          paragraphs: [
+            "Экспертные услуги часто ищут по специализации, месту, условиям и доверию. Сверяйте названия, перечень услуг, локации и существенные сведения о квалификации с актуальными авторитетными источниками и не воспринимайте юридические, медицинские или финансовые тексты ИИ как консультацию.",
+            "Аудит сохраняет вопросы, выборку ответов, сущности, позиции и источники. Он не проверяет профессиональную квалификацию и не сертифицирует ответ; чувствительные факты должен оценивать компетентный человек.",
+          ],
+          examples: [
+            "«Какие компании ведут международные налоги малых экспортёров?»",
+            "«Найдите клинику в Алматы с указанной услугой».",
+          ],
+        },
+        {
+          heading: "SaaS и цифровые продукты",
+          paragraphs: [
+            "Поиск часто начинается с задачи, аудитории, интеграции или альтернативы, а не с названия продукта. Сопоставляйте небрендовые вопросы категории и сравнения с актуальным определением продукта, документацией, доступностью и датированными критериями.",
+            "Старые названия, противоречия между главной страницей и документацией или неподтверждённые функции затрудняют идентификацию. Аудит показывает использованные публичные источники, но не доказывает соответствие рынку и не внедряет изменения автоматически.",
+          ],
+          examples: [
+            "«Какие инструменты отслеживают появление бренда в ответах ИИ?»",
+            "«Сравните сервисы для анализа рекомендаций конкурентов в ИИ-поиске».",
+          ],
+        },
         {
           heading: "Общая отправная точка",
           bullets: [
@@ -1169,350 +1238,155 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
             "Стройте вопросы на реальных услугах и потребностях клиентов.",
             "Проверяйте ответ и источники, а не только индекс.",
             "Отделяйте изменчивость модели от исправимых пробелов в источниках.",
+            "Считайте каждую повторную проверку свежей датированной выборкой, а не доказательством влияния одной правки.",
           ],
         },
       ],
       related: [
-        { path: "/use-cases/local-businesses", label: "Локальный бизнес" },
-        { path: "/use-cases/saas", label: "SaaS" },
-        { path: "/use-cases/ecommerce", label: "Электронная торговля" },
-        { path: "/use-cases/professional-services", label: "Профессиональные услуги" },
+        { path: "/use-cases/local-businesses", label: "Подробно о локальном бизнесе" },
+        { path: "/services", label: "Как устроена услуга Synap" },
+        { path: "/blogs/ai-visibility-kazakhstan", label: "Видимость в ИИ для бизнеса Казахстана" },
+        { path: "/methodology", label: "Правила измерения" },
       ],
     }),
   },
   "/use-cases/local-businesses": {
-    en: en({
+    en: enPhase2b({
       eyebrow: "Use case",
-      h1: "AI visibility for local businesses",
+      h1: "AI visibility for local businesses in Kazakhstan",
       lead:
-        "Local discovery depends on category, place and evidence that the business is active and relevant in that place.",
-      summaryTitle: "Local measurement goal",
+        "Local AI visibility depends on whether a system can connect the right business, service and place using consistent public information and relevant local sources.",
+      summaryTitle: "Practical measurement goal",
       summary:
-        "Measure whether generated answers include the business for unbranded category-and-location questions, where it appears among alternatives and which local sources support the recommendation.",
-      published: "August 2, 2026",
+        "Use customer-style questions tied to a real city or service area, then review business appearances, competitors, answer-level positions and citations as a dated sample. No listing or content change guarantees a recommendation.",
       sections: [
         {
-          heading: "Realistic prompt patterns",
+          heading: "Start with one consistent local business identity",
+          paragraphs: [
+            "Use the same official or customer-facing name, service description, website and current contact details across pages the business controls. If a business serves customers at a location, state the real city and address accurately. If it travels or works remotely, describe the genuine service area instead of implying a walk-in location.",
+            "Check for old names, duplicate map listings, inconsistent categories and similarly named companies. Consistency helps systems resolve the intended entity, but it does not guarantee inclusion in an AI answer.",
+          ],
+        },
+        {
+          heading: "Review Russian, Kazakh and English public information",
+          paragraphs: [
+            "A Kazakhstan business may be described across Russian, Kazakh and English websites, listings or articles. The core name, services, city, hours and contact facts should not contradict one another across those sources.",
+            "Synap's current interface and reports are available in Russian and English; this is not a claim of a full Kazakh-language platform. Kazakh public sources can still be relevant evidence and should be reviewed by someone fluent in the language when accuracy matters.",
+          ],
+        },
+        {
+          heading: "Use real local service pages",
+          paragraphs: [
+            "A homepage name alone may not explain what the business does in a specific place. Publish crawlable text for real services, eligibility, booking or purchase steps, city or service area, and current contact or location information. Avoid city pages for places the business does not serve.",
+          ],
+        },
+        {
+          heading: "Ask customer-style local questions",
           examples: [
             "“Recommend a coffee shop in Almaty for a quiet meeting.”",
             "“Which dental clinic in Astana offers weekend appointments?”",
-            "“Compare independent hotels near the city center.”",
+            "“Compare independent hotels near the center of Shymkent.”",
+            "“Which accounting firms work with small exporters in Kazakhstan?”",
           ],
         },
         {
-          heading: "Common visibility problems",
-          bullets: [
-            "Inconsistent name, address, category or website across public sources.",
-            "A directory outranks the business's own current service information.",
-            "The site describes the brand but not the specific services or location.",
-            "A similarly named business is mistaken for the target entity.",
-          ],
-        },
-        {
-          heading: "What to measure and improve",
+          heading: "Review competitors, positions and citations together",
           paragraphs: [
-            "Use city-specific unbranded prompts, review which competitors recur and inspect whether citations point to the business site, maps, directories or editorial sources. Correct core business facts at their authoritative source, publish service and location details as text, and keep opening hours and contact routes consistent.",
-            "Synap supports a city field and market-specific language mix. It identifies directory entities separately so a map platform is not misreported as a competitor.",
+            "A competitor appearance can reflect stronger prompt fit, clearer local evidence, better entity consistency or normal model variability. Check the original answer before treating every extracted name as a true competitor, and distinguish maps, directories, marketplaces and associations from operating businesses.",
+            "Open returned citations where available. Look for missing first-party service information, outdated directory facts, unsupported descriptions and recurring sources that describe competitors more clearly. A citation is evidence used in that sampled answer, not proof of a permanent ranking.",
+          ],
+        },
+        {
+          heading: "Check local listings without treating them as a guarantee",
+          bullets: [
+            "Correct business-owned map and directory listings that contain inaccurate names, categories, locations, hours or website links.",
+            "Prioritize relevant Kazakhstan listings and authoritative industry sources rather than creating profiles everywhere.",
+            "Keep contact and location facts aligned with the website and actual operating model.",
+            "Do not buy fake reviews, fabricate citations or assume that a listing forces an AI system to recommend the business.",
+          ],
+        },
+        {
+          heading: "Rescan after agreed improvements",
+          paragraphs: [
+            "After factual and technical work has been completed and public sources have had time to update, start a fresh audit using comparable types of buyer questions. Compare the dated answers, coverage, competitors and sources directionally.",
+            "A later result can change because of the work, but also because the model, prompt wording, retrieval and date changed. Synap does not provide continuous monitoring and cannot guarantee improvement in a later sample.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "See how Synap supports agreed improvement work" },
+        { path: "/blogs/ai-visibility-kazakhstan", label: "Understand AI visibility in Kazakhstan" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Audit local entity facts" },
         { path: "/methodology", label: "See how directories are filtered" },
-        { path: "/product", label: "Review the report outputs" },
       ],
     }),
-    ru: ru({
+    ru: ruPhase2b({
       eyebrow: "Сценарий",
-      h1: "Видимость локального бизнеса в ИИ",
+      h1: "Видимость локального бизнеса Казахстана в ответах ИИ",
       lead:
-        "Локальное обнаружение зависит от категории, места и доказательств того, что бизнес активен и релевантен в этой локации.",
-      summaryTitle: "Цель измерения",
+        "Локальная видимость зависит от того, может ли ИИ связать правильный бизнес, услугу и место с помощью согласованной публичной информации и релевантных локальных источников.",
+      summaryTitle: "Практическая цель измерения",
       summary:
-        "Проверьте, включает ли ИИ бизнес в небрендовые ответы по категории и месту, какую позицию он занимает среди вариантов и какие локальные источники подтверждают рекомендацию.",
-      published: "2 августа 2026 года",
+        "Используйте клиентские вопросы о реальном городе или зоне обслуживания, затем изучайте появления бизнеса, конкурентов, позиции и источники как датированную выборку. Карточки и контент не гарантируют рекомендацию.",
       sections: [
         {
-          heading: "Реалистичные вопросы",
+          heading: "Начните с единой локальной идентичности",
+          paragraphs: [
+            "Используйте одно официальное или привычное клиентам название, описание услуг, сайт и актуальные контакты на подконтрольных страницах. Если бизнес принимает клиентов на месте, точно укажите реальный город и адрес. Если команда выезжает или работает удалённо, опишите настоящую зону обслуживания без выдуманной точки приёма.",
+            "Проверьте старые названия, дубли карточек на картах, разные категории и компании с похожим названием. Согласованность помогает определить нужную сущность, но не гарантирует появление в ответе ИИ.",
+          ],
+        },
+        {
+          heading: "Проверьте русские, казахские и английские источники",
+          paragraphs: [
+            "Бизнес Казахстана может быть описан на русском, казахском и английском в сайтах, карточках и публикациях. Название, услуги, город, часы работы и контакты не должны противоречить друг другу в этих источниках.",
+            "Текущий интерфейс и отчёты Synap доступны на русском и английском; это не заявление о полноценной казахской версии платформы. Казахские публичные источники всё равно могут быть важны, и при существенных фактах их должен проверять человек, свободно владеющий языком.",
+          ],
+        },
+        {
+          heading: "Опишите реальные локальные услуги",
+          paragraphs: [
+            "Одного названия на главной недостаточно, чтобы объяснить услуги в конкретном месте. Опубликуйте обычным индексируемым текстом реальные услуги, условия, шаги записи или покупки, город или зону обслуживания и актуальные контакты или локацию. Не создавайте городские страницы для мест, где бизнес не работает.",
+          ],
+        },
+        {
+          heading: "Используйте локальные вопросы от лица клиента",
           examples: [
             "«Посоветуйте тихую кофейню в Алматы для встречи».",
             "«Какая стоматология в Астане работает по выходным?»",
-            "«Сравните независимые отели рядом с центром города».",
+            "«Сравните независимые отели рядом с центром Шымкента».",
+            "«Какие бухгалтерские компании работают с малыми экспортёрами в Казахстане?»",
           ],
         },
         {
-          heading: "Частые проблемы",
-          bullets: [
-            "Разные название, адрес, категория или сайт в публичных источниках.",
-            "Каталог оказывается заметнее актуальной информации на сайте бизнеса.",
-            "Сайт описывает бренд, но не конкретные услуги и локацию.",
-            "Похожее название принимается за целевую компанию.",
-          ],
-        },
-        {
-          heading: "Что измерять и улучшать",
+          heading: "Анализируйте конкурентов, позиции и источники вместе",
           paragraphs: [
-            "Используйте небрендовые вопросы с городом, проверяйте повторяющихся конкурентов и смотрите, ведут ли ссылки на сайт, карты, каталоги или редакционные материалы. Исправляйте базовые факты в авторитетном источнике, публикуйте услуги и локацию обычным текстом, поддерживайте единые часы работы и контакты.",
-            "Synap поддерживает поле города и языковую пропорцию рынка. Каталоги классифицируются отдельно и не становятся конкурентами.",
+            "Появление конкурента может объясняться лучшим соответствием вопросу, более ясными локальными доказательствами, единой сущностью или обычной изменчивостью модели. Проверяйте исходный ответ, прежде чем считать каждое найденное название реальным конкурентом, и отделяйте карты, каталоги, маркетплейсы и ассоциации от работающих компаний.",
+            "Открывайте возвращённые источники, если они есть. Ищите недостающую информацию об услугах на сайте бизнеса, устаревшие факты в каталогах, неподтверждённые описания и источники, которые яснее рассказывают о конкурентах. Цитирование относится к конкретной выборке и не доказывает постоянную позицию.",
+          ],
+        },
+        {
+          heading: "Работайте с локальными карточками без обещаний",
+          bullets: [
+            "Исправьте подконтрольные карточки на картах и в каталогах с неверным названием, категорией, адресом, временем работы или сайтом.",
+            "Сосредоточьтесь на релевантных карточках Казахстана и авторитетных отраслевых источниках, а не создавайте профили повсюду.",
+            "Согласуйте контакты и локацию с сайтом и реальной моделью работы.",
+            "Не покупайте фиктивные отзывы, не выдумывайте ссылки и не считайте, что карточка заставит ИИ рекомендовать бизнес.",
+          ],
+        },
+        {
+          heading: "Повторите аудит после согласованных улучшений",
+          paragraphs: [
+            "После завершения фактических и технических работ и обновления публичных источников запустите свежий аудит с сопоставимыми типами вопросов покупателей. Сравнивайте датированные ответы, покрытие, конкурентов и источники как направление изменений.",
+            "Результат может измениться из-за работы, но также из-за модели, формулировки, поиска и даты. Synap не ведёт постоянный мониторинг и не гарантирует улучшение следующей выборки.",
           ],
         },
       ],
       related: [
+        { path: "/services", label: "Как Synap помогает с согласованной работой" },
+        { path: "/blogs/ai-visibility-kazakhstan", label: "Видимость в ИИ для бизнеса Казахстана" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Аудит локальных фактов" },
         { path: "/methodology", label: "Фильтрация каталогов" },
-        { path: "/product", label: "Разделы отчёта" },
-      ],
-    }),
-  },
-  "/use-cases/saas": {
-    en: en({
-      eyebrow: "Use case",
-      h1: "AI visibility analytics for SaaS",
-      lead:
-        "SaaS discovery often begins with a workflow, integration, audience or alternative—not the product name.",
-      summaryTitle: "SaaS measurement goal",
-      summary:
-        "Measure whether generated answers connect the product to the problems it actually solves, surface it for unbranded category prompts and describe capabilities from current product evidence.",
-      published: "August 2, 2026",
-      sections: [
-        {
-          heading: "Prompt patterns",
-          examples: [
-            "“Which tools monitor brand mentions in AI answers?”",
-            "“Best analytics platform for a multilingual marketing team.”",
-            "“Compare tools for tracking competitor recommendations in AI search.”",
-          ],
-        },
-        {
-          heading: "SaaS-specific gaps",
-          bullets: [
-            "Homepage positioning conflicts with documentation or changelog language.",
-            "Feature claims have no crawlable help page or release evidence.",
-            "Old product names and domains split the entity.",
-            "Alternative pages compare categories without clear dated criteria.",
-          ],
-        },
-        {
-          heading: "Practical actions",
-          paragraphs: [
-            "Create one stable product definition, publish feature and methodology documentation, keep integration and availability facts current, and link product claims to detailed pages. Compare competitors only on dated, verifiable criteria.",
-            "Synap's prompt research can use a submitted website and its report exposes cited domains, helping a SaaS team see whether answers rely on first-party documentation or third-party summaries.",
-          ],
-        },
-      ],
-      related: [
-        { path: "/generative-engine-optimization", label: "Build a GEO work plan" },
-        { path: "/blogs/why-ai-recommends-competitors", label: "Diagnose competitor recommendations" },
-        { path: "/docs", label: "Read provider and citation results" },
-      ],
-    }),
-    ru: ru({
-      eyebrow: "Сценарий",
-      h1: "Аналитика видимости SaaS в ИИ",
-      lead:
-        "Поиск SaaS часто начинается с задачи, интеграции, аудитории или альтернативы, а не с названия продукта.",
-      summaryTitle: "Цель измерения SaaS",
-      summary:
-        "Проверьте, связывает ли ИИ продукт с реальными задачами, показывает ли его по небрендовым категориям и описывает ли возможности по актуальным данным продукта.",
-      published: "2 августа 2026 года",
-      sections: [
-        {
-          heading: "Примеры вопросов",
-          examples: [
-            "«Какие инструменты отслеживают упоминания бренда в ответах ИИ?»",
-            "«Лучшая аналитическая платформа для многоязычной маркетинговой команды».",
-            "«Сравните сервисы отслеживания рекомендаций конкурентов в ИИ-поиске».",
-          ],
-        },
-        {
-          heading: "Специфические пробелы SaaS",
-          bullets: [
-            "Позиционирование на главной противоречит документации или обновлениям.",
-            "У функций нет индексируемой справки или подтверждения выпуска.",
-            "Старые названия и домены разделяют сущность.",
-            "Страницы альтернатив сравнивают продукты без датированных критериев.",
-          ],
-        },
-        {
-          heading: "Практические действия",
-          paragraphs: [
-            "Создайте одно стабильное определение продукта, опубликуйте документацию функций и методологии, поддерживайте факты об интеграциях и доступности, связывайте заявления с подробными страницами. Сравнивайте конкурентов только по датированным проверяемым критериям.",
-            "Исследование Synap может использовать указанный сайт, а отчёт показывает процитированные домены — так команда видит, опирается ли ИИ на документацию или сторонние пересказы.",
-          ],
-        },
-      ],
-      related: [
-        { path: "/generative-engine-optimization", label: "План GEO" },
-        { path: "/blogs/why-ai-recommends-competitors", label: "Почему появляются конкуренты" },
-        { path: "/docs", label: "Результаты моделей и источники" },
-      ],
-    }),
-  },
-  "/use-cases/ecommerce": {
-    en: en({
-      eyebrow: "Use case",
-      h1: "AI visibility analytics for ecommerce",
-      lead:
-        "Ecommerce answers can mix products, manufacturers, retailers and marketplaces, so entity classification matters as much as mention count.",
-      summaryTitle: "Ecommerce measurement goal",
-      summary:
-        "Measure whether a brand or store appears for unbranded product-discovery questions, which alternatives recur, how it is described and whether cited evidence is current.",
-      published: "August 2, 2026",
-      sections: [
-        {
-          heading: "Prompt patterns",
-          examples: [
-            "“Which running shoes suit wet winter streets?”",
-            "“Compare refillable skincare brands available in Kazakhstan.”",
-            "“Where can I buy a compact espresso machine with local warranty?”",
-          ],
-        },
-        {
-          heading: "Common ecommerce ambiguity",
-          bullets: [
-            "A marketplace is mistaken for a competing brand.",
-            "A retailer page carries outdated availability or specifications.",
-            "Product variants and parent brands are treated as separate companies.",
-            "The answer cites reviews while the official product facts are not crawlable.",
-          ],
-        },
-        {
-          heading: "Measurement considerations",
-          paragraphs: [
-            "Separate company, product, retailer and marketplace entities before reading Share of Voice. Review category and purchase-intent prompts separately, because appearing in research does not mean being recommended for purchase.",
-            "Synap filters known marketplaces from competitor rows and exposes answer citations. It does not ingest a private product feed or guarantee that availability data in a generated answer is current.",
-          ],
-        },
-      ],
-      related: [
-        { path: "/methodology", label: "Understand entity filtering" },
-        { path: "/blogs/audit-ai-generated-brand-information", label: "Audit product and brand facts" },
-        { path: "/product", label: "See measured outputs" },
-      ],
-    }),
-    ru: ru({
-      eyebrow: "Сценарий",
-      h1: "Аналитика видимости электронной торговли в ИИ",
-      lead:
-        "В ecommerce-ответах смешиваются товары, производители, продавцы и маркетплейсы, поэтому классификация сущностей не менее важна, чем число упоминаний.",
-      summaryTitle: "Цель измерения",
-      summary:
-        "Проверьте появление бренда или магазина в небрендовом выборе товаров, повторяющиеся альтернативы, описание и актуальность процитированных данных.",
-      published: "2 августа 2026 года",
-      sections: [
-        {
-          heading: "Примеры вопросов",
-          examples: [
-            "«Какие кроссовки подходят для мокрой зимней улицы?»",
-            "«Сравните бренды многоразовой косметической упаковки в Казахстане».",
-            "«Где купить компактную кофемашину с местной гарантией?»",
-          ],
-        },
-        {
-          heading: "Типичные неоднозначности",
-          bullets: [
-            "Маркетплейс принимается за конкурирующий бренд.",
-            "Страница продавца содержит устаревшие наличие или характеристики.",
-            "Варианты товара и родительский бренд считаются разными компаниями.",
-            "Ответ цитирует обзоры, а официальные данные товара недоступны для обхода.",
-          ],
-        },
-        {
-          heading: "Особенности измерения",
-          paragraphs: [
-            "Сначала разделите компанию, товар, продавца и маркетплейс, затем читайте долю голоса. Анализируйте вопросы категории и покупки отдельно: присутствие в исследовании не равно рекомендации к покупке.",
-            "Synap исключает известные маркетплейсы из конкурентов и показывает источники ответов. Платформа не загружает приватный товарный фид и не гарантирует актуальность наличия в сгенерированном ответе.",
-          ],
-        },
-      ],
-      related: [
-        { path: "/methodology", label: "Классификация сущностей" },
-        { path: "/blogs/audit-ai-generated-brand-information", label: "Аудит фактов о товаре и бренде" },
-        { path: "/product", label: "Измеряемые результаты" },
-      ],
-    }),
-  },
-  "/use-cases/professional-services": {
-    en: en({
-      eyebrow: "Use case",
-      h1: "AI visibility for professional services",
-      lead:
-        "Expertise-led services are discovered through specialty, location, eligibility and trust—areas where inaccurate generated claims can be consequential.",
-      summaryTitle: "Measurement goal",
-      summary:
-        "Measure whether AI answers identify the right provider for relevant unbranded questions, then verify every material claim against current first-party and authoritative sources.",
-      published: "August 2, 2026",
-      sections: [
-        {
-          heading: "Prompt patterns",
-          examples: [
-            "“Which firms handle cross-border tax for small exporters?”",
-            "“Find a clinic in Almaty offering the stated service.”",
-            "“Compare property agencies experienced with commercial leases.”",
-          ],
-        },
-        {
-          heading: "Trust-sensitive review",
-          bullets: [
-            "Check names, credentials, service scope and locations against authoritative records.",
-            "Do not treat generated legal, medical or financial statements as professional advice.",
-            "Distinguish a directory or association from a competing provider.",
-            "Avoid publishing customer outcomes, certifications or partnerships without evidence.",
-          ],
-        },
-        {
-          heading: "How Synap supports the audit",
-          paragraphs: [
-            "Synap records the prompt, answer, named entities, position and citations so a reviewer can inspect the statement rather than rely on a score. City and market inputs help shape relevant questions; alias matching reduces missed mentions across spelling and language variants.",
-            "The tool measures generated output. It does not validate professional credentials or certify the accuracy of an answer; a qualified human must verify sensitive facts.",
-          ],
-        },
-      ],
-      related: [
-        { path: "/privacy", label: "Review report privacy" },
-        { path: "/blogs/audit-ai-generated-brand-information", label: "Run a factual accuracy audit" },
-        { path: "/methodology", label: "Understand extraction limits" },
-      ],
-    }),
-    ru: ru({
-      eyebrow: "Сценарий",
-      h1: "Видимость профессиональных услуг в ИИ",
-      lead:
-        "Экспертные услуги ищут по специализации, месту, условиям и доверию — в этих областях неточное утверждение ИИ может иметь последствия.",
-      summaryTitle: "Цель измерения",
-      summary:
-        "Проверьте, называет ли ИИ подходящего поставщика по релевантным небрендовым вопросам, а затем сверяйте каждое существенное утверждение с актуальными первичными и авторитетными источниками.",
-      published: "2 августа 2026 года",
-      sections: [
-        {
-          heading: "Примеры вопросов",
-          examples: [
-            "«Какие компании ведут международные налоги малых экспортёров?»",
-            "«Найдите клинику в Алматы с указанной услугой».",
-            "«Сравните агентства недвижимости с опытом коммерческой аренды».",
-          ],
-        },
-        {
-          heading: "Проверка доверия",
-          bullets: [
-            "Сверяйте названия, квалификацию, перечень услуг и локации с авторитетными реестрами.",
-            "Не воспринимайте юридические, медицинские и финансовые тексты ИИ как профессиональную консультацию.",
-            "Отделяйте каталог или ассоциацию от конкурирующего поставщика.",
-            "Не публикуйте результаты клиентов, сертификаты и партнёрства без доказательств.",
-          ],
-        },
-        {
-          heading: "Как Synap помогает аудиту",
-          paragraphs: [
-            "Synap сохраняет вопрос, ответ, сущности, позицию и источники, чтобы специалист проверял утверждение, а не полагался на индекс. Город и рынок делают вопросы релевантнее; варианты названия снижают пропуск упоминаний в разных написаниях и языках.",
-            "Инструмент измеряет сгенерированный результат. Он не проверяет профессиональную квалификацию и не сертифицирует точность ответа; чувствительные факты должен подтверждать компетентный человек.",
-          ],
-        },
-      ],
-      related: [
-        { path: "/privacy", label: "Приватность отчёта" },
-        { path: "/blogs/audit-ai-generated-brand-information", label: "Аудит фактической точности" },
-        { path: "/methodology", label: "Ограничения извлечения" },
       ],
     }),
   },

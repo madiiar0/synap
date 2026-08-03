@@ -18,9 +18,6 @@ export const INDEXABLE_PUBLIC_PATHS = [
   "/generative-engine-optimization",
   "/use-cases",
   "/use-cases/local-businesses",
-  "/use-cases/saas",
-  "/use-cases/ecommerce",
-  "/use-cases/professional-services",
   "/pricing",
   "/faq",
   "/about",
@@ -54,6 +51,9 @@ export const LEGACY_PUBLIC_REDIRECTS = [
     from: "/ai-visibility",
     to: "/blogs/ai-visibility-kazakhstan",
   },
+  { from: "/use-cases/saas", to: "/use-cases" },
+  { from: "/use-cases/ecommerce", to: "/use-cases" },
+  { from: "/use-cases/professional-services", to: "/use-cases" },
 ] as const satisfies ReadonlyArray<{ from: string; to: IndexablePublicPath }>;
 
 export type LegacyPublicPath = (typeof LEGACY_PUBLIC_REDIRECTS)[number]["from"];
@@ -234,78 +234,30 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       description:
         "Explore practical AI visibility measurement for local businesses, SaaS teams, ecommerce brands and professional services without generic doorway content.",
       kind: "webpage",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
       title: "Сценарии аналитики видимости в ИИ | Synap",
       description:
         "Практические сценарии измерения видимости для локального бизнеса, SaaS, электронной торговли и профессиональных услуг без шаблонных страниц.",
       kind: "webpage",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/use-cases/local-businesses": {
     en: {
-      title: "AI Visibility for Local Businesses | Synap",
+      title: "AI Visibility for Local Businesses in Kazakhstan | Synap",
       description:
-        "Measure whether AI answers recommend a local business for category-and-city questions, which competitors appear and which public sources shape the answer.",
+        "Practical guidance for auditing local AI visibility in Kazakhstan across business facts, city prompts, competitor appearances, listings, citations and dated rescans.",
       kind: "article",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
     ru: {
-      title: "Видимость локального бизнеса в ответах ИИ | Synap",
+      title: "Видимость локального бизнеса Казахстана в ответах ИИ | Synap",
       description:
-        "Измеряйте рекомендации локального бизнеса по запросам категории и города, появление конкурентов и публичные источники, формирующие ответ.",
+        "Практический аудит локальной видимости в Казахстане: факты о бизнесе, городские вопросы, конкуренты, карточки, источники и датированные проверки.",
       kind: "article",
-      lastModified: UPDATED,
-    },
-  },
-  "/use-cases/saas": {
-    en: {
-      title: "AI Visibility Analytics for SaaS Companies | Synap",
-      description:
-        "Audit a dated sample of how AI answers describe a SaaS product, surface it for unbranded questions, compare alternatives and cite documentation.",
-      kind: "article",
-      lastModified: UPDATED,
-    },
-    ru: {
-      title: "Аналитика видимости SaaS-продуктов в ИИ | Synap",
-      description:
-        "Проверьте датированную выборку ответов: как ИИ описывает SaaS-продукт, показывает его по небрендовым вопросам и цитирует документацию.",
-      kind: "article",
-      lastModified: UPDATED,
-    },
-  },
-  "/use-cases/ecommerce": {
-    en: {
-      title: "AI Visibility Analytics for Ecommerce Brands | Synap",
-      description:
-        "Audit whether AI answers mention an ecommerce brand for product-discovery questions, which retailers or rivals appear and what evidence is cited.",
-      kind: "article",
-      lastModified: UPDATED,
-    },
-    ru: {
-      title: "Аналитика видимости ecommerce-брендов в ИИ | Synap",
-      description:
-        "Проверяйте упоминания ecommerce-бренда в вопросах о выборе товаров, появление продавцов и конкурентов и источники, на которые ссылается ИИ.",
-      kind: "article",
-      lastModified: UPDATED,
-    },
-  },
-  "/use-cases/professional-services": {
-    en: {
-      title: "AI Visibility for Professional Services | Synap",
-      description:
-        "Measure AI recommendations for legal, healthcare, real-estate, education and other expertise-led services while accounting for location and trust signals.",
-      kind: "article",
-      lastModified: UPDATED,
-    },
-    ru: {
-      title: "Видимость профессиональных услуг в ответах ИИ | Synap",
-      description:
-        "Измеряйте рекомендации юридических, медицинских, образовательных и других экспертных услуг с учётом географии и сигналов доверия.",
-      kind: "article",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
     },
   },
   "/pricing": {

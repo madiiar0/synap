@@ -23,9 +23,14 @@ const BASE = "https://synap.example";
 const FORMER_NAME = ["Synap", "AI"].join("");
 
 describe("public information architecture", () => {
-  it("keeps the canonical route inventory unchanged", () => {
-    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(23);
-    expect(PUBLIC_PATHS).toHaveLength(24);
+  it("keeps only consolidated canonical use-case routes", () => {
+    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(20);
+    expect(PUBLIC_PATHS).toHaveLength(21);
+    expect(INDEXABLE_PUBLIC_PATHS).toContain("/use-cases");
+    expect(INDEXABLE_PUBLIC_PATHS).toContain("/use-cases/local-businesses");
+    expect(INDEXABLE_PUBLIC_PATHS).not.toContain("/use-cases/saas");
+    expect(INDEXABLE_PUBLIC_PATHS).not.toContain("/use-cases/ecommerce");
+    expect(INDEXABLE_PUBLIC_PATHS).not.toContain("/use-cases/professional-services");
   });
 
   it("defines Synap as a human-assisted Kazakhstan service in primary metadata", () => {
@@ -110,6 +115,9 @@ describe("public information architecture", () => {
         from: "/ai-visibility",
         to: "/blogs/ai-visibility-kazakhstan",
       },
+      { from: "/use-cases/saas", to: "/use-cases" },
+      { from: "/use-cases/ecommerce", to: "/use-cases" },
+      { from: "/use-cases/professional-services", to: "/use-cases" },
     ]);
     expect(routeMeta("/blogs", "en").title).toBe("Synap Blog — AI Visibility in Kazakhstan");
     expect(routeMeta("/blogs", "ru").title).toBe("Блог Synap — видимость бизнеса в ответах ИИ");
