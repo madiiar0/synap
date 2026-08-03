@@ -14,7 +14,7 @@ export const INDEXABLE_PUBLIC_PATHS = [
   "/services",
   "/how-it-works",
   "/methodology",
-  "/ai-visibility",
+  "/blogs/ai-visibility-kazakhstan",
   "/generative-engine-optimization",
   "/use-cases",
   "/use-cases/local-businesses",
@@ -50,6 +50,10 @@ export const LEGACY_PUBLIC_REDIRECTS = [
     from: "/guides/why-ai-recommends-competitors",
     to: "/blogs/why-ai-recommends-competitors",
   },
+  {
+    from: "/ai-visibility",
+    to: "/blogs/ai-visibility-kazakhstan",
+  },
 ] as const satisfies ReadonlyArray<{ from: string; to: IndexablePublicPath }>;
 
 export type LegacyPublicPath = (typeof LEGACY_PUBLIC_REDIRECTS)[number]["from"];
@@ -73,6 +77,10 @@ export interface RouteMeta {
   indexable: boolean;
   /** ISO date backed by the checked-in content revision. */
   lastModified?: string;
+  /** ISO publication date only when a truthful public publication is known. */
+  datePublished?: string;
+  /** Visible article headline when it differs from the browser title. */
+  headline?: string;
 }
 
 export const PRODUCT_POSITIONING: Record<Locale, {
@@ -186,20 +194,22 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       lastModified: "2026-08-03",
     },
   },
-  "/ai-visibility": {
+  "/blogs/ai-visibility-kazakhstan": {
     en: {
-      title: "What Is AI Visibility? Measurement Guide | Synap",
+      title: "What AI Visibility Means for Kazakhstan Businesses | Synap",
       description:
-        "AI visibility describes whether and how a business appears in generated answers. Learn how it differs from SEO rankings and how to measure it responsibly.",
+        "Learn how mentions, recommendations, prompts and citations shape AI visibility for Kazakhstan businesses—and what a dated Synap audit can and cannot show.",
       kind: "article",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
+      headline: "What AI Visibility Means for Businesses in Kazakhstan",
     },
     ru: {
-      title: "Что такое видимость в ИИ и как её измерять | Synap",
+      title: "Что означает видимость бизнеса в ответах ИИ в Казахстане | Synap",
       description:
-        "Видимость в ИИ показывает, появляется ли бизнес в сгенерированных ответах и как именно. Разбираем отличие от SEO и корректное измерение.",
+        "Разбираем упоминания, рекомендации, вопросы и источники в ответах ИИ для бизнеса Казахстана, а также возможности и ограничения датированного аудита Synap.",
       kind: "article",
-      lastModified: UPDATED,
+      lastModified: "2026-08-03",
+      headline: "Что означает видимость бизнеса в ответах ИИ для компаний Казахстана",
     },
   },
   "/generative-engine-optimization": {
@@ -401,6 +411,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "A repeatable audit for checking whether AI answers identify a business correctly, describe it consistently, cite reliable sources and confuse it with other entities.",
       kind: "article",
       lastModified: UPDATED,
+      datePublished: UPDATED,
     },
     ru: {
       title: "Как проверить информацию о бренде в ответах ИИ | Synap",
@@ -408,6 +419,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Повторяемый аудит: правильно ли ИИ распознаёт бизнес, последовательно ли описывает его, ссылается ли на надёжные источники и путает ли сущности.",
       kind: "article",
       lastModified: UPDATED,
+      datePublished: UPDATED,
     },
   },
   "/blogs/why-ai-recommends-competitors": {
@@ -417,6 +429,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Learn why competitors may appear in AI recommendations, how to separate evidence gaps from model variability and which corrective actions can be verified.",
       kind: "article",
       lastModified: UPDATED,
+      datePublished: UPDATED,
     },
     ru: {
       title: "Почему ИИ рекомендует конкурентов | Synap",
@@ -424,6 +437,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Почему конкуренты появляются в рекомендациях ИИ, как отличить нехватку подтверждений от изменчивости модели и какие действия можно проверить.",
       kind: "article",
       lastModified: UPDATED,
+      datePublished: UPDATED,
     },
   },
   "/changelog": {
@@ -687,9 +701,8 @@ export function webPageLd(
   }
   if (meta.lastModified) page.dateModified = meta.lastModified;
   if (meta.kind === "article") {
-    page.headline = meta.title;
-    page.datePublished = meta.lastModified;
-    page.author = { "@id": `${base}/#organization` };
+    page.headline = meta.headline ?? meta.title;
+    if (meta.datePublished) page.datePublished = meta.datePublished;
     page.mainEntityOfPage = { "@id": `${url}#webpage` };
   }
   return page;

@@ -37,6 +37,8 @@ describe("localized blog hub", () => {
       .toBe("/en/blogs/audit-ai-generated-brand-information");
     expect(page.getByRole("link", { name: /Why AI answers recommend competitors/ }).getAttribute("href"))
       .toBe("/en/blogs/why-ai-recommends-competitors");
+    expect(page.getByRole("link", { name: /What AI Visibility Means for Businesses in Kazakhstan/ }).getAttribute("href"))
+      .toBe("/en/blogs/ai-visibility-kazakhstan");
     expect(page.getAllByText("August 2, 2026").length).toBeGreaterThanOrEqual(2);
     expect(page.getAllByRole("link", { name: "Product" })[0].getAttribute("href")).toBe("/en#product");
     expect(page.getAllByRole("link", { name: "Blogs" }).some((link) => link.getAttribute("href") === "/en/blogs"))
@@ -52,6 +54,8 @@ describe("localized blog hub", () => {
       .toBe("/blogs/audit-ai-generated-brand-information");
     expect(page.getByRole("link", { name: publicPageContent("/blogs/why-ai-recommends-competitors", "ru").h1 }).getAttribute("href"))
       .toBe("/blogs/why-ai-recommends-competitors");
+    expect(page.getByRole("link", { name: publicPageContent("/blogs/ai-visibility-kazakhstan", "ru").h1 }).getAttribute("href"))
+      .toBe("/blogs/ai-visibility-kazakhstan");
     expect(page.container.textContent).not.toMatch(/customer@example|BEGIN PRIVATE KEY/i);
   });
 });

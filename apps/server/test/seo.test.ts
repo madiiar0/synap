@@ -85,8 +85,8 @@ describe("crawl and retrieval resources", () => {
     expect(xml).not.toMatch(/\/login<|\/app<|\/api\//);
   });
 
-  it("permanently redirects every localized guide URL without loops", async () => {
-    expect(publicRedirects()).toHaveLength(6);
+  it("permanently redirects every localized legacy content URL without loops", async () => {
+    expect(publicRedirects()).toHaveLength(8);
     expect(publicRedirects().every(({ targetPath }) => !targetPath.includes("/guides"))).toBe(true);
 
     const app = express();

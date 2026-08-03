@@ -4,6 +4,7 @@ import type { IndexablePublicPath } from "./seo.js";
 export type ContentPagePath = Exclude<IndexablePublicPath, "/">;
 
 export const BLOG_ARTICLE_PATHS = [
+  "/blogs/ai-visibility-kazakhstan",
   "/blogs/audit-ai-generated-brand-information",
   "/blogs/why-ai-recommends-competitors",
 ] as const satisfies readonly ContentPagePath[];
@@ -735,7 +736,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       related: [
         { path: "/services", label: "See how measurements inform agreed service work" },
         { path: "/docs", label: "Interpret each report view" },
-        { path: "/ai-visibility", label: "Understand the measured concept" },
+        { path: "/blogs/ai-visibility-kazakhstan", label: "Understand the measured concept" },
         { path: "/changelog", label: "Review methodology changes" },
       ],
     }),
@@ -798,116 +799,198 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       related: [
         { path: "/services", label: "Как измерения помогают согласовать работу" },
         { path: "/docs", label: "Как читать разделы отчёта" },
-        { path: "/ai-visibility", label: "Что именно измеряется" },
+        { path: "/blogs/ai-visibility-kazakhstan", label: "Что именно измеряется" },
         { path: "/changelog", label: "Изменения методологии" },
       ],
     }),
   },
-  "/ai-visibility": {
-    en: en({
-      eyebrow: "Guide",
-      h1: "What is AI visibility?",
+  "/blogs/ai-visibility-kazakhstan": {
+    en: enPhase2b({
+      eyebrow: "Article",
+      h1: "What AI Visibility Means for Businesses in Kazakhstan",
       lead:
-        "AI visibility is the observable presence and treatment of an entity inside generated answers to relevant questions.",
+        "AI visibility describes whether and how a business appears when an AI system generates an answer to a relevant customer question. It is not one universal ranking and it changes with the model, prompt, date and retrieved sources.",
       summaryTitle: "Definition",
       summary:
-        "For a business, AI visibility describes whether an answer identifies the business, includes it among relevant options, places it in a recommendation order, describes it accurately and cites evidence connected to it.",
-      published: "August 2, 2026",
+        "For a Kazakhstan business, AI visibility includes recognition of the correct entity, appearances in relevant answers, recommendation order, description accuracy, competitors and cited evidence. Each audit remains a dated sample rather than a permanent position.",
       sections: [
         {
-          heading: "Visibility is more than a mention",
+          heading: "AI visibility is different from a Google ranking",
           paragraphs: [
-            "A business can be named only when the user already supplied its name, or it can surface organically when the user asks for a category, need or location. Those are different signals. A useful audit separates branded recognition from unbranded discovery and keeps the underlying question visible.",
-            "Position, description, competitors and citations add context. A first-position recommendation supported by current primary information is different from a passing mention based on an outdated directory.",
+            "Search results usually present ranked pages or domains for a query. An AI-generated answer can combine information into prose, name several businesses, omit links, retrieve different sources or change its wording between runs. There is no single AI ranking shared by every model and interface.",
           ],
-        },
-        {
-          heading: "AI visibility versus traditional SEO",
           table: {
-            headers: ["Dimension", "Search visibility", "AI visibility"],
+            headers: ["Question", "Traditional search", "AI-generated answer"],
             rows: [
-              ["Output", "Ranked links", "Synthesized answer"],
-              ["Entity signal", "Page or domain", "Business, product or organization"],
-              ["Evidence", "Indexed page and snippet", "Answer text and cited sources"],
-              ["Volatility", "Ranking changes", "Model, retrieval and wording changes"],
-              ["Success", "Impressions, clicks, rank", "Mentions, recommendation position, Share of Voice"],
+              ["Primary output", "Ranked links", "Synthesized text"],
+              ["Measured entity", "Page or domain", "Business, product or organization"],
+              ["Evidence", "Indexed page and snippet", "Answer text and returned citations"],
+              ["Sources of change", "Index and ranking systems", "Model, prompt, date, retrieval and interface context"],
             ],
           },
         },
         {
-          heading: "A responsible measurement set",
-          bullets: [
-            "Use realistic prompts tied to actual products, services, audiences and locations.",
-            "Separate questions that name the business from those that do not.",
-            "Record the date, model family, exact prompt, answer and citations.",
-            "Treat failed requests as missing measurements, not negative answers.",
-            "Repeat scans over time and interpret movement alongside source changes.",
+          heading: "Mentions and recommendations are not the same",
+          paragraphs: [
+            "A mention only shows that the answer named the business. A recommendation adds context: the business may be presented as suitable for a need, included among alternatives or placed earlier in a list. Neither signal proves that a customer saw, trusted or acted on the answer.",
+            "The exact answer and its sources matter more than an isolated number. A prominent recommendation based on outdated facts can be less useful than a lower mention supported by accurate current information.",
           ],
         },
         {
-          heading: "What the number cannot prove",
+          heading: "Branded and unbranded questions answer different questions",
           paragraphs: [
-            "A visibility score does not prove that a real customer saw an answer, clicked, purchased or will receive the same response. It is a controlled observation of generated outputs. Conversion and search analytics remain necessary for commercial impact.",
+            "A branded prompt names the business and tests recognition: does the system identify and describe the right entity? An unbranded prompt asks about a category, need, comparison or location without naming the business and tests discovery among relevant alternatives.",
+            "A responsible audit reports branded recognition separately so direct questions about the company do not inflate the primary unbranded Visibility Score.",
+          ],
+        },
+        {
+          heading: "Why the same question can produce a different answer",
+          bullets: [
+            "The selected model family and model version can change.",
+            "Small wording differences can change the interpreted need or location.",
+            "Retrieved web sources and their freshness can differ by date and provider.",
+            "Consumer applications can add personalization, interface features or context that an API-based sample does not reproduce.",
+          ],
+        },
+        {
+          heading: "What an AI-visibility audit can measure",
+          bullets: [
+            "Whether the correct business appears in sampled branded and unbranded answers.",
+            "Visibility metrics, separate branded recognition and answer-level positions.",
+            "Which competitors appear and their Share of Voice across qualifying sampled answers.",
+            "The exact prompts, sampled answers and citations returned with those answers.",
+            "Directional changes between fresh, user-initiated audits of comparable question types.",
+          ],
+        },
+        {
+          heading: "What an audit cannot prove",
+          paragraphs: [
+            "An audit cannot prove that every consumer will receive the same response, that a real customer saw or acted on it, or that one website change caused a later movement. It does not guarantee indexing, mentions, citations, rankings or recommendations.",
+          ],
+        },
+        {
+          heading: "Why consistent business information and external sources matter",
+          paragraphs: [
+            "A business is easier to resolve when its name, services, city, service area, website and contact information agree across authoritative pages. Contradictory or incomplete facts can make the entity harder to identify, but consistency alone does not guarantee inclusion in an answer.",
+            "Third-party sources can corroborate claims or introduce errors. Review citations and relevant local listings to see which information an answer relied on, then correct facts at the source you control or can legitimately update. Do not create fake citations or listings.",
+          ],
+        },
+        {
+          heading: "Practical first steps for a Kazakhstan business",
+          bullets: [
+            "Write down the official business name, real services, city or service area and current contact routes.",
+            "Check whether Russian, Kazakh and English public references describe the same entity and offering.",
+            "Use realistic local customer questions without inserting the business name into every prompt.",
+            "Review sampled competitors and citations against the original answers rather than copying their wording.",
+            "Prioritize factual gaps, then use a later dated audit for directional comparison without assuming causation.",
+          ],
+        },
+        {
+          heading: "How Synap fits",
+          paragraphs: [
+            "Synap provides Kazakhstan businesses with a free, user-initiated audit covering model families associated with ChatGPT, Gemini and Perplexity through configured provider APIs. The private report records a dated sample of prompts, answers, metrics, competitors, positions and cited sources.",
+            "After reviewing the report, the owner may book a call. Synap can then plan and manually perform separately agreed improvement work. AI systems remain independent, so the audit and service do not guarantee a future placement or recommendation.",
           ],
         },
       ],
       related: [
-        { path: "/generative-engine-optimization", label: "Move from measurement to GEO" },
+        { path: "/services", label: "Review Synap's audit and improvement service" },
         { path: "/methodology", label: "See Synap's exact measurement rules" },
-        { path: "/use-cases", label: "Apply the concept by business type" },
+        { path: "/use-cases/local-businesses", label: "Apply the concepts to a local business" },
       ],
     }),
-    ru: ru({
-      eyebrow: "Руководство",
-      h1: "Что такое видимость в ИИ?",
+    ru: ruPhase2b({
+      eyebrow: "Статья",
+      h1: "Что означает видимость бизнеса в ответах ИИ для компаний Казахстана",
       lead:
-        "Видимость в ИИ — наблюдаемое присутствие сущности и отношение к ней в сгенерированных ответах на релевантные вопросы.",
+        "Видимость в ИИ показывает, появляется ли бизнес в сгенерированном ответе на релевантный вопрос клиента и как именно он представлен. Это не единый универсальный рейтинг: результат зависит от модели, вопроса, даты и найденных источников.",
       summaryTitle: "Определение",
       summary:
-        "Для бизнеса видимость в ИИ показывает, распознаёт ли ответ компанию, включает ли её в подходящие варианты, какое место даёт в рекомендации, корректно ли описывает и связывает ли с подтверждающими источниками.",
-      published: "2 августа 2026 года",
+        "Для бизнеса Казахстана видимость в ИИ включает распознавание правильной сущности, появление в релевантных ответах, порядок рекомендаций, точность описания, конкурентов и процитированные доказательства. Каждый аудит остаётся датированной выборкой, а не постоянной позицией.",
       sections: [
         {
-          heading: "Видимость — это больше, чем упоминание",
+          heading: "Видимость в ИИ отличается от позиции в Google",
           paragraphs: [
-            "Компания может появиться только потому, что пользователь уже назвал её, или органически — в вопросе о категории, задаче или месте. Это разные сигналы. Полезный аудит отделяет узнаваемость бренда от небрендового обнаружения и сохраняет исходный вопрос.",
-            "Позиция, описание, конкуренты и источники дают контекст. Первая рекомендация с актуальным первичным подтверждением отличается от случайного упоминания по устаревшему каталогу.",
+            "Поисковая выдача обычно показывает ранжированные страницы или домены. Ответ ИИ может объединять информацию в текст, называть несколько компаний, не давать ссылок, находить другие источники и менять формулировку между запусками. Единого рейтинга для всех моделей и интерфейсов не существует.",
           ],
-        },
-        {
-          heading: "Видимость в ИИ и традиционное SEO",
           table: {
-            headers: ["Измерение", "Поисковая видимость", "Видимость в ИИ"],
+            headers: ["Вопрос", "Традиционный поиск", "Ответ ИИ"],
             rows: [
-              ["Результат", "Ранжированные ссылки", "Синтезированный ответ"],
-              ["Сущность", "Страница или домен", "Бизнес, продукт или организация"],
-              ["Доказательства", "Страница и сниппет", "Текст ответа и источники"],
-              ["Изменчивость", "Изменение позиции", "Модель, поиск и формулировка"],
-              ["Успех", "Показы, клики, позиция", "Упоминания, порядок, доля голоса"],
+              ["Основной результат", "Ранжированные ссылки", "Синтезированный текст"],
+              ["Измеряемая сущность", "Страница или домен", "Бизнес, продукт или организация"],
+              ["Доказательства", "Страница и сниппет", "Текст ответа и возвращённые источники"],
+              ["Причины изменений", "Индекс и алгоритмы ранжирования", "Модель, вопрос, дата, поиск и контекст интерфейса"],
             ],
           },
         },
         {
-          heading: "Корректный набор измерений",
-          bullets: [
-            "Используйте реалистичные вопросы о фактических продуктах, услугах, аудитории и локации.",
-            "Отделяйте вопросы с названием бизнеса от вопросов без него.",
-            "Сохраняйте дату, семейство модели, точный вопрос, ответ и источники.",
-            "Считайте ошибочный запрос отсутствующим измерением, а не отрицательным ответом.",
-            "Повторяйте проверки и сопоставляйте движение с изменениями источников.",
+          heading: "Упоминание и рекомендация — разные сигналы",
+          paragraphs: [
+            "Упоминание показывает только то, что ответ назвал бизнес. В рекомендации появляется контекст: компания может быть представлена как подходящий вариант, включена среди альтернатив или поставлена выше в списке. Ни один из сигналов не доказывает, что клиент увидел ответ, доверился ему или совершил действие.",
+            "Точный текст ответа и его источники важнее отдельного числа. Заметная рекомендация на основе устаревших фактов может быть менее полезной, чем более низкое упоминание с актуальным подтверждением.",
           ],
         },
         {
-          heading: "Чего число не доказывает",
+          heading: "Брендовые и небрендовые вопросы измеряют разное",
           paragraphs: [
-            "Индекс не доказывает, что реальный клиент увидел ответ, перешёл, купил или получит ту же формулировку. Это контролируемое наблюдение сгенерированных результатов. Для коммерческого эффекта по-прежнему нужны данные конверсий и поиска.",
+            "Брендовый вопрос называет компанию и проверяет узнаваемость: правильно ли система определяет и описывает сущность. Небрендовый вопрос спрашивает о категории, задаче, сравнении или месте без названия компании и проверяет обнаружение среди релевантных вариантов.",
+            "Корректный аудит показывает узнаваемость отдельно, чтобы прямые вопросы о компании не завышали основной небрендовый Индекс видимости.",
+          ],
+        },
+        {
+          heading: "Почему один вопрос может дать разные ответы",
+          bullets: [
+            "Могут измениться семейство и версия модели.",
+            "Небольшая разница в формулировке меняет понимание задачи или локации.",
+            "Найденные веб-источники и их актуальность зависят от даты и провайдера.",
+            "Пользовательские приложения могут добавлять персонализацию, функции интерфейса и контекст, которых нет в выборке через API.",
+          ],
+        },
+        {
+          heading: "Что может измерить аудит видимости",
+          bullets: [
+            "Появляется ли правильный бизнес в выборке брендовых и небрендовых ответов.",
+            "Метрики видимости, отдельную узнаваемость бренда и позиции в отдельных ответах.",
+            "Какие конкуренты появляются и какова их доля голоса в подходящей выборке.",
+            "Точные вопросы, выборку ответов и возвращённые с ними источники.",
+            "Направление изменений между свежими проверками сопоставимых типов вопросов по инициативе пользователя.",
+          ],
+        },
+        {
+          heading: "Чего аудит не доказывает",
+          paragraphs: [
+            "Аудит не доказывает, что каждый пользователь получит тот же ответ, что реальный клиент увидел его или совершил действие и что одна правка вызвала последующее изменение. Он не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации.",
+          ],
+        },
+        {
+          heading: "Почему важны единые факты и внешние источники",
+          paragraphs: [
+            "Бизнес проще распознать, когда название, услуги, город, зона обслуживания, сайт и контакты совпадают на авторитетных страницах. Противоречивые или неполные данные затрудняют идентификацию, но сама согласованность не гарантирует появление в ответе.",
+            "Внешние источники могут подтверждать заявления или распространять ошибки. Проверяйте цитирование и релевантные локальные карточки, чтобы понять, на что опирался ответ, а затем исправляйте факты в источнике, который вы контролируете или можете законно обновить. Не создавайте фиктивные ссылки и карточки.",
+          ],
+        },
+        {
+          heading: "Первые шаги для бизнеса в Казахстане",
+          bullets: [
+            "Зафиксируйте официальное название, реальные услуги, город или зону обслуживания и актуальные способы связи.",
+            "Проверьте, одинаково ли русские, казахские и английские публичные источники описывают сущность и предложение.",
+            "Используйте реалистичные локальные вопросы клиентов, не вставляя название бизнеса в каждый запрос.",
+            "Проверяйте конкурентов и источники по исходным ответам, а не копируйте их формулировки.",
+            "Сначала исправьте фактические пробелы, затем используйте новый датированный аудит для сравнения направления без вывода о причинности.",
+          ],
+        },
+        {
+          heading: "Роль Synap",
+          paragraphs: [
+            "Synap проводит для бизнеса Казахстана бесплатный аудит по инициативе пользователя. Он охватывает семейства моделей, связанные с ChatGPT, Gemini и Perplexity, через настроенные API провайдеров. Закрытый отчёт сохраняет датированную выборку вопросов, ответов, метрик, конкурентов, позиций и источников.",
+            "После разбора отчёта владелец может записаться на созвон. Synap может спланировать и вручную выполнить отдельно согласованные работы. ИИ-системы остаются независимыми, поэтому аудит и услуга не гарантируют будущую позицию или рекомендацию.",
           ],
         },
       ],
       related: [
-        { path: "/generative-engine-optimization", label: "От измерения к GEO" },
-        { path: "/methodology", label: "Точные правила Synap" },
-        { path: "/use-cases", label: "Сценарии по типам бизнеса" },
+        { path: "/services", label: "Аудит и помощь команды Synap" },
+        { path: "/methodology", label: "Точные правила измерения Synap" },
+        { path: "/use-cases/local-businesses", label: "Применение для локального бизнеса" },
       ],
     }),
   },
@@ -963,7 +1046,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/services", label: "See what Synap offers commercially" },
-        { path: "/ai-visibility", label: "Define the outcome being measured" },
+        { path: "/blogs/ai-visibility-kazakhstan", label: "Define the outcome being measured" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Run a factual entity audit" },
       ],
     }),
@@ -1018,7 +1101,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/services", label: "Коммерческие услуги Synap" },
-        { path: "/ai-visibility", label: "Что измеряет GEO" },
+        { path: "/blogs/ai-visibility-kazakhstan", label: "Что измеряет GEO" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Фактический аудит сущности" },
       ],
     }),

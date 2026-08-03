@@ -138,16 +138,21 @@ describe("Phase 2B public service content", () => {
     expect(text).not.toMatch(/customer@example|BEGIN PRIVATE KEY|access token value|private customer report/i);
   });
 
-  it("retains the two established blog articles and their factual publication record", () => {
+  it("adds the Kazakhstan AI-visibility article without changing established publication records", () => {
     expect(BLOG_ARTICLE_PATHS).toEqual([
+      "/blogs/ai-visibility-kazakhstan",
       "/blogs/audit-ai-generated-brand-information",
       "/blogs/why-ai-recommends-competitors",
     ]);
     expect(publicPageContent(BLOG_ARTICLE_PATHS[0], "en")).toMatchObject({
+      h1: "What AI Visibility Means for Businesses in Kazakhstan",
+    });
+    expect(publicPageContent(BLOG_ARTICLE_PATHS[0], "en")).not.toHaveProperty("published");
+    expect(publicPageContent(BLOG_ARTICLE_PATHS[1], "en")).toMatchObject({
       h1: "How to audit AI-generated brand information",
       published: "August 2, 2026",
     });
-    expect(publicPageContent(BLOG_ARTICLE_PATHS[1], "ru")).toMatchObject({
+    expect(publicPageContent(BLOG_ARTICLE_PATHS[2], "ru")).toMatchObject({
       h1: "Почему ИИ рекомендует конкурентов",
       published: "2 августа 2026 года",
     });

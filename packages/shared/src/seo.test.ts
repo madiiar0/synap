@@ -90,8 +90,9 @@ describe("public information architecture", () => {
     expect(PUBLIC_PATHS).not.toContain("/admin");
   });
 
-  it("publishes canonical blog routes while retaining only redirect metadata for guides", () => {
+  it("publishes canonical blog routes while retaining redirect metadata for legacy guides", () => {
     expect(INDEXABLE_PUBLIC_PATHS).toContain("/blogs");
+    expect(INDEXABLE_PUBLIC_PATHS).toContain("/blogs/ai-visibility-kazakhstan");
     expect(INDEXABLE_PUBLIC_PATHS).toContain("/blogs/audit-ai-generated-brand-information");
     expect(INDEXABLE_PUBLIC_PATHS).toContain("/blogs/why-ai-recommends-competitors");
     expect(INDEXABLE_PUBLIC_PATHS as readonly string[]).not.toContain("/guides");
@@ -104,6 +105,10 @@ describe("public information architecture", () => {
       {
         from: "/guides/why-ai-recommends-competitors",
         to: "/blogs/why-ai-recommends-competitors",
+      },
+      {
+        from: "/ai-visibility",
+        to: "/blogs/ai-visibility-kazakhstan",
       },
     ]);
     expect(routeMeta("/blogs", "en").title).toBe("Synap Blog — AI Visibility in Kazakhstan");
@@ -270,6 +275,20 @@ describe("structured data", () => {
 
     expect(article?.url).toBe(`${BASE}/en/blogs/audit-ai-generated-brand-information`);
     expect(article?.publisher).toEqual({ "@id": `${BASE}/#organization` });
+  });
+
+  it("uses the visible AI-visibility headline without inventing publication or author data", () => {
+    const graph = (structuredDataForRoute(
+      BASE,
+      "/blogs/ai-visibility-kazakhstan",
+      "en",
+    ) as { "@graph": Array<Record<string, unknown>> })["@graph"];
+    const article = graph.find((node) => node["@type"] === "Article");
+
+    expect(article?.headline).toBe("What AI Visibility Means for Businesses in Kazakhstan");
+    expect(article?.dateModified).toBe("2026-08-03");
+    expect(article).not.toHaveProperty("datePublished");
+    expect(article).not.toHaveProperty("author");
   });
 
   it("connects the Services WebPage to the primary Service entity", () => {

@@ -232,7 +232,7 @@ export function llmsText(baseUrl: string): string {
     "",
     "## Concepts and use cases",
     "",
-    `- [AI visibility](${base}/en/ai-visibility)`,
+    `- [AI visibility in Kazakhstan](${base}/en/blogs/ai-visibility-kazakhstan)`,
     `- [Generative Engine Optimization](${base}/en/generative-engine-optimization)`,
     `- [Use cases](${base}/en/use-cases)`,
     `- [Blog](${base}/en/blogs)`,

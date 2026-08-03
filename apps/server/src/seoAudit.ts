@@ -126,8 +126,17 @@ async function run(): Promise<void> {
 
     const ruBlog = pages.find((page) => page.path === "/blogs")?.html ?? "";
     const enBlog = pages.find((page) => page.path === "/en/blogs")?.html ?? "";
+    const enAiVisibility = pages.find((page) => page.path === "/en/blogs/ai-visibility-kazakhstan")?.html ?? "";
     assert(ruBlog.includes("Как проверить информацию о бренде в ответах ИИ"), "/blogs: article list is missing from initial HTML");
     assert(enBlog.includes("How to audit AI-generated brand information"), "/en/blogs: article list is missing from initial HTML");
+    assert(
+      enBlog.includes("What AI Visibility Means for Businesses in Kazakhstan"),
+      "/en/blogs: AI-visibility article is missing from initial HTML",
+    );
+    assert(
+      enAiVisibility.includes("Branded and unbranded questions answer different questions"),
+      "/en/blogs/ai-visibility-kazakhstan: article body is missing from initial HTML",
+    );
 
     for (const { from, to } of LEGACY_PUBLIC_REDIRECTS) {
       for (const locale of ["ru", "en"] as const) {
