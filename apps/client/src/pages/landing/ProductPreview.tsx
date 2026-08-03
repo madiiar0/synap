@@ -1,40 +1,52 @@
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { LANDING_COFFEE_SHOPS } from "./landingCoffeeShops";
 
 interface PreviewRow {
   name: string;
+  logo: string | undefined;
   visibility: number;
   trend: "up" | "down";
 }
 
-// Fictional names and explicitly labelled sample values prevent this preview
-// from being mistaken for a customer result, endorsement or live measurement.
-const ROWS: PreviewRow[] = [
-  { name: "Northstar Coffee", visibility: 74, trend: "up" },
-  { name: "Juniper Roasters", visibility: 52, trend: "down" },
-  { name: "Cedar Cafe", visibility: 38, trend: "up" },
-];
+const SAMPLE_METRICS = [
+  { visibility: 74, trend: "up" },
+  { visibility: 52, trend: "down" },
+  { visibility: 38, trend: "up" },
+] as const;
+
+// The visible Sample data label prevents these illustrative percentages from
+// being mistaken for customer results, endorsements or live measurements.
+const ROWS: PreviewRow[] = LANDING_COFFEE_SHOPS.map((shop, index) => ({
+  ...shop,
+  ...SAMPLE_METRICS[index],
+}));
 
 /** Rankings preview panel used inside the final CTA card (localized). */
 export default function ProductPreview(): JSX.Element {
   const { t } = useTranslation();
   return (
-    <div className="w-full max-w-xl rounded-2xl border border-darkline bg-dark p-6 text-darktext shadow-lg">
+    <div className="w-full max-w-xl rounded-2xl border border-darkline bg-dark p-4 text-xs text-darktext shadow-lg sm:p-6 sm:text-sm">
       <div className="flex items-center justify-between border-b border-darkline pb-4">
         <p className="text-sm font-semibold">{t("landing.preview.title")}</p>
         <div className="flex items-center gap-2">
           <span className="rounded-full border border-darkline px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-sub">
             {t("common.sampleData")}
           </span>
-          <p className="text-xs text-sub">{t("landing.preview.subtitle")}</p>
+          <p className="hidden text-xs text-sub sm:block">{t("landing.preview.subtitle")}</p>
         </div>
       </div>
-      <table className="mt-2 w-full text-sm">
+      <table className="mt-2 w-full table-fixed text-xs sm:text-sm">
         <thead>
           <tr className="text-left text-xs text-sub">
-            <th className="py-2 font-medium">{t("landing.preview.colBrand")}</th>
-            <th className="py-2 font-medium">{t("landing.preview.colVisibility")}</th>
-            <th className="py-2 text-right font-medium">{t("landing.preview.colSentiment")}</th>
+            <th className="w-[52%] py-2 font-medium">{t("landing.preview.colBrand")}</th>
+            <th className="w-[34%] py-2 font-medium">{t("landing.preview.colVisibility")}</th>
+            <th
+              className="w-[14%] py-2 text-right font-medium"
+              aria-label={t("landing.preview.colSentiment")}
+            >
+              <span className="hidden text-[10px] sm:inline">{t("landing.preview.colSentiment")}</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -43,12 +55,26 @@ export default function ProductPreview(): JSX.Element {
               <td className="py-3">
                 <span className="inline-flex items-center gap-2">
                   <span className="text-xs text-sub">{index + 1}</span>
-                  <span className="font-medium">{row.name}</span>
+                  {row.logo ? (
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-md border border-darkline bg-white sm:h-7 sm:w-7">
+                      <img
+                        src={row.logo}
+                        alt={row.name}
+                        className="h-full w-full object-contain"
+                        loading="lazy"
+                      />
+                    </span>
+                  ) : (
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-darkline text-xs font-bold sm:h-7 sm:w-7">
+                      {row.name.charAt(0)}
+                    </span>
+                  )}
+                  <span className="whitespace-nowrap font-medium">{row.name}</span>
                 </span>
               </td>
               <td className="py-3">
                 <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-24 rounded-full bg-darkline">
+                  <div className="h-1.5 w-10 rounded-full bg-darkline sm:w-24">
                     <div
                       className="h-1.5 rounded-full bg-darktext/70"
                       style={{ width: `${row.visibility}%` }}

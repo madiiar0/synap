@@ -1,10 +1,7 @@
 import { useTranslation } from "react-i18next";
 import Reveal from "../../components/Reveal";
 import { AI_LOGOS } from "../../lib/aiLogos";
-import { brandLogo } from "../../lib/brandLogos";
-
-// §6+7: real chain names are allowed ONLY here, with neutral descriptions.
-const SHOPS = ["Global Coffee", "Master Coffee", "Coffee Boom"] as const;
+import { LANDING_COFFEE_SHOPS } from "./landingCoffeeShops";
 
 /** Chat-style ChatGPT mock answer (coffee niche, reference density). */
 export default function MockAnswer(): JSX.Element {
@@ -34,7 +31,7 @@ export default function MockAnswer(): JSX.Element {
             <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md border border-line bg-surface p-4 shadow-sm sm:p-6">
               <p className="text-sm leading-relaxed text-sub">{t("landing.mockAnswer.intro")}</p>
               <div className="mt-4 border-t border-line" />
-              {SHOPS.map((name, index) => (
+              {LANDING_COFFEE_SHOPS.map(({ name, logo }, index) => (
                 <div
                   key={name}
                   className={`flex items-start gap-3 ${
@@ -44,10 +41,10 @@ export default function MockAnswer(): JSX.Element {
                   <span className="mt-0.5 shrink-0 rounded-lg border border-line px-2 py-0.5 text-xs font-semibold text-sub">
                     #{index + 1}
                   </span>
-                  {brandLogo(name) ? (
+                  {logo ? (
                     <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-surface">
                       <img
-                        src={brandLogo(name)}
+                        src={logo}
                         alt={name}
                         className="h-8 w-8 object-contain"
                         loading="lazy"

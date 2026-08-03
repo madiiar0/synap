@@ -7,36 +7,26 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { SYNAP_MARK, synapFaviconSvg } from "./icon-source.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = path.join(root, "apps/client/public");
 fs.mkdirSync(publicDir, { recursive: true });
 
-const MARK = `
-  <path d="M5.5 18.5 12 12l6.5-6.5" stroke="#111111" stroke-width="1.8" fill="none"/>
-  <circle cx="5.5" cy="18.5" r="3" fill="#111111"/>
-  <circle cx="12" cy="12" r="2.2" fill="#111111"/>
-  <circle cx="18.5" cy="5.5" r="3.4" fill="#111111"/>`;
+fs.writeFileSync(path.join(publicDir, "favicon.svg"), synapFaviconSvg(24));
 
-const markSvg = (size, withBg) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24">
-  ${withBg ? '<rect width="24" height="24" rx="5" fill="#FFFFFF"/>' : ""}${MARK}
-</svg>`;
-
-// favicon.svg (transparent background)
-fs.writeFileSync(path.join(publicDir, "favicon.svg"), markSvg(24, false));
-
-async function png(size, out, withBg) {
-  await sharp(Buffer.from(markSvg(size, withBg)), { density: (72 * size) / 24 })
+async function png(size, out) {
+  await sharp(Buffer.from(synapFaviconSvg(size)), { density: (72 * size) / 24 })
     .resize(size, size)
     .png()
     .toFile(path.join(publicDir, out));
 }
 
-await png(192, "icon-192.png", true);
-await png(512, "icon-512.png", true);
-await png(180, "apple-touch-icon.png", true);
-await png(16, "favicon-16.png", true);
-await png(32, "favicon-32.png", true);
+await png(192, "icon-192.png");
+await png(512, "icon-512.png");
+await png(180, "apple-touch-icon.png");
+await png(16, "favicon-16.png");
+await png(32, "favicon-32.png");
 
 // favicon.ico: ICO container with PNG-encoded 16 + 32 entries (Vista+ format).
 function buildIco(entries) {
@@ -69,7 +59,7 @@ fs.writeFileSync(path.join(publicDir, "favicon.ico"), ico);
 // OG image 1200x630: white background, mark + wordmark + tagline.
 const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#FFFFFF"/>
-  <g transform="translate(480, 140) scale(6.5)">${MARK}</g>
+  <g transform="translate(480, 140) scale(6.5)">${SYNAP_MARK}</g>
   <text x="600" y="410" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#111111">Synap</text>
   <text x="600" y="480" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#6F6F6F">AI visibility analytics for businesses</text>
 </svg>`;

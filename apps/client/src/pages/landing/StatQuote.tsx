@@ -9,26 +9,20 @@ import StartCta from "../../components/StartCta";
 export default function StatQuote(): JSX.Element {
   const { t } = useTranslation();
   return (
-    <section className="hairline-dashed bg-base py-28 sm:py-36">
+    <section className="hairline-dashed bg-base py-24 sm:py-28">
       <div className="guides mx-auto max-w-container px-6">
         <Reveal className="mx-auto max-w-4xl text-center">
           {/* §5: ONE decorative mark for both languages. The localized string
               carries no quote glyphs, so RU and EN render identically. */}
           <QuoteMark className="mx-auto text-line" size={48} />
           <blockquote
-            className="mt-5 text-balance font-semibold tracking-tight text-ink"
-            style={{ fontSize: "clamp(28px, 4.4vw, 54px)", lineHeight: 1.18 }}
+            className="mx-auto mt-5 max-w-3xl text-balance font-semibold tracking-tight text-ink"
+            style={{ fontSize: "clamp(28px, 4vw, 50px)", lineHeight: 1.18 }}
           >
             {t("landing.stat.quote")}
           </blockquote>
-          <p className="mx-auto mt-6 max-w-xl text-sm text-sub">
-            <a
-              href="https://www.gartner.com/en/newsroom/press-releases/2023-12-14-gartner-predicts-fifty-percent-of-consumers-will-significantly-limit-their-interactions-with-social-media-by-2025"
-              rel="noreferrer"
-              className="underline decoration-line underline-offset-4 hover:text-ink"
-            >
-              {t("landing.stat.sourceLine")}
-            </a>
+          <p className="mx-auto mt-6 max-w-2xl text-sm text-sub">
+            {t("landing.stat.sourceLine")}
           </p>
           <p className="mt-12 text-2xl font-medium text-ink sm:text-3xl">
             {t("landing.stat.question")}

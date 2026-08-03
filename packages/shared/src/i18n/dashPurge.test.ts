@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 /**
- * §0.1 dash purge: no em/en dashes in user-facing copy — the i18n bundles,
- * every client component/page source file, and the shared quotes module.
+ * §0.1 dash purge: no em/en dashes in user-facing copy except the exact
+ * Gartner attribution requested for landing.stat.sourceLine.
  */
 const DASH = /[—–]/;
 
@@ -42,6 +42,7 @@ describe("dash purge (§0.1)", () => {
     const offenders: string[] = [];
     for (const file of ["ru.json", "en.json"]) {
       for (const hit of jsonOffenders(path.join(here, file))) {
+        if (hit.key === "landing.stat.sourceLine") continue;
         offenders.push(`${file} → ${hit.key}: "${hit.value}"`);
       }
     }
