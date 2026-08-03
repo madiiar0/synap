@@ -82,6 +82,9 @@ const schema = z.object({
    * can never set this.
    */
   ADMIN_EMAIL: z.string().default("admin@synapai.app"),
+  // Optional shared credential for the canonical ADMIN_EMAIL account. It is
+  // checked only by the server and must never be exposed through /api/config.
+  ADMIN_PASSWORD: z.string().optional().default(""),
 
   DEMO_MODE: bool.default("true"),
   DEMO_SCAN_TOTAL_MS: z.coerce.number().int().min(0).default(18000),
@@ -124,6 +127,11 @@ if (
   console.error(
     "Refusing to start: JWT_SECRET is unset/default. Generate one with `openssl rand -hex 32`.",
   );
+  process.exit(1);
+}
+
+if (parsed.data.ADMIN_PASSWORD && parsed.data.ADMIN_PASSWORD.length < 12) {
+  console.error("Refusing to start: ADMIN_PASSWORD must contain at least 12 characters.");
   process.exit(1);
 }
 

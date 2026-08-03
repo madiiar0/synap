@@ -118,6 +118,14 @@ start in mock mode).
       account can then sign in with email and password like any other user.
       Keep the password out of the repository, and change it before launch:
       this account has unlimited audits and full admin panel access.
+- [ ] **Optional shared admin password.** Set `ADMIN_PASSWORD=` in the
+      server-only `.env` to a random value of at least 12 characters. The
+      normal sign-in form will then accept any syntactically valid email with
+      that password and open the canonical `ADMIN_EMAIL` account. The entered
+      email is not stored or promoted. Attempts are rate-limited, the password
+      is compared server-side and it is never returned by `/api/config`.
+      Leave the variable empty to disable shared-password access. Only use
+      this over HTTPS and rotate the value when team access changes.
 - [ ] **Production domains:** Authentication → Settings → Authorized domains →
       add `yourdomain.com`, otherwise Google sign-in fails with
       `auth/unauthorized-domain`. The four `VITE_FIREBASE_*` values are baked

@@ -12,6 +12,17 @@ export const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+/** Shared-admin password attempts: five failures/min/IP. Successful logins do
+ * not consume the failure budget, while ordinary Firebase sign-in can still
+ * proceed when this separate gate is exhausted. */
+export const sharedAdminAuthLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+});
+
 /** General API: 120/min (per IP; sessions share NATs rarely enough for an MVP). */
 export const apiLimiter = rateLimit({
   windowMs: 60_000,

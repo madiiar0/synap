@@ -6,7 +6,7 @@ import BookCallButton, { useAppConfig } from "../components/BookCallButton";
 import Logo from "../components/Logo";
 import QuoteCarousel from "../components/QuoteCarousel";
 import { PublicPageMetadata } from "../components/PageMetadata";
-import { apiPost } from "../lib/api";
+import { ApiError, apiPost } from "../lib/api";
 import { currentLocale, localizedPath } from "../lib/i18n";
 
 // Firebase is needed only after the sign-in page hydrates or the visitor acts.
@@ -73,6 +73,24 @@ export default function Login(): JSX.Element {
     navigate(user.role === "admin" ? "/admin" : next);
   };
 
+  const trySharedAdminSession = async (): Promise<boolean> => {
+    try {
+      const user = await apiPost<SessionUserDto>("/api/auth/admin-session", { email, password });
+      navigate(user.role === "admin" ? "/admin" : next, { replace: true });
+      return true;
+    } catch (err) {
+      // A missing/wrong shared credential is expected for ordinary Firebase
+      // users. Rate limiting this optional gate must not block their login.
+      if (
+        err instanceof ApiError &&
+        (err.code === "ADMIN_CREDENTIALS_INVALID" || err.status === 429)
+      ) {
+        return false;
+      }
+      throw err;
+    }
+  };
+
   // §2.1: finish a redirect-based Google sign-in when the page loads back.
   useEffect(() => {
     if (mock) return;
@@ -99,10 +117,10 @@ export default function Login(): JSX.Element {
         await createSession({ email });
       } else {
         const firebase = await loadFirebase();
-        const idToken =
-          mode === "signup"
-            ? await firebase.firebaseEmailSignUp(email, password)
-            : await firebase.firebaseEmailSignIn(email, password);
+        if (mode === "signin" && (await trySharedAdminSession())) return;
+        const idToken = mode === "signup"
+          ? await firebase.firebaseEmailSignUp(email, password)
+          : await firebase.firebaseEmailSignIn(email, password);
         await createSession({ idToken });
       }
     } catch (err) {

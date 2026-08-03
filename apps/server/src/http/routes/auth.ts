@@ -1,8 +1,9 @@
+import crypto from "node:crypto";
 import { Router } from "express";
 import { z } from "zod";
 import { scanAllowance } from "../../services/allowance.js";
 import { isDisposableEmail, type SessionUserDto } from "@synapai/shared";
-import { authMode, env, isAdminEmail, isProd } from "../../config/env.js";
+import { adminEmails, authMode, env, isAdminEmail, isProd } from "../../config/env.js";
 import { logger } from "../../lib/logger.js";
 import { AppError } from "../../lib/errors.js";
 import { User, type UserDoc } from "../../models/User.js";
@@ -16,6 +17,7 @@ import {
   authLimiter,
   consumeNewAccountQuota,
   newAccountIpAllowed,
+  sharedAdminAuthLimiter,
 } from "../middleware/rateLimits.js";
 
 export const authRouter = Router();
@@ -40,6 +42,50 @@ const sessionSchema = z.object({
   idToken: z.string().min(10).max(4096).optional(),
   email: z.string().trim().toLowerCase().email().max(120).optional(),
   locale: z.enum(["ru", "en"]).optional(),
+});
+
+const sharedAdminSessionSchema = z.object({
+  email: z.string().trim().toLowerCase().email().max(120),
+  password: z.string().min(1).max(256),
+});
+
+function sharedAdminPasswordMatches(candidate: string): boolean {
+  if (!env.ADMIN_PASSWORD) return false;
+  const digest = (value: string): Buffer => crypto.createHash("sha256").update(value).digest();
+  return crypto.timingSafeEqual(digest(candidate), digest(env.ADMIN_PASSWORD));
+}
+
+/**
+ * Optional shared access to the one canonical admin account. The submitted
+ * email is deliberately not persisted or promoted: every successful login
+ * resolves to the first server-controlled ADMIN_EMAIL account.
+ */
+authRouter.post("/admin-session", sharedAdminAuthLimiter, async (req, res, next) => {
+  try {
+    const input = sharedAdminSessionSchema.parse(req.body);
+    if (!sharedAdminPasswordMatches(input.password)) {
+      throw new AppError("ADMIN_CREDENTIALS_INVALID", 401, "Invalid email or password");
+    }
+
+    const canonicalAdminEmail = adminEmails[0];
+    if (!canonicalAdminEmail) {
+      throw new AppError("ADMIN_LOGIN_UNAVAILABLE", 503, "Admin login is unavailable");
+    }
+
+    const user = await User.findOneAndUpdate(
+      { email: canonicalAdminEmail },
+      {
+        $set: { role: "admin", unlimitedScans: true, emailVerified: true },
+        $setOnInsert: { email: canonicalAdminEmail, locale: "ru" },
+      },
+      { upsert: true, new: true },
+    );
+
+    setSessionCookie(res, createSessionToken(user));
+    res.json(toSessionDto(user, req.ip));
+  } catch (err) {
+    next(err);
+  }
 });
 
 /** Upsert by firebaseUid, falling back to email so pre-created accounts get
