@@ -48,6 +48,7 @@ export interface AppConfig {
   calendlyUrl: string | null;
   whatsappUrl: string | null;
   authMode: "firebase" | "mock";
+  publicAnalyticsEnabled: boolean;
   /** §0.1: true when the in-memory fallback database is in use (dev only). */
   memoryDb: boolean;
   isDev: boolean;

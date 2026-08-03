@@ -12,6 +12,7 @@ import {
   firebaseSignOut,
 } from "../lib/firebaseClient";
 import { useMe } from "../lib/queries";
+import { PrivatePageMetadata } from "../components/PageMetadata";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -90,7 +91,8 @@ export default function VerifyEmail(): JSX.Element {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-base px-4 py-12 text-ink">
-      <a href={localizedPath("/")} aria-label="SynapAI" className="mb-8">
+      <PrivatePageMetadata title={t("verifyPage.title")} />
+      <a href={localizedPath("/")} aria-label="Synap" className="mb-8">
         <Logo size={20} className="text-lg" />
       </a>
       <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-8 text-center shadow-sm">

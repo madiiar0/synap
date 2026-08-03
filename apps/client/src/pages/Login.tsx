@@ -5,15 +5,13 @@ import type { SessionUserDto } from "@synapai/shared";
 import BookCallButton, { useAppConfig } from "../components/BookCallButton";
 import Logo from "../components/Logo";
 import QuoteCarousel from "../components/QuoteCarousel";
+import { PublicPageMetadata } from "../components/PageMetadata";
 import { apiPost } from "../lib/api";
-import {
-  authErrorKey,
-  consumeGoogleRedirect,
-  firebaseEmailSignIn,
-  firebaseEmailSignUp,
-  firebaseGoogleSignIn,
-} from "../lib/firebaseClient";
 import { currentLocale, localizedPath } from "../lib/i18n";
+
+// Firebase is needed only after the sign-in page hydrates or the visitor acts.
+// Keeping it behind this import avoids shipping the auth SDK with public pages.
+const loadFirebase = () => import("../lib/firebaseClient");
 
 /** Official multicolor Google "G" mark (inline SVG). */
 function GoogleMark(): JSX.Element {
@@ -78,14 +76,13 @@ export default function Login(): JSX.Element {
   // §2.1: finish a redirect-based Google sign-in when the page loads back.
   useEffect(() => {
     if (mock) return;
-    void consumeGoogleRedirect()
+    void loadFirebase()
+      .then((firebase) => firebase.consumeGoogleRedirect())
       .then((idToken) => {
         if (idToken) return createSession({ idToken });
         return undefined;
       })
-      .catch((err) => {
-        setErrorKey(authErrorKey(err));
-        });
+      .catch((err) => void loadFirebase().then((firebase) => setErrorKey(firebase.authErrorKey(err))));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mock]);
 
@@ -101,14 +98,15 @@ export default function Login(): JSX.Element {
       if (mock) {
         await createSession({ email });
       } else {
+        const firebase = await loadFirebase();
         const idToken =
           mode === "signup"
-            ? await firebaseEmailSignUp(email, password)
-            : await firebaseEmailSignIn(email, password);
+            ? await firebase.firebaseEmailSignUp(email, password)
+            : await firebase.firebaseEmailSignIn(email, password);
         await createSession({ idToken });
       }
     } catch (err) {
-      setErrorKey(mock ? "auth.errors.generic" : authErrorKey(err));
+      setErrorKey(mock ? "auth.errors.generic" : (await loadFirebase()).authErrorKey(err));
     } finally {
       setBusy(false);
     }
@@ -126,10 +124,10 @@ export default function Login(): JSX.Element {
     setErrorKey(null);
     setBusy(true);
     try {
-      const idToken = await firebaseGoogleSignIn();
+      const idToken = await (await loadFirebase()).firebaseGoogleSignIn();
       await createSession({ idToken });
     } catch (err) {
-      setErrorKey(authErrorKey(err));
+      setErrorKey((await loadFirebase()).authErrorKey(err));
     } finally {
       setBusy(false);
     }
@@ -139,11 +137,12 @@ export default function Login(): JSX.Element {
     "h-12 w-full rounded-xl border border-line bg-base px-4 text-sm text-ink outline-none transition-colors placeholder:text-sub focus:border-ink focus-visible:ring-2 focus-visible:ring-ink/20";
 
   return (
-    <div className="grid min-h-screen bg-base text-ink lg:grid-cols-2">
+    <main className="grid min-h-screen bg-base text-ink lg:grid-cols-2">
+      <PublicPageMetadata path="/login" locale={currentLocale()} />
       {/* Left: the auth card (§2.3) */}
       <div className="flex items-center justify-center px-6 py-16">
         <div className="w-full max-w-[440px]">
-          <Link to={localizedPath("/")} aria-label="SynapAI">
+          <Link to={localizedPath("/")} aria-label="Synap">
             <Logo size={20} className="text-lg" />
           </Link>
           <h1 className="mt-8 text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -265,6 +264,6 @@ export default function Login(): JSX.Element {
       >
         <QuoteCarousel />
       </div>
-    </div>
+    </main>
   );
 }

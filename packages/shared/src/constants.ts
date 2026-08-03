@@ -1,8 +1,4 @@
 /**
- * overall = round(0.35·branded + 0.45·category + 0.20·comparison), where each
- * subscore is a 0–100 mention rate over its intent group (see scoring.ts).
- */
-/**
  * §3: subscore weights for the PRIMARY visibility score. Branded prompts are
  * excluded from it entirely (reported separately), so these weights cover only
  * unbranded discovery groups and sum to 1.
@@ -32,16 +28,12 @@ export const PROMPT_INTENTS = [
 export type PromptIntent = (typeof PROMPT_INTENTS)[number];
 
 /**
- * Share of each intent in a generated prompt set (sums to 1). Tuned so the
- * 25-prompt scan yields exactly: branded 6, comparison 2, category 5,
- * best_of 4, purchase 4, informational 4 (§3). Branded + comparison form
- * the core-8 that every core engine answers.
- */
-/**
  * §2: the visibility scan must represent customers who do NOT already know the
  * business. Branded prompts (which name it) are capped at 12%; comparison
  * prompts are now written between third-party alternatives and carry no brand
  * name, so >= 88% of every scan is unbranded.
+ * Largest-remainder allocation yields 3 branded, 3 comparison, 5 category,
+ * 5 best-of, 5 purchase and 4 informational prompts in the default set of 25.
  *
  * Previous mix put branded at 24% and comparison at 8% (both named the
  * business) = 32% branded, which is what inflated the score.

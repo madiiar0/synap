@@ -1,30 +1,26 @@
 import { fireEvent, render } from "@testing-library/react";
+import { publicFaqItems } from "@synapai/shared";
 import { describe, expect, it } from "vitest";
-import i18n from "../../lib/i18n";
 import FaqSection from "./FaqSection";
 
-describe("FaqSection (§12.8 accordion)", () => {
-  it("renders all six questions and toggles answers", () => {
-    const { getByText, queryByText } = render(<FaqSection />);
-    const q1 = i18n.t("landing.faq.q1");
-    const a1 = i18n.t("landing.faq.a1");
-
-    for (let n = 1; n <= 6; n++) {
-      expect(getByText(i18n.t(`landing.faq.q${n}`))).toBeTruthy();
+describe("FaqSection crawlable accordion", () => {
+  it("renders six visible questions and answers in the initial DOM", () => {
+    const { container, getByText } = render(<FaqSection />);
+    const items = publicFaqItems("ru").slice(0, 6);
+    expect(container.querySelectorAll("details")).toHaveLength(items.length);
+    for (const item of items) {
+      expect(getByText(item.question)).toBeTruthy();
+      expect(getByText(item.answer)).toBeTruthy();
     }
-
-    expect(queryByText(a1)).toBeNull();
-    fireEvent.click(getByText(q1));
-    expect(queryByText(a1)).toBeTruthy();
-    fireEvent.click(getByText(q1));
-    expect(queryByText(a1)).toBeNull();
   });
 
-  it("marks the open item with aria-expanded", () => {
-    const { getAllByRole } = render(<FaqSection />);
-    const buttons = getAllByRole("button");
-    expect(buttons[0].getAttribute("aria-expanded")).toBe("false");
-    fireEvent.click(buttons[0]);
-    expect(buttons[0].getAttribute("aria-expanded")).toBe("true");
+  it("uses native details and summary disclosure semantics", () => {
+    const { container } = render(<FaqSection />);
+    const details = container.querySelector("details");
+    const summary = details?.querySelector("summary");
+    expect(details?.open).toBe(false);
+    expect(summary).toBeTruthy();
+    if (summary) fireEvent.click(summary);
+    expect(details?.open).toBe(true);
   });
 });

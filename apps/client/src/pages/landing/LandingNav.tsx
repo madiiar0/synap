@@ -100,11 +100,11 @@ export default function LandingNav(): JSX.Element {
   }, []);
 
   const links = [
-    { href: "#product", label: t("nav.product") },
-    { href: "#how", label: t("nav.howItWorks") },
-    { href: "#faq", label: t("nav.faq") },
+    { href: localizedPath("/product"), label: t("nav.product") },
+    { href: localizedPath("/methodology"), label: t("nav.methodology") },
+    { href: localizedPath("/guides"), label: t("nav.guides") },
+    { href: localizedPath("/pricing"), label: t("nav.pricing") },
   ];
-  const hrefFor = (hash: string): string => `${localizedPath("/")}${hash}`.replace("//#", "/#");
 
   return (
     <nav className="fixed inset-x-0 top-0 z-40">
@@ -114,19 +114,15 @@ export default function LandingNav(): JSX.Element {
           island ? "md:nav-inner-island nav-inner-top" : "nav-inner-top"
         }`}
       >
-        <Link to={localizedPath("/")} aria-label="SynapAI">
+        <Link to={localizedPath("/")} aria-label="Synap">
           <Logo size={20} className="text-lg" />
         </Link>
         <div className="hidden items-center gap-8 text-sm text-sub md:flex">
-          <a href={`${localizedPath("/")}#product`.replace("//#", "/#")} className="transition-colors hover:text-ink">
-            {t("nav.product")}
-          </a>
-          <a href={`${localizedPath("/")}#how`.replace("//#", "/#")} className="transition-colors hover:text-ink">
-            {t("nav.howItWorks")}
-          </a>
-          <a href={`${localizedPath("/")}#faq`.replace("//#", "/#")} className="transition-colors hover:text-ink">
-            {t("nav.faq")}
-          </a>
+          {links.map((link) => (
+            <Link key={link.href} to={link.href} className="transition-colors hover:text-ink">
+              {link.label}
+            </Link>
+          ))}
         </div>
         {/* §5: mobile shows only a hamburger; everything moves into the sheet. */}
         <button
@@ -208,14 +204,14 @@ export default function LandingNav(): JSX.Element {
           </div>
           <div className="flex flex-1 flex-col gap-1 px-4 pt-4">
             {links.map((link) => (
-              <a
+              <Link
                 key={link.href}
-                href={hrefFor(link.href)}
+                to={link.href}
                 onClick={() => setMenuOpen(false)}
                 className="flex min-h-[44px] items-center border-b border-line py-3 text-lg text-ink"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
             <button
               type="button"

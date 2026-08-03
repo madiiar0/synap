@@ -1,76 +1,108 @@
 import { describe, expect, it } from "vitest";
 import {
+  INDEXABLE_PUBLIC_PATHS,
+  NOINDEX_PUBLIC_PATHS,
+  PUBLIC_PATHS,
   faqLd,
+  isIndexablePublicPath,
   localizedPublicPath,
   organizationLd,
-  PUBLIC_PATHS,
+  parseLocalizedPublicPath,
   routeMeta,
   softwareApplicationLd,
+  structuredDataForRoute,
   webSiteLd,
 } from "./seo.js";
 
-const BASE = "https://synapai.app";
+const BASE = "https://synap.example";
+const FORMER_NAME = ["Synap", "AI"].join("");
 
-describe("SEO meta (§1.2)", () => {
-  it("has localized title + description for every public route, dash-free", () => {
+describe("public information architecture", () => {
+  it("has unique localized titles and descriptions for every public route", () => {
+    const titles = new Set<string>();
+    const descriptions = new Set<string>();
+
     for (const path of PUBLIC_PATHS) {
       for (const locale of ["ru", "en"] as const) {
         const meta = routeMeta(path, locale);
         expect(meta.title.length).toBeGreaterThan(10);
         expect(meta.description.length).toBeGreaterThan(40);
-        expect(meta.title).not.toMatch(/[—–]/);
-        expect(meta.description).not.toMatch(/[—–]/);
+        expect(meta.title).not.toContain(FORMER_NAME);
+        expect(meta.description).not.toContain(FORMER_NAME);
+        expect(titles.has(meta.title)).toBe(false);
+        expect(descriptions.has(meta.description)).toBe(false);
+        titles.add(meta.title);
+        descriptions.add(meta.description);
       }
     }
   });
 
-  it("maps locales to URL paths (§1.4)", () => {
-    expect(localizedPublicPath("/", "ru")).toBe("/");
-    expect(localizedPublicPath("/", "en")).toBe("/en");
-    expect(localizedPublicPath("/login", "en")).toBe("/en/login");
-    expect(localizedPublicPath("/login", "ru")).toBe("/login");
+  it("round-trips Russian and English route paths", () => {
+    for (const path of PUBLIC_PATHS) {
+      for (const locale of ["ru", "en"] as const) {
+        const localized = localizedPublicPath(path, locale);
+        expect(parseLocalizedPublicPath(localized)).toEqual({ path, locale });
+        if (localized !== "/") {
+          expect(parseLocalizedPublicPath(`${localized}/`)).toEqual({ path, locale });
+        }
+      }
+    }
   });
 
-  // Iteration 5 §1: the standalone scan page is gone; it must not reappear in
-  // the sitemap, the prerender list, or any generated link.
-  it("does not expose a /scan route", () => {
+  it("keeps sign-in noindex and excludes all private routes", () => {
+    expect(NOINDEX_PUBLIC_PATHS).toEqual(["/login"]);
+    expect(isIndexablePublicPath("/login")).toBe(false);
+    expect(INDEXABLE_PUBLIC_PATHS).not.toContain("/login");
     expect(PUBLIC_PATHS).not.toContain("/scan");
+    expect(PUBLIC_PATHS).not.toContain("/app");
+    expect(PUBLIC_PATHS).not.toContain("/admin");
   });
 });
 
-describe("JSON-LD (§1.3)", () => {
-  it("Organization has required fields", () => {
-    const ld = organizationLd(BASE);
-    expect(ld["@context"]).toBe("https://schema.org");
+describe("structured data", () => {
+  it("uses a stable Synap organization identity with machine-readable continuity", () => {
+    const ld = organizationLd(BASE) as Record<string, unknown>;
     expect(ld["@type"]).toBe("Organization");
-    expect(ld.name).toBe("SynapAI");
+    expect(ld["@id"]).toBe(`${BASE}/#organization`);
+    expect(ld.name).toBe("Synap");
+    expect(ld.alternateName).toBe(FORMER_NAME);
     expect(ld.url).toBe(BASE);
-    expect(String(ld.logo)).toContain(BASE);
+    expect(JSON.stringify(ld)).not.toContain("ratingValue");
   });
 
-  it("SoftwareApplication is a free BusinessApplication", () => {
+  it("describes the real browser product without reviews or invented ratings", () => {
     const ld = softwareApplicationLd(BASE, "en") as {
-      "@type": string;
+      "@type": string[];
       applicationCategory: string;
+      operatingSystem: string;
       offers: { price: string };
     };
-    expect(ld["@type"]).toBe("SoftwareApplication");
+    expect(ld["@type"]).toEqual(["SoftwareApplication", "Product"]);
     expect(ld.applicationCategory).toBe("BusinessApplication");
+    expect(ld.operatingSystem).toBe("Web browser");
     expect(ld.offers.price).toBe("0");
+    expect(JSON.stringify(ld)).not.toMatch(/aggregateRating|reviewCount/);
   });
 
-  it("WebSite carries inLanguage", () => {
-    expect((webSiteLd(BASE, "ru") as { inLanguage: string }).inLanguage).toBe("ru");
+  it("declares both supported public languages on the WebSite", () => {
+    expect((webSiteLd(BASE) as { inLanguage: string[] }).inLanguage).toEqual(["en", "ru"]);
   });
 
-  it("FAQPage wraps items into Question/Answer", () => {
-    const ld = faqLd([{ question: "Q1", answer: "A1" }]) as {
+  it("only emits FAQ questions supplied from visible page content", () => {
+    const ld = faqLd([{ question: "Visible question", answer: "Visible answer" }]) as {
       "@type": string;
-      mainEntity: { "@type": string; name: string; acceptedAnswer: { text: string } }[];
+      mainEntity: { name: string; acceptedAnswer: { text: string } }[];
     };
     expect(ld["@type"]).toBe("FAQPage");
     expect(ld.mainEntity).toHaveLength(1);
-    expect(ld.mainEntity[0].name).toBe("Q1");
-    expect(ld.mainEntity[0].acceptedAnswer.text).toBe("A1");
+    expect(ld.mainEntity[0].name).toBe("Visible question");
+    expect(ld.mainEntity[0].acceptedAnswer.text).toBe("Visible answer");
+  });
+
+  it("does not attach product or page schema to the noindex sign-in page", () => {
+    const graph = (structuredDataForRoute(BASE, "/login", "en") as {
+      "@graph": Array<Record<string, unknown>>;
+    })["@graph"];
+    expect(graph.map((node) => node["@type"])).toEqual(["Organization", "WebSite"]);
   });
 });

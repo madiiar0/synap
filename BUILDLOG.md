@@ -1,6 +1,6 @@
 # BUILDLOG
 
-Chronological log of the SynapAI v2 build. Newest entries last.
+Chronological log of the Synap v2 build. Newest entries last.
 
 ## 2026-07-31 — Session start
 
@@ -235,7 +235,7 @@ the clamp minimum, and a 4-line fear wrap at 1440 by widening to max-w-5xl).
   / EN 2 lines via locale-conditional max-width); how-it-works copy dash-free;
   RU quote in guillemets, two lines, one-sentence hyphen source line; navbar
   three levels (ghost lang / secondary «Войти» pill / primary black pill);
-  footer trademark line replaced with © 2026 SynapAI; /scan select fixed
+  footer trademark line replaced with © 2026 Synap; /scan select fixed
   (appearance-none, chevron right-4, h-12 uniform), subtitle rewritten, no
   duplicated footer nav.
 - **QA (§13):** typecheck ✅ lint ✅ 70 tests ✅ (dash purge, SEO/JSON-LD,
@@ -324,7 +324,7 @@ answers, ever** — every scan issues a complete fresh set of provider calls;
   "IP that isn't whitelisted" message: **the current IP is not in Network
   Access**. Credentials and host are correct; the password needs no encoding.
   A second defect was found in the same URI: no database name
-  (`...mongodb.net/?appName=SynapAI`), so writes would land in `test`.
+  (`...mongodb.net/?appName=Synap`), so writes would land in `test`.
   Both are console/env fixes for the owner, documented in MANUAL_SETUP.
   Code side: the failure now logs at **error** level with name, code, message
   and per-cause hints (was a one-line warning); a new `db/diagnose.ts`
@@ -469,7 +469,7 @@ answers, ever** — every scan issues a complete fresh set of provider calls;
   (`favicon.ico`, `__/firebase/init.json`) on Firebase's handler page. The
   flow then waits for a human to pick an account, which is why it appears to
   "do nothing". Every Firebase error code is now shown to the user with the
-  raw code beneath it and logged as `[SynapAI auth] <code>: <message>`, so the
+  raw code beneath it and logged as `[Synap auth] <code>: <message>`, so the
   next real failure is diagnosable; new codes covered:
   operation-not-allowed, account-exists-with-different-credential,
   unauthorized-domain, too-many-requests, internal-error, timeout.
@@ -586,3 +586,39 @@ answers, ever** — every scan issues a complete fresh set of provider calls;
   `identity.test.ts`, `tailwindTokens.test.ts`.
 - **Not verified:** a real Google sign-in still requires the owner's Google
   account; Safari was unavailable in this environment.
+
+## Iteration 8 — Synap brand migration and public discovery architecture (2026-08-02)
+
+- Migrated the user-facing product name to **Synap** across UI, metadata,
+  manifest, social image, email copy, logs and documentation. The former name
+  remains only as structured-data `alternateName` for entity continuity;
+  package scopes, database names, cookie/storage keys and configured email
+  domains remain stable internal identifiers.
+- Replaced the two-route SEO map with one authoritative registry covering 22
+  indexable public paths plus noindex sign-in, each in Russian and English.
+  Routing, prerendering, localized metadata, canonical/hreflang links,
+  structured data, sitemap and automated checks consume the same registry.
+- Added crawlable product, methodology, concept, use-case, about, contact,
+  pricing, FAQ, documentation, guide, changelog, privacy and terms pages. Copy
+  is derived from the actual prompt, extraction and scoring implementation and
+  states model/provider and measurement limitations explicitly.
+- Added Organization, WebSite, WebPage, AboutPage, ContactPage, Article,
+  FAQPage, BreadcrumbList and SoftwareApplication/Product JSON-LD where each
+  type matches visible page content. No ratings, reviews, customers, user
+  counts or outcomes were invented.
+- Public routes now return prerendered body content; private app bundles are
+  lazy, Firebase auth is isolated from the public bundle, unknown public routes
+  return 404, canonical-host/trailing-slash changes use 308, and app/login
+  routes carry response-level noindex controls. `SITE_NOINDEX=true` protects
+  standalone staging deployments.
+- Added `robots.txt`, a 44-URL localized sitemap, `llms.txt`, maintained
+  `llms-full.txt`, aggregate privacy-safe acquisition metrics, a public brand
+  check and a deployed-style SEO audit. Customer scans, prompts, answers,
+  reports, emails, billing data, APIs and admin routes remain private.
+- Replaced unlabeled real-brand sample rankings with fictional, visibly labeled
+  sample data. Corrected and linked the Gartner prediction on the landing page.
+- **QA:** strict typecheck ✅ lint ✅ shared 36/36 ✅ client 24/24 ✅ server
+  90/90 ✅ production build/prerender 46/46 ✅ deployed-style SEO audit 46/46
+  ✅ desktop 1440px and mobile 375px browser checks with zero horizontal
+  overflow ✅. The build still reports a 529 kB raw/169 kB gzip main public JS
+  chunk; Firebase (35 kB gzip) and dashboard charts (115 kB gzip) are separate.

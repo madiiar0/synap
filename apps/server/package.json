@@ -13,7 +13,8 @@
     "seed": "tsx src/seed.ts",
     "cost:report": "tsx src/costReport.ts",
     "db:check": "tsx src/dbCheck.ts",
-    "engines:check": "tsx src/enginesCheck.ts"
+    "engines:check": "tsx src/enginesCheck.ts",
+    "seo:audit": "tsx src/seoAudit.ts"
   },
   "dependencies": {
     "@synapai/shared": "workspace:*",

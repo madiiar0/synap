@@ -1,6 +1,11 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { localizedPublicPath, type Locale, type PublicPath } from "@synapai/shared";
+import {
+  localizedPublicPath,
+  parseLocalizedPublicPath,
+  type Locale,
+  type PublicPath,
+} from "@synapai/shared";
 import en from "@synapai/shared/i18n/en.json";
 import ru from "@synapai/shared/i18n/ru.json";
 
@@ -35,9 +40,7 @@ if (isBrowser) {
 }
 
 function publicBasePath(pathname: string): PublicPath | null {
-  const stripped =
-    pathname === "/en" ? "/" : pathname.startsWith("/en/") ? pathname.slice(3) : pathname;
-  return stripped === "/" || stripped === "/login" ? (stripped as PublicPath) : null;
+  return parseLocalizedPublicPath(pathname)?.path ?? null;
 }
 
 export function setLocale(locale: Locale): void {

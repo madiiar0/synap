@@ -14,6 +14,7 @@ import {
   skipOnboarding,
 } from "../../lib/pendingBusiness";
 import { useMe } from "../../lib/queries";
+import { PrivatePageMetadata } from "../../components/PageMetadata";
 
 /**
  * §3: the first business. This replaces the deleted public scan page, so it is
@@ -93,7 +94,8 @@ export default function Onboarding(): JSX.Element {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-base px-4 py-12">
-      <Link to="/" aria-label="SynapAI" className="mb-8">
+      <PrivatePageMetadata title={t("onboarding.title")} />
+      <Link to="/" aria-label="Synap" className="mb-8">
         <Logo size={20} className="text-lg" />
       </Link>
       <div className="w-full max-w-2xl rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-8">

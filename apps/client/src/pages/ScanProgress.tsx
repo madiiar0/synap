@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import type { BrandDto, OverviewDto, ScanProgressDto } from "@synapai/shared";
 import { apiGet } from "../lib/api";
 import { setPreferredBrand } from "../lib/pendingBusiness";
+import { PrivatePageMetadata } from "../components/PageMetadata";
 
 /** Pulsing dots sitting on the radar rings. */
 const RING_DOTS = [
@@ -95,6 +96,7 @@ export default function ScanProgress(): JSX.Element {
       className="flex min-h-screen flex-col items-center justify-center bg-base px-6 text-center text-ink transition-all duration-500"
       style={leaving ? { opacity: 0, filter: "blur(14px)" } : undefined}
     >
+      <PrivatePageMetadata title={t("progress.title")} />
       {/* Radar: light theme: gray rings, black sweep/accents (§Global) */}
       <div className="relative mb-10 h-[min(56vw,14rem)] w-[min(56vw,14rem)] sm:mb-14">
         <div className="absolute inset-0 rounded-full border border-line" />

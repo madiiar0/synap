@@ -13,6 +13,7 @@ import { adminRouter } from "./http/routes/admin.js";
 import { authRouter } from "./http/routes/auth.js";
 import { dashboardRouter } from "./http/routes/dashboard.js";
 import { leadsRouter } from "./http/routes/leads.js";
+import { publicAnalyticsRouter } from "./http/routes/publicAnalytics.js";
 import { scanRouter } from "./http/routes/scan.js";
 import { attachUser } from "./http/middleware/auth.js";
 import { errorHandler, notFoundHandler } from "./http/middleware/errors.js";
@@ -27,6 +28,7 @@ export function createApp(): Express {
   // bounces to onboarding. User-scoped data must never be conditionally cached.
   app.set("etag", false);
   app.set("trust proxy", 1);
+  const canonicalOrigin = new URL(env.APP_BASE_URL).origin;
   // §2.1: helmet's default CSP is `script-src 'self'` / `frame-src 'self'`,
   // which silently breaks the Firebase sign-in popup once the server serves
   // the built client. Widen exactly the origins Firebase Auth needs and no
@@ -59,6 +61,25 @@ export function createApp(): Express {
       crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
     }),
   );
+
+  // One origin and one trailing-slash policy for public HTML. In production,
+  // preview hosts and HTTP requests consolidate to APP_BASE_URL with a 308.
+  app.use((req, res, next) => {
+    const apiRequest = req.path === "/api" || req.path.startsWith("/api/");
+    if ((req.method === "GET" || req.method === "HEAD") && !apiRequest) {
+      if (isProd && `${req.protocol}://${req.get("host")}` !== canonicalOrigin) {
+        res.redirect(308, `${canonicalOrigin}${req.originalUrl}`);
+        return;
+      }
+      if (req.path.length > 1 && req.path.endsWith("/")) {
+        const queryIndex = req.originalUrl.indexOf("?");
+        const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : "";
+        res.redirect(308, `${req.path.replace(/\/+$/, "")}${query}`);
+        return;
+      }
+    }
+    next();
+  });
   app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
   app.use(express.json({ limit: "200kb" }));
   app.use(cookieParser());
@@ -90,6 +111,7 @@ export function createApp(): Express {
       calendlyUrl: env.CALENDLY_URL || null,
       whatsappUrl: env.WHATSAPP_URL || null,
       authMode,
+      publicAnalyticsEnabled: env.PUBLIC_ANALYTICS_ENABLED,
       // §0.1/§0.2: the UI warns when data is not persisted or auth is mocked.
       memoryDb: isMemoryDb(),
       isDev: !isProd,
@@ -99,6 +121,7 @@ export function createApp(): Express {
   app.use("/api/scan", apiLimiter, scanRouter);
   app.use("/api/auth", authRouter);
   app.use("/api/leads", apiLimiter, leadsRouter);
+  app.use("/api/analytics", apiLimiter, publicAnalyticsRouter);
   app.use("/api/admin", apiLimiter, adminRouter);
   app.use("/api", apiLimiter, dashboardRouter);
 
@@ -108,9 +131,22 @@ export function createApp(): Express {
   // Serve the built client when it exists (single-origin production setup).
   const clientDist = path.join(repoRoot, "apps/client/dist");
   if (fs.existsSync(clientDist)) {
-    app.use(express.static(clientDist));
-    app.get(/^(?!\/api\/).*/, (_req, res) => {
-      res.sendFile(path.join(clientDist, "index.html"));
+    app.use(
+      express.static(clientDist, {
+        setHeaders: (res, filePath) => {
+          if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+            res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+          }
+        },
+      }),
+    );
+    app.get(/^(?!\/api(?:\/|$)).*/, (req, res) => {
+      const privateClientRoute = ["/app", "/admin", "/scan", "/verify-email"].some(
+        (prefix) => req.path === prefix || req.path.startsWith(`${prefix}/`),
+      );
+      res.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive");
+      res.setHeader("Cache-Control", privateClientRoute ? "private, no-store" : "no-store");
+      res.status(privateClientRoute ? 200 : 404).sendFile(path.join(clientDist, "index.html"));
     });
   }
 

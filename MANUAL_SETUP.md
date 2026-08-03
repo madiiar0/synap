@@ -144,7 +144,7 @@ Concrete walkthrough with **Brevo** (free tier is enough to start):
 - [ ] Copy the values into `.env`:
       `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=587`,
       `SMTP_USER=<your login>`, `SMTP_PASS=<your SMTP key>`
-- [ ] Set `MAIL_FROM="SynapAI <no-reply@yourdomain.com>"` and verify that
+- [ ] Set `MAIL_FROM="Synap <no-reply@yourdomain.com>"` and verify that
       sender/domain inside Brevo (SPF/DKIM records they show you).
 
 (Any other SMTP provider — Resend, Postmark, Mailgun — works the same way.)
@@ -191,7 +191,7 @@ match the error:
   password to letters and digits only.
 - **No database name in the URI** — a string ending in `.mongodb.net/?...`
   writes to the default `test` database. Put the name before the query
-  string: `...mongodb.net/synapai?appName=SynapAI`. `pnpm db:check` warns
+  string: `...mongodb.net/synapai?appName=Synap`. `pnpm db:check` warns
   about this even when the connection succeeds.
 
 In production the server **refuses to start** rather than falling back, so a
@@ -229,13 +229,48 @@ For both paths set:
 - [ ] `NODE_ENV=production`
 - [ ] `APP_BASE_URL=https://yourdomain.com` and
       `CLIENT_URL=https://yourdomain.com` (single-origin setup)
+- [ ] Choose exactly one canonical hostname (`www` or non-`www`). The app
+      permanently redirects every other production host to `APP_BASE_URL` and
+      refuses to start when that value is not a public HTTPS URL.
+- [ ] Keep `SITE_NOINDEX=false` only on the canonical production deployment.
+      Every staging or preview deployment must use its own HTTPS
+      `APP_BASE_URL` and `SITE_NOINDEX=true`.
 - [ ] Point your domain's DNS at the server; confirm HTTPS works.
 
 **Verify:** open `https://yourdomain.com/api/health` → `{"ok":true,…}`.
 
 ---
 
-## 8. Go-live checklist
+## 8. Crawlability and retrieval validation
+
+Build and run the automated deployed-style audit before switching DNS:
+
+```bash
+pnpm build
+pnpm lint
+pnpm test
+pnpm seo:audit
+```
+
+The audit starts the built Express application on a temporary local port and
+checks all 46 RU/EN public responses, unique metadata, canonical and hreflang
+links, JSON-LD parsing, one H1 and one main element, image alt text, internal
+links, sitemap membership, `robots.txt`, `llms.txt`, assets, real 404 behavior,
+and noindex/cache headers on private application routes.
+
+After deployment, verify the canonical host itself:
+
+- [ ] View source for `/`, `/en/about`, `/product` and `/methodology`; the H1,
+      body copy, metadata and JSON-LD must be in the response before JavaScript.
+- [ ] Open `/robots.txt`, `/sitemap.xml`, `/llms.txt` and `/llms-full.txt`.
+- [ ] Confirm `/app` and `/login` return `X-Robots-Tag: noindex`, and a made-up
+      public URL returns HTTP 404 rather than a 200 application shell.
+- [ ] Confirm `http`, the non-canonical hostname and trailing-slash URLs each
+      resolve through at most one permanent redirect.
+- [ ] Submit the sitemap in the search-engine webmaster tools you actually use.
+      Crawlability does not guarantee indexing, citation or recommendation.
+
+## 9. Go-live checklist
 
 - [ ] `DEMO_MODE=false` and `AUTH_MODE=firebase` in `.env`, restart
 - [ ] Sign up with a fresh (non-admin) email, verify it, run one real **free**
@@ -250,10 +285,14 @@ For both paths set:
 - [ ] Spend the remaining free scans; the 4th attempt must show the
       end-of-trial modal (book-a-call, no prices)
 - [ ] Book-a-call: submit a test lead, confirm the notification email
+- [ ] Optional: set `PUBLIC_ANALYTICS_ENABLED=true` to store aggregate daily
+      public page views and signup/contact intent by locale and coarse source.
+      The collector stores no visitor ID, raw referrer URL, query, IP or user
+      agent. Read the rows at `/api/admin/public-metrics?days=30`.
 
 ---
 
-## 9. Where leads land
+## 10. Where leads land
 
 - Admin → **Leads** (`/admin`): every book-a-call click/submission,
   filterable by type.

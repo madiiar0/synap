@@ -7,6 +7,7 @@ import { AI_LOGOS } from "../../lib/aiLogos";
 import StartCta from "../../components/StartCta";
 
 const HOLD_MS = 3500;
+const SCANNABLE_PLATFORMS = AI_PLATFORMS.filter((platform) => platform.scannable);
 
 /**
  * §3 hero cycle: line 2 is its own centered line ([logo] [Name]); every
@@ -23,7 +24,7 @@ export function CyclingPlatform(): JSX.Element {
     timer.current = setInterval(() => {
       setIndex((current) => {
         setPrevIndex(current);
-        return (current + 1) % AI_PLATFORMS.length;
+        return (current + 1) % SCANNABLE_PLATFORMS.length;
       });
     }, HOLD_MS);
     return () => clearInterval(timer.current);
@@ -31,7 +32,7 @@ export function CyclingPlatform(): JSX.Element {
 
   return (
     <span data-testid="cycling-engine" className="relative block h-[1.2em] w-full">
-      {AI_PLATFORMS.map((platform, i) => {
+      {SCANNABLE_PLATFORMS.map((platform, i) => {
         const state = i === index ? "in" : i === prevIndex ? "out" : "off";
         return (
           <span

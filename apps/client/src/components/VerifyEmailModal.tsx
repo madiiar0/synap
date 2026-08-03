@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiPost } from "../lib/api";
-import { firebaseRefreshIdToken, firebaseResendVerification } from "../lib/firebaseClient";
 import { onEmailNotVerified } from "../lib/quotaModal";
 import { useMe } from "../lib/queries";
 import { currentLocale } from "../lib/i18n";
@@ -36,7 +35,7 @@ export default function VerifyEmailModal(): JSX.Element | null {
   const resend = async (): Promise<void> => {
     setState("sending");
     try {
-      await firebaseResendVerification();
+      await (await import("../lib/firebaseClient")).firebaseResendVerification();
       setState("sent");
     } catch {
       setState("error");
@@ -48,7 +47,7 @@ export default function VerifyEmailModal(): JSX.Element | null {
     try {
       // The verified flag lives in the ID token, so mint a fresh one and
       // hand it back to the server, which updates the account.
-      const idToken = await firebaseRefreshIdToken();
+      const idToken = await (await import("../lib/firebaseClient")).firebaseRefreshIdToken();
       if (!idToken) {
         setState("error");
         return;

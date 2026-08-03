@@ -30,6 +30,9 @@ export type SessionState = "loading" | "signedIn" | "signedOut";
  */
 export function useSession(): { state: SessionState; user: SessionUserDto | undefined } {
   const { data, isPending, isError } = useMe();
+  // Prerender public navigation and CTAs as signed-out links. No account data
+  // is fetched or embedded during SSR, and crawlers still receive real links.
+  if (typeof window === "undefined") return { state: "signedOut", user: undefined };
   if (isPending) return { state: "loading", user: undefined };
   if (isError || !data) return { state: "signedOut", user: undefined };
   return { state: "signedIn", user: data };

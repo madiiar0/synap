@@ -1,6 +1,15 @@
 {
-  "name": "SynapAI",
-  "short_name": "SynapAI",
+  "id": "/",
+  "name": "Synap",
+  "short_name": "Synap",
+  "description": "AI visibility analytics for businesses",
+  "start_url": "/",
+  "scope": "/",
+  "lang": "ru",
+  "categories": [
+    "business",
+    "analytics"
+  ],
   "icons": [
     {
       "src": "/icon-192.png",

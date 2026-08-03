@@ -1,16 +1,13 @@
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { publicFaqItems } from "@synapai/shared";
 import Reveal from "../../components/Reveal";
+import { currentLocale } from "../../lib/i18n";
 
 /** §12.8: 6-item accordion with hairline dividers and rotating chevrons. */
 export default function FaqSection(): JSX.Element {
   const { t } = useTranslation();
-  const [open, setOpen] = useState<number | null>(null);
-  const items = [1, 2, 3, 4, 5, 6].map((n) => ({
-    q: t(`landing.faq.q${n}`),
-    a: t(`landing.faq.a${n}`),
-  }));
+  const items = publicFaqItems(currentLocale()).slice(0, 6);
 
   return (
     <section id="faq" className="hairline-dashed bg-base py-24">
@@ -21,25 +18,16 @@ export default function FaqSection(): JSX.Element {
           </h2>
           <div className="mt-12 border-t border-line">
             {items.map((item, index) => (
-              <div key={index} className="border-b border-line">
-                <button
-                  type="button"
-                  aria-expanded={open === index}
-                  onClick={() => setOpen((current) => (current === index ? null : index))}
-                  className="flex w-full items-center justify-between gap-4 py-5 text-left"
-                >
-                  <span className="text-[15px] font-medium">{item.q}</span>
+              <details key={index} className="group border-b border-line">
+                <summary className="flex w-full cursor-pointer list-none items-center justify-between gap-4 py-5 text-left marker:hidden">
+                  <span className="text-[15px] font-medium">{item.question}</span>
                   <ChevronDown
                     size={17}
-                    className={`shrink-0 text-sub transition-transform duration-300 ${
-                      open === index ? "rotate-180" : ""
-                    }`}
+                    className="shrink-0 text-sub transition-transform duration-300 group-open:rotate-180"
                   />
-                </button>
-                {open === index && (
-                  <p className="pb-5 pr-8 text-sm leading-relaxed text-sub">{item.a}</p>
-                )}
-              </div>
+                </summary>
+                <p className="pb-5 pr-8 text-sm leading-relaxed text-sub">{item.answer}</p>
+              </details>
             ))}
           </div>
         </Reveal>

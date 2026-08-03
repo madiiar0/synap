@@ -7,15 +7,17 @@ export default function LandingFooter(): JSX.Element {
   const { t } = useTranslation();
   return (
     <footer className="border-t border-line bg-base py-10">
-      <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-4 px-6 sm:flex-row">
+      <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-6 px-6 sm:flex-row sm:items-start">
         <Logo size={16} className="text-sm" />
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-sub">
-          <a href={`${localizedPath("/")}#how`.replace("//#", "/#")} className="hover:text-ink">
-            {t("nav.howItWorks")}
-          </a>
-          <a href={`${localizedPath("/")}#faq`.replace("//#", "/#")} className="hover:text-ink">
-            {t("nav.faq")}
-          </a>
+        <nav aria-label={t("nav.footer")} className="flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-sub sm:justify-end">
+          <Link to={localizedPath("/product")} className="hover:text-ink">{t("nav.product")}</Link>
+          <Link to={localizedPath("/methodology")} className="hover:text-ink">{t("nav.methodology")}</Link>
+          <Link to={localizedPath("/docs")} className="hover:text-ink">{t("nav.docs")}</Link>
+          <Link to={localizedPath("/about")} className="hover:text-ink">{t("nav.about")}</Link>
+          <Link to={localizedPath("/faq")} className="hover:text-ink">{t("nav.faq")}</Link>
+          <Link to={localizedPath("/contact")} className="hover:text-ink">{t("nav.contact")}</Link>
+          <Link to={localizedPath("/privacy")} className="hover:text-ink">{t("nav.privacy")}</Link>
+          <Link to={localizedPath("/terms")} className="hover:text-ink">{t("nav.terms")}</Link>
           <Link to={localizedPath("/login")} className="hover:text-ink">
             {t("nav.login")}
           </Link>
@@ -26,7 +28,7 @@ export default function LandingFooter(): JSX.Element {
           >
             {currentLocale() === "ru" ? "EN" : "RU"}
           </button>
-        </div>
+        </nav>
       </div>
       <p className="mt-6 px-6 text-center text-xs text-sub">{t("common.copyright")}</p>
     </footer>

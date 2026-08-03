@@ -28,6 +28,7 @@ import { onboardingSkipped, readPreferredBrand } from "../../lib/pendingBusiness
 import { useBrands, useMe, useOverview, useStartScan } from "../../lib/queries";
 import { DemoBadge, Skeleton } from "../../components/ui";
 import { ErrorPanel } from "../../components/PageState";
+import { PrivatePageMetadata } from "../../components/PageMetadata";
 import AdminPanel from "../admin/AdminPanel";
 import Answers from "./Answers";
 import Competitors from "./Competitors";
@@ -104,6 +105,7 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
 
   return (
     <BrandContext.Provider value={{ brand }}>
+      <PrivatePageMetadata title={admin ? t("admin.title") : t("nav.dashboard")} />
       <div className="flex min-h-screen bg-base">
         {/* Sidebar */}
         <aside
@@ -112,7 +114,7 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
              was pushed below the fold on long pages. */
           className="sticky top-0 hidden h-[100dvh] w-56 shrink-0 flex-col border-r border-line bg-surface px-3 py-6 md:flex"
         >
-          <Link to="/" className="mb-8 px-3" aria-label="SynapAI">
+          <Link to="/" className="mb-8 px-3" aria-label="Synap">
             <Logo size={18} className="text-lg" />
           </Link>
           <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">

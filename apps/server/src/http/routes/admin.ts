@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ENGINE_IDS, type EngineId, type LeadRowDto, type ScanListItemDto } from "@synapai/shared";
 import { z } from "zod";
+import { env } from "../../config/env.js";
 import { User } from "../../models/User.js";
 import { engineStatus } from "../../engines/registry.js";
 import { AppError } from "../../lib/errors.js";
@@ -9,6 +10,7 @@ import { Brand } from "../../models/Brand.js";
 import { Lead } from "../../models/Lead.js";
 import { Scan } from "../../models/Scan.js";
 import { ScoreSnapshot } from "../../models/ScoreSnapshot.js";
+import { PublicMetric } from "../../models/PublicMetric.js";
 import { getSettings } from "../../models/Settings.js";
 import { enqueue } from "../../queue/index.js";
 import { getBudgetState, todayKey } from "../../services/usage.js";
@@ -70,7 +72,7 @@ adminRouter.get("/leads.csv", async (_req, res, next) => {
       ),
     ];
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
-    res.setHeader("Content-Disposition", "attachment; filename=synapai-leads.csv");
+    res.setHeader("Content-Disposition", "attachment; filename=synap-leads.csv");
     res.send(rows.join("\n"));
   } catch (err) {
     next(err);
@@ -252,6 +254,31 @@ adminRouter.get("/usage", async (req, res, next) => {
         costUsd: Math.round(r.costUsd * 10000) / 10000,
       })),
       budget: await getBudgetState(),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Privacy-safe public acquisition reporting. Rows are already aggregated and
+// contain no visitor identifier, raw referrer URL, query, IP or user agent.
+adminRouter.get("/public-metrics", async (req, res, next) => {
+  try {
+    const days = Math.min(90, Math.max(1, Number(req.query.days) || 30));
+    const cutoff = new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10);
+    const rows = await PublicMetric.find({ date: { $gte: cutoff } }).sort({ date: 1, path: 1 });
+    res.json({
+      enabled: env.PUBLIC_ANALYTICS_ENABLED,
+      series: rows.map((row) => ({
+        date: row.date,
+        path: row.path,
+        locale: row.locale,
+        event: row.event,
+        source: row.source,
+        count: row.count,
+      })),
     });
   } catch (err) {
     next(err);

@@ -23,7 +23,7 @@ async function main(): Promise<void> {
   console.log("Running FULL fixture scan (100 prompts × 4 engines)…");
   const result = await seedDemoData();
 
-  console.log("\n=== SynapAI seed complete ===");
+  console.log("\n=== Synap seed complete ===");
   console.log(`Admin user:      ${result.adminEmail} (mock mode: sign in with this email)`);
   console.log(`Demo user:       ${result.demoEmail}`);
   console.log(`Demo business:   ${result.brandName}, latest Visibility Score: ${result.overall ?? "n/a"}`);

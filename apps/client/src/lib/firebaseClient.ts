@@ -139,7 +139,7 @@ export function authErrorKey(err: unknown): string {
   const message = (err as { message?: string }).message ?? String(err);
   // #12: technical detail stays in the development console only.
   if (import.meta.env.DEV) {
-    console.error(`[SynapAI auth] ${code || "unknown"}: ${message}`, err);
+    console.error(`[Synap auth] ${code || "unknown"}: ${message}`, err);
   }
   switch (code) {
     case "auth/invalid-credential":

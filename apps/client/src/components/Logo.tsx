@@ -1,5 +1,5 @@
 /**
- * SynapAI mark: a minimal black "synapse": three nodes joined by two
+ * Synap mark: a minimal black "synapse": three nodes joined by two
  * strokes. Single file so the owner can swap it trivially. Uses
  * currentColor; legible at 20px.
  */
@@ -27,7 +27,7 @@ export default function Logo({
         <circle cx="12" cy="12" r="2.2" fill="currentColor" />
         <circle cx="18.5" cy="5.5" r="3.4" fill="currentColor" />
       </svg>
-      {withWordmark && <span className="font-bold tracking-tight">SynapAI</span>}
+      {withWordmark && <span className="font-bold tracking-tight">Synap</span>}
     </span>
   );
 }

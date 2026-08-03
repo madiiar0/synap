@@ -1,4 +1,4 @@
-# Local infrastructure for SynapAI. Redis is optional — without it the app
+# Local infrastructure for Synap. Redis is optional — without it the app
 # uses an in-process job queue; without Mongo (dev only) it falls back to an
 # in-memory MongoDB.
 services:

@@ -1,5 +1,6 @@
 {
-  "name": "synapai",
+  "name": "synap",
+  "description": "AI visibility analytics for businesses",
   "version": "2.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +13,9 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
-    "test": "pnpm -r test && node scripts/check-i18n.mjs",
+    "test": "pnpm -r test && node scripts/check-i18n.mjs && node scripts/check-brand.mjs",
+    "check-brand": "node scripts/check-brand.mjs",
+    "seo:audit": "pnpm --filter @synapai/server seo:audit",
     "smoke": "pnpm --filter @synapai/server smoke",
     "seed": "pnpm --filter @synapai/server seed",
     "check-i18n": "node scripts/check-i18n.mjs",

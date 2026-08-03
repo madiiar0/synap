@@ -5,7 +5,7 @@ import type { EngineId } from "./engines.js";
  * override via env, so the owner dials cost without a code change.
  *
  * Free scan (iteration 6), weighted to assistant popularity in Kazakhstan:
- *   9 core prompts (all 6 branded + 2 comparison + 1 top category)
+ *   9 core prompts (all 3 branded, then comparison and top discovery prompts)
  *     × 3 core engines [chatgpt, gemini, perplexity]        = 27 calls
  *   16 tail prompts split evenly between chatgpt and gemini = 16 calls
  *                                                      total = 43 calls

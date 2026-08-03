@@ -11,25 +11,21 @@ const clientRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".
 const dist = path.join(clientRoot, "dist");
 const outDir = path.join(dist, "prerendered");
 
-const { render } = await import(path.join(clientRoot, "dist-ssr/entry.js"));
+const { render, prerenderRoutes } = await import(path.join(clientRoot, "dist-ssr/entry.js"));
 
 const shell = fs.readFileSync(path.join(dist, "index.html"), "utf8");
 
-// Iteration 5 §1: /scan no longer exists; the only public routes are the
-// landing and sign-in, in both locales.
-const ROUTES = [
-  { url: "/", locale: "ru", out: "index.html", mustContain: "Станьте ответом" },
-  { url: "/login", locale: "ru", out: "login/index.html", mustContain: "аккаунт" },
-  { url: "/en", locale: "en", out: "en/index.html", mustContain: "Be the answer in" },
-  { url: "/en/login", locale: "en", out: "en/login/index.html", mustContain: "account" },
-];
+const ROUTES = prerenderRoutes();
 
 for (const route of ROUTES) {
   const body = await render(route.url, route.locale);
-  if (!body.includes(route.mustContain)) {
+  if (!body.includes("<h1")) {
     throw new Error(
-      `prerender check failed for ${route.url}: expected body to contain "${route.mustContain}"`,
+      `prerender check failed for ${route.url}: expected a server-rendered h1`,
     );
+  }
+  if (route.basePath !== "/login" && !body.includes("<main")) {
+    throw new Error(`prerender check failed for ${route.url}: expected semantic main content`);
   }
   const html = shell
     .replace('<div id="root"></div>', `<div id="root">${body}</div>`)

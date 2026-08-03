@@ -70,8 +70,8 @@ fs.writeFileSync(path.join(publicDir, "favicon.ico"), ico);
 const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#FFFFFF"/>
   <g transform="translate(480, 140) scale(6.5)">${MARK}</g>
-  <text x="600" y="410" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#111111">SynapAI</text>
-  <text x="600" y="480" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#6F6F6F">Be the answer in AI. Станьте ответом в ИИ.</text>
+  <text x="600" y="410" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#111111">Synap</text>
+  <text x="600" y="480" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#6F6F6F">AI visibility analytics for businesses</text>
 </svg>`;
 await sharp(Buffer.from(ogSvg), { density: 150 }).resize(1200, 630).png().toFile(path.join(publicDir, "og-image.png"));
 
@@ -79,8 +79,14 @@ fs.writeFileSync(
   path.join(publicDir, "site.webmanifest"),
   JSON.stringify(
     {
-      name: "SynapAI",
-      short_name: "SynapAI",
+      id: "/",
+      name: "Synap",
+      short_name: "Synap",
+      description: "AI visibility analytics for businesses",
+      start_url: "/",
+      scope: "/",
+      lang: "ru",
+      categories: ["business", "analytics"],
       icons: [
         { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
         { src: "/icon-512.png", sizes: "512x512", type: "image/png" },

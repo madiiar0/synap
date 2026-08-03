@@ -1,6 +1,6 @@
 {
   "common": {
-    "brand": "SynapAI",
+    "brand": "Synap",
     "loading": "Loading…",
     "error": "Something went wrong. Please try again.",
     "retry": "Retry",
@@ -18,12 +18,21 @@
     "logout": "Log out",
     "email": "Email",
     "emailPlaceholder": "you@company.com",
-    "copyright": "© 2026 SynapAI",
+    "copyright": "© 2026 Synap",
     "sampleData": "Sample data"
   },
   "nav": {
     "product": "Product",
     "howItWorks": "How it works",
+    "methodology": "Methodology",
+    "guides": "Guides",
+    "pricing": "Pricing",
+    "docs": "Docs",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "footer": "Product and company links",
     "faq": "FAQ",
     "login": "Log in",
     "checkBrand": "Check your business",
@@ -34,7 +43,7 @@
     "switchLanguage": "Русский"
   },
   "landing": {
-    "heroLine1": "Be the answer in",
+    "heroLine1": "Measure visibility across",
     "ctaCheckFree": "Check for free",
     "ctaBookCall": "Book a call",
     "form": {
@@ -73,7 +82,7 @@
       "blurb1": "A large chain with consistent quality and locations all over the city. Convenient when you want predictability: the menu and taste are the same everywhere. Expect queues at peak hours.",
       "blurb2": "Known for breakfasts and desserts, with cozy rooms for long meetings. The coffee is reliably good and the staff attentive. Prices are above the city average.",
       "blurb3": "Operating since 2012: a wide menu, fast service and in-house roasting. A solid choice for everyday coffee. Weekends can get crowded.",
-      "caption": "This is what the new search results look like. Customers come straight from the AI answer, skipping search."
+      "caption": "Illustrative example: generated answers can present businesses directly instead of showing a conventional list of search results."
     },
     "marquee": {
       "heading1": "AI is the new search engine.",
@@ -82,15 +91,15 @@
     "how": {
       "title": "How it works",
       "step1Title": "We ask the AIs",
-      "step1Text": "25 of your customers' questions across ChatGPT, Claude, Gemini, Perplexity and Grok.",
+      "step1Text": "We generate 25 customer-style prompts and query the supported model families configured for your scan.",
       "step2Title": "The full picture",
-      "step2Text": "A 0-100 Visibility Score, competitors and the sources AI builds its answers from.",
+      "step2Text": "Inspect the unbranded Visibility Score, branded recognition, answers, competitors and cited sources.",
       "step3Title": "We fix it for you",
-      "step3Text": "A call, a visibility growth plan, and we execute it ourselves."
+      "step3Text": "Review where competitors appear, verify the evidence and scope measurable improvement work."
     },
     "stat": {
-      "quote": "50% of traditional search traffic will be replaced with generative AI by 2028",
-      "sourceLine": "Source: Gartner - the world's largest technology research and consulting firm.",
+      "quote": "Gartner predicted brands' organic search traffic would decrease by 50% or more by 2028 as consumers adopt generative AI search",
+      "sourceLine": "Gartner newsroom prediction, published December 2023",
       "question": "Is your business ready?"
     },
     "preview": {
@@ -103,24 +112,24 @@
     "faq": {
       "title": "FAQ",
       "q1": "How is the Visibility Score calculated?",
-      "a1": "We ask AI platforms dozens of questions your customers typically ask and measure how often, and at which position, they name your business. The 0-100 score combines branded, category and comparison prompts.",
+      "a1": "The primary score uses successful unbranded category and comparison answers. Branded recognition is reported separately and cannot raise the primary score.",
       "q2": "Which models do you check?",
-      "a2": "Five platforms: ChatGPT, Gemini and Perplexity in the free check, with Claude and Grok added on the full scan.",
+      "a2": "Synap supports model families associated with ChatGPT, Gemini, Perplexity, Claude and Grok. The free plan uses ChatGPT, Gemini and Perplexity coverage.",
       "q3": "How long does a scan take?",
-      "a3": "The free check takes about a minute. The full five-platform scan takes a few minutes; we email you the report link.",
+      "a3": "A free scan usually completes in minutes, depending on provider latency and availability. We email the report link when it finishes.",
       "q4": "Is the data accurate?",
-      "a4": "AI answers vary: the same question can produce different answers. We run repeated passes and average them, so the score reflects a stable picture rather than a single reply.",
+      "a4": "AI answers vary by model, retrieval, time and wording. A Synap scan is a dated sample; rescanning can show movement but does not guarantee the same answer.",
       "q5": "What happens after the call?",
-      "a5": "We walk through your report, show where you lose customers, and propose a plan: sources, content, mentions. We execute it for you and track the score's growth.",
+      "a5": "A review call can examine your report and scope evidence, content or technical work. Deliverables and pricing are agreed separately; outcomes are not guaranteed.",
       "q6": "How much does it cost?",
-      "a6": "The scan is free. Improving your visibility is scoped on the call: it depends on your category and competition."
+      "a6": "Scans are free within account and service limits. Improvement planning or implementation is scoped separately after a review call."
     },
     "finalCta": {
       "title": "Find out what AI says about your business",
       "start": "Start the free scan",
       "book": "Book a call"
     },
-    "heroSub": "Millions of people already ask AI what to buy. Find out if it names your business."
+    "heroSub": "Synap shows when, where and how your business is mentioned, ranked and recommended in AI-generated answers."
   },
   "progress": {
     "title": "Checking what AI says about your business…",
@@ -364,11 +373,11 @@
     },
     "leadNotification": {
       "subject": "New lead: {{type}}",
-      "title": "New lead in SynapAI",
+      "title": "New lead in Synap",
       "body": "Type: {{type}}. Business: {{brand}}. Contact: {{contact}}."
     },
     "budgetPaused": {
-      "subject": "SynapAI: daily LLM budget exhausted",
+      "subject": "Synap: daily LLM budget exhausted",
       "title": "Scans paused",
       "body": "Today's spend reached {{spend}} USD against a {{budget}} USD limit. Scans are paused until tomorrow. Resume from the admin panel."
     }
@@ -409,6 +418,10 @@
     "errorBody": "Check your connection and try again. If this keeps happening, get in touch.",
     "retry": "Try again",
     "support": "Get in touch"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The address may be outdated or mistyped. Return to the Synap homepage to continue."
   },
   "verifyPage": {
     "title": "Verify your email",

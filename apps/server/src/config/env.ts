@@ -39,8 +39,8 @@ const schema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().default(4000),
   CLIENT_URL: z.string().default("http://localhost:5173"),
-  APP_BASE_URL: z.string().default("http://localhost:4000"),
-  BRAND_NAME: z.string().default("SynapAI"),
+  APP_BASE_URL: z.string().url().default("http://localhost:4000"),
+  BRAND_NAME: z.string().default("Synap"),
   JWT_SECRET: z.string().default("change_me"),
   MONGODB_URI: z.string().optional().default(""),
   REDIS_URL: z.string().optional().default(""),
@@ -61,13 +61,20 @@ const schema = z.object({
   NEW_ACCOUNTS_PER_IP_PER_DAY: z.coerce.number().int().min(1).default(NEW_ACCOUNTS_PER_IP_PER_DAY),
   DAILY_LLM_BUDGET_USD: z.coerce.number().min(0).default(10),
 
+  // Aggregate public acquisition metrics. No visitor identifiers or raw
+  // referrer URLs are stored; keep disabled unless the operator wants them.
+  PUBLIC_ANALYTICS_ENABLED: bool.default("false"),
+  // Set true on staging/preview deployments. Public HTML receives noindex,
+  // robots.txt disallows all crawling and the sitemap is empty.
+  SITE_NOINDEX: bool.default("false"),
+
   CALENDLY_URL: z.string().optional().default(""),
   WHATSAPP_URL: z.string().optional().default(""),
   SMTP_HOST: z.string().optional().default(""),
   SMTP_PORT: z.coerce.number().int().default(587),
   SMTP_USER: z.string().optional().default(""),
   SMTP_PASS: z.string().optional().default(""),
-  MAIL_FROM: z.string().default("SynapAI <no-reply@synapai.app>"),
+  MAIL_FROM: z.string().default("Synap <no-reply@synapai.app>"),
   /**
    * #9: comma-separated list. Every address here is promoted to admin
    * (unlimited audits, bypasses the per-IP gate) on boot AND on each sign-in,
@@ -97,6 +104,16 @@ if (!parsed.success) {
   // Fail fast with a readable message; never print secrets.
   console.error("Invalid environment configuration:", parsed.error.flatten().fieldErrors);
   process.exit(1);
+}
+
+if (parsed.data.NODE_ENV === "production") {
+  const canonical = new URL(parsed.data.APP_BASE_URL);
+  if (canonical.protocol !== "https:" || ["localhost", "127.0.0.1"].includes(canonical.hostname)) {
+    console.error(
+      "Refusing to start: APP_BASE_URL must be the public HTTPS canonical origin in production.",
+    );
+    process.exit(1);
+  }
 }
 
 // A forgeable session secret must never reach production.

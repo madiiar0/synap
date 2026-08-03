@@ -22,7 +22,13 @@ export default function StatQuote(): JSX.Element {
             {t("landing.stat.quote")}
           </blockquote>
           <p className="mx-auto mt-6 max-w-xl text-sm text-sub">
-            {t("landing.stat.sourceLine")}
+            <a
+              href="https://www.gartner.com/en/newsroom/press-releases/2023-12-14-gartner-predicts-fifty-percent-of-consumers-will-significantly-limit-their-interactions-with-social-media-by-2025"
+              rel="noreferrer"
+              className="underline decoration-line underline-offset-4 hover:text-ink"
+            >
+              {t("landing.stat.sourceLine")}
+            </a>
           </p>
           <p className="mt-12 text-2xl font-medium text-ink sm:text-3xl">
             {t("landing.stat.question")}

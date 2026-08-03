@@ -64,8 +64,8 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
 17. **Hero minimum font size is 24px** on very small screens — the price of
     keeping "рекомендует + [longest platform name]" on a single fixed line
     with zero layout shift during the cycle.
-18. **Gartner wording (verified).** The landing renders the owner-specified
-    phrasing («50% трафика традиционного поиска к 2028 году заменит ИИ»).
+18. **Gartner wording (verified).** The landing paraphrases and links the
+    dated prediction instead of presenting it as a current measured fact.
     The verified original prediction is "By 2028, brands' organic search
     traffic will decrease by 50% or more as consumers embrace generative
     AI-powered search" — Gartner press release, Dec 14, 2023
@@ -81,7 +81,7 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
     server refuses to start with AUTH_MODE=mock in production, and mock
     sessions are additionally rejected at the endpoint when NODE_ENV=production.
 21. **Prerender uses react-dom/server**, not puppeteer/vite-react-ssg: a
-    Vite SSR entry renders the six public pages at build time. Hydration is
+    Vite SSR entry renders every localized public route at build time. Hydration is
     a plain client render (brief replace on load) — acceptable for an MVP;
     crawlers get full HTML either way.
 22. *(superseded in iteration 4)* ~~Cost table is estimates~~ — per-call cost
@@ -115,3 +115,26 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
 29. **"Scans left" is `null` for admin/unlimited accounts** and the chip is
     hidden — showing a number there would present a limit that does not
     exist (rule 2).
+
+## Iteration 8
+
+30. **Canonical production domain is operator-supplied.** The repository does
+    not establish ownership of a Synap domain, so metadata uses
+    `APP_BASE_URL`; production refuses localhost/non-HTTPS values and redirects
+    other hosts. No new brand domain, email address or social profile was
+    invented.
+31. **Entity continuity is machine-readable only.** The previous public name is
+    retained solely as Organization `alternateName`. Internal package scopes,
+    database/queue names, cookies, local-storage keys and existing mail domains
+    are deliberately unchanged because renaming them creates migration risk
+    without improving the visible entity.
+32. **Public content is implementation-backed.** The current 25-prompt mix,
+    43-call free plan, model-family/provider distinction, metric version 2,
+    unbranded score formula, failure handling and Share of Voice rules were
+    taken from the running code. No customer outcomes or availability claims
+    were inferred beyond it.
+33. **Missing organization facts stay missing.** Legal entity name, founders,
+    founding date, physical address, public support email, social profiles,
+    security/status URLs, supported-country policy and privacy-scrubbed product
+    screenshots require owner-supplied facts. Public pages explain the product
+    and contact route without fabricating these fields.

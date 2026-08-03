@@ -1,6 +1,5 @@
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { brandLogo } from "../../lib/brandLogos";
 
 interface PreviewRow {
   name: string;
@@ -8,12 +7,12 @@ interface PreviewRow {
   trend: "up" | "down";
 }
 
-// Real coffee brands with their real logos; the percentages are illustrative,
-// The figures are illustrative; no badge is rendered (iteration 7 #1).
+// Fictional names and explicitly labelled sample values prevent this preview
+// from being mistaken for a customer result, endorsement or live measurement.
 const ROWS: PreviewRow[] = [
-  { name: "Global Coffee", visibility: 74, trend: "up" },
-  { name: "Master Coffee", visibility: 52, trend: "down" },
-  { name: "Coffee Boom", visibility: 38, trend: "up" },
+  { name: "Northstar Coffee", visibility: 74, trend: "up" },
+  { name: "Juniper Roasters", visibility: 52, trend: "down" },
+  { name: "Cedar Cafe", visibility: 38, trend: "up" },
 ];
 
 /** Rankings preview panel used inside the final CTA card (localized). */
@@ -23,7 +22,12 @@ export default function ProductPreview(): JSX.Element {
     <div className="w-full max-w-xl rounded-2xl border border-darkline bg-dark p-6 text-darktext shadow-lg">
       <div className="flex items-center justify-between border-b border-darkline pb-4">
         <p className="text-sm font-semibold">{t("landing.preview.title")}</p>
-        <p className="text-xs text-sub">{t("landing.preview.subtitle")}</p>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full border border-darkline px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-sub">
+            {t("common.sampleData")}
+          </span>
+          <p className="text-xs text-sub">{t("landing.preview.subtitle")}</p>
+        </div>
       </div>
       <table className="mt-2 w-full text-sm">
         <thead>
@@ -39,14 +43,6 @@ export default function ProductPreview(): JSX.Element {
               <td className="py-3">
                 <span className="inline-flex items-center gap-2">
                   <span className="text-xs text-sub">{index + 1}</span>
-                  {brandLogo(row.name) && (
-                    <img
-                      src={brandLogo(row.name)}
-                      alt={row.name}
-                      className="h-5 w-5 rounded object-contain"
-                      loading="lazy"
-                    />
-                  )}
                   <span className="font-medium">{row.name}</span>
                 </span>
               </td>

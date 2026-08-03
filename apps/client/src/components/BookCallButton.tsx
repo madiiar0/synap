@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { apiGet, apiPost, type AppConfig } from "../lib/api";
 import type { LeadSource } from "@synapai/shared";
+import { trackPublicEvent } from "../lib/publicAnalytics";
 
 interface BookCallButtonProps {
   source: LeadSource;
@@ -56,6 +57,7 @@ export default function BookCallButton({
 
   const handleOpen = useCallback(() => {
     setOpen(true);
+    trackPublicEvent("contact_intent");
     // Log the click itself as a lead even if Calendly completes off-site.
     void apiPost("/api/leads", { opened: true, source, scanId, brandName }).catch(() => undefined);
   }, [source, scanId, brandName]);

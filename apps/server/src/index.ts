@@ -62,7 +62,7 @@ async function main(): Promise<void> {
   app.listen(env.PORT, () => {
     logger.info(
       { port: env.PORT, demo: env.DEMO_MODE, client: env.CLIENT_URL },
-      "SynapAI server listening",
+      "Synap server listening",
     );
   });
 }

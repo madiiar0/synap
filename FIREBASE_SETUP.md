@@ -136,7 +136,7 @@ Firebase sends the confirmation email, not your SMTP provider, so the wording
 is configured in the Firebase Console:
 
 1. **Authentication → Templates → Email address verification**.
-2. Click the pencil icon. Set **Sender name** to `SynapAI` (the reply-to
+2. Click the pencil icon. Set **Sender name** to `Synap` (the reply-to
    address can stay the default).
 3. Change the template language with the dropdown at the top right of the
    template list: pick **Russian** so Russian-speaking customers get a Russian
@@ -178,7 +178,7 @@ Work through these in order:
 
 Every Firebase failure now appears on the sign-in page with its raw code
 underneath the message, and is logged to the browser console as
-`[SynapAI auth] <code>: <message>`. If Google sign-in misbehaves, open the
+`[Synap auth] <code>: <message>`. If Google sign-in misbehaves, open the
 console, read the code, and match it here:
 
 | Code | Meaning and fix |
