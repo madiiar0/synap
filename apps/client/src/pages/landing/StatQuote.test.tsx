@@ -21,7 +21,7 @@ describe("StatQuote", () => {
 
     expect(
       getByText(
-        "By 2028, brands’ organic search traffic will decrease by 50% or more as consumers embrace AI-powered search.",
+        "50% of traditional search traffic will be replaced with AI by 2028",
       ),
     ).toBeTruthy();
     expect(source.tagName).toBe("P");
@@ -29,17 +29,22 @@ describe("StatQuote", () => {
     expect(container.querySelector("blockquote")).toBeTruthy();
     expect(
       queryByText(
-        "Gartner predicted brands' organic search traffic would decrease by 50% or more by 2028 as consumers adopt generative AI search",
+        "By 2028, brands’ organic search traffic will decrease by 50% or more as consumers embrace AI-powered search.",
       ),
     ).toBeNull();
   });
 
   it("renders the concise Russian Gartner text with a non-clickable source", async () => {
     await i18n.changeLanguage("ru");
-    const { getByText } = render(<StatQuote />);
+    const { getByText, queryByText } = render(<StatQuote />);
     const source = getByText(ru.landing.stat.sourceLine);
 
-    expect(getByText(ru.landing.stat.quote)).toBeTruthy();
+    expect(getByText("К 2028 году ИИ заменит 50% традиционного поискового трафика")).toBeTruthy();
+    expect(
+      queryByText(
+        "К 2028 году органический поисковый трафик брендов снизится на 50% или более по мере перехода пользователей к поиску с ИИ.",
+      ),
+    ).toBeNull();
     expect(source.tagName).toBe("P");
     expect(source.closest("a")).toBeNull();
   });

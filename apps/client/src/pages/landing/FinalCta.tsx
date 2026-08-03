@@ -27,6 +27,7 @@ export default function FinalCta(): JSX.Element {
       <div className="guides mx-auto max-w-container px-4 sm:px-6">
         <Reveal>
           <div
+            data-testid="final-cta-card"
             className="relative overflow-hidden rounded-3xl px-5 py-10 text-darktext sm:px-14 sm:py-14"
             style={{
               // §5: horizontal on desktop where the panel sits right; vertical on
@@ -55,9 +56,12 @@ export default function FinalCta(): JSX.Element {
                 />
               </div>
             </div>
-            {/* On mobile the panel keeps the angled composition while fitting
-                inside the card so every sample row remains readable. */}
-            <div className="pointer-events-none relative z-10 mt-10 w-full origin-top-left rotate-[-2deg] lg:hidden">
+            {/* On mobile the oversized panel emerges from the card. The outer
+                CTA is the clipping frame, matching the desktop composition. */}
+            <div
+              data-testid="final-cta-mobile-preview"
+              className="pointer-events-none relative z-10 -mb-16 mt-12 w-[calc(100%+9rem)] translate-x-2 origin-top-left rotate-[-2deg] lg:hidden"
+            >
               <ProductPreview />
             </div>
             {/* preview peeking from the right edge, slightly elevated */}

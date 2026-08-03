@@ -15,8 +15,6 @@ const SAMPLE_METRICS = [
   { visibility: 38, trend: "up" },
 ] as const;
 
-// The visible Sample data label prevents these illustrative percentages from
-// being mistaken for customer results, endorsements or live measurements.
 const ROWS: PreviewRow[] = LANDING_COFFEE_SHOPS.map((shop, index) => ({
   ...shop,
   ...SAMPLE_METRICS[index],
@@ -27,14 +25,9 @@ export default function ProductPreview(): JSX.Element {
   const { t } = useTranslation();
   return (
     <div className="w-full max-w-xl rounded-2xl border border-darkline bg-dark p-4 text-xs text-darktext shadow-lg sm:p-6 sm:text-sm">
-      <div className="flex items-center justify-between border-b border-darkline pb-4">
+      <div className="flex items-center justify-between gap-4 border-b border-darkline pb-4">
         <p className="text-sm font-semibold">{t("landing.preview.title")}</p>
-        <div className="flex items-center gap-2">
-          <span className="rounded-full border border-darkline px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-sub">
-            {t("common.sampleData")}
-          </span>
-          <p className="hidden text-xs text-sub sm:block">{t("landing.preview.subtitle")}</p>
-        </div>
+        <p className="hidden text-xs text-sub sm:block">{t("landing.preview.subtitle")}</p>
       </div>
       <table className="mt-2 w-full table-fixed text-xs sm:text-sm">
         <thead>

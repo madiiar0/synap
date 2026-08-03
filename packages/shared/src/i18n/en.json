@@ -18,8 +18,7 @@
     "logout": "Log out",
     "email": "Email",
     "emailPlaceholder": "you@company.com",
-    "copyright": "© 2026 Synap",
-    "sampleData": "Sample data"
+    "copyright": "© 2026 Synap"
   },
   "nav": {
     "product": "Product",
@@ -98,12 +97,12 @@
       "step3Text": "On a call, we review your report, create an improvement plan, and our team carries out the agreed work."
     },
     "stat": {
-      "quote": "By 2028, brands’ organic search traffic will decrease by 50% or more as consumers embrace AI-powered search.",
+      "quote": "50% of traditional search traffic will be replaced with AI by 2028",
       "sourceLine": "Source: Gartner — one of the world’s leading research and advisory companies.",
       "question": "Is your business ready?"
     },
     "preview": {
-      "title": "Rankings",
+      "title": "Example ranking",
       "subtitle": "Comparison with competitors",
       "colBrand": "Company",
       "colVisibility": "Visibility",

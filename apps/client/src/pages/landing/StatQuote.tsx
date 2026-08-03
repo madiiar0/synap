@@ -9,7 +9,7 @@ import StartCta from "../../components/StartCta";
 export default function StatQuote(): JSX.Element {
   const { t } = useTranslation();
   return (
-    <section className="hairline-dashed bg-base py-24 sm:py-28">
+    <section className="hairline-dashed bg-base py-20 sm:py-24">
       <div className="guides mx-auto max-w-container px-6">
         <Reveal className="mx-auto max-w-4xl text-center">
           {/* §5: ONE decorative mark for both languages. The localized string
@@ -24,7 +24,7 @@ export default function StatQuote(): JSX.Element {
           <p className="mx-auto mt-6 max-w-2xl text-sm text-sub">
             {t("landing.stat.sourceLine")}
           </p>
-          <p className="mt-12 text-2xl font-medium text-ink sm:text-3xl">
+          <p className="mt-10 text-2xl font-medium text-ink sm:text-3xl">
             {t("landing.stat.question")}
           </p>
           <div className="mt-7 flex w-full flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">

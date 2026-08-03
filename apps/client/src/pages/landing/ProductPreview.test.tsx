@@ -23,9 +23,19 @@ describe("ProductPreview sample businesses", () => {
       expect(preview.getByText(name)).toBeTruthy();
       expect(preview.getByAltText(name).getAttribute("src")).toBe(mockLogos.get(name));
     }
-    expect(preview.getByText("Sample data")).toBeTruthy();
+    expect(preview.getByText("Example ranking")).toBeTruthy();
+    expect(preview.queryByText("Sample data")).toBeNull();
+    expect(preview.container.querySelector("[class*='uppercase'][class*='tracking-wide']")).toBeNull();
     expect(preview.queryByText("Northstar Coffee")).toBeNull();
     expect(preview.queryByText("Juniper Roasters")).toBeNull();
     expect(preview.queryByText("Cedar Cafe")).toBeNull();
+  });
+
+  it("renders the localized example label without a sample-data badge", async () => {
+    await i18n.changeLanguage("ru");
+    const preview = render(<ProductPreview />);
+
+    expect(preview.getByText("Пример рейтинга")).toBeTruthy();
+    expect(preview.queryByText("Пример данных")).toBeNull();
   });
 });
