@@ -28,8 +28,8 @@ const FORMER_NAME = ["Synap", "AI"].join("");
 
 describe("crawl and retrieval resources", () => {
   it("preserves route counts and compatibility-sensitive internal identifiers", () => {
-    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(22);
-    expect(PUBLIC_PATHS).toHaveLength(23);
+    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(23);
+    expect(PUBLIC_PATHS).toHaveLength(24);
     expect(SESSION_COOKIE).toBe(["synap", "ai_session"].join(""));
   });
 
@@ -79,6 +79,8 @@ describe("crawl and retrieval resources", () => {
     expect(xml).toContain('hreflang="x-default"');
     expect(xml).toContain(`${BASE}/blogs`);
     expect(xml).toContain(`${BASE}/en/blogs`);
+    expect(xml).toContain(`${BASE}/services`);
+    expect(xml).toContain(`${BASE}/en/services`);
     expect(xml).not.toContain(`${BASE}/guides`);
     expect(xml).not.toMatch(/\/login<|\/app<|\/api\//);
   });
@@ -167,6 +169,7 @@ describe("crawl and retrieval resources", () => {
     expect(concise).toContain("user-initiated");
     expect(concise).toContain("manually carries out separately scoped improvement work");
     expect(concise).toContain(`${BASE}/en/methodology`);
+    expect(concise).toContain(`${BASE}/en/services`);
     expect(concise).toContain(`${BASE}/en/blogs`);
     expect(concise).not.toContain(`${BASE}/en/guides`);
     expect(full).toContain("does not guarantee indexing");

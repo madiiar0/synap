@@ -13,6 +13,10 @@ vi.mock("../lib/publicAnalytics", () => ({
   trackPublicEvent: vi.fn(),
 }));
 
+vi.mock("../components/BookCallButton", () => ({
+  default: () => <button type="button">Book a call</button>,
+}));
+
 function renderPage(path: string): ReturnType<typeof render> {
   return render(
     <MemoryRouter initialEntries={[path]}>
@@ -49,5 +53,34 @@ describe("localized blog hub", () => {
     expect(page.getByRole("link", { name: publicPageContent("/blogs/why-ai-recommends-competitors", "ru").h1 }).getAttribute("href"))
       .toBe("/blogs/why-ai-recommends-competitors");
     expect(page.container.textContent).not.toMatch(/customer@example|BEGIN PRIVATE KEY/i);
+  });
+});
+
+describe("localized Services page", () => {
+  it("renders substantive English service content and both conversion actions", async () => {
+    await i18n.changeLanguage("en");
+    const page = renderPage("/en/services");
+    const content = publicPageContent("/services", "en");
+
+    expect(page.getByRole("heading", { level: 1, name: content.h1 })).toBeTruthy();
+    expect(page.getByText(/free initial AI-visibility audit during the current testing stage/i)).toBeTruthy();
+    expect(page.getByRole("link", { name: "Start the free audit" }).getAttribute("href")).toBe("/en/login");
+    expect(page.getByRole("button", { name: "Book a call" })).toBeTruthy();
+    expect(page.container.textContent).toContain("ChatGPT, Gemini and Perplexity");
+    expect(page.container.textContent).not.toMatch(/Claude|Grok/);
+  });
+
+  it("renders the Russian service content and is linked from Product", async () => {
+    await i18n.changeLanguage("ru");
+    const servicePage = renderPage("/services");
+    expect(servicePage.getByRole("heading", {
+      level: 1,
+      name: publicPageContent("/services", "ru").h1,
+    })).toBeTruthy();
+    servicePage.unmount();
+
+    const productPage = renderPage("/product");
+    expect(productPage.getByRole("link", { name: "Услуги аудита и улучшения" }).getAttribute("href"))
+      .toBe("/services");
   });
 });

@@ -23,8 +23,8 @@ const FORMER_NAME = ["Synap", "AI"].join("");
 
 describe("public information architecture", () => {
   it("keeps the canonical route inventory unchanged", () => {
-    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(22);
-    expect(PUBLIC_PATHS).toHaveLength(23);
+    expect(INDEXABLE_PUBLIC_PATHS).toHaveLength(23);
+    expect(PUBLIC_PATHS).toHaveLength(24);
   });
 
   it("defines Synap as a human-assisted Kazakhstan service in primary metadata", () => {
@@ -107,6 +107,20 @@ describe("public information architecture", () => {
     ]);
     expect(routeMeta("/blogs", "en").title).toBe("Synap Blog — AI Visibility in Kazakhstan");
     expect(routeMeta("/blogs", "ru").title).toBe("Блог Synap — видимость бизнеса в ответах ИИ");
+  });
+
+  it("registers localized Services metadata without a hard-coded origin", () => {
+    expect(INDEXABLE_PUBLIC_PATHS).toContain("/services");
+    expect(routeMeta("/services", "en")).toMatchObject({
+      title: "AI Visibility Services in Kazakhstan — Synap",
+      indexable: true,
+    });
+    expect(routeMeta("/services", "ru")).toMatchObject({
+      title: "Услуги по улучшению видимости бизнеса в ИИ в Казахстане — Synap",
+      indexable: true,
+    });
+    expect(localizedPublicPath("/services", "en")).toBe("/en/services");
+    expect(localizedPublicPath("/services", "ru")).toBe("/services");
   });
 });
 
@@ -242,5 +256,17 @@ describe("structured data", () => {
 
     expect(article?.url).toBe(`${BASE}/en/blogs/audit-ai-generated-brand-information`);
     expect(article?.publisher).toEqual({ "@id": `${BASE}/#organization` });
+  });
+
+  it("connects the Services WebPage to the primary Service entity", () => {
+    const graph = (structuredDataForRoute(BASE, "/services", "en") as {
+      "@graph": Array<Record<string, unknown>>;
+    })["@graph"];
+    const page = graph.find((node) => node["@id"] === `${BASE}/en/services#webpage`);
+
+    expect(graph.some((node) => node["@id"] === `${BASE}/#service`)).toBe(true);
+    expect(page?.["@type"]).toBe("WebPage");
+    expect(page?.mainEntity).toEqual({ "@id": `${BASE}/#service` });
+    expect(page?.about).toEqual({ "@id": `${BASE}/#service` });
   });
 });

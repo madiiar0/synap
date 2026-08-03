@@ -61,6 +61,9 @@ export interface PublicUiText {
   startHeading: string;
   startBody: string;
   startButton: string;
+  serviceCtaHeading: string;
+  serviceCtaBody: string;
+  serviceCtaButton: string;
   socialImageAlt: string;
 }
 
@@ -83,6 +86,9 @@ const PUBLIC_UI: Record<Locale, PublicUiText> = {
     startHeading: "Check your business",
     startBody: "Run a private scan and inspect the underlying answers.",
     startButton: "Start a scan",
+    serviceCtaHeading: "Start with evidence",
+    serviceCtaBody: "Run the free audit or book a call to discuss whether human-assisted improvement work is appropriate for your business.",
+    serviceCtaButton: "Start the free audit",
     socialImageAlt: "Synap visibility analytics for AI answers",
   },
   ru: {
@@ -103,6 +109,9 @@ const PUBLIC_UI: Record<Locale, PublicUiText> = {
     startHeading: "Проверьте свой бизнес",
     startBody: "Запустите приватную проверку и изучите исходные ответы.",
     startButton: "Начать проверку",
+    serviceCtaHeading: "Начните с фактов",
+    serviceCtaBody: "Запустите бесплатный аудит или запишитесь на созвон, чтобы обсудить, подходит ли вашему бизнесу помощь команды.",
+    serviceCtaButton: "Начать бесплатный аудит",
     socialImageAlt: "Synap: аналитика видимости в ИИ",
   },
 };
@@ -222,6 +231,14 @@ const ru = (content: Omit<PublicPageContent, "updated">): PublicPageContent => (
   ...content,
   updated: "2 августа 2026 года",
 });
+const enPhase2b = (content: Omit<PublicPageContent, "updated">): PublicPageContent => ({
+  ...content,
+  updated: "August 3, 2026",
+});
+const ruPhase2b = (content: Omit<PublicPageContent, "updated">): PublicPageContent => ({
+  ...content,
+  updated: "3 августа 2026 года",
+});
 
 export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicPageContent>> = {
   "/product": {
@@ -275,6 +292,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
+        { path: "/services", label: "See Synap's audit and improvement services" },
         { path: "/how-it-works", label: "Follow a scan step by step" },
         { path: "/methodology", label: "Read the scoring methodology" },
         { path: "/pricing", label: "Review access and pricing" },
@@ -330,9 +348,134 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
+        { path: "/services", label: "Услуги аудита и улучшения" },
         { path: "/how-it-works", label: "Этапы проверки" },
         { path: "/methodology", label: "Методология расчёта" },
         { path: "/pricing", label: "Доступ и тарифы" },
+      ],
+    }),
+  },
+  "/services": {
+    en: enPhase2b({
+      eyebrow: "Services",
+      h1: "AI visibility services for businesses in Kazakhstan",
+      lead:
+        "Synap starts with a free, dated audit of sampled AI-generated answers. Business owners can then book a call and agree on human-assisted improvement work with the Synap team.",
+      summaryTitle: "What Synap offers",
+      summary:
+        "The free audit is the diagnostic entry point. Any manual improvement work is optional, separately scoped after the report review, and does not guarantee placement in AI answers.",
+      sections: [
+        {
+          heading: "Start with a free audit",
+          paragraphs: [
+            "A business owner provides current business information and starts a user-initiated scan. Synap collects a dated sample of supported AI-generated answers and makes the resulting report available privately through the authenticated audit application.",
+          ],
+          bullets: [
+            "A free initial AI-visibility audit during the current testing stage.",
+            "A private report that can be reviewed before any service work is discussed.",
+            "An optional call to review the evidence and decide whether further work is useful.",
+            "Fresh user-initiated audits for later directional comparison; no continuous monitoring.",
+          ],
+        },
+        {
+          heading: "What the free audit can show",
+          bullets: [
+            "How the business appears in sampled answers from model families associated with ChatGPT, Gemini and Perplexity.",
+            "Visibility metrics based on the implemented methodology and a separate branded-recognition diagnostic.",
+            "Competitor appearances, answer-level positions and Share of Voice across qualifying answers.",
+            "Cited sources returned with the sampled answers, together with the prompt and scan date needed for context.",
+            "Provider failures, incomplete coverage and other limitations rather than fabricated replacement data.",
+          ],
+        },
+        {
+          heading: "Human-assisted improvement work",
+          paragraphs: [
+            "After reviewing the audit, Synap and the business agree on a relevant scope. Not every engagement needs every activity, and the free audit does not automatically include implementation.",
+          ],
+          bullets: [
+            "Correcting inconsistent public business information.",
+            "Improving website crawlability and machine-readable entity clarity.",
+            "Improving service, About, FAQ and educational pages with factual information.",
+            "Strengthening relevant local listings and credible third-party sources.",
+            "Creating useful content and reviewing citation or competitor evidence gaps.",
+            "Retesting comparable buyer questions through a fresh user-initiated audit.",
+          ],
+        },
+        {
+          heading: "Limits of the service",
+          bullets: [
+            "AI systems remain independent, and their answers vary by model, prompt, date and retrieved sources.",
+            "Synap cannot purchase or guarantee indexing, mentions, citations, positions or recommendations.",
+            "Synap does not currently provide continuous monitoring or automatic optimization.",
+            "The service is in an early testing stage, so availability and the agreed scope may change as the work is validated.",
+          ],
+        },
+      ],
+      related: [
+        { path: "/product", label: "See what the diagnostic audit includes" },
+        { path: "/how-it-works", label: "Follow the audit and service lifecycle" },
+        { path: "/pricing", label: "Understand free access and separate scoping" },
+      ],
+    }),
+    ru: ruPhase2b({
+      eyebrow: "Услуги",
+      h1: "Услуги по улучшению видимости бизнеса в ИИ в Казахстане",
+      lead:
+        "Synap начинает с бесплатного датированного аудита выборки ответов ИИ. Затем владелец бизнеса может записаться на созвон и согласовать с командой работы по улучшению.",
+      summaryTitle: "Что предлагает Synap",
+      summary:
+        "Бесплатный аудит — это начальная диагностика. Ручная работа команды не обязательна, согласовывается отдельно после разбора отчёта и не гарантирует позиции в ответах ИИ.",
+      sections: [
+        {
+          heading: "Начните с бесплатного аудита",
+          paragraphs: [
+            "Владелец указывает актуальную информацию о бизнесе и самостоятельно запускает проверку. Synap собирает датированную выборку ответов поддерживаемых ИИ-моделей, а закрытый отчёт становится доступен после авторизации.",
+          ],
+          bullets: [
+            "Бесплатный начальный аудит видимости в ИИ на текущем этапе тестирования.",
+            "Приватный отчёт, который можно изучить до обсуждения дальнейшей работы.",
+            "Необязательный созвон для разбора фактов и решения о следующих шагах.",
+            "Свежие проверки по инициативе пользователя для последующего сравнения; постоянного мониторинга нет.",
+          ],
+        },
+        {
+          heading: "Что показывает бесплатный аудит",
+          bullets: [
+            "Как бизнес представлен в выборке ответов семейств моделей, связанных с ChatGPT, Gemini и Perplexity.",
+            "Метрики видимости по реализованной методологии и отдельный показатель узнаваемости бренда.",
+            "Появление конкурентов, позиции в отдельных ответах и долю голоса по подходящим ответам.",
+            "Источники из выборки ответов вместе с вопросом и датой проверки, необходимыми для контекста.",
+            "Ошибки провайдера, неполное покрытие и другие ограничения вместо выдуманных данных.",
+          ],
+        },
+        {
+          heading: "Работа команды по улучшению",
+          paragraphs: [
+            "После разбора аудита Synap и владелец бизнеса согласуют подходящий объём. Не каждой компании нужны все перечисленные действия, а внедрение не входит автоматически в бесплатный аудит.",
+          ],
+          bullets: [
+            "Исправление противоречивой публичной информации о бизнесе.",
+            "Улучшение доступности сайта для обхода и ясности сущности для машин.",
+            "Улучшение страниц услуг, «О компании», FAQ и полезных материалов.",
+            "Укрепление релевантных локальных карточек и надёжных внешних источников.",
+            "Создание полезного контента и разбор пробелов в источниках или появлениях конкурентов.",
+            "Повторная проверка сопоставимых вопросов через новый запуск по инициативе пользователя.",
+          ],
+        },
+        {
+          heading: "Ограничения услуги",
+          bullets: [
+            "ИИ-системы независимы, а ответы меняются в зависимости от модели, вопроса, даты и найденных источников.",
+            "Synap не может купить или гарантировать индексацию, упоминания, цитирование, позиции и рекомендации.",
+            "Synap пока не предоставляет постоянный мониторинг или автоматическую оптимизацию.",
+            "Сервис находится на раннем этапе тестирования, поэтому доступность и согласуемый объём работ могут меняться по мере проверки модели.",
+          ],
+        },
+      ],
+      related: [
+        { path: "/product", label: "Что входит в диагностический аудит" },
+        { path: "/how-it-works", label: "Полный путь аудита и работы команды" },
+        { path: "/pricing", label: "Бесплатный доступ и отдельная оценка работ" },
       ],
     }),
   },

@@ -134,6 +134,7 @@ export default function PublicPage(): JSX.Element {
   const meta = routeMeta(path, locale);
   const ui = publicUiText(locale);
   const showContactAction = path === "/contact" || path === "/pricing";
+  const showServiceAction = path === "/services";
 
   return (
     <div className="min-h-screen bg-base text-ink">
@@ -223,6 +224,24 @@ export default function PublicPage(): JSX.Element {
             </section>
           )}
 
+          {showServiceAction && (
+            <section aria-labelledby="service-action" className="mt-16 rounded-2xl bg-ink p-8 text-white">
+              <h2 id="service-action" className="text-2xl font-semibold">
+                {ui.serviceCtaHeading}
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
+                {ui.serviceCtaBody}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <StartCta
+                  label={ui.serviceCtaButton}
+                  className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-ink hover:bg-darktext"
+                />
+                <BookCallButton source="landing" variant="dark-outline" />
+              </div>
+            </section>
+          )}
+
           {path !== "/blogs" && <section aria-labelledby="related-pages" className="mt-16 border-t border-line pt-10">
             <h2 id="related-pages" className="text-xl font-semibold">
               {ui.related}
@@ -238,7 +257,7 @@ export default function PublicPage(): JSX.Element {
             </ul>
           </section>}
 
-          {!showContactAction && path !== "/privacy" && path !== "/terms" && (
+          {!showContactAction && !showServiceAction && path !== "/privacy" && path !== "/terms" && (
             <section className="mt-16 flex flex-col items-start justify-between gap-5 rounded-2xl border border-line bg-surface p-7 sm:flex-row sm:items-center">
               <div>
                 <h2 className="text-xl font-semibold">{ui.startHeading}</h2>

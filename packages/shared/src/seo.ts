@@ -11,6 +11,7 @@ import ruTranslations from "./i18n/ru.json" with { type: "json" };
 export const INDEXABLE_PUBLIC_PATHS = [
   "/",
   "/product",
+  "/services",
   "/how-it-works",
   "/methodology",
   "/ai-visibility",
@@ -135,6 +136,22 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Изучите ответы и метрики бесплатного аудита Synap для бизнеса Казахстана. Дальнейшая работа команды согласовывается отдельно после созвона.",
       kind: "product",
       lastModified: UPDATED,
+    },
+  },
+  "/services": {
+    en: {
+      title: "AI Visibility Services in Kazakhstan — Synap",
+      description:
+        "Start with a free, dated AI-visibility audit, then review separately scoped human-assisted improvement work for your business in Kazakhstan.",
+      kind: "webpage",
+      lastModified: "2026-08-03",
+    },
+    ru: {
+      title: "Услуги по улучшению видимости бизнеса в ИИ в Казахстане — Synap",
+      description:
+        "Начните с бесплатного датированного аудита видимости в ИИ и обсудите отдельно согласуемые работы команды для бизнеса в Казахстане.",
+      kind: "webpage",
+      lastModified: "2026-08-03",
     },
   },
   "/how-it-works": {
@@ -662,7 +679,9 @@ export function webPageLd(
     about: { "@id": `${base}/#service` },
     publisher: { "@id": `${base}/#organization` },
   };
-  if (path === "/") page.mainEntity = { "@id": `${base}/#service` };
+  if (path === "/" || path === "/services") {
+    page.mainEntity = { "@id": `${base}/#service` };
+  }
   if (path === "/product" || path === "/docs" || path === "/methodology") {
     page.mainEntity = { "@id": `${base}/#audit-application` };
   }
