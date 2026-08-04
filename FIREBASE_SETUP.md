@@ -99,6 +99,9 @@ Notes:
   email-verification gate. It also receives lead and budget alerts.
 - Leave `GOOGLE_APPLICATION_CREDENTIALS=` empty. It is the alternative to the
   base64 blob, not an addition to it.
+- Vercel also accepts the complete raw service-account JSON as this value. Do
+  not paste a filename or only the private key; the full downloaded JSON object
+  is required.
 - The root `.env` is gitignored. Never commit it.
 
 ## 7. Restart and verify

@@ -30,7 +30,7 @@ BRAND_NAME=Synap
 JWT_SECRET=<at-least-32-random-bytes>
 MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>/synapai?retryWrites=true&w=majority
 AUTH_MODE=firebase
-FIREBASE_SERVICE_ACCOUNT_JSON=<base64-service-account-json>
+FIREBASE_SERVICE_ACCOUNT_JSON=<base64-service-account-json-or-complete-raw-json>
 ADMIN_EMAIL=admin@synapai.app
 ADMIN_PASSWORD=<at-least-12-random-characters>
 DEMO_MODE=true
@@ -89,8 +89,8 @@ effective public runtime mode without exposing secrets.
 
 Enable Email/Password authentication and add the frontend hostname (without
 `https://`) to Firebase Authentication's Authorized domains. The backend
-`FIREBASE_SERVICE_ACCOUNT_JSON` must be a base64 encoding of a service-account
-key from that same project.
+`FIREBASE_SERVICE_ACCOUNT_JSON` must be either the complete raw JSON or a
+base64 encoding of a service-account key from that same project.
 
 ## 4. First audit test
 
