@@ -33,7 +33,7 @@ async function main(): Promise<void> {
   process.env.FREE_TAIL_ENGINES = "chatgpt,gemini";
 
   const { connectDb, disconnectDb } = await import("./db/connect.js");
-  const { createApp } = await import("./app.js");
+  const { createApp } = await import("./createApp.js");
   const { initQueue, registerHandler } = await import("./queue/index.js");
   const { runScan } = await import("./services/scanRunner.js");
   const { OUTBOX_DIR } = await import("./mail/mailer.js");

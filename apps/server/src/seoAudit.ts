@@ -9,7 +9,7 @@ import {
   type Locale,
   type PublicPath,
 } from "@synapai/shared";
-import { createApp } from "./app.js";
+import { createApp } from "./createApp.js";
 import { env } from "./config/env.js";
 import { logger } from "./lib/logger.js";
 

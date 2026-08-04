@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { createApp } from "./app.js";
+import { createApp } from "./createApp.js";
 import { adminEmails, authMode, env } from "./config/env.js";
 import { connectDb, isMemoryDb } from "./db/connect.js";
 import { logger } from "./lib/logger.js";

@@ -19,7 +19,7 @@ import type { Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const { connectDb, disconnectDb } = await import("../src/db/connect.js");
-const { createApp } = await import("../src/app.js");
+const { createApp } = await import("../src/createApp.js");
 const { Brand } = await import("../src/models/Brand.js");
 const { User } = await import("../src/models/User.js");
 
