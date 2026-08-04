@@ -1,10 +1,11 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { type Express } from "express";
-import helmet from "helmet";
+import express, { type Express, type RequestHandler } from "express";
+import type { HelmetOptions } from "helmet";
 import { pinoHttp } from "pino-http";
 import { authMode, env, isProd, repoRoot } from "./config/env.js";
 import { isMemoryDb } from "./db/connect.js";
@@ -19,6 +20,14 @@ import { attachUser } from "./http/middleware/auth.js";
 import { errorHandler, notFoundHandler } from "./http/middleware/errors.js";
 import { apiLimiter } from "./http/middleware/rateLimits.js";
 import { mountSeo } from "./http/seo.js";
+
+// Vercel's Express compiler can resolve Helmet's dual ESM/CJS declaration as
+// a non-callable module namespace. Helmet's CommonJS export is the documented
+// callable middleware factory, so load that export explicitly and retain its
+// public option type.
+const helmet = createRequire(import.meta.url)("helmet") as (
+  options?: Readonly<HelmetOptions>,
+) => RequestHandler;
 
 export function createApp(): Express {
   const app = express();

@@ -43,6 +43,13 @@ interface AgentResponse {
   usage?: AgentUsage;
 }
 
+interface ProviderHttpResponse {
+  readonly ok: boolean;
+  readonly status: number;
+  text(): Promise<string>;
+  json(): Promise<unknown>;
+}
+
 function extractText(resp: AgentResponse): string {
   if (typeof resp.output_text === "string" && resp.output_text.length > 0) {
     return resp.output_text;
@@ -106,7 +113,11 @@ export async function agentCallRaw(
   if (opts.fetchUrl) tools.push({ type: "fetch_url" });
   if (tools.length > 0) body.tools = tools;
 
-  const res = await fetch(AGENT_URL, {
+  // Vercel's generated Express type environment can shadow Node's Fetch
+  // Response with an incompatible ambient Response. The runtime remains the
+  // native Node fetch implementation; declare only the response surface used
+  // by this adapter so deployment compilation stays deterministic.
+  const res = (await fetch(AGENT_URL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${env.PERPLEXITY_API_KEY}`,
@@ -114,7 +125,7 @@ export async function agentCallRaw(
     },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(55_000),
-  });
+  })) as ProviderHttpResponse;
   if (!res.ok) {
     // §1.3: surface the provider's own message — a 400 on a model id is
     // otherwise indistinguishable from a transport failure.
