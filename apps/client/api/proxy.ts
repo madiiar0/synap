@@ -42,6 +42,10 @@ export async function proxyRequest(
   const headers = new Headers(request.headers);
   headers.delete("host");
   headers.delete("content-length");
+  // The server-side fetch runtime transparently decompresses upstream bodies.
+  // Do not negotiate browser compression through the bridge: forwarding the
+  // original content-encoding afterwards makes the browser decode JSON twice.
+  headers.delete("accept-encoding");
   headers.set("x-forwarded-host", incoming.host);
   headers.set("x-forwarded-proto", incoming.protocol.replace(":", ""));
 
@@ -53,9 +57,14 @@ export async function proxyRequest(
     redirect: "manual",
   });
 
+  const responseHeaders = new Headers(upstream.headers);
+  responseHeaders.delete("content-encoding");
+  responseHeaders.delete("content-length");
+  responseHeaders.delete("transfer-encoding");
+
   return new Response(upstream.body, {
     status: upstream.status,
     statusText: upstream.statusText,
-    headers: upstream.headers,
+    headers: responseHeaders,
   });
 }

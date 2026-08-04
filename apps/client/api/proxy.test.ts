@@ -70,4 +70,29 @@ describe("Vercel frontend API proxy", () => {
     const [target] = upstream.mock.calls[0];
     expect(String(target)).toBe("https://synap-server.vercel.app/api/auth/me?next=%2Fapp");
   });
+
+  it("removes stale compression metadata from decoded upstream JSON", async () => {
+    const upstream = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) =>
+      new Response(JSON.stringify([{ id: "brand-1" }]), {
+        headers: {
+          "content-type": "application/json",
+          "content-encoding": "br",
+          "content-length": "999",
+        },
+      }));
+    vi.stubGlobal("fetch", upstream);
+
+    const response = await proxyRequest(
+      new Request("https://synap-client.vercel.app/api/brands", {
+        headers: { "accept-encoding": "br, gzip" },
+      }),
+      "https://synap-server.vercel.app",
+    );
+
+    const [, init] = upstream.mock.calls[0];
+    expect(new Headers(init?.headers).has("accept-encoding")).toBe(false);
+    expect(response.headers.has("content-encoding")).toBe(false);
+    expect(response.headers.has("content-length")).toBe(false);
+    await expect(response.json()).resolves.toEqual([{ id: "brand-1" }]);
+  });
 });
