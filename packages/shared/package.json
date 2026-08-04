@@ -11,7 +11,10 @@
       "browser": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./i18n/*": "./src/i18n/*"
+    "./i18n/*": {
+      "browser": "./src/i18n/*",
+      "default": "./dist/i18n/*"
+    }
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

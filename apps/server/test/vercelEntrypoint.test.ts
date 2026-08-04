@@ -34,9 +34,13 @@ describe("Vercel Express entrypoint", () => {
       fs.readFileSync(path.join(repoRoot, "packages/shared/package.json"), "utf8"),
     ) as {
       main?: string;
-      exports?: { "."?: { types?: string; default?: string } };
+      exports?: {
+        "."?: { types?: string; default?: string };
+        "./i18n/*"?: { browser?: string; default?: string };
+      };
     };
     expect(sharedPackage.main).toBe("./dist/index.js");
     expect(sharedPackage.exports?.["."]?.default).toBe("./dist/index.js");
+    expect(sharedPackage.exports?.["./i18n/*"]?.default).toBe("./dist/i18n/*");
   });
 });

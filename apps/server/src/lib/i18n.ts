@@ -1,17 +1,12 @@
-import fs from "node:fs";
-import path from "node:path";
 import { DEFAULT_LOCALE, type Locale } from "@synapai/shared";
-import { repoRoot } from "../config/env.js";
+import en from "@synapai/shared/i18n/en.json" with { type: "json" };
+import ru from "@synapai/shared/i18n/ru.json" with { type: "json" };
 
 type Dict = { [key: string]: string | Dict };
 
 const dictionaries: Record<Locale, Dict> = {
-  ru: JSON.parse(
-    fs.readFileSync(path.join(repoRoot, "packages/shared/src/i18n/ru.json"), "utf8"),
-  ) as Dict,
-  en: JSON.parse(
-    fs.readFileSync(path.join(repoRoot, "packages/shared/src/i18n/en.json"), "utf8"),
-  ) as Dict,
+  ru: ru as Dict,
+  en: en as Dict,
 };
 
 /** Server-side translation for emails: dot-path lookup + {{var}} interpolation. */
