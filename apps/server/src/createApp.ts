@@ -157,6 +157,8 @@ export function createApp(): Express {
   // Serve the built client when it exists (single-origin production setup).
   const clientDist = path.join(repoRoot, "apps/client/dist");
   if (fs.existsSync(clientDist)) {
+    const spaShell = path.join(clientDist, "spa.html");
+    const fallbackShell = fs.existsSync(spaShell) ? spaShell : path.join(clientDist, "index.html");
     app.use(
       express.static(clientDist, {
         setHeaders: (res, filePath) => {
@@ -172,7 +174,7 @@ export function createApp(): Express {
       );
       res.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive");
       res.setHeader("Cache-Control", privateClientRoute ? "private, no-store" : "no-store");
-      res.status(privateClientRoute ? 200 : 404).sendFile(path.join(clientDist, "index.html"));
+      res.status(privateClientRoute ? 200 : 404).sendFile(fallbackShell);
     });
   }
 

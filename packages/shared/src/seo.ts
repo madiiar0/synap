@@ -527,6 +527,16 @@ export function organizationLd(baseUrl: string, locale: Locale = "en"): Record<s
       caption: "Synap",
     },
     description: PRODUCT_POSITIONING[locale].short,
+    areaServed: {
+      "@type": "Country",
+      name: locale === "ru" ? "Казахстан" : "Kazakhstan",
+    },
+    knowsAbout: [
+      "AI visibility",
+      "Generative engine optimization",
+      "Answer engine optimization",
+      "AI-generated brand answers",
+    ],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer support",
@@ -545,6 +555,7 @@ export function webSiteLd(baseUrl: string, locale: Locale = "en"): Record<string
     url: base,
     description: PRODUCT_POSITIONING[locale].short,
     inLanguage: ["en", "ru"],
+    about: { "@id": `${base}/#service` },
     publisher: { "@id": `${base}/#organization` },
   };
 }
@@ -561,9 +572,18 @@ export function serviceLd(baseUrl: string, locale: Locale): Record<string, unkno
       locale === "ru"
         ? "Бесплатный аудит видимости бизнеса в ИИ и отдельно согласуемая помощь команды"
         : "Free AI-visibility audit with separately scoped human-assisted improvement",
+    category: "AI visibility audit and human-assisted improvement",
+    availableLanguage: ["English", "Russian"],
     areaServed: {
       "@type": "Country",
       name: locale === "ru" ? "Казахстан" : "Kazakhstan",
+    },
+    audience: {
+      "@type": "BusinessAudience",
+      geographicArea: {
+        "@type": "Country",
+        name: locale === "ru" ? "Казахстан" : "Kazakhstan",
+      },
     },
     provider: { "@id": `${base}/#organization` },
     description: PRODUCT_POSITIONING[locale].full,

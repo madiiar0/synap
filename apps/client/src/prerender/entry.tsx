@@ -12,8 +12,8 @@ import App from "../App";
 
 /**
  * §1.1 layer 2: build-time prerender entry. scripts/prerender.mjs calls this
- * for every public route × locale and writes static HTML with real body
- * content, so crawlers and AI bots never see an empty shell.
+ * for every public route × locale and writes clean-URL static HTML with real
+ * body content, so crawlers and AI bots never see an empty shell.
  */
 export async function render(url: string, locale: Locale): Promise<string> {
   await i18n.changeLanguage(locale);
@@ -40,7 +40,7 @@ export function prerenderRoutes(): Array<{
         url,
         basePath,
         locale,
-        out: url === "/" ? "index.html" : `${url.replace(/^\//, "")}/index.html`,
+        out: url === "/" ? "index.html" : `${url.replace(/^\//, "")}.html`,
       };
     }),
   );

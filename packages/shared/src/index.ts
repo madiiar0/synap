@@ -10,4 +10,5 @@ export * from "./marqueeData.js";
 export * from "./aiPlatforms.js";
 export * from "./quotes.js";
 export * from "./seo.js";
+export * from "./seoResources.js";
 export * from "./publicContent.js";

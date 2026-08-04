@@ -150,6 +150,8 @@ describe("structured data", () => {
     expect(ld).not.toHaveProperty("alternateName");
     expect(ld.url).toBe(BASE);
     expect(ld.description).toContain("Kazakhstan");
+    expect(ld.areaServed).toEqual({ "@type": "Country", name: "Kazakhstan" });
+    expect(ld.knowsAbout).toContain("Answer engine optimization");
     expect(JSON.stringify(ld)).not.toContain(FORMER_NAME);
     expect(JSON.stringify(ld)).not.toContain("ratingValue");
   });
@@ -192,7 +194,12 @@ describe("structured data", () => {
   });
 
   it("declares both supported public languages on the WebSite", () => {
-    expect((webSiteLd(BASE) as { inLanguage: string[] }).inLanguage).toEqual(["en", "ru"]);
+    const website = webSiteLd(BASE) as {
+      inLanguage: string[];
+      about: { "@id": string };
+    };
+    expect(website.inLanguage).toEqual(["en", "ru"]);
+    expect(website.about).toEqual({ "@id": `${BASE}/#service` });
   });
 
   it("only emits FAQ questions supplied from visible page content", () => {

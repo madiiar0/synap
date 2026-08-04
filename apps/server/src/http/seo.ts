@@ -2,24 +2,22 @@ import fs from "node:fs";
 import path from "node:path";
 import type { Express, Request, Response } from "express";
 import {
-  INDEXABLE_PUBLIC_PATHS,
-  landingFaqItems,
+  buildPublicHeadTags,
+  injectPublicHead,
   LEGACY_PUBLIC_REDIRECTS,
+  llmsFullText,
+  llmsText,
   localizedPublicPath,
-  PRODUCT_POSITIONING,
   PUBLIC_PATHS,
-  publicFreeAuditEngineNames,
-  publicFaqItems,
+  robotsText,
   routeMeta,
-  SOCIAL_IMAGE_ALT,
-  structuredDataForRoute,
+  sitemapXml,
   type Locale,
   type PublicPath,
 } from "@synapai/shared";
 import { env, repoRoot } from "../config/env.js";
 
 const CLIENT_DIST = path.join(repoRoot, "apps/client/dist");
-const PRERENDER_DIR = path.join(CLIENT_DIST, "prerendered");
 
 interface PublicRoute {
   urlPath: string;
@@ -50,266 +48,40 @@ export function publicRedirects(): PublicRedirect[] {
   );
 }
 
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function escapeXml(value: string): string {
-  return escapeHtml(value).replace(/'/g, "&apos;");
-}
-
-function safeJson(value: unknown): string {
-  return JSON.stringify(value).replace(/</g, "\\u003c");
-}
-
 /** One complete, route-specific head block for runtime HTML and client checks. */
 export function buildHeadTags(basePath: PublicPath, locale: Locale): string {
-  const base = env.APP_BASE_URL.replace(/\/$/, "");
-  const meta = routeMeta(basePath, locale);
-  const indexable = meta.indexable && !env.SITE_NOINDEX;
-  const robots = indexable
-    ? "index,follow,max-image-preview:large"
-    : env.SITE_NOINDEX || basePath === "/login"
-      ? "noindex,nofollow,noarchive"
-      : "noindex,follow,noarchive";
-  const canonical = `${base}${localizedPublicPath(basePath, locale)}`;
-  const ruUrl = `${base}${localizedPublicPath(basePath, "ru")}`;
-  const enUrl = `${base}${localizedPublicPath(basePath, "en")}`;
-  const ogImage = `${base}/og-image.png`;
-  const ogAlt = SOCIAL_IMAGE_ALT[locale];
-  const faq = basePath === "/"
-    ? landingFaqItems(locale)
-    : basePath === "/faq"
-      ? publicFaqItems(locale)
-      : [];
-
-  const tags = [
-    `<title>${escapeHtml(meta.title)}</title>`,
-    `<meta name="description" content="${escapeHtml(meta.description)}">`,
-    `<meta name="author" content="Synap">`,
-    `<meta name="publisher" content="Synap">`,
-    `<meta name="robots" content="${robots}">`,
-    `<link rel="canonical" href="${escapeHtml(canonical)}">`,
-    `<link rel="alternate" hreflang="ru" href="${escapeHtml(ruUrl)}">`,
-    `<link rel="alternate" hreflang="en" href="${escapeHtml(enUrl)}">`,
-    `<link rel="alternate" hreflang="x-default" href="${escapeHtml(ruUrl)}">`,
-    `<meta property="og:type" content="${meta.kind === "article" ? "article" : "website"}">`,
-    `<meta property="og:site_name" content="Synap">`,
-    `<meta property="og:title" content="${escapeHtml(meta.title)}">`,
-    `<meta property="og:description" content="${escapeHtml(meta.description)}">`,
-    `<meta property="og:url" content="${escapeHtml(canonical)}">`,
-    `<meta property="og:image" content="${escapeHtml(ogImage)}">`,
-    `<meta property="og:image:width" content="1200">`,
-    `<meta property="og:image:height" content="630">`,
-    `<meta property="og:image:alt" content="${escapeHtml(ogAlt)}">`,
-    `<meta property="og:locale" content="${locale === "ru" ? "ru_RU" : "en_US"}">`,
-    `<meta property="og:locale:alternate" content="${locale === "ru" ? "en_US" : "ru_RU"}">`,
-    `<meta name="twitter:card" content="summary_large_image">`,
-    `<meta name="twitter:title" content="${escapeHtml(meta.title)}">`,
-    `<meta name="twitter:description" content="${escapeHtml(meta.description)}">`,
-    `<meta name="twitter:image" content="${escapeHtml(ogImage)}">`,
-    `<meta name="twitter:image:alt" content="${escapeHtml(ogAlt)}">`,
-  ];
-  if (meta.kind === "article" && meta.lastModified) {
-    tags.push(`<meta property="article:published_time" content="${meta.lastModified}">`);
-    tags.push(`<meta property="article:modified_time" content="${meta.lastModified}">`);
-  }
-  if (basePath !== "/login") {
-    tags.push(
-      `<script id="synap-structured-data" type="application/ld+json">${safeJson(
-        structuredDataForRoute(base, basePath, locale, faq),
-      )}</script>`,
-    );
-  }
-  return tags.join("\n    ");
+  return buildPublicHeadTags(
+    env.APP_BASE_URL,
+    basePath,
+    locale,
+    env.SITE_NOINDEX,
+  );
 }
 
 /** Inject route metadata and language into a prerendered HTML document. */
 export function injectHead(html: string, basePath: PublicPath, locale: Locale): string {
-  const out = html.replace(
-    /<html lang="[^"]*"(?: data-site-noindex="[^"]*")?/i,
-    `<html lang="${locale}" data-site-noindex="${env.SITE_NOINDEX}"`,
+  return injectPublicHead(
+    html,
+    env.APP_BASE_URL,
+    basePath,
+    locale,
+    env.SITE_NOINDEX,
   );
-  const block = `<!-- synap-seo:start -->\n    ${buildHeadTags(basePath, locale)}\n    <!-- synap-seo:end -->`;
-  if (/<!-- synap-seo:start -->[\s\S]*?<!-- synap-seo:end -->/.test(out)) {
-    return out.replace(/<!-- synap-seo:start -->[\s\S]*?<!-- synap-seo:end -->/, block);
-  }
-  return out.replace("</head>", `    ${block}\n  </head>`);
 }
 
 function prerenderedPath(urlPath: string): string {
-  return path.join(
-    PRERENDER_DIR,
-    urlPath === "/" ? "index.html" : `${urlPath.replace(/^\//, "")}/index.html`,
-  );
+  return path.join(CLIENT_DIST, urlPath === "/" ? "index.html" : `${urlPath.slice(1)}.html`);
 }
 
 function shellFor(route: PublicRoute): string | null {
   const prerendered = prerenderedPath(route.urlPath);
   if (fs.existsSync(prerendered)) return fs.readFileSync(prerendered, "utf8");
-  const shell = path.join(CLIENT_DIST, "index.html");
+  const shell = path.join(CLIENT_DIST, "spa.html");
   if (fs.existsSync(shell)) return fs.readFileSync(shell, "utf8");
   return null;
 }
 
-export function robotsText(baseUrl: string, siteNoindex = false): string {
-  const base = baseUrl.replace(/\/$/, "");
-  if (siteNoindex) {
-    return [
-      "# This deployment is a staging or preview environment.",
-      "User-agent: *",
-      "Disallow: /",
-    ].join("\n");
-  }
-  return [
-    "# Public Synap product content is crawlable for search and AI retrieval.",
-    "# Account data stays protected by authentication; these rules reduce unwanted crawling.",
-    "User-agent: *",
-    "Allow: /",
-    "Disallow: /api/",
-    "Disallow: /app",
-    "Disallow: /admin",
-    "Disallow: /scan",
-    "Disallow: /verify-email",
-    "",
-    `Sitemap: ${base}/sitemap.xml`,
-  ].join("\n");
-}
-
-export function sitemapXml(baseUrl: string, siteNoindex = false): string {
-  const base = baseUrl.replace(/\/$/, "");
-  if (siteNoindex) {
-    return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>';
-  }
-  const urls = INDEXABLE_PUBLIC_PATHS.flatMap((basePath) =>
-    (["ru", "en"] as const).map((locale) => {
-      const meta = routeMeta(basePath, locale);
-      const loc = `${base}${localizedPublicPath(basePath, locale)}`;
-      const ru = `${base}${localizedPublicPath(basePath, "ru")}`;
-      const en = `${base}${localizedPublicPath(basePath, "en")}`;
-      return [
-        "  <url>",
-        `    <loc>${escapeXml(loc)}</loc>`,
-        meta.lastModified ? `    <lastmod>${meta.lastModified}</lastmod>` : null,
-        `    <xhtml:link rel="alternate" hreflang="ru" href="${escapeXml(ru)}"/>`,
-        `    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(en)}"/>`,
-        `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(ru)}"/>`,
-        "  </url>",
-      ].filter(Boolean).join("\n");
-    }),
-  ).join("\n");
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>`;
-}
-
-export function llmsText(baseUrl: string): string {
-  const base = baseUrl.replace(/\/$/, "");
-  return [
-    "# Synap",
-    "",
-    `> ${PRODUCT_POSITIONING.en.short}`,
-    "",
-    `Canonical website: ${base}`,
-    "Primary market: businesses in Kazakhstan",
-    "Languages: English and Russian",
-    `Normal free-audit model families: ${publicFreeAuditEngineNames().join(", ")}`,
-    "",
-    "## Current service",
-    "",
-    "Synap is in an early testing stage. A business owner can start a free, user-initiated AI-visibility audit, review the private dated report, and book a call. The Synap team then plans and manually carries out separately scoped improvement work.",
-    "",
-    "The free audit uses model families associated with ChatGPT, Gemini and Perplexity through configured provider APIs. It does not claim to reproduce every answer shown in the consumer applications.",
-    "",
-    "Scans and rescans are started by users. Synap does not currently provide continuous or real-time monitoring.",
-    "",
-    "## Audit and methodology",
-    "",
-    `- [Services](${base}/en/services): free audit and separately scoped human-assisted improvement`,
-    `- [Audit interface](${base}/en/product): measured outputs and availability`,
-    `- [How it works](${base}/en/how-it-works): scan workflow`,
-    `- [Methodology](${base}/en/methodology): prompts, formulas, exclusions and limitations`,
-    `- [Pricing](${base}/en/pricing): free-audit access and separately scoped work`,
-    `- [FAQ](${base}/en/faq): concise service and audit answers`,
-    `- [Documentation](${base}/en/docs): using a private report`,
-    "",
-    "## Concepts and use cases",
-    "",
-    `- [AI visibility in Kazakhstan](${base}/en/blogs/ai-visibility-kazakhstan)`,
-    `- [Generative Engine Optimization](${base}/en/generative-engine-optimization)`,
-    `- [Use cases](${base}/en/use-cases)`,
-    `- [Blog](${base}/en/blogs)`,
-    "",
-    "## Entity and trust",
-    "",
-    `- [About Synap](${base}/en/about)`,
-    `- [Contact](${base}/en/contact)`,
-    "",
-    "## Data boundary",
-    "",
-    "Public resources describe Synap and its methodology. Customer business profiles, account prompts, generated answers, competitor reports, emails and scan data remain authenticated and are not included in public resources.",
-    "",
-    "A Synap audit is a dated sample. Synap does not guarantee indexing, mentions, citations, positions, rankings or recommendations in any AI system.",
-    "",
-    "llms.txt is supplemental and experimental. It does not guarantee discovery, indexing or citation. Canonical HTML pages, metadata, structured data, robots rules and the sitemap remain authoritative.",
-  ].join("\n");
-}
-
-export function llmsFullText(baseUrl: string): string {
-  const base = baseUrl.replace(/\/$/, "");
-  return [
-    "# Synap: public service reference",
-    "",
-    PRODUCT_POSITIONING.en.full,
-    "",
-    "## Availability and service workflow",
-    "",
-    "Synap is currently in an early testing stage and primarily serves businesses in Kazakhstan.",
-    "",
-    "1. A business owner starts a free AI-visibility audit.",
-    "2. Synap makes fresh provider requests and produces a private, dated report.",
-    "3. The owner reviews the report and can book a call with Synap.",
-    "4. The Synap team plans and manually performs agreed improvement work. This work is separately scoped from the free audit.",
-    "",
-    "Scans and rescans are user-initiated. Synap does not currently provide continuous or real-time monitoring, and future automation is not described as a current capability.",
-    "",
-    "## Public free-audit coverage",
-    "",
-    `The normal free audit covers model families associated with ${publicFreeAuditEngineNames().join(", ")}. Requests use configured provider APIs rather than direct automation of consumer chat applications, so a scan should not be treated as a reproduction of every consumer-interface answer.`,
-    "",
-    "## Audit measurement summary",
-    "",
-    "- A scan researches the submitted business and generates 25 prompts under the current default configuration.",
-    "- Prompts are stored as branded or unbranded from their actual text and known aliases.",
-    "- The primary Visibility Score uses successful unbranded category and comparison answers; branded recognition is separate.",
-    "- Category has weight 0.60 and unbranded comparison has weight 0.40, with model weights normalized over model families present.",
-    "- Failed model requests are excluded. Every score snapshot stores a metric version; the current version is 2.",
-    "- Share of Voice counts each qualifying entity at most once per successful unbranded answer and excludes directories, marketplaces, sources and generic phrases.",
-    "",
-    "## Supported outputs",
-    "",
-    "Visibility metrics; branded recognition; provider-level results; prompts; generated answers; answer-level recommendation position; competitors; Share of Voice; cited domains; and prompts where competitors appear without the target business.",
-    "",
-    "## Limitations and privacy boundary",
-    "",
-    "Generated answers vary by model, retrieval, date and wording. Provider-hosted model behavior can differ from consumer interfaces. A Synap audit is a dated sample and does not guarantee indexing, mentions, citations, positions, rankings, recommendations, inclusion in training data or commercial results.",
-    "",
-    "Authenticated business profiles, prompts, answers, competitor reports, account details and customer scan data remain private. They are not exposed in this file or other public crawl resources.",
-    "",
-    "## Canonical references",
-    "",
-    `- Services: ${base}/en/services`,
-    `- Methodology: ${base}/en/methodology`,
-    `- Audit interface: ${base}/en/product`,
-    `- Documentation: ${base}/en/docs`,
-    `- FAQ: ${base}/en/faq`,
-    `- Full sitemap: ${base}/sitemap.xml`,
-    "",
-    "Updated: 2026-08-03",
-  ].join("\n");
-}
+export { llmsFullText, llmsText, robotsText, sitemapXml };
 
 /** Public HTML, crawl resources and response-level indexing controls. */
 export function mountSeo(app: Express): void {

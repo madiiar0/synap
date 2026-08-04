@@ -1,5 +1,110 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/guides", "destination": "/blogs", "permanent": true },
+    { "source": "/en/guides", "destination": "/en/blogs", "permanent": true },
+    {
+      "source": "/guides/audit-ai-brand-information",
+      "destination": "/blogs/audit-ai-generated-brand-information",
+      "permanent": true
+    },
+    {
+      "source": "/en/guides/audit-ai-brand-information",
+      "destination": "/en/blogs/audit-ai-generated-brand-information",
+      "permanent": true
+    },
+    {
+      "source": "/guides/why-ai-recommends-competitors",
+      "destination": "/blogs/why-ai-recommends-competitors",
+      "permanent": true
+    },
+    {
+      "source": "/en/guides/why-ai-recommends-competitors",
+      "destination": "/en/blogs/why-ai-recommends-competitors",
+      "permanent": true
+    },
+    {
+      "source": "/ai-visibility",
+      "destination": "/blogs/ai-visibility-kazakhstan",
+      "permanent": true
+    },
+    {
+      "source": "/en/ai-visibility",
+      "destination": "/en/blogs/ai-visibility-kazakhstan",
+      "permanent": true
+    },
+    { "source": "/use-cases/saas", "destination": "/use-cases", "permanent": true },
+    { "source": "/en/use-cases/saas", "destination": "/en/use-cases", "permanent": true },
+    { "source": "/use-cases/ecommerce", "destination": "/use-cases", "permanent": true },
+    {
+      "source": "/en/use-cases/ecommerce",
+      "destination": "/en/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/use-cases/professional-services",
+      "destination": "/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/en/use-cases/professional-services",
+      "destination": "/en/use-cases",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/robots.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "Content-Type", "value": "application/xml; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    },
+    {
+      "source": "/:file(llms|llms-full).txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    },
+    {
+      "source": "/:private(app|admin|scan)/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "Cache-Control", "value": "private, no-store" }
+      ]
+    },
+    {
+      "source": "/verify-email",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "Cache-Control", "value": "private, no-store" }
+      ]
+    },
+    {
+      "source": "/api/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "Cache-Control", "value": "private, no-store" }
+      ]
+    },
+    {
+      "source": "/spa",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "Cache-Control", "value": "private, no-store" }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",
@@ -7,7 +112,7 @@
     },
     {
       "source": "/:path((?!api(?:/|$)).*)",
-      "destination": "/index.html"
+      "destination": "/spa"
     }
   ]
 }
