@@ -1,4 +1,4 @@
-import rateLimit from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 import type { NextFunction, Request, Response } from "express";
 import { env } from "../../config/env.js";
 import { AppError } from "../../lib/errors.js";
