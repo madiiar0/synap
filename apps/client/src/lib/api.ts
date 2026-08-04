@@ -14,7 +14,20 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
     ...init,
   });
-  const body = (await res.json().catch(() => ({}))) as {
+  if (res.status === 204) return undefined as T;
+
+  const contentType = res.headers.get("content-type")?.toLowerCase() ?? "";
+  if (!contentType.includes("application/json")) {
+    throw new ApiError(
+      "INVALID_RESPONSE",
+      res.status,
+      `Expected a JSON response from ${path}`,
+    );
+  }
+
+  const body = (await res.json().catch(() => {
+    throw new ApiError("INVALID_RESPONSE", res.status, `Invalid JSON response from ${path}`);
+  })) as {
     error?: { code?: string; message?: string };
   };
   if (!res.ok) {
