@@ -17,6 +17,7 @@ function configurationError(message: string): Response {
 export async function proxyRequest(
   request: Request,
   configuredBackend = process.env.BACKEND_URL,
+  forwardedApiPath?: string,
 ): Promise<Response> {
   if (!configuredBackend) {
     return configurationError("The frontend BACKEND_URL environment variable is not configured");
@@ -33,7 +34,11 @@ export async function proxyRequest(
   }
 
   const incoming = new URL(request.url);
-  const target = new URL(`${incoming.pathname}${incoming.search}`, backend.origin);
+  const targetPath = forwardedApiPath
+    ? `/api/${forwardedApiPath.replace(/^\/+/, "")}`
+    : incoming.pathname;
+  incoming.searchParams.delete("__synap_path");
+  const target = new URL(`${targetPath}${incoming.search}`, backend.origin);
   const headers = new Headers(request.headers);
   headers.delete("host");
   headers.delete("content-length");

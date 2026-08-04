@@ -53,4 +53,21 @@ describe("Vercel frontend API proxy", () => {
     expect(response.headers.get("x-synap-proxy-test")).toBe("preserved");
     await expect(response.json()).resolves.toEqual({ role: "admin" });
   });
+
+  it("restores a nested path supplied by the Vercel API rewrite", async () => {
+    const upstream = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) =>
+      Response.json({ error: { code: "UNAUTHORIZED" } }, { status: 401 }));
+    vi.stubGlobal("fetch", upstream);
+
+    await proxyRequest(
+      new Request(
+        "https://synap-client.vercel.app/api/bridge?next=%2Fapp&__synap_path=auth%2Fme",
+      ),
+      "https://synap-server.vercel.app",
+      "auth/me",
+    );
+
+    const [target] = upstream.mock.calls[0];
+    expect(String(target)).toBe("https://synap-server.vercel.app/api/auth/me?next=%2Fapp");
+  });
 });
