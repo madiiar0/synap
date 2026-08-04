@@ -9,7 +9,7 @@ export interface JobPayload {
 type Handler = (payload: JobPayload) => Promise<void>;
 
 const handlers = new Map<JobName, Handler>();
-let driver: "inline" | "bullmq" = "inline";
+let driver: "inline" | "bullmq" | "vercel" = "inline";
 let bullQueue: { add: (name: string, data: JobPayload) => Promise<unknown> } | null = null;
 
 export function registerHandler(name: JobName, handler: Handler): void {
@@ -34,6 +34,13 @@ async function runInline(name: JobName, payload: JobPayload): Promise<void> {
  * inline driver (immediate async execution).
  */
 export async function initQueue(): Promise<void> {
+  if (process.env.VERCEL === "1") {
+    // A Vercel Function has no durable resident worker. waitUntil() keeps the
+    // invocation alive after the scan-start response, within maxDuration.
+    driver = "vercel";
+    logger.info("queue: Vercel waitUntil driver");
+    return;
+  }
   if (!env.REDIS_URL) {
     driver = "inline";
     logger.info("queue: inline driver (no REDIS_URL)");
@@ -82,6 +89,11 @@ export async function initQueue(): Promise<void> {
 }
 
 export async function enqueue(name: JobName, payload: JobPayload): Promise<void> {
+  if (driver === "vercel") {
+    const { waitUntil } = await import("@vercel/functions");
+    waitUntil(runInline(name, payload));
+    return;
+  }
   if (driver === "bullmq" && bullQueue) {
     await bullQueue.add(name, payload);
     return;

@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import { createApp } from "./app.js";
 import { adminEmails, authMode, env } from "./config/env.js";
 import { connectDb, isMemoryDb } from "./db/connect.js";
@@ -7,7 +8,11 @@ import { initQueue, registerHandler, startStuckScanSweeper } from "./queue/index
 import { findStuckScans, runScan } from "./services/scanRunner.js";
 import { setBudgetEmailSender } from "./services/usage.js";
 
-async function main(): Promise<void> {
+const isVercel = process.env.VERCEL === "1";
+const app = createApp();
+let initialization: Promise<void> | null = null;
+
+async function initializeRuntime(): Promise<void> {
   await connectDb();
 
   // §1.1: demo mode must never be a silent surprise.
@@ -31,7 +36,7 @@ async function main(): Promise<void> {
   registerHandler("runScan", ({ scanId }) => runScan(scanId));
   await initQueue();
   setBudgetEmailSender(sendBudgetPausedEmail);
-  startStuckScanSweeper(findStuckScans);
+  if (!isVercel) startStuckScanSweeper(findStuckScans);
 
   // §7: the owner's account is admin + unlimited from the first sign-in.
   const { User } = await import("./models/User.js");
@@ -57,17 +62,46 @@ async function main(): Promise<void> {
       "in-memory DB auto-seeded with demo data (mock auth: sign in with the email)",
     );
   }
-
-  const app = createApp();
-  app.listen(env.PORT, () => {
-    logger.info(
-      { port: env.PORT, demo: env.DEMO_MODE, client: env.CLIENT_URL },
-      "Synap server listening",
-    );
-  });
 }
 
-main().catch((err) => {
-  logger.error({ err }, "fatal startup error");
-  process.exit(1);
-});
+function runtimeReady(): Promise<void> {
+  initialization ??= initializeRuntime();
+  return initialization;
+}
+
+/** Vercel function entry: every cold instance finishes initialization before
+ * Express handles its first request. Subsequent requests reuse the promise. */
+export default async function handler(req: Request, res: Response): Promise<void> {
+  try {
+    await runtimeReady();
+    await new Promise<void>((resolve) => {
+      const finished = (): void => resolve();
+      res.once("finish", finished);
+      res.once("close", finished);
+      app(req, res);
+    });
+  } catch (err) {
+    logger.error({ err }, "backend initialization failed");
+    if (!res.headersSent) {
+      res.status(503).json({
+        error: { code: "SERVICE_UNAVAILABLE", message: "Backend initialization failed" },
+      });
+    }
+  }
+}
+
+if (!isVercel) {
+  runtimeReady()
+    .then(() => {
+      app.listen(env.PORT, () => {
+        logger.info(
+          { port: env.PORT, demo: env.DEMO_MODE, client: env.CLIENT_URL },
+          "Synap server listening",
+        );
+      });
+    })
+    .catch((err) => {
+      logger.error({ err }, "fatal startup error");
+      process.exit(1);
+    });
+}
