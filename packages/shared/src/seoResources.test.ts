@@ -27,6 +27,7 @@ describe("public SEO resource rendering", () => {
 
     expect(renderedBody).toBe(originalBody);
     expect(html).toContain('<html lang="en" data-site-noindex="false">');
+    expect(html).not.toContain('<html lang="en" data-site-noindex="false">>');
     expect(html).toContain(`<link rel="canonical" href="${BASE}/en/about">`);
     expect(html).toContain('hreflang="x-default"');
     expect(html).toContain('type="application/ld+json"');

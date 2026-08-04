@@ -108,7 +108,7 @@ export function injectPublicHead(
   siteNoindex = false,
 ): string {
   const out = html.replace(
-    /<html lang="[^"]*"(?: data-site-noindex="[^"]*")?/i,
+    /<html lang="[^"]*"(?: data-site-noindex="[^"]*")?>/i,
     `<html lang="${locale}" data-site-noindex="${siteNoindex}">`,
   );
   const block = `<!-- synap-seo:start -->\n    ${buildPublicHeadTags(
