@@ -3,9 +3,22 @@ import fs from "node:fs";
 import path from "node:path";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { type Express, type RequestHandler } from "express";
-import * as helmetModule from "helmet";
-import type { HelmetOptions } from "helmet";
+import express, { type Express } from "express";
+import {
+  contentSecurityPolicy,
+  crossOriginOpenerPolicy,
+  crossOriginResourcePolicy,
+  originAgentCluster,
+  referrerPolicy,
+  strictTransportSecurity,
+  xContentTypeOptions,
+  xDnsPrefetchControl,
+  xDownloadOptions,
+  xFrameOptions,
+  xPermittedCrossDomainPolicies,
+  xPoweredBy,
+  xXssProtection,
+} from "helmet";
 import { pinoHttp } from "pino-http";
 import { authMode, env, isProd, repoRoot } from "./config/env.js";
 import { isMemoryDb } from "./db/connect.js";
@@ -20,13 +33,6 @@ import { attachUser } from "./http/middleware/auth.js";
 import { errorHandler, notFoundHandler } from "./http/middleware/errors.js";
 import { apiLimiter } from "./http/middleware/rateLimits.js";
 import { mountSeo } from "./http/seo.js";
-
-// Vercel's Express compiler treats a direct default import as the module
-// namespace. Access the package's real ESM default explicitly while keeping a
-// static import so the serverless dependency tracer includes Helmet.
-const helmet: (
-  options?: Readonly<HelmetOptions>,
-) => RequestHandler = helmetModule.default;
 
 export function createApp(): Express {
   const app = express();
@@ -46,28 +52,40 @@ export function createApp(): Express {
     "https://accounts.google.com",
     "https://*.google.com",
   ];
+  // Use Helmet's named middleware exports instead of its dual ESM/CJS default
+  // export. These are the same defaults Helmet composes internally, with the
+  // existing Firebase CSP and opener-policy exceptions preserved.
   app.use(
-    helmet({
-      contentSecurityPolicy: {
-        useDefaults: true,
-        directives: {
-          "script-src": ["'self'", "https://apis.google.com", "https://www.gstatic.com"],
-          "connect-src": [
-            "'self'",
-            "https://*.googleapis.com",
-            "https://*.firebaseapp.com",
-            "https://accounts.google.com",
-            "https://securetoken.googleapis.com",
-          ],
-          "frame-src": ["'self'", ...FIREBASE_FRAME],
-          "form-action": ["'self'", ...FIREBASE_FRAME],
-          // Google account avatars.
-          "img-src": ["'self'", "data:", "https://lh3.googleusercontent.com"],
-        },
+    contentSecurityPolicy({
+      useDefaults: true,
+      directives: {
+        "script-src": ["'self'", "https://apis.google.com", "https://www.gstatic.com"],
+        "connect-src": [
+          "'self'",
+          "https://*.googleapis.com",
+          "https://*.firebaseapp.com",
+          "https://accounts.google.com",
+          "https://securetoken.googleapis.com",
+        ],
+        "frame-src": ["'self'", ...FIREBASE_FRAME],
+        "form-action": ["'self'", ...FIREBASE_FRAME],
+        // Google account avatars.
+        "img-src": ["'self'", "data:", "https://lh3.googleusercontent.com"],
       },
-      // Firebase's popup needs to be able to talk to its opener.
-      crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
     }),
+    // Firebase's popup needs to be able to talk to its opener.
+    crossOriginOpenerPolicy({ policy: "same-origin-allow-popups" }),
+    crossOriginResourcePolicy(),
+    originAgentCluster(),
+    referrerPolicy(),
+    strictTransportSecurity(),
+    xContentTypeOptions(),
+    xDnsPrefetchControl(),
+    xDownloadOptions(),
+    xFrameOptions(),
+    xPermittedCrossDomainPolicies(),
+    xPoweredBy(),
+    xXssProtection(),
   );
 
   // One origin and one trailing-slash policy for public HTML. In production,

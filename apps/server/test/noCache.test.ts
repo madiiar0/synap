@@ -63,4 +63,23 @@ describe("authenticated API responses are never conditionally cached (§3.1)", (
     expect(second.status).not.toBe(304);
     await expect(second.json()).resolves.toBeInstanceOf(Array);
   });
+
+  it("preserves the complete security-header policy", async () => {
+    const res = await fetch(`${base}/api/health`);
+    const csp = res.headers.get("content-security-policy") ?? "";
+
+    expect(csp).toContain("https://*.firebaseapp.com");
+    expect(res.headers.get("cross-origin-opener-policy")).toBe("same-origin-allow-popups");
+    expect(res.headers.get("cross-origin-resource-policy")).toBe("same-origin");
+    expect(res.headers.get("origin-agent-cluster")).toBe("?1");
+    expect(res.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(res.headers.get("strict-transport-security")).toContain("max-age=");
+    expect(res.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(res.headers.get("x-dns-prefetch-control")).toBe("off");
+    expect(res.headers.get("x-download-options")).toBe("noopen");
+    expect(res.headers.get("x-frame-options")).toBe("SAMEORIGIN");
+    expect(res.headers.get("x-permitted-cross-domain-policies")).toBe("none");
+    expect(res.headers.get("x-powered-by")).toBeNull();
+    expect(res.headers.get("x-xss-protection")).toBe("0");
+  });
 });
