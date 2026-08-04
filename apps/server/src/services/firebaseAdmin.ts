@@ -1,3 +1,11 @@
+import {
+  applicationDefault,
+  cert,
+  getApp,
+  getApps,
+  initializeApp,
+} from "firebase-admin/app";
+import { getAuth, type Auth } from "firebase-admin/auth";
 import { env } from "../config/env.js";
 import { AppError } from "../lib/errors.js";
 import { logger } from "../lib/logger.js";
@@ -10,7 +18,7 @@ export interface VerifiedIdentity {
   emailVerified: boolean;
 }
 
-let appPromise: Promise<typeof import("firebase-admin/auth")> | null = null;
+let appPromise: Promise<Auth> | null = null;
 
 type ServiceAccountJson = Record<string, unknown>;
 
@@ -111,21 +119,17 @@ export function parseFirebaseServiceAccount(value: string): ServiceAccountJson {
   return account;
 }
 
-async function getAdminAuth(): Promise<typeof import("firebase-admin/auth")> {
+async function getAdminAuth(): Promise<Auth> {
   if (!appPromise) {
     appPromise = (async () => {
-      const { initializeApp, cert, applicationDefault, getApps } = await import("firebase-admin/app");
-      const authModule = await import("firebase-admin/auth");
-      if (getApps().length === 0) {
-        if (env.FIREBASE_SERVICE_ACCOUNT_JSON) {
-          const json = parseFirebaseServiceAccount(env.FIREBASE_SERVICE_ACCOUNT_JSON);
-          initializeApp({ credential: cert(json) });
-        } else {
-          // GOOGLE_APPLICATION_CREDENTIALS path
-          initializeApp({ credential: applicationDefault() });
-        }
+      if (getApps().length > 0) return getAuth(getApp());
+
+      if (env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+        const json = parseFirebaseServiceAccount(env.FIREBASE_SERVICE_ACCOUNT_JSON);
+        return getAuth(initializeApp({ credential: cert(json) }));
       }
-      return authModule;
+      // GOOGLE_APPLICATION_CREDENTIALS path
+      return getAuth(initializeApp({ credential: applicationDefault() }));
     })().catch((error: unknown) => {
       // Do not permanently cache a rejected initialization in a warm function.
       appPromise = null;
@@ -145,8 +149,8 @@ async function getAdminAuth(): Promise<typeof import("firebase-admin/auth")> {
 
 /** Verify a Firebase ID token and normalize the identity. */
 export async function verifyFirebaseToken(idToken: string): Promise<VerifiedIdentity> {
-  const { getAuth } = await getAdminAuth();
-  const decoded = await getAuth()
+  const adminAuth = await getAdminAuth();
+  const decoded = await adminAuth
     .verifyIdToken(idToken)
     .catch(() => {
       throw new AppError("INVALID_TOKEN", 401, "Invalid or expired sign-in token");
