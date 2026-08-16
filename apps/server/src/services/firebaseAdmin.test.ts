@@ -6,8 +6,8 @@ import {
 
 const account = {
   type: "service_account",
-  project_id: "synapai-test",
-  client_email: "firebase-adminsdk@synapai-test.iam.gserviceaccount.com",
+  project_id: "akrux-test",
+  client_email: "firebase-adminsdk@akrux-test.iam.gserviceaccount.com",
   private_key: "-----BEGIN PRIVATE KEY-----\nnot-a-real-key\n-----END PRIVATE KEY-----\n",
 };
 

@@ -1,6 +1,6 @@
 {
   "common": {
-    "brand": "Synap",
+    "brand": "Akrux",
     "loading": "Загрузка…",
     "error": "Что-то пошло не так. Попробуйте ещё раз.",
     "retry": "Повторить",
@@ -18,7 +18,7 @@
     "logout": "Выйти",
     "email": "Email",
     "emailPlaceholder": "you@company.com",
-    "copyright": "© 2026 Synap"
+    "copyright": "© 2026 Akrux"
   },
   "nav": {
     "product": "Продукт",
@@ -372,11 +372,11 @@
     },
     "leadNotification": {
       "subject": "Новый лид: {{type}}",
-      "title": "Новый лид в Synap",
+      "title": "Новый лид в Akrux",
       "body": "Тип: {{type}}. Бизнес: {{brand}}. Контакт: {{contact}}."
     },
     "budgetPaused": {
-      "subject": "Synap: дневной бюджет LLM исчерпан",
+      "subject": "Akrux: дневной бюджет LLM исчерпан",
       "title": "Сканы на паузе",
       "body": "Расход за сегодня достиг {{spend}} USD при лимите {{budget}} USD. Сканы приостановлены до завтра. Возобновить можно в админке."
     }
@@ -420,7 +420,7 @@
   },
   "notFound": {
     "title": "Страница не найдена",
-    "body": "Адрес мог устареть или быть введён с ошибкой. Вернитесь на главную страницу Synap."
+    "body": "Адрес мог устареть или быть введён с ошибкой. Вернитесь на главную страницу Akrux."
   },
   "verifyPage": {
     "title": "Подтвердите email",

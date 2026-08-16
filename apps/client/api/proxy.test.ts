@@ -7,7 +7,7 @@ describe("Vercel frontend API proxy", () => {
   });
 
   it("returns a non-cacheable configuration error when BACKEND_URL is absent", async () => {
-    const response = await proxyRequest(new Request("https://synap.vercel.app/api/health"), "");
+    const response = await proxyRequest(new Request("https://akrux.vercel.app/api/health"), "");
     expect(response.status).toBe(503);
     expect(response.headers.get("cache-control")).toBe("no-store");
     await expect(response.json()).resolves.toMatchObject({
@@ -21,13 +21,13 @@ describe("Vercel frontend API proxy", () => {
         status: 200,
         headers: {
           "content-type": "application/json",
-          "x-synap-proxy-test": "preserved",
+          "x-akrux-proxy-test": "preserved",
         },
       }));
     vi.stubGlobal("fetch", upstream);
 
     const request = new Request(
-      "https://synap-preview.vercel.app/api/auth/admin-session?next=%2Fadmin",
+      "https://akrux-preview.vercel.app/api/auth/admin-session?next=%2Fadmin",
       {
         method: "POST",
         headers: {
@@ -37,20 +37,20 @@ describe("Vercel frontend API proxy", () => {
         body: JSON.stringify({ email: "owner@example.com", password: "server-only" }),
       },
     );
-    const response = await proxyRequest(request, "https://synap-api.vercel.app/");
+    const response = await proxyRequest(request, "https://akrux-api.vercel.app/");
 
     expect(upstream).toHaveBeenCalledOnce();
     const [target, init] = upstream.mock.calls[0];
     expect(String(target)).toBe(
-      "https://synap-api.vercel.app/api/auth/admin-session?next=%2Fadmin",
+      "https://akrux-api.vercel.app/api/auth/admin-session?next=%2Fadmin",
     );
     expect(init?.method).toBe("POST");
     expect(new Headers(init?.headers).get("authorization")).toBe("Bearer existing-session");
     expect(new Headers(init?.headers).get("x-forwarded-host")).toBe(
-      "synap-preview.vercel.app",
+      "akrux-preview.vercel.app",
     );
     expect(new TextDecoder().decode(init?.body as ArrayBuffer)).toContain("owner@example.com");
-    expect(response.headers.get("x-synap-proxy-test")).toBe("preserved");
+    expect(response.headers.get("x-akrux-proxy-test")).toBe("preserved");
     await expect(response.json()).resolves.toEqual({ role: "admin" });
   });
 
@@ -61,14 +61,14 @@ describe("Vercel frontend API proxy", () => {
 
     await proxyRequest(
       new Request(
-        "https://synap-client.vercel.app/api/bridge?next=%2Fapp&__synap_path=auth%2Fme",
+        "https://akrux-client.vercel.app/api/bridge?next=%2Fapp&__akrux_path=auth%2Fme",
       ),
-      "https://synap-server.vercel.app",
+      "https://akrux-server.vercel.app",
       "auth/me",
     );
 
     const [target] = upstream.mock.calls[0];
-    expect(String(target)).toBe("https://synap-server.vercel.app/api/auth/me?next=%2Fapp");
+    expect(String(target)).toBe("https://akrux-server.vercel.app/api/auth/me?next=%2Fapp");
   });
 
   it("removes stale compression metadata from decoded upstream JSON", async () => {
@@ -83,10 +83,10 @@ describe("Vercel frontend API proxy", () => {
     vi.stubGlobal("fetch", upstream);
 
     const response = await proxyRequest(
-      new Request("https://synap-client.vercel.app/api/brands", {
+      new Request("https://akrux-client.vercel.app/api/brands", {
         headers: { "accept-encoding": "br, gzip" },
       }),
-      "https://synap-server.vercel.app",
+      "https://akrux-server.vercel.app",
     );
 
     const [, init] = upstream.mock.calls[0];

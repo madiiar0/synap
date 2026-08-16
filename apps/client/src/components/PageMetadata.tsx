@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+  CANONICAL_SITE_URL,
   localizedPublicPath,
   landingFaqItems,
   publicFaqItems,
@@ -14,7 +15,7 @@ function upsertMeta(selector: string, attrs: Record<string, string>): void {
   let el = document.head.querySelector<HTMLMetaElement>(selector);
   if (!el) {
     el = document.createElement("meta");
-    el.dataset.synapManaged = "true";
+    el.dataset.akruxManaged = "true";
     document.head.appendChild(el);
   }
   for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, value);
@@ -24,7 +25,7 @@ function upsertLink(selector: string, attrs: Record<string, string>): void {
   let el = document.head.querySelector<HTMLLinkElement>(selector);
   if (!el) {
     el = document.createElement("link");
-    el.dataset.synapManaged = "true";
+    el.dataset.akruxManaged = "true";
     document.head.appendChild(el);
   }
   for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, value);
@@ -34,7 +35,10 @@ function upsertLink(selector: string, attrs: Record<string, string>): void {
 export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale: Locale }): null {
   useEffect(() => {
     const meta = routeMeta(path, locale);
-    const base = window.location.origin;
+    // Always the canonical origin, never window.location.origin: a preview
+    // alias or a retired hostname must not advertise itself as a second
+    // canonical identity for the same pages.
+    const base = CANONICAL_SITE_URL;
     const canonical = `${base}${localizedPublicPath(path, locale)}`;
     const ruUrl = `${base}${localizedPublicPath(path, "ru")}`;
     const enUrl = `${base}${localizedPublicPath(path, "en")}`;
@@ -64,7 +68,7 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
     }
     const og: Array<[string, string]> = [
       ["og:type", meta.kind === "article" ? "article" : "website"],
-      ["og:site_name", "Synap"],
+      ["og:site_name", "Akrux"],
       ["og:title", meta.title],
       ["og:description", description],
       ["og:url", canonical],
@@ -87,12 +91,12 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
       upsertMeta(`meta[name="${name}"]`, { name, content });
     }
 
-    let script = document.head.querySelector<HTMLScriptElement>("#synap-structured-data");
+    let script = document.head.querySelector<HTMLScriptElement>("#akrux-structured-data");
     if (!script) {
       script = document.createElement("script");
-      script.id = "synap-structured-data";
+      script.id = "akrux-structured-data";
       script.type = "application/ld+json";
-      script.dataset.synapManaged = "true";
+      script.dataset.akruxManaged = "true";
       document.head.appendChild(script);
     }
     const faq = path === "/" ? landingFaqItems(locale) : path === "/faq" ? publicFaqItems(locale) : [];
@@ -104,11 +108,11 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
 /** Prevent stale public metadata after navigation into an authenticated route. */
 export function PrivatePageMetadata({ title }: { title: string }): null {
   useEffect(() => {
-    document.title = `${title} | Synap`;
+    document.title = `${title} | Akrux`;
     upsertMeta('meta[name="robots"]', { name: "robots", content: "noindex,nofollow,noarchive" });
     document.head.querySelectorAll('link[rel="canonical"], link[rel="alternate"][hreflang]')
       .forEach((node) => node.remove());
-    document.head.querySelector("#synap-structured-data")?.remove();
+    document.head.querySelector("#akrux-structured-data")?.remove();
   }, [title]);
   return null;
 }

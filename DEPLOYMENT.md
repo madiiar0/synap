@@ -1,13 +1,19 @@
-# Synap deployment
+# Akrux deployment
 
-Synap can run as two Vercel projects from this pnpm monorepo:
+Akrux can run as two Vercel projects from this pnpm monorepo:
 
 - `apps/client`: Vite frontend and same-origin `/api` proxy
 - `apps/server`: Express API, MongoDB access and audit execution
 
 The proxy is intentional. Browser code continues to request `/api/...`, so
 the HTTP-only session cookie remains first-party on the frontend hostname.
-Neither temporary nor final domains are hardcoded in the repository.
+
+Deployment hostnames stay in Vercel, but the **public canonical origin is not
+a deployment detail**: `CANONICAL_SITE_URL` in `packages/shared/src/seo.ts`
+pins it to `https://akrux.app`. Production frontend builds publish that origin
+in canonicals, hreflang, the sitemap, `llms.txt` and JSON-LD regardless of the
+Vercel URL a deployment happens to receive. Point the `akrux.app` domain at
+the frontend project and let every other hostname 308 to it.
 
 ## 1. Create the backend project first
 
@@ -17,7 +23,7 @@ the Root Directory** enabled because the server imports `packages/shared`.
 
 Use Node.js 22. The Express entry is `src/index.ts`; `vercel.json` gives the
 function a 300-second maximum duration. Vercel automatically sets `VERCEL=1`.
-In that environment Synap uses `waitUntil()` for an audit started by the
+In that environment Akrux uses `waitUntil()` for an audit started by the
 request instead of assuming an always-running process.
 
 Configure these backend variables for the environment being deployed:
@@ -26,12 +32,12 @@ Configure these backend variables for the environment being deployed:
 NODE_ENV=production
 CLIENT_URL=https://your-frontend.vercel.app
 APP_BASE_URL=https://your-backend.vercel.app
-BRAND_NAME=Synap
+BRAND_NAME=Akrux
 JWT_SECRET=<at-least-32-random-bytes>
 MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>/synapai?retryWrites=true&w=majority
 AUTH_MODE=firebase
 FIREBASE_SERVICE_ACCOUNT_JSON=<base64-service-account-json-or-complete-raw-json>
-ADMIN_EMAIL=admin@synapai.app
+ADMIN_EMAIL=admin@akrux.app
 ADMIN_PASSWORD=<at-least-12-random-characters>
 DEMO_MODE=true
 SITE_NOINDEX=true
@@ -115,3 +121,23 @@ When the final domains are ready, update and redeploy:
 
 Keep `JWT_SECRET`, MongoDB, Firebase, provider, SMTP and admin credentials
 unchanged during a domain-only migration.
+
+## 6. Brand identity outside the repository
+
+The repository publishes `Akrux` and `https://akrux.app` everywhere a user,
+crawler or AI retriever can read it. These live in provider dashboards instead
+and have to be changed there:
+
+1. **Domain.** Point `akrux.app` at the frontend Vercel project and keep every
+   other hostname — including the previous brand's domain and the generated
+   `*.vercel.app` URLs — redirecting `308` to it. One canonical origin is what
+   keeps search engines and AI systems from treating this as two entities.
+2. **`ADMIN_EMAIL` / `MAIL_FROM`.** Repository defaults are now `@akrux.app`,
+   but a deployment that sets these explicitly keeps its old values until they
+   are edited. Every outgoing email shows `MAIL_FROM`.
+3. **Firebase `authDomain`.** Shown to users during Google sign-in. A project
+   ID cannot be renamed; see `FIREBASE_SETUP.md` for the custom-domain route.
+4. **MongoDB database and Redis queue names, the `synapai_session` cookie and
+   the `synapai:*` browser-storage keys** are deliberately unchanged. They
+   hold live state, are invisible to users and crawlers, and renaming them
+   would drop data or sign every existing session out for no visible gain.

@@ -95,7 +95,7 @@ export default function Onboarding(): JSX.Element {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-base px-4 py-12">
       <PrivatePageMetadata title={t("onboarding.title")} />
-      <Link to="/" aria-label="Synap" className="mb-8">
+      <Link to="/" aria-label="Akrux" className="mb-8">
         <Logo size={20} className="text-lg" />
       </Link>
       <div className="w-full max-w-2xl rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-8">

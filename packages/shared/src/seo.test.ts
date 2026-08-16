@@ -19,8 +19,8 @@ import {
   webSiteLd,
 } from "./seo.js";
 
-const BASE = "https://synap.example";
-const FORMER_NAME = ["Synap", "AI"].join("");
+const BASE = "https://akrux.example";
+const FORMER_NAME = ["Syn", "ap"].join("");
 
 describe("public information architecture", () => {
   it("keeps only consolidated and complete canonical routes", () => {
@@ -33,25 +33,25 @@ describe("public information architecture", () => {
     expect(INDEXABLE_PUBLIC_PATHS).not.toContain("/use-cases/professional-services");
   });
 
-  it("defines Synap as a human-assisted Kazakhstan service in primary metadata", () => {
+  it("defines Akrux as a human-assisted Kazakhstan service in primary metadata", () => {
     expect(PRODUCT_POSITIONING.en.short).toBe(
-      "Synap gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
+      "Akrux gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
     );
     expect(PRODUCT_POSITIONING.ru.short).toBe(
-      "Synap бесплатно проверяет, как бизнес в Казахстане представлен в ответах ИИ, а затем команда вручную помогает с улучшениями. Позиции в ИИ не гарантируются.",
+      "Akrux бесплатно проверяет, как бизнес в Казахстане представлен в ответах ИИ, а затем команда вручную помогает с улучшениями. Позиции в ИИ не гарантируются.",
     );
     expect(PRODUCT_POSITIONING.en.full).toContain("human-assisted");
     expect(PRODUCT_POSITIONING.en.full).toContain("manually carries out agreed improvement work");
     expect(PRODUCT_POSITIONING.en.full).not.toMatch(/analytics platform|continuous|real-time/i);
     expect(routeMeta("/", "en")).toMatchObject({
-      title: "Synap — Improve AI Visibility in Kazakhstan",
+      title: "Akrux — Improve AI Visibility in Kazakhstan",
       description:
-        "Get a free audit of how your business appears in AI answers. Synap’s team helps Kazakhstan businesses carry out agreed improvements; AI placement is not guaranteed.",
+        "Get a free audit of how your business appears in AI answers. Akrux’s team helps Kazakhstan businesses carry out agreed improvements; AI placement is not guaranteed.",
     });
     expect(routeMeta("/", "ru")).toMatchObject({
-      title: "Synap — улучшение видимости бизнеса в ИИ в Казахстане",
+      title: "Akrux — улучшение видимости бизнеса в ИИ в Казахстане",
       description:
-        "Получите бесплатный аудит представленности бизнеса в ответах ИИ. Команда Synap помогает компаниям Казахстана с улучшениями; позиции в ИИ не гарантируются.",
+        "Получите бесплатный аудит представленности бизнеса в ответах ИИ. Команда Akrux помогает компаниям Казахстана с улучшениями; позиции в ИИ не гарантируются.",
     });
   });
 
@@ -122,18 +122,18 @@ describe("public information architecture", () => {
       { from: "/use-cases/ecommerce", to: "/use-cases" },
       { from: "/use-cases/professional-services", to: "/use-cases" },
     ]);
-    expect(routeMeta("/blogs", "en").title).toBe("Synap Blog — AI Visibility in Kazakhstan");
-    expect(routeMeta("/blogs", "ru").title).toBe("Блог Synap — видимость бизнеса в ответах ИИ");
+    expect(routeMeta("/blogs", "en").title).toBe("Akrux Blog — AI Visibility in Kazakhstan");
+    expect(routeMeta("/blogs", "ru").title).toBe("Блог Akrux — видимость бизнеса в ответах ИИ");
   });
 
   it("registers localized Services metadata without a hard-coded origin", () => {
     expect(INDEXABLE_PUBLIC_PATHS).toContain("/services");
     expect(routeMeta("/services", "en")).toMatchObject({
-      title: "AI Visibility Services in Kazakhstan — Synap",
+      title: "AI Visibility Services in Kazakhstan — Akrux",
       indexable: true,
     });
     expect(routeMeta("/services", "ru")).toMatchObject({
-      title: "Услуги по улучшению видимости бизнеса в ИИ в Казахстане — Synap",
+      title: "Услуги по улучшению видимости бизнеса в ИИ в Казахстане — Akrux",
       indexable: true,
     });
     expect(localizedPublicPath("/services", "en")).toBe("/en/services");
@@ -142,11 +142,11 @@ describe("public information architecture", () => {
 });
 
 describe("structured data", () => {
-  it("uses a stable Synap organization identity without unsupported former-name continuity", () => {
+  it("uses a stable Akrux organization identity without unsupported former-name continuity", () => {
     const ld = organizationLd(BASE) as Record<string, unknown>;
     expect(ld["@type"]).toBe("Organization");
     expect(ld["@id"]).toBe(`${BASE}/#organization`);
-    expect(ld.name).toBe("Synap");
+    expect(ld.name).toBe("Akrux");
     expect(ld).not.toHaveProperty("alternateName");
     expect(ld.url).toBe(BASE);
     expect(ld.description).toContain("Kazakhstan");

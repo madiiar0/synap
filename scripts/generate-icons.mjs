@@ -1,5 +1,5 @@
 /**
- * §1.7: generate favicon/app icons and the OG image from the black synapse
+ * §1.7: generate favicon/app icons and the OG image from the black Akrux
  * mark (same geometry as apps/client/src/components/Logo.tsx). Outputs land
  * in apps/client/public/ and are committed. Re-run: node scripts/generate-icons.mjs
  */
@@ -7,16 +7,16 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import { SYNAP_MARK, synapFaviconSvg } from "./icon-source.mjs";
+import { AKRUX_MARK, akruxFaviconSvg } from "./icon-source.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = path.join(root, "apps/client/public");
 fs.mkdirSync(publicDir, { recursive: true });
 
-fs.writeFileSync(path.join(publicDir, "favicon.svg"), synapFaviconSvg(24));
+fs.writeFileSync(path.join(publicDir, "favicon.svg"), akruxFaviconSvg(24));
 
 async function png(size, out) {
-  await sharp(Buffer.from(synapFaviconSvg(size)), { density: (72 * size) / 24 })
+  await sharp(Buffer.from(akruxFaviconSvg(size)), { density: (72 * size) / 24 })
     .resize(size, size)
     .png()
     .toFile(path.join(publicDir, out));
@@ -59,8 +59,8 @@ fs.writeFileSync(path.join(publicDir, "favicon.ico"), ico);
 // OG image 1200x630: white background, mark + wordmark + tagline.
 const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#FFFFFF"/>
-  <g transform="translate(480, 140) scale(6.5)">${SYNAP_MARK}</g>
-  <text x="600" y="410" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#111111">Synap</text>
+  <g transform="translate(480, 140) scale(6.5)">${AKRUX_MARK}</g>
+  <text x="600" y="410" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="84" font-weight="700" fill="#111111">Akrux</text>
   <text x="600" y="480" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#6F6F6F">AI visibility analytics for businesses</text>
 </svg>`;
 await sharp(Buffer.from(ogSvg), { density: 150 }).resize(1200, 630).png().toFile(path.join(publicDir, "og-image.png"));
@@ -70,8 +70,8 @@ fs.writeFileSync(
   JSON.stringify(
     {
       id: "/",
-      name: "Synap",
-      short_name: "Synap",
+      name: "Akrux",
+      short_name: "Akrux",
       description: "AI visibility analytics for businesses",
       start_url: "/",
       scope: "/",

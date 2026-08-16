@@ -114,7 +114,7 @@ export default function LandingNav(): JSX.Element {
           island ? "md:nav-inner-island nav-inner-top" : "nav-inner-top"
         }`}
       >
-        <Link to={localizedPath("/")} aria-label="Synap">
+        <Link to={localizedPath("/")} aria-label="Akrux">
           <Logo size={20} className="text-lg" />
         </Link>
         <div className="hidden items-center gap-8 text-sm text-sub md:flex">

@@ -10,7 +10,7 @@ describe("blog prerender output", () => {
     expect(ru).toContain(publicPageContent("/blogs", "ru").h1);
     expect(ru).toContain(publicPageContent("/blogs/audit-ai-generated-brand-information", "ru").h1);
     expect(ru).toContain("/blogs/why-ai-recommends-competitors");
-    expect(en).toContain("Synap Blog");
+    expect(en).toContain("Akrux Blog");
     expect(en).toContain("How to audit AI-generated brand information");
     expect(en).toContain("What AI Visibility Means for Businesses in Kazakhstan");
     expect(en).toContain("/en/blogs/why-ai-recommends-competitors");

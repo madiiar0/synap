@@ -72,7 +72,7 @@ export function diagnoseMongoError(err: unknown, uri: string): MongoDiagnosis {
 
   if (missingDatabaseName(uri)) {
     hints.push(
-      "MONGODB_URI has no database name, so the driver would use `test`. Add it before the query string, for example: ...mongodb.net/synapai?appName=Synap",
+      "MONGODB_URI has no database name, so the driver would use `test`. Add it before the query string, for example: ...mongodb.net/synapai?appName=Akrux",
     );
   }
 

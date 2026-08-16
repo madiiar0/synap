@@ -26,7 +26,7 @@ async function main(): Promise<void> {
   }
 
   const usd = (n: number): string => `$${n.toFixed(4)}`;
-  console.log("=== Synap cost report (last 30 days) ===");
+  console.log("=== Akrux cost report (last 30 days) ===");
   console.log(`Scans run:          ${scans.length}`);
   console.log(`Provider calls:     ${calls}`);
   console.log(`Tokens (in+out):    ${tokens}`);

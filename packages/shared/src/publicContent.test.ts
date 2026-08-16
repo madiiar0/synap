@@ -41,10 +41,10 @@ describe("Phase 2B public service content", () => {
   it("distinguishes the diagnostic application from manual service work", () => {
     const en = pageText("/product", "en");
     const ru = pageText("/product", "ru");
-    expect(en).toContain("The diagnostic application behind Synap's free audit");
+    expect(en).toContain("The diagnostic application behind Akrux's free audit");
     expect(en).toContain("The application provides the free diagnostic audit");
     expect(en).toContain("manually carries out only the activities agreed");
-    expect(ru).toContain("Диагностическое приложение для бесплатного аудита Synap");
+    expect(ru).toContain("Диагностическое приложение для бесплатного аудита Akrux");
     expect(ru).toContain("вручную выполняет только согласованные");
     expect(`${en}\n${ru}`).not.toMatch(/Claude|Grok|fully automated|полностью автоматизированн/i);
   });
@@ -89,8 +89,8 @@ describe("Phase 2B public service content", () => {
     expect(text).toMatch(/Gemini/);
     expect(text).toMatch(/Perplexity/);
     expect(text).not.toMatch(/Claude|Grok/);
-    expect(text).not.toMatch(/Synap (?:offers?|provides?|runs?) (?:continuous|real-time) monitoring/i);
-    expect(text).not.toMatch(/Synap (?:guarantees?|promises?) (?:placement|indexing|mentions|citations|positions|rankings|recommendations)/i);
+    expect(text).not.toMatch(/Akrux (?:offers?|provides?|runs?) (?:continuous|real-time) monitoring/i);
+    expect(text).not.toMatch(/Akrux (?:guarantees?|promises?) (?:placement|indexing|mentions|citations|positions|rankings|recommendations)/i);
   });
 
   it("answers the practical public FAQ without hidden or duplicated questions", () => {
@@ -101,24 +101,24 @@ describe("Phase 2B public service content", () => {
       expect(JSON.stringify(items)).not.toMatch(/Claude|Grok/);
     }
     expect(publicFaqItems("en").map((item) => item.question)).toEqual([
-      "What is Synap?",
-      "Who is Synap for?",
+      "What is Akrux?",
+      "Who is Akrux for?",
       "What does the free audit include?",
       "Which AI model families are included in the free audit?",
-      "Does Synap directly scan the consumer ChatGPT, Gemini or Perplexity apps?",
+      "Does Akrux directly scan the consumer ChatGPT, Gemini or Perplexity apps?",
       "What happens after the audit?",
       "What can manual improvement work involve?",
-      "Does Synap guarantee indexing, citations, rankings or recommendations?",
-      "Does Synap provide continuous or real-time monitoring?",
+      "Does Akrux guarantee indexing, citations, rankings or recommendations?",
+      "Does Akrux provide continuous or real-time monitoring?",
       "Are audit reports public?",
-      "Does Synap currently focus on Kazakhstan?",
-      "Is Synap still in testing?",
+      "Does Akrux currently focus on Kazakhstan?",
+      "Is Akrux still in testing?",
     ]);
   });
 
   it("keeps Docs diagnostic, Methodology implementation-backed and GEO human-led", () => {
     expect(pageText("/docs", "en")).toContain("diagnostic application");
-    expect(pageText("/docs", "en")).toContain("does not describe the full human-assisted Synap service");
+    expect(pageText("/docs", "en")).toContain("does not describe the full human-assisted Akrux service");
     expect(pageText("/methodology", "en")).toContain("category rate has weight 0.60");
     expect(pageText("/methodology", "en")).toContain("comparison rate 0.40");
     expect(pageText("/generative-engine-optimization", "en")).toContain("human-led work");
@@ -133,7 +133,7 @@ describe("Phase 2B public service content", () => {
           ? ["Local businesses", "Ecommerce", "Professional services", "SaaS and digital products"]
           : ["Локальный бизнес", "Электронная торговля", "Профессиональные услуги", "SaaS и цифровые продукты"],
       );
-      expect(JSON.stringify(content)).toMatch(locale === "en" ? /not Synap client case studies/ : /не кейсы клиентов Synap/);
+      expect(JSON.stringify(content)).toMatch(locale === "en" ? /not Akrux client case studies/ : /не кейсы клиентов Akrux/);
     }
   });
 
@@ -154,7 +154,7 @@ describe("Phase 2B public service content", () => {
     expect(contact).toMatch(/free audit|бесплатный аудит/);
     expect(contact).toMatch(/Book a call|созвон/);
     expect(contact).not.toMatch(/repository|репозитор|not configured|не настроен|not supplied|не указан/i);
-    expect(contact).not.toMatch(/support@|@synap|phone|телефон|office hours|часы работы|legal entity|юридическ.*лиц/i);
+    expect(contact).not.toMatch(/support@|@akrux|phone|телефон|office hours|часы работы|legal entity|юридическ.*лиц/i);
   });
 
   it("contains no fabricated founder, customer, address or result claims on changed pages", () => {

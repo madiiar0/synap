@@ -72,7 +72,7 @@ adminRouter.get("/leads.csv", async (_req, res, next) => {
       ),
     ];
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
-    res.setHeader("Content-Disposition", "attachment; filename=synap-leads.csv");
+    res.setHeader("Content-Disposition", "attachment; filename=akrux-leads.csv");
     res.send(rows.join("\n"));
   } catch (err) {
     next(err);

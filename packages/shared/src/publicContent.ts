@@ -75,7 +75,7 @@ const PUBLIC_UI: Record<Locale, PublicUiText> = {
     breadcrumbs: "Breadcrumbs",
     home: "Home",
     answers: "Answers",
-    publisher: "Published by Synap",
+    publisher: "Published by Akrux",
     published: "Published",
     updated: "Updated",
     articles: "Articles",
@@ -90,7 +90,7 @@ const PUBLIC_UI: Record<Locale, PublicUiText> = {
     serviceCtaHeading: "Start with evidence",
     serviceCtaBody: "Run the free audit or book a call to discuss whether human-assisted improvement work is appropriate for your business.",
     serviceCtaButton: "Start the free audit",
-    socialImageAlt: "Synap visibility analytics for AI answers",
+    socialImageAlt: "Akrux visibility analytics for AI answers",
   },
   ru: {
     useCases: "Сценарии",
@@ -98,7 +98,7 @@ const PUBLIC_UI: Record<Locale, PublicUiText> = {
     breadcrumbs: "Хлебные крошки",
     home: "Главная",
     answers: "Ответы",
-    publisher: "Издатель: Synap",
+    publisher: "Издатель: Akrux",
     published: "Опубликовано",
     updated: "Обновлено",
     articles: "Статьи",
@@ -113,21 +113,21 @@ const PUBLIC_UI: Record<Locale, PublicUiText> = {
     serviceCtaHeading: "Начните с фактов",
     serviceCtaBody: "Запустите бесплатный аудит или запишитесь на созвон, чтобы обсудить, подходит ли вашему бизнесу помощь команды.",
     serviceCtaButton: "Начать бесплатный аудит",
-    socialImageAlt: "Synap: аналитика видимости в ИИ",
+    socialImageAlt: "Akrux: аналитика видимости в ИИ",
   },
 };
 
 export const PUBLIC_FAQ_ITEMS: Record<Locale, PublicFaqItem[]> = {
   en: [
     {
-      question: "What is Synap?",
+      question: "What is Akrux?",
       answer:
-        "Synap is an early-stage, human-assisted AI-visibility audit and improvement service for businesses in Kazakhstan. The browser application provides the free diagnostic audit; the Synap team separately plans and performs agreed improvement work after a call.",
+        "Akrux is an early-stage, human-assisted AI-visibility audit and improvement service for businesses in Kazakhstan. The browser application provides the free diagnostic audit; the Akrux team separately plans and performs agreed improvement work after a call.",
     },
     {
-      question: "Who is Synap for?",
+      question: "Who is Akrux for?",
       answer:
-        "Synap currently focuses on business owners in Kazakhstan who want evidence about how their company appears when people ask AI systems about a category, need, location or comparison. The audit is most useful when the business already has public information that can be checked.",
+        "Akrux currently focuses on business owners in Kazakhstan who want evidence about how their company appears when people ask AI systems about a category, need, location or comparison. The audit is most useful when the business already has public information that can be checked.",
     },
     {
       question: "What does the free audit include?",
@@ -140,14 +140,14 @@ export const PUBLIC_FAQ_ITEMS: Record<Locale, PublicFaqItem[]> = {
         "The normal free audit covers model families associated with ChatGPT, Gemini and Perplexity. The report records the family used for each sampled answer, and provider availability can affect coverage or timing.",
     },
     {
-      question: "Does Synap directly scan the consumer ChatGPT, Gemini or Perplexity apps?",
+      question: "Does Akrux directly scan the consumer ChatGPT, Gemini or Perplexity apps?",
       answer:
         "No. The audit uses configured provider APIs and model families associated with those products; it does not automate each consumer chat application. Personalization, interface features and model changes can therefore produce different answers for an individual user.",
     },
     {
       question: "What happens after the audit?",
       answer:
-        "The owner reviews the private report and may book a call. Synap can explain the evidence, identify practical gaps and propose a scope of work. If both sides agree, the team manually performs the agreed improvements; this work is separate from the free audit.",
+        "The owner reviews the private report and may book a call. Akrux can explain the evidence, identify practical gaps and propose a scope of work. If both sides agree, the team manually performs the agreed improvements; this work is separate from the free audit.",
     },
     {
       question: "What can manual improvement work involve?",
@@ -155,14 +155,14 @@ export const PUBLIC_FAQ_ITEMS: Record<Locale, PublicFaqItem[]> = {
         "Depending on the audit, work may include correcting inconsistent business facts, improving crawlability and entity clarity, improving service, About or FAQ pages, creating useful factual content, strengthening relevant local listings and sources, and reviewing citation or competitor gaps. Not every engagement includes every activity.",
     },
     {
-      question: "Does Synap guarantee indexing, citations, rankings or recommendations?",
+      question: "Does Akrux guarantee indexing, citations, rankings or recommendations?",
       answer:
-        "No. AI systems remain independent, and answers vary by model, wording, date and retrieved sources. Synap cannot purchase or guarantee indexing, mentions, citations, positions, rankings or recommendations.",
+        "No. AI systems remain independent, and answers vary by model, wording, date and retrieved sources. Akrux cannot purchase or guarantee indexing, mentions, citations, positions, rankings or recommendations.",
     },
     {
-      question: "Does Synap provide continuous or real-time monitoring?",
+      question: "Does Akrux provide continuous or real-time monitoring?",
       answer:
-        "No. Scans and rescans are started by the user and produce dated samples. A later scan can show directional movement, but Synap does not currently run continuous monitoring or automatic optimization.",
+        "No. Scans and rescans are started by the user and produce dated samples. A later scan can show directional movement, but Akrux does not currently run continuous monitoring or automatic optimization.",
     },
     {
       question: "Are audit reports public?",
@@ -170,26 +170,26 @@ export const PUBLIC_FAQ_ITEMS: Record<Locale, PublicFaqItem[]> = {
         "No. Business profiles, account prompts, sampled answers, competitor reports and scan results remain behind authentication. Public pages explain the service and methodology without exposing customer reports.",
     },
     {
-      question: "Does Synap currently focus on Kazakhstan?",
+      question: "Does Akrux currently focus on Kazakhstan?",
       answer:
         "Yes. Businesses in Kazakhstan are the primary market. The interface and public information are currently available in Russian and English, and a city can be supplied for local discovery questions.",
     },
     {
-      question: "Is Synap still in testing?",
+      question: "Is Akrux still in testing?",
       answer:
-        "Yes. Synap is in an early testing stage. The initial audit is currently free within application and provider limits, while optional improvement work is scoped separately. Availability and the service process may evolve as the model is validated.",
+        "Yes. Akrux is in an early testing stage. The initial audit is currently free within application and provider limits, while optional improvement work is scoped separately. Availability and the service process may evolve as the model is validated.",
     },
   ],
   ru: [
     {
-      question: "Что такое Synap?",
+      question: "Что такое Akrux?",
       answer:
-        "Synap — сервис аудита и улучшения видимости бизнеса в ответах ИИ для компаний Казахстана на раннем этапе тестирования. Браузерное приложение проводит бесплатную диагностику, а команда отдельно планирует и вручную выполняет согласованные работы после созвона.",
+        "Akrux — сервис аудита и улучшения видимости бизнеса в ответах ИИ для компаний Казахстана на раннем этапе тестирования. Браузерное приложение проводит бесплатную диагностику, а команда отдельно планирует и вручную выполняет согласованные работы после созвона.",
     },
     {
-      question: "Для кого предназначен Synap?",
+      question: "Для кого предназначен Akrux?",
       answer:
-        "Сейчас Synap ориентирован на владельцев бизнеса в Казахстане, которым нужны факты о том, как компания появляется в вопросах ИИ о категории, задаче, локации или сравнении. Аудит особенно полезен, когда у бизнеса уже есть публичная информация, которую можно проверить.",
+        "Сейчас Akrux ориентирован на владельцев бизнеса в Казахстане, которым нужны факты о том, как компания появляется в вопросах ИИ о категории, задаче, локации или сравнении. Аудит особенно полезен, когда у бизнеса уже есть публичная информация, которую можно проверить.",
     },
     {
       question: "Что входит в бесплатный аудит?",
@@ -202,14 +202,14 @@ export const PUBLIC_FAQ_ITEMS: Record<Locale, PublicFaqItem[]> = {
         "Обычный бесплатный аудит охватывает семейства моделей, связанные с ChatGPT, Gemini и Perplexity. В отчёте сохраняется семейство каждого ответа, а доступность провайдера может влиять на покрытие и время проверки.",
     },
     {
-      question: "Synap напрямую проверяет приложения ChatGPT, Gemini и Perplexity?",
+      question: "Akrux напрямую проверяет приложения ChatGPT, Gemini и Perplexity?",
       answer:
         "Нет. Аудит использует настроенные API провайдеров и семейства моделей, связанные с этими продуктами, но не автоматизирует каждое пользовательское приложение. Персонализация, функции интерфейса и обновления моделей могут дать отдельному пользователю другой ответ.",
     },
     {
       question: "Что происходит после аудита?",
       answer:
-        "Владелец изучает закрытый отчёт и при желании записывается на созвон. Synap может разобрать факты, найти практические пробелы и предложить объём работы. Если стороны договорятся, команда вручную выполняет согласованные улучшения; эта работа не входит в бесплатный аудит.",
+        "Владелец изучает закрытый отчёт и при желании записывается на созвон. Akrux может разобрать факты, найти практические пробелы и предложить объём работы. Если стороны договорятся, команда вручную выполняет согласованные улучшения; эта работа не входит в бесплатный аудит.",
     },
     {
       question: "Что может входить в ручную работу по улучшению?",
@@ -217,12 +217,12 @@ export const PUBLIC_FAQ_ITEMS: Record<Locale, PublicFaqItem[]> = {
         "В зависимости от аудита работа может включать исправление противоречивых фактов о бизнесе, улучшение доступности сайта и ясности сущности, доработку страниц услуг, «О компании» или FAQ, создание полезного фактического контента, укрепление локальных карточек и источников, а также разбор пробелов в цитировании и появлениях конкурентов. Не каждый проект включает все действия.",
     },
     {
-      question: "Synap гарантирует индексацию, цитирование, позиции или рекомендации?",
+      question: "Akrux гарантирует индексацию, цитирование, позиции или рекомендации?",
       answer:
-        "Нет. ИИ-системы независимы, а ответы меняются в зависимости от модели, формулировки, даты и найденных источников. Synap не может купить или гарантировать индексацию, упоминания, цитирование, позиции, рейтинги и рекомендации.",
+        "Нет. ИИ-системы независимы, а ответы меняются в зависимости от модели, формулировки, даты и найденных источников. Akrux не может купить или гарантировать индексацию, упоминания, цитирование, позиции, рейтинги и рекомендации.",
     },
     {
-      question: "Есть ли в Synap постоянный мониторинг в реальном времени?",
+      question: "Есть ли в Akrux постоянный мониторинг в реальном времени?",
       answer:
         "Нет. Проверки и повторные проверки запускает пользователь, и каждая из них создаёт датированную выборку. Более поздний аудит может показать направление изменений, но постоянного мониторинга и автоматической оптимизации сейчас нет.",
     },
@@ -232,14 +232,14 @@ export const PUBLIC_FAQ_ITEMS: Record<Locale, PublicFaqItem[]> = {
         "Нет. Профили бизнеса, вопросы аккаунта, выборка ответов, отчёты о конкурентах и результаты проверок доступны только после авторизации. Публичные страницы объясняют сервис и методологию без раскрытия клиентских отчётов.",
     },
     {
-      question: "Synap сейчас ориентирован на Казахстан?",
+      question: "Akrux сейчас ориентирован на Казахстан?",
       answer:
         "Да. Основной рынок — бизнес в Казахстане. Интерфейс и публичная информация сейчас доступны на русском и английском, а для локальных вопросов можно указать город.",
     },
     {
-      question: "Synap находится на этапе тестирования?",
+      question: "Akrux находится на этапе тестирования?",
       answer:
-        "Да. Synap находится на раннем этапе тестирования. Начальный аудит сейчас бесплатный в рамках лимитов приложения и провайдера, а дополнительные работы согласовываются отдельно. Доступность и процесс оказания услуги могут меняться по мере проверки модели.",
+        "Да. Akrux находится на раннем этапе тестирования. Начальный аудит сейчас бесплатный в рамках лимитов приложения и провайдера, а дополнительные работы согласовываются отдельно. Доступность и процесс оказания услуги могут меняться по мере проверки модели.",
     },
   ],
 };
@@ -265,17 +265,17 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/product": {
     en: enPhase2b({
       eyebrow: "Product",
-      h1: "The diagnostic application behind Synap's free audit",
+      h1: "The diagnostic application behind Akrux's free audit",
       lead:
         "The browser application collects a dated sample of AI-generated answers and turns it into a private report. It diagnoses the current situation; it does not automatically improve or continuously monitor a business.",
       summaryTitle: "Audit software and service are different",
       summary:
-        "The application provides the free diagnostic audit. After reviewing the report, a business owner may book a call and separately agree on human-assisted improvement work with Synap.",
+        "The application provides the free diagnostic audit. After reviewing the report, a business owner may book a call and separately agree on human-assisted improvement work with Akrux.",
       sections: [
         {
           heading: "Create a project and define the business",
           paragraphs: [
-            "A project records the business name and category, with optional website, city, market, aliases and known competitors. These details help Synap resolve the intended entity and create relevant buyer questions; they do not become a public customer profile.",
+            "A project records the business name and category, with optional website, city, market, aliases and known competitors. These details help Akrux resolve the intended entity and create relevant buyer questions; they do not become a public customer profile.",
             "When provider access is available, the scan researches public information about the business before generating prompts. Low-confidence research does not replace the owner's submitted facts with guesses.",
           ],
         },
@@ -306,20 +306,20 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Audit application versus improvement service",
           paragraphs: [
             "The software observes sampled answers and records evidence. It does not edit AI answers, publish website changes or automatically optimize the business.",
-            "If the owner books a call, Synap can review the report and propose separately scoped manual work. The team manually carries out only the activities agreed with the business.",
+            "If the owner books a call, Akrux can review the report and propose separately scoped manual work. The team manually carries out only the activities agreed with the business.",
           ],
         },
         {
           heading: "Fresh rescans, private reports and limitations",
           paragraphs: [
             "Scans and rescans are started by the user. A new scan sends fresh requests rather than reusing prior answers, so it can show directional movement while remaining subject to model, prompt, date and retrieval variability.",
-            "Reports require authentication. Synap does not currently provide continuous monitoring and does not guarantee indexing, mentions, citations, positions, rankings or recommendations.",
+            "Reports require authentication. Akrux does not currently provide continuous monitoring and does not guarantee indexing, mentions, citations, positions, rankings or recommendations.",
           ],
         },
         {
           heading: "How the audit differs from rank tracking",
           table: {
-            headers: ["Question", "Traditional rank tracking", "Synap"],
+            headers: ["Question", "Traditional rank tracking", "Akrux"],
             rows: [
               ["Measured surface", "Search-result pages", "Generated answer text"],
               ["Primary unit", "URL position", "Business mention and answer-level position"],
@@ -330,19 +330,19 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
-        { path: "/services", label: "See Synap's audit and improvement services" },
+        { path: "/services", label: "See Akrux's audit and improvement services" },
         { path: "/how-it-works", label: "Follow a scan step by step" },
         { path: "/methodology", label: "Read the scoring methodology" },
       ],
     }),
     ru: ruPhase2b({
       eyebrow: "Продукт",
-      h1: "Диагностическое приложение для бесплатного аудита Synap",
+      h1: "Диагностическое приложение для бесплатного аудита Akrux",
       lead:
         "Браузерное приложение собирает датированную выборку ответов ИИ и формирует закрытый отчёт. Оно диагностирует текущую ситуацию, но не улучшает бизнес автоматически и не ведёт постоянный мониторинг.",
-      summaryTitle: "Приложение и услуга — разные части Synap",
+      summaryTitle: "Приложение и услуга — разные части Akrux",
       summary:
-        "Приложение проводит бесплатный диагностический аудит. После разбора отчёта владелец может записаться на созвон и отдельно согласовать с Synap ручную работу по улучшению.",
+        "Приложение проводит бесплатный диагностический аудит. После разбора отчёта владелец может записаться на созвон и отдельно согласовать с Akrux ручную работу по улучшению.",
       sections: [
         {
           heading: "Создание проекта и описание бизнеса",
@@ -378,20 +378,20 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Приложение аудита и работа команды",
           paragraphs: [
             "Приложение наблюдает выборку ответов и сохраняет доказательства. Оно не редактирует ответы ИИ, не публикует изменения на сайте и не оптимизирует бизнес автоматически.",
-            "Если владелец записывается на созвон, Synap может разобрать отчёт и предложить отдельный объём ручных работ. Команда вручную выполняет только согласованные с бизнесом действия.",
+            "Если владелец записывается на созвон, Akrux может разобрать отчёт и предложить отдельный объём ручных работ. Команда вручную выполняет только согласованные с бизнесом действия.",
           ],
         },
         {
           heading: "Свежие проверки, приватность и ограничения",
           paragraphs: [
             "Проверки и повторные проверки запускает пользователь. Новый запуск отправляет свежие запросы и не использует старые ответы, поэтому может показать направление изменений с учётом изменчивости модели, вопроса, даты и поиска.",
-            "Отчёты доступны после авторизации. Synap пока не ведёт постоянный мониторинг и не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации.",
+            "Отчёты доступны после авторизации. Akrux пока не ведёт постоянный мониторинг и не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации.",
           ],
         },
         {
           heading: "Отличие аудита от поискового трекинга",
           table: {
-            headers: ["Вопрос", "Поисковые позиции", "Synap"],
+            headers: ["Вопрос", "Поисковые позиции", "Akrux"],
             rows: [
               ["Измеряемая поверхность", "Поисковая выдача", "Текст сгенерированного ответа"],
               ["Основная единица", "Позиция URL", "Упоминание бизнеса и позиция в ответе"],
@@ -413,15 +413,15 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       eyebrow: "Services",
       h1: "AI visibility services for businesses in Kazakhstan",
       lead:
-        "Synap starts with a free, dated audit of sampled AI-generated answers. Business owners can then book a call and agree on human-assisted improvement work with the Synap team.",
-      summaryTitle: "What Synap offers",
+        "Akrux starts with a free, dated audit of sampled AI-generated answers. Business owners can then book a call and agree on human-assisted improvement work with the Akrux team.",
+      summaryTitle: "What Akrux offers",
       summary:
         "The free audit is the diagnostic entry point. Any manual improvement work is optional, separately scoped after the report review, and does not guarantee placement in AI answers.",
       sections: [
         {
           heading: "Start with a free audit",
           paragraphs: [
-            "A business owner provides current business information and starts a user-initiated scan. Synap collects a dated sample of supported AI-generated answers and makes the resulting report available privately through the authenticated audit application.",
+            "A business owner provides current business information and starts a user-initiated scan. Akrux collects a dated sample of supported AI-generated answers and makes the resulting report available privately through the authenticated audit application.",
           ],
           bullets: [
             "A free initial AI-visibility audit during the current testing stage.",
@@ -443,7 +443,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Human-assisted improvement work",
           paragraphs: [
-            "After reviewing the audit, Synap and the business agree on a relevant scope. Not every engagement needs every activity, and the free audit does not automatically include implementation.",
+            "After reviewing the audit, Akrux and the business agree on a relevant scope. Not every engagement needs every activity, and the free audit does not automatically include implementation.",
           ],
           bullets: [
             "Correcting inconsistent public business information.",
@@ -458,8 +458,8 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Limits of the service",
           bullets: [
             "AI systems remain independent, and their answers vary by model, prompt, date and retrieved sources.",
-            "Synap cannot purchase or guarantee indexing, mentions, citations, positions or recommendations.",
-            "Synap does not currently provide continuous monitoring or automatic optimization.",
+            "Akrux cannot purchase or guarantee indexing, mentions, citations, positions or recommendations.",
+            "Akrux does not currently provide continuous monitoring or automatic optimization.",
             "The service is in an early testing stage, so availability and the agreed scope may change as the work is validated.",
           ],
         },
@@ -474,15 +474,15 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       eyebrow: "Услуги",
       h1: "Услуги по улучшению видимости бизнеса в ИИ в Казахстане",
       lead:
-        "Synap начинает с бесплатного датированного аудита выборки ответов ИИ. Затем владелец бизнеса может записаться на созвон и согласовать с командой работы по улучшению.",
-      summaryTitle: "Что предлагает Synap",
+        "Akrux начинает с бесплатного датированного аудита выборки ответов ИИ. Затем владелец бизнеса может записаться на созвон и согласовать с командой работы по улучшению.",
+      summaryTitle: "Что предлагает Akrux",
       summary:
         "Бесплатный аудит — это начальная диагностика. Ручная работа команды не обязательна, согласовывается отдельно после разбора отчёта и не гарантирует позиции в ответах ИИ.",
       sections: [
         {
           heading: "Начните с бесплатного аудита",
           paragraphs: [
-            "Владелец указывает актуальную информацию о бизнесе и самостоятельно запускает проверку. Synap собирает датированную выборку ответов поддерживаемых ИИ-моделей, а закрытый отчёт становится доступен после авторизации.",
+            "Владелец указывает актуальную информацию о бизнесе и самостоятельно запускает проверку. Akrux собирает датированную выборку ответов поддерживаемых ИИ-моделей, а закрытый отчёт становится доступен после авторизации.",
           ],
           bullets: [
             "Бесплатный начальный аудит видимости в ИИ на текущем этапе тестирования.",
@@ -504,7 +504,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Работа команды по улучшению",
           paragraphs: [
-            "После разбора аудита Synap и владелец бизнеса согласуют подходящий объём. Не каждой компании нужны все перечисленные действия, а внедрение не входит автоматически в бесплатный аудит.",
+            "После разбора аудита Akrux и владелец бизнеса согласуют подходящий объём. Не каждой компании нужны все перечисленные действия, а внедрение не входит автоматически в бесплатный аудит.",
           ],
           bullets: [
             "Исправление противоречивой публичной информации о бизнесе.",
@@ -519,8 +519,8 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Ограничения услуги",
           bullets: [
             "ИИ-системы независимы, а ответы меняются в зависимости от модели, вопроса, даты и найденных источников.",
-            "Synap не может купить или гарантировать индексацию, упоминания, цитирование, позиции и рекомендации.",
-            "Synap пока не предоставляет постоянный мониторинг или автоматическую оптимизацию.",
+            "Akrux не может купить или гарантировать индексацию, упоминания, цитирование, позиции и рекомендации.",
+            "Akrux пока не предоставляет постоянный мониторинг или автоматическую оптимизацию.",
             "Сервис находится на раннем этапе тестирования, поэтому доступность и согласуемый объём работ могут меняться по мере проверки модели.",
           ],
         },
@@ -535,12 +535,12 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/how-it-works": {
     en: enPhase2b({
       eyebrow: "Workflow",
-      h1: "How the Synap audit and improvement service works",
+      h1: "How the Akrux audit and improvement service works",
       lead:
-        "The process begins with a free diagnostic audit, continues with a private report and optional review call, and leads to manual improvement work only when Synap and the business agree on a scope.",
+        "The process begins with a free diagnostic audit, continues with a private report and optional review call, and leads to manual improvement work only when Akrux and the business agree on a scope.",
       summaryTitle: "Direct answer",
       summary:
-        "Synap researches the submitted business, creates customer-style prompts, analyses a dated sample of AI-generated answers and stores the evidence in a private report. Later human work and rescans are separate, agreed steps rather than automatic optimization.",
+        "Akrux researches the submitted business, creates customer-style prompts, analyses a dated sample of AI-generated answers and stores the evidence in a private report. Later human work and rescans are separate, agreed steps rather than automatic optimization.",
       sections: [
         {
           heading: "1. Create a business profile",
@@ -551,7 +551,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "2. Research before asking",
           paragraphs: [
-            "In a live scan, Synap can research the public website and web results to identify services, audiences, aliases, sub-brands and likely competitors. Low-confidence research does not fill gaps with guesses; prompt generation falls back to the owner's fields.",
+            "In a live scan, Akrux can research the public website and web results to identify services, audiences, aliases, sub-brands and likely competitors. Low-confidence research does not fill gaps with guesses; prompt generation falls back to the owner's fields.",
           ],
         },
         {
@@ -569,7 +569,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "4. Collect and analyse sampled answers",
           paragraphs: [
             "Answers are not reused across scans. The normal free audit sends the configured prompt plan to model families associated with ChatGPT, Gemini and Perplexity through provider APIs. It does not directly automate the consumer applications.",
-            "Synap matches known entities and their order, can extract additional company names, filters common non-competitor entities, records cited sources and calculates versioned metrics. Failed requests remain failures and are excluded from score denominators.",
+            "Akrux matches known entities and their order, can extract additional company names, filters common non-competitor entities, records cited sources and calculates versioned metrics. Failed requests remain failures and are excluded from score denominators.",
           ],
         },
         {
@@ -581,24 +581,24 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "6. Book an optional review call",
           paragraphs: [
-            "A business owner may book a call after reading the report. Synap reviews the evidence, explains important limitations and identifies gaps that may be practical to address. Booking a call does not guarantee that every project will be accepted.",
+            "A business owner may book a call after reading the report. Akrux reviews the evidence, explains important limitations and identifies gaps that may be practical to address. Booking a call does not guarantee that every project will be accepted.",
           ],
         },
         {
           heading: "7. Agree on and perform improvement work",
           paragraphs: [
-            "Synap and the business decide which actions are relevant and agree on the scope separately from the free audit. The Synap team then manually performs the agreed work; the audit application does not implement changes automatically.",
+            "Akrux and the business decide which actions are relevant and agree on the scope separately from the free audit. The Akrux team then manually performs the agreed work; the audit application does not implement changes automatically.",
           ],
         },
         {
           heading: "8. Use later scans for directional comparison",
           paragraphs: [
-            "A later user-initiated scan sends fresh requests and can compare the same types of buyer questions. Results can move because of website or source changes, but also because of models, wording, dates and retrieval. Synap cannot guarantee that the next scan will improve.",
+            "A later user-initiated scan sends fresh requests and can compare the same types of buyer questions. Results can move because of website or source changes, but also because of models, wording, dates and retrieval. Akrux cannot guarantee that the next scan will improve.",
           ],
         },
       ],
       related: [
-        { path: "/services", label: "Review Synap's human-assisted services" },
+        { path: "/services", label: "Review Akrux's human-assisted services" },
         { path: "/methodology", label: "Inspect formulas and exclusions" },
         { path: "/docs", label: "Use the report" },
         { path: "/privacy", label: "See how scan data is protected" },
@@ -606,12 +606,12 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
     ru: ruPhase2b({
       eyebrow: "Процесс",
-      h1: "Как проходит аудит и работа команды Synap",
+      h1: "Как проходит аудит и работа команды Akrux",
       lead:
         "Процесс начинается с бесплатного диагностического аудита, продолжается закрытым отчётом и необязательным созвоном, а ручная работа начинается только после согласования объёма с бизнесом.",
       summaryTitle: "Краткий ответ",
       summary:
-        "Synap исследует указанный бизнес, создаёт клиентские вопросы, анализирует датированную выборку ответов ИИ и сохраняет доказательства в закрытом отчёте. Дальнейшая работа команды и повторные проверки являются отдельными согласованными шагами, а не автоматической оптимизацией.",
+        "Akrux исследует указанный бизнес, создаёт клиентские вопросы, анализирует датированную выборку ответов ИИ и сохраняет доказательства в закрытом отчёте. Дальнейшая работа команды и повторные проверки являются отдельными согласованными шагами, а не автоматической оптимизацией.",
       sections: [
         {
           heading: "1. Создание профиля бизнеса",
@@ -622,7 +622,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "2. Исследование до генерации вопросов",
           paragraphs: [
-            "В рабочем режиме Synap может изучить публичный сайт и веб-результаты, чтобы найти услуги, аудиторию, варианты названия, суббренды и вероятных конкурентов. При низкой уверенности система не заполняет пробелы догадками и использует поля владельца.",
+            "В рабочем режиме Akrux может изучить публичный сайт и веб-результаты, чтобы найти услуги, аудиторию, варианты названия, суббренды и вероятных конкурентов. При низкой уверенности система не заполняет пробелы догадками и использует поля владельца.",
           ],
         },
         {
@@ -640,7 +640,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "4. Сбор и анализ выборки ответов",
           paragraphs: [
             "Ответы не переиспользуются между проверками. Обычный бесплатный аудит отправляет настроенный план вопросов семействам моделей, связанным с ChatGPT, Gemini и Perplexity, через API провайдеров и не автоматизирует пользовательские приложения напрямую.",
-            "Synap сопоставляет известные сущности и порядок их появления, может извлечь дополнительные названия компаний, фильтрует распространённые неконкурентные сущности, сохраняет источники и рассчитывает версионированные метрики. Ошибочные запросы остаются ошибками и не входят в знаменатели.",
+            "Akrux сопоставляет известные сущности и порядок их появления, может извлечь дополнительные названия компаний, фильтрует распространённые неконкурентные сущности, сохраняет источники и рассчитывает версионированные метрики. Ошибочные запросы остаются ошибками и не входят в знаменатели.",
           ],
         },
         {
@@ -652,24 +652,24 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "6. Необязательный созвон",
           paragraphs: [
-            "После изучения отчёта владелец может записаться на созвон. Synap разбирает доказательства, объясняет важные ограничения и определяет пробелы, с которыми можно работать. Запись на созвон не означает, что Synap примет любой проект.",
+            "После изучения отчёта владелец может записаться на созвон. Akrux разбирает доказательства, объясняет важные ограничения и определяет пробелы, с которыми можно работать. Запись на созвон не означает, что Akrux примет любой проект.",
           ],
         },
         {
           heading: "7. Согласование и выполнение работ",
           paragraphs: [
-            "Synap и бизнес определяют релевантные действия и отдельно от бесплатного аудита согласуют объём. Затем команда Synap вручную выполняет согласованные работы; приложение аудита не внедряет изменения автоматически.",
+            "Akrux и бизнес определяют релевантные действия и отдельно от бесплатного аудита согласуют объём. Затем команда Akrux вручную выполняет согласованные работы; приложение аудита не внедряет изменения автоматически.",
           ],
         },
         {
           heading: "8. Повторная проверка направления изменений",
           paragraphs: [
-            "Более поздняя проверка по инициативе пользователя отправляет свежие запросы и позволяет сравнить те же типы вопросов покупателей. Результат меняется не только из-за сайта и источников, но и из-за моделей, формулировок, дат и поиска. Synap не гарантирует улучшение следующего результата.",
+            "Более поздняя проверка по инициативе пользователя отправляет свежие запросы и позволяет сравнить те же типы вопросов покупателей. Результат меняется не только из-за сайта и источников, но и из-за моделей, формулировок, дат и поиска. Akrux не гарантирует улучшение следующего результата.",
           ],
         },
       ],
       related: [
-        { path: "/services", label: "Услуги команды Synap" },
+        { path: "/services", label: "Услуги команды Akrux" },
         { path: "/methodology", label: "Формулы и исключения" },
         { path: "/docs", label: "Работа с отчётом" },
         { path: "/privacy", label: "Защита данных проверки" },
@@ -679,7 +679,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/methodology": {
     en: enPhase2b({
       eyebrow: "Methodology version 2",
-      h1: "How Synap measures AI visibility",
+      h1: "How Akrux measures AI visibility",
       lead:
         "This page documents the diagnostic application's implemented calculation rather than a marketing approximation. It explains what enters each metric, what is excluded and why the audit remains a dated sample rather than a promised service outcome.",
       summaryTitle: "Primary measurement rule",
@@ -703,7 +703,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Visibility Score formula",
           paragraphs: [
-            "For every model family actually queried, Synap calculates a category mention rate over category, best-of and purchase prompts, and a comparison mention rate over unbranded comparison prompts. The category rate has weight 0.60 and the comparison rate 0.40. Missing groups are omitted and the remaining weights are normalized.",
+            "For every model family actually queried, Akrux calculates a category mention rate over category, best-of and purchase prompts, and a comparison mention rate over unbranded comparison prompts. The category rate has weight 0.60 and the comparison rate 0.40. Missing groups are omitted and the remaining weights are normalized.",
             "Cross-model results use weights of 0.30 ChatGPT, 0.25 Gemini, 0.20 Perplexity, 0.15 Claude and 0.10 Grok, normalized over the models present in that scan. If the average organic mention position is 2 or better, the score receives a 1.15 multiplier. The result is capped at 100, and the bonus cannot turn an imperfect baseline into 100.",
             "Branded prompts and informational prompts do not enter the primary category/comparison formula. Branded answers produce a separate recognition percentage. Informational unbranded answers can still contribute to overall evidence counts and Share of Voice.",
           ],
@@ -711,7 +711,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Share of Voice formula",
           paragraphs: [
-            "Synap uses successful unbranded answers. It counts each qualifying business entity at most once per answer, sums those entity mentions, then divides each entity's count by the total qualifying mentions. Configured competitors remain visible with zero mentions; newly detected entities must pass competitor classification.",
+            "Akrux uses successful unbranded answers. It counts each qualifying business entity at most once per answer, sums those entity mentions, then divides each entity's count by the total qualifying mentions. Configured competitors remain visible with zero mentions; newly detected entities must pass competitor classification.",
             "Known directories, maps, marketplaces, social or source platforms and generic descriptive phrases are not competitor rows. This filtering reduces category noise, but classification can still be imperfect and should be reviewed against the underlying answers.",
           ],
         },
@@ -742,7 +742,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
     ru: ruPhase2b({
       eyebrow: "Методология, версия 2",
-      h1: "Как Synap измеряет видимость в ИИ",
+      h1: "Как Akrux измеряет видимость в ИИ",
       lead:
         "Здесь описан реализованный расчёт диагностического приложения, а не маркетинговое приближение: какие данные входят в метрики, что исключается и почему аудит остаётся датированной выборкой, а не обещанным результатом услуги.",
       summaryTitle: "Главное правило измерения",
@@ -766,7 +766,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Формула Индекса видимости",
           paragraphs: [
-            "Для каждого фактически запрошенного семейства моделей Synap считает долю упоминаний по вопросам категории, лучших вариантов и покупки, а также долю по небрендовым сравнениям. Вес категории — 0,60, сравнения — 0,40. Отсутствующие группы исключаются, оставшиеся веса нормализуются.",
+            "Для каждого фактически запрошенного семейства моделей Akrux считает долю упоминаний по вопросам категории, лучших вариантов и покупки, а также долю по небрендовым сравнениям. Вес категории — 0,60, сравнения — 0,40. Отсутствующие группы исключаются, оставшиеся веса нормализуются.",
             "Межмодельный расчёт использует веса: ChatGPT 0,30, Gemini 0,25, Perplexity 0,20, Claude 0,15 и Grok 0,10, с нормализацией по моделям конкретной проверки. При средней органической позиции 2 или лучше применяется множитель 1,15. Результат ограничен 100, а бонус не может превратить несовершенную базу в 100.",
             "Брендовые и информационные вопросы не входят в основную формулу категории и сравнения. Брендовые ответы дают отдельный процент узнаваемости. Информационные небрендовые ответы могут входить в общие показатели доказательств и долю голоса.",
           ],
@@ -774,7 +774,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Формула доли голоса",
           paragraphs: [
-            "Synap использует успешные небрендовые ответы. Каждая подходящая бизнес-сущность учитывается не более одного раза на ответ; её число делится на сумму всех подходящих упоминаний. Заданные конкуренты остаются в таблице с нулём, а новые сущности проходят классификацию.",
+            "Akrux использует успешные небрендовые ответы. Каждая подходящая бизнес-сущность учитывается не более одного раза на ответ; её число делится на сумму всех подходящих упоминаний. Заданные конкуренты остаются в таблице с нулём, а новые сущности проходят классификацию.",
             "Известные каталоги, карты, маркетплейсы, социальные и информационные платформы, а также общие описательные фразы не считаются конкурентами. Фильтрация снижает шум, но неоднозначные случаи нужно проверять по исходным ответам.",
           ],
         },
@@ -886,16 +886,16 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           ],
         },
         {
-          heading: "How Synap fits",
+          heading: "How Akrux fits",
           paragraphs: [
-            "Synap provides Kazakhstan businesses with a free, user-initiated audit covering model families associated with ChatGPT, Gemini and Perplexity through configured provider APIs. The private report records a dated sample of prompts, answers, metrics, competitors, positions and cited sources.",
-            "After reviewing the report, the owner may book a call. Synap can then plan and manually perform separately agreed improvement work. AI systems remain independent, so the audit and service do not guarantee a future placement or recommendation.",
+            "Akrux provides Kazakhstan businesses with a free, user-initiated audit covering model families associated with ChatGPT, Gemini and Perplexity through configured provider APIs. The private report records a dated sample of prompts, answers, metrics, competitors, positions and cited sources.",
+            "After reviewing the report, the owner may book a call. Akrux can then plan and manually perform separately agreed improvement work. AI systems remain independent, so the audit and service do not guarantee a future placement or recommendation.",
           ],
         },
       ],
       related: [
-        { path: "/services", label: "Review Synap's audit and improvement service" },
-        { path: "/methodology", label: "See Synap's exact measurement rules" },
+        { path: "/services", label: "Review Akrux's audit and improvement service" },
+        { path: "/methodology", label: "See Akrux's exact measurement rules" },
         { path: "/use-cases/local-businesses", label: "Apply the concepts to a local business" },
       ],
     }),
@@ -980,16 +980,16 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           ],
         },
         {
-          heading: "Роль Synap",
+          heading: "Роль Akrux",
           paragraphs: [
-            "Synap проводит для бизнеса Казахстана бесплатный аудит по инициативе пользователя. Он охватывает семейства моделей, связанные с ChatGPT, Gemini и Perplexity, через настроенные API провайдеров. Закрытый отчёт сохраняет датированную выборку вопросов, ответов, метрик, конкурентов, позиций и источников.",
-            "После разбора отчёта владелец может записаться на созвон. Synap может спланировать и вручную выполнить отдельно согласованные работы. ИИ-системы остаются независимыми, поэтому аудит и услуга не гарантируют будущую позицию или рекомендацию.",
+            "Akrux проводит для бизнеса Казахстана бесплатный аудит по инициативе пользователя. Он охватывает семейства моделей, связанные с ChatGPT, Gemini и Perplexity, через настроенные API провайдеров. Закрытый отчёт сохраняет датированную выборку вопросов, ответов, метрик, конкурентов, позиций и источников.",
+            "После разбора отчёта владелец может записаться на созвон. Akrux может спланировать и вручную выполнить отдельно согласованные работы. ИИ-системы остаются независимыми, поэтому аудит и услуга не гарантируют будущую позицию или рекомендацию.",
           ],
         },
       ],
       related: [
-        { path: "/services", label: "Аудит и помощь команды Synap" },
-        { path: "/methodology", label: "Точные правила измерения Synap" },
+        { path: "/services", label: "Аудит и помощь команды Akrux" },
+        { path: "/methodology", label: "Точные правила измерения Akrux" },
         { path: "/use-cases/local-businesses", label: "Применение для локального бизнеса" },
       ],
     }),
@@ -1037,15 +1037,15 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           ],
         },
         {
-          heading: "How Synap fits",
+          heading: "How Akrux fits",
           paragraphs: [
-            "The Synap audit stores prompts and sampled answers, separates branded recognition from unbranded discovery, identifies competing entities and sources, and produces versioned metrics. After a call, the team can use that evidence to plan and manually perform agreed work.",
-            "Later user-initiated audits can show directional movement, but AI systems remain independent. Synap cannot guarantee that an edit will produce a mention, citation, position or recommendation.",
+            "The Akrux audit stores prompts and sampled answers, separates branded recognition from unbranded discovery, identifies competing entities and sources, and produces versioned metrics. After a call, the team can use that evidence to plan and manually perform agreed work.",
+            "Later user-initiated audits can show directional movement, but AI systems remain independent. Akrux cannot guarantee that an edit will produce a mention, citation, position or recommendation.",
           ],
         },
       ],
       related: [
-        { path: "/services", label: "See what Synap offers commercially" },
+        { path: "/services", label: "See what Akrux offers commercially" },
         { path: "/blogs/ai-visibility-kazakhstan", label: "Define the outcome being measured" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Run a factual entity audit" },
       ],
@@ -1092,15 +1092,15 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           ],
         },
         {
-          heading: "Роль Synap",
+          heading: "Роль Akrux",
           paragraphs: [
-            "Аудит Synap сохраняет вопросы и выборку ответов, отделяет узнаваемость бренда от небрендового обнаружения, определяет конкурирующие сущности и источники и рассчитывает версионированные метрики. После созвона команда может использовать эти данные для планирования и ручного выполнения согласованной работы.",
-            "Более поздние проверки по инициативе пользователя могут показать направление изменений, но ИИ-системы остаются независимыми. Synap не гарантирует, что правка приведёт к упоминанию, цитированию, позиции или рекомендации.",
+            "Аудит Akrux сохраняет вопросы и выборку ответов, отделяет узнаваемость бренда от небрендового обнаружения, определяет конкурирующие сущности и источники и рассчитывает версионированные метрики. После созвона команда может использовать эти данные для планирования и ручного выполнения согласованной работы.",
+            "Более поздние проверки по инициативе пользователя могут показать направление изменений, но ИИ-системы остаются независимыми. Akrux не гарантирует, что правка приведёт к упоминанию, цитированию, позиции или рекомендации.",
           ],
         },
       ],
       related: [
-        { path: "/services", label: "Коммерческие услуги Synap" },
+        { path: "/services", label: "Коммерческие услуги Akrux" },
         { path: "/blogs/ai-visibility-kazakhstan", label: "Что измеряет GEO" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Фактический аудит сущности" },
       ],
@@ -1111,7 +1111,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       eyebrow: "Use cases",
       h1: "AI-visibility audit questions by business type",
       lead:
-        "Different businesses need different buyer questions and evidence checks. These examples show how an audit can be adapted; they are not Synap client case studies or promised outcomes.",
+        "Different businesses need different buyer questions and evidence checks. These examples show how an audit can be adapted; they are not Akrux client case studies or promised outcomes.",
       summaryTitle: "How to use these examples",
       summary:
         "Start with the real way customers discover the business, then review the sampled answer, competitors and citations. The appropriate improvement work depends on the evidence and is agreed separately after the free audit.",
@@ -1131,7 +1131,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Ecommerce",
           paragraphs: [
             "Product-discovery answers can mix a manufacturer, product, retailer and marketplace. Review category and purchase questions separately, check whether availability or specifications are current, and do not treat every marketplace as a competing brand.",
-            "Useful evidence includes current product pages, delivery or warranty information and truthful third-party reviews. Synap exposes returned citations but does not ingest a private product feed or guarantee that generated availability information is current.",
+            "Useful evidence includes current product pages, delivery or warranty information and truthful third-party reviews. Akrux exposes returned citations but does not ingest a private product feed or guarantee that generated availability information is current.",
           ],
           examples: [
             "“Compare refillable skincare brands available in Kazakhstan.”",
@@ -1173,7 +1173,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/use-cases/local-businesses", label: "Detailed local-business guidance" },
-        { path: "/services", label: "How Synap's service works" },
+        { path: "/services", label: "How Akrux's service works" },
         { path: "/blogs/ai-visibility-kazakhstan", label: "Understand AI visibility in Kazakhstan" },
         { path: "/methodology", label: "Review measurement rules" },
       ],
@@ -1182,7 +1182,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       eyebrow: "Сценарии",
       h1: "Вопросы аудита видимости в ИИ для разных типов бизнеса",
       lead:
-        "Разным компаниям нужны разные клиентские вопросы и проверки источников. Это примеры настройки аудита, а не кейсы клиентов Synap и не обещанные результаты.",
+        "Разным компаниям нужны разные клиентские вопросы и проверки источников. Это примеры настройки аудита, а не кейсы клиентов Akrux и не обещанные результаты.",
       summaryTitle: "Как использовать примеры",
       summary:
         "Начните с реального способа поиска бизнеса клиентами, затем изучите выборку ответов, конкурентов и источников. Подходящая работа по улучшению определяется доказательствами и согласуется отдельно после бесплатного аудита.",
@@ -1202,7 +1202,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Электронная торговля",
           paragraphs: [
             "В ответах о выборе товара могут смешиваться производитель, продукт, продавец и маркетплейс. Анализируйте вопросы категории и покупки отдельно, проверяйте актуальность наличия и характеристик и не считайте каждый маркетплейс конкурирующим брендом.",
-            "Полезные доказательства — актуальные страницы товаров, условия доставки или гарантии и достоверные внешние отзывы. Synap показывает возвращённые источники, но не загружает приватный товарный фид и не гарантирует актуальность наличия в ответе ИИ.",
+            "Полезные доказательства — актуальные страницы товаров, условия доставки или гарантии и достоверные внешние отзывы. Akrux показывает возвращённые источники, но не загружает приватный товарный фид и не гарантирует актуальность наличия в ответе ИИ.",
           ],
           examples: [
             "«Сравните бренды многоразовой косметической упаковки в Казахстане».",
@@ -1244,7 +1244,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/use-cases/local-businesses", label: "Подробно о локальном бизнесе" },
-        { path: "/services", label: "Как устроена услуга Synap" },
+        { path: "/services", label: "Как устроена услуга Akrux" },
         { path: "/blogs/ai-visibility-kazakhstan", label: "Видимость в ИИ для бизнеса Казахстана" },
         { path: "/methodology", label: "Правила измерения" },
       ],
@@ -1271,7 +1271,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Review Russian, Kazakh and English public information",
           paragraphs: [
             "A Kazakhstan business may be described across Russian, Kazakh and English websites, listings or articles. The core name, services, city, hours and contact facts should not contradict one another across those sources.",
-            "Synap's current interface and reports are available in Russian and English; this is not a claim of a full Kazakh-language platform. Kazakh public sources can still be relevant evidence and should be reviewed by someone fluent in the language when accuracy matters.",
+            "Akrux's current interface and reports are available in Russian and English; this is not a claim of a full Kazakh-language platform. Kazakh public sources can still be relevant evidence and should be reviewed by someone fluent in the language when accuracy matters.",
           ],
         },
         {
@@ -1309,12 +1309,12 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Rescan after agreed improvements",
           paragraphs: [
             "After factual and technical work has been completed and public sources have had time to update, start a fresh audit using comparable types of buyer questions. Compare the dated answers, coverage, competitors and sources directionally.",
-            "A later result can change because of the work, but also because the model, prompt wording, retrieval and date changed. Synap does not provide continuous monitoring and cannot guarantee improvement in a later sample.",
+            "A later result can change because of the work, but also because the model, prompt wording, retrieval and date changed. Akrux does not provide continuous monitoring and cannot guarantee improvement in a later sample.",
           ],
         },
       ],
       related: [
-        { path: "/services", label: "See how Synap supports agreed improvement work" },
+        { path: "/services", label: "See how Akrux supports agreed improvement work" },
         { path: "/blogs/ai-visibility-kazakhstan", label: "Understand AI visibility in Kazakhstan" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Audit local entity facts" },
         { path: "/methodology", label: "See how directories are filtered" },
@@ -1340,7 +1340,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Проверьте русские, казахские и английские источники",
           paragraphs: [
             "Бизнес Казахстана может быть описан на русском, казахском и английском в сайтах, карточках и публикациях. Название, услуги, город, часы работы и контакты не должны противоречить друг другу в этих источниках.",
-            "Текущий интерфейс и отчёты Synap доступны на русском и английском; это не заявление о полноценной казахской версии платформы. Казахские публичные источники всё равно могут быть важны, и при существенных фактах их должен проверять человек, свободно владеющий языком.",
+            "Текущий интерфейс и отчёты Akrux доступны на русском и английском; это не заявление о полноценной казахской версии платформы. Казахские публичные источники всё равно могут быть важны, и при существенных фактах их должен проверять человек, свободно владеющий языком.",
           ],
         },
         {
@@ -1378,12 +1378,12 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
           heading: "Повторите аудит после согласованных улучшений",
           paragraphs: [
             "После завершения фактических и технических работ и обновления публичных источников запустите свежий аудит с сопоставимыми типами вопросов покупателей. Сравнивайте датированные ответы, покрытие, конкурентов и источники как направление изменений.",
-            "Результат может измениться из-за работы, но также из-за модели, формулировки, поиска и даты. Synap не ведёт постоянный мониторинг и не гарантирует улучшение следующей выборки.",
+            "Результат может измениться из-за работы, но также из-за модели, формулировки, поиска и даты. Akrux не ведёт постоянный мониторинг и не гарантирует улучшение следующей выборки.",
           ],
         },
       ],
       related: [
-        { path: "/services", label: "Как Synap помогает с согласованной работой" },
+        { path: "/services", label: "Как Akrux помогает с согласованной работой" },
         { path: "/blogs/ai-visibility-kazakhstan", label: "Видимость в ИИ для бизнеса Казахстана" },
         { path: "/blogs/audit-ai-generated-brand-information", label: "Аудит локальных фактов" },
         { path: "/methodology", label: "Фильтрация каталогов" },
@@ -1395,10 +1395,10 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       eyebrow: "Pricing",
       h1: "Start with a free visibility scan",
       lead:
-        "The initial AI-visibility audit is free during Synap's current testing stage. Optional human-assisted improvement work is reviewed and scoped separately.",
+        "The initial AI-visibility audit is free during Akrux's current testing stage. Optional human-assisted improvement work is reviewed and scoped separately.",
       summaryTitle: "Current pricing status",
       summary:
-        "Synap does not currently publish a fixed subscription or universal service price. The work required depends on the audit, the business and the competitive evidence; no AI placement is guaranteed.",
+        "Akrux does not currently publish a fixed subscription or universal service price. The work required depends on the audit, the business and the competitive evidence; no AI placement is guaranteed.",
       sections: [
         {
           heading: "Free initial audit during testing",
@@ -1412,14 +1412,14 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Optional improvement work",
           paragraphs: [
-            "After reviewing the private report, a business owner may book a call. Synap can propose manual work such as correcting public entity facts, improving crawlability, strengthening useful first-party information or reviewing source gaps. Price, deliverables and timing are agreed separately and are not implied by the free audit.",
-            "Booking a call does not guarantee that Synap will accept every project. The team first checks whether there is a useful and responsible scope of work.",
+            "After reviewing the private report, a business owner may book a call. Akrux can propose manual work such as correcting public entity facts, improving crawlability, strengthening useful first-party information or reviewing source gaps. Price, deliverables and timing are agreed separately and are not implied by the free audit.",
+            "Booking a call does not guarantee that Akrux will accept every project. The team first checks whether there is a useful and responsible scope of work.",
           ],
         },
         {
           heading: "No fixed public package or guaranteed placement",
           paragraphs: [
-            "There is currently no public fixed subscription, currency-based package or universal price for improvement work. Synap does not sell or guarantee indexing, mentions, citations, positions, rankings or recommendations because providers and AI systems remain independent.",
+            "There is currently no public fixed subscription, currency-based package or universal price for improvement work. Akrux does not sell or guarantee indexing, mentions, citations, positions, rankings or recommendations because providers and AI systems remain independent.",
           ],
         },
       ],
@@ -1434,10 +1434,10 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       eyebrow: "Тарифы",
       h1: "Начните с бесплатной проверки видимости",
       lead:
-        "Начальный аудит видимости в ИИ бесплатный на текущем этапе тестирования Synap. Необязательная ручная работа команды разбирается и оценивается отдельно.",
+        "Начальный аудит видимости в ИИ бесплатный на текущем этапе тестирования Akrux. Необязательная ручная работа команды разбирается и оценивается отдельно.",
       summaryTitle: "Текущий статус цены",
       summary:
-        "Synap пока не публикует фиксированную подписку или универсальную цену услуги. Необходимый объём зависит от аудита, бизнеса и конкурентных данных; позиции в ИИ не гарантируются.",
+        "Akrux пока не публикует фиксированную подписку или универсальную цену услуги. Необходимый объём зависит от аудита, бизнеса и конкурентных данных; позиции в ИИ не гарантируются.",
       sections: [
         {
           heading: "Бесплатный начальный аудит на этапе тестирования",
@@ -1451,14 +1451,14 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Необязательная работа по улучшению",
           paragraphs: [
-            "После изучения закрытого отчёта владелец может записаться на созвон. Synap может предложить ручную работу: исправление публичных фактов о сущности, улучшение обхода сайта, усиление полезной информации или разбор пробелов в источниках. Цена, результат работ и сроки согласуются отдельно и не следуют из бесплатного аудита.",
-            "Запись на созвон не означает, что Synap примет любой проект. Сначала команда проверяет, существует ли полезный и ответственный объём работы.",
+            "После изучения закрытого отчёта владелец может записаться на созвон. Akrux может предложить ручную работу: исправление публичных фактов о сущности, улучшение обхода сайта, усиление полезной информации или разбор пробелов в источниках. Цена, результат работ и сроки согласуются отдельно и не следуют из бесплатного аудита.",
+            "Запись на созвон не означает, что Akrux примет любой проект. Сначала команда проверяет, существует ли полезный и ответственный объём работы.",
           ],
         },
         {
           heading: "Нет фиксированного пакета и гарантии позиции",
           paragraphs: [
-            "Сейчас нет публичной фиксированной подписки, пакета в определённой валюте или универсальной цены на улучшения. Synap не продаёт и не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации, потому что провайдеры и ИИ-системы независимы.",
+            "Сейчас нет публичной фиксированной подписки, пакета в определённой валюте или универсальной цены на улучшения. Akrux не продаёт и не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации, потому что провайдеры и ИИ-системы независимы.",
           ],
         },
       ],
@@ -1473,14 +1473,14 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/faq": {
     en: enPhase2b({
       eyebrow: "FAQ",
-      h1: "Frequently asked questions about Synap",
+      h1: "Frequently asked questions about Akrux",
       lead: "Practical answers about the free audit, human-assisted service, model coverage, privacy, pricing and limitations.",
       summaryTitle: "Start here",
       summary:
-        "Synap provides businesses in Kazakhstan with a free, dated AI-visibility audit and can separately perform agreed improvement work. AI placement and future scan results are not guaranteed.",
+        "Akrux provides businesses in Kazakhstan with a free, dated AI-visibility audit and can separately perform agreed improvement work. AI placement and future scan results are not guaranteed.",
       sections: [],
       related: [
-        { path: "/services", label: "Review Synap's service" },
+        { path: "/services", label: "Review Akrux's service" },
         { path: "/methodology", label: "Read the full methodology" },
         { path: "/docs", label: "Open product documentation" },
         { path: "/contact", label: "Ask a product question" },
@@ -1488,14 +1488,14 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
     ru: ruPhase2b({
       eyebrow: "FAQ",
-      h1: "Частые вопросы о Synap",
+      h1: "Частые вопросы о Akrux",
       lead: "Практические ответы о бесплатном аудите, помощи команды, покрытии моделей, приватности, цене и ограничениях.",
       summaryTitle: "Главное",
       summary:
-        "Synap проводит для бизнеса в Казахстане бесплатный датированный аудит видимости в ИИ и может отдельно выполнить согласованные работы по улучшению. Позиции и будущий результат проверки не гарантируются.",
+        "Akrux проводит для бизнеса в Казахстане бесплатный датированный аудит видимости в ИИ и может отдельно выполнить согласованные работы по улучшению. Позиции и будущий результат проверки не гарантируются.",
       sections: [],
       related: [
-        { path: "/services", label: "Услуги Synap" },
+        { path: "/services", label: "Услуги Akrux" },
         { path: "/methodology", label: "Полная методология" },
         { path: "/docs", label: "Документация продукта" },
         { path: "/contact", label: "Задать вопрос" },
@@ -1505,17 +1505,17 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/about": {
     en: enPhase2b({
       eyebrow: "About",
-      h1: "Synap helps Kazakhstan businesses understand and improve AI visibility",
+      h1: "Akrux helps Kazakhstan businesses understand and improve AI visibility",
       lead:
-        "Synap combines a free diagnostic audit with separately agreed, human-assisted improvement work for business owners in Kazakhstan.",
-      summaryTitle: "What Synap is",
+        "Akrux combines a free diagnostic audit with separately agreed, human-assisted improvement work for business owners in Kazakhstan.",
+      summaryTitle: "What Akrux is",
       summary:
-        "Synap is an early-stage AI-visibility audit and improvement service. The browser application creates the private report; the team manually plans and performs agreed work after a call.",
+        "Akrux is an early-stage AI-visibility audit and improvement service. The browser application creates the private report; the team manually plans and performs agreed work after a call.",
       sections: [
         {
-          heading: "Why Synap exists",
+          heading: "Why Akrux exists",
           paragraphs: [
-            "A business owner can often see search rankings but not the exact AI-generated answers in which the company is absent, confused with another entity or described using weak sources. Synap provides a dated evidence set of prompts, sampled answers, business appearances, competitors and citations.",
+            "A business owner can often see search rankings but not the exact AI-generated answers in which the company is absent, confused with another entity or described using weak sources. Akrux provides a dated evidence set of prompts, sampled answers, business appearances, competitors and citations.",
           ],
         },
         {
@@ -1527,20 +1527,20 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Human-assisted improvement",
           paragraphs: [
-            "After reviewing the report, the owner may book a call. Synap can identify practical gaps, agree on a relevant scope and manually perform the work. The service is not a fully automated optimization system, and implementation is separate from the free audit.",
+            "After reviewing the report, the owner may book a call. Akrux can identify practical gaps, agree on a relevant scope and manually perform the work. The service is not a fully automated optimization system, and implementation is separate from the free audit.",
           ],
         },
         {
           heading: "Kazakhstan focus and current stage",
           paragraphs: [
-            "Businesses in Kazakhstan are Synap's primary market. The interface and public information are currently available in Russian and English, and local audits can use a city to make buyer questions more relevant.",
-            "Synap is in an early testing stage. The service process and availability may evolve as the team validates the work with businesses.",
+            "Businesses in Kazakhstan are Akrux's primary market. The interface and public information are currently available in Russian and English, and local audits can use a city to make buyer questions more relevant.",
+            "Akrux is in an early testing stage. The service process and availability may evolve as the team validates the work with businesses.",
           ],
         },
         {
           heading: "Honest limits",
           paragraphs: [
-            "AI answers change with the model, prompt, date and retrieved sources. Synap observes and works on public evidence but does not control AI systems and cannot guarantee indexing, mentions, citations, positions, rankings or recommendations.",
+            "AI answers change with the model, prompt, date and retrieved sources. Akrux observes and works on public evidence but does not control AI systems and cannot guarantee indexing, mentions, citations, positions, rankings or recommendations.",
           ],
         },
       ],
@@ -1551,18 +1551,18 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
     }),
     ru: ruPhase2b({
-      eyebrow: "О Synap",
-      h1: "Synap помогает бизнесу Казахстана понять и улучшить видимость в ИИ",
+      eyebrow: "О Akrux",
+      h1: "Akrux помогает бизнесу Казахстана понять и улучшить видимость в ИИ",
       lead:
-        "Synap сочетает бесплатный диагностический аудит с отдельно согласуемой помощью команды для владельцев бизнеса в Казахстане.",
-      summaryTitle: "Что такое Synap",
+        "Akrux сочетает бесплатный диагностический аудит с отдельно согласуемой помощью команды для владельцев бизнеса в Казахстане.",
+      summaryTitle: "Что такое Akrux",
       summary:
-        "Synap — сервис аудита и улучшения видимости в ИИ на раннем этапе. Браузерное приложение создаёт закрытый отчёт, а команда вручную планирует и выполняет согласованные работы после созвона.",
+        "Akrux — сервис аудита и улучшения видимости в ИИ на раннем этапе. Браузерное приложение создаёт закрытый отчёт, а команда вручную планирует и выполняет согласованные работы после созвона.",
       sections: [
         {
-          heading: "Зачем существует Synap",
+          heading: "Зачем существует Akrux",
           paragraphs: [
-            "Владелец может видеть поисковые позиции, но не конкретные ответы ИИ, в которых компания отсутствует, перепутана с другой сущностью или описана по слабым источникам. Synap создаёт датированный набор доказательств: вопросы, выборку ответов, появления бизнеса, конкурентов и источники.",
+            "Владелец может видеть поисковые позиции, но не конкретные ответы ИИ, в которых компания отсутствует, перепутана с другой сущностью или описана по слабым источникам. Akrux создаёт датированный набор доказательств: вопросы, выборку ответов, появления бизнеса, конкурентов и источники.",
           ],
         },
         {
@@ -1574,20 +1574,20 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Помощь команды",
           paragraphs: [
-            "После изучения отчёта владелец может записаться на созвон. Synap определяет практические пробелы, согласует релевантный объём и вручную выполняет работу. Сервис не является полностью автоматизированной оптимизацией, а внедрение отделено от бесплатного аудита.",
+            "После изучения отчёта владелец может записаться на созвон. Akrux определяет практические пробелы, согласует релевантный объём и вручную выполняет работу. Сервис не является полностью автоматизированной оптимизацией, а внедрение отделено от бесплатного аудита.",
           ],
         },
         {
           heading: "Фокус на Казахстане и текущий этап",
           paragraphs: [
-            "Основной рынок Synap — бизнес в Казахстане. Интерфейс и публичная информация сейчас доступны на русском и английском, а в локальном аудите можно указать город для более релевантных вопросов покупателей.",
-            "Synap находится на раннем этапе тестирования. Процесс и доступность услуги могут меняться по мере проверки работы с бизнесом.",
+            "Основной рынок Akrux — бизнес в Казахстане. Интерфейс и публичная информация сейчас доступны на русском и английском, а в локальном аудите можно указать город для более релевантных вопросов покупателей.",
+            "Akrux находится на раннем этапе тестирования. Процесс и доступность услуги могут меняться по мере проверки работы с бизнесом.",
           ],
         },
         {
           heading: "Честные ограничения",
           paragraphs: [
-            "Ответы ИИ меняются в зависимости от модели, вопроса, даты и найденных источников. Synap наблюдает результат и работает с публичными доказательствами, но не контролирует ИИ-системы и не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации.",
+            "Ответы ИИ меняются в зависимости от модели, вопроса, даты и найденных источников. Akrux наблюдает результат и работает с публичными доказательствами, но не контролирует ИИ-системы и не гарантирует индексацию, упоминания, цитирование, позиции, рейтинги или рекомендации.",
           ],
         },
       ],
@@ -1601,17 +1601,17 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/contact": {
     en: enPhase2b({
       eyebrow: "Contact",
-      h1: "Contact Synap",
+      h1: "Contact Akrux",
       lead:
         "Start the free audit to create a private report, or use the existing Book a call flow to discuss the report and possible improvement work.",
       summaryTitle: "Choose the appropriate next step",
       summary:
-        "The audit is the diagnostic starting point. A call is useful when you already have a report or want to understand whether Synap can responsibly help with an agreed scope.",
+        "The audit is the diagnostic starting point. A call is useful when you already have a report or want to understand whether Akrux can responsibly help with an agreed scope.",
       sections: [
         {
           heading: "Start with the free audit",
           paragraphs: [
-            "Create or sign in to an account, provide the business information and start a user-initiated audit. The resulting report remains private and gives both the owner and Synap a dated evidence set for any later discussion.",
+            "Create or sign in to an account, provide the business information and start a user-initiated audit. The resulting report remains private and gives both the owner and Akrux a dated evidence set for any later discussion.",
           ],
         },
         {
@@ -1628,24 +1628,24 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
-        { path: "/services", label: "Review what Synap can help with" },
+        { path: "/services", label: "Review what Akrux can help with" },
         { path: "/faq", label: "Check common questions first" },
         { path: "/pricing", label: "Understand current access" },
       ],
     }),
     ru: ruPhase2b({
       eyebrow: "Контакты",
-      h1: "Связаться с Synap",
+      h1: "Связаться с Akrux",
       lead:
         "Запустите бесплатный аудит, чтобы получить закрытый отчёт, или используйте существующую форму записи на созвон для обсуждения отчёта и возможных работ.",
       summaryTitle: "Выберите подходящий следующий шаг",
       summary:
-        "Аудит — начальная диагностика. Созвон полезен, когда отчёт уже готов или вы хотите понять, может ли Synap ответственно помочь в рамках согласованной работы.",
+        "Аудит — начальная диагностика. Созвон полезен, когда отчёт уже готов или вы хотите понять, может ли Akrux ответственно помочь в рамках согласованной работы.",
       sections: [
         {
           heading: "Начните с бесплатного аудита",
           paragraphs: [
-            "Создайте аккаунт или войдите, укажите информацию о бизнесе и запустите проверку. Отчёт останется закрытым и даст владельцу и Synap датированный набор фактов для дальнейшего обсуждения.",
+            "Создайте аккаунт или войдите, укажите информацию о бизнесе и запустите проверку. Отчёт останется закрытым и даст владельцу и Akrux датированный набор фактов для дальнейшего обсуждения.",
           ],
         },
         {
@@ -1662,7 +1662,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         },
       ],
       related: [
-        { path: "/services", label: "Чем может помочь Synap" },
+        { path: "/services", label: "Чем может помочь Akrux" },
         { path: "/faq", label: "Частые вопросы" },
         { path: "/pricing", label: "Текущий доступ" },
       ],
@@ -1671,9 +1671,9 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/docs": {
     en: enPhase2b({
       eyebrow: "Documentation",
-      h1: "Using the Synap diagnostic audit report",
+      h1: "Using the Akrux diagnostic audit report",
       lead:
-        "This guide documents the authenticated diagnostic application and explains what each report view can and cannot tell you. It does not describe the full human-assisted Synap service.",
+        "This guide documents the authenticated diagnostic application and explains what each report view can and cannot tell you. It does not describe the full human-assisted Akrux service.",
       summaryTitle: "Quick start",
       summary:
         "Create or sign in to an account, add a business profile, run a scan, wait for fresh provider requests to finish, then inspect the score together with prompts, answers, competitors and citations.",
@@ -1727,7 +1727,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "From report to optional service work",
           paragraphs: [
-            "The report is the diagnostic output. A business owner can separately book a call, agree on a relevant scope and ask the Synap team to perform improvement work. No application metric automatically triggers implementation or guarantees a future AI outcome.",
+            "The report is the diagnostic output. A business owner can separately book a call, agree on a relevant scope and ask the Akrux team to perform improvement work. No application metric automatically triggers implementation or guarantees a future AI outcome.",
           ],
         },
       ],
@@ -1740,9 +1740,9 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
     ru: ruPhase2b({
       eyebrow: "Документация",
-      h1: "Работа с диагностическим отчётом Synap",
+      h1: "Работа с диагностическим отчётом Akrux",
       lead:
-        "Руководство описывает диагностическое приложение после авторизации и объясняет, что каждый раздел отчёта показывает и чего не доказывает. Оно не описывает всю услугу Synap с участием команды.",
+        "Руководство описывает диагностическое приложение после авторизации и объясняет, что каждый раздел отчёта показывает и чего не доказывает. Оно не описывает всю услугу Akrux с участием команды.",
       summaryTitle: "Быстрый старт",
       summary:
         "Создайте аккаунт или войдите, добавьте профиль бизнеса, запустите проверку, дождитесь свежих запросов к провайдеру, затем изучите индекс вместе с вопросами, ответами, конкурентами и источниками.",
@@ -1796,7 +1796,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "От отчёта к необязательной работе команды",
           paragraphs: [
-            "Отчёт — результат диагностики. Владелец может отдельно записаться на созвон, согласовать релевантный объём и поручить Synap работу по улучшению. Метрика приложения не запускает внедрение автоматически и не гарантирует будущий результат в ИИ.",
+            "Отчёт — результат диагностики. Владелец может отдельно записаться на созвон, согласовать релевантный объём и поручить Akrux работу по улучшению. Метрика приложения не запускает внедрение автоматически и не гарантирует будущий результат в ИИ.",
           ],
         },
       ],
@@ -1810,8 +1810,8 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   },
   "/blogs": {
     en: {
-      eyebrow: "Synap Blog",
-      h1: "Synap Blog — AI Visibility in Kazakhstan",
+      eyebrow: "Akrux Blog",
+      h1: "Akrux Blog — AI Visibility in Kazakhstan",
       lead:
         "Practical articles for business owners who want to understand and improve how their companies appear in AI-generated answers.",
       summaryTitle: "Start with the evidence",
@@ -1826,8 +1826,8 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
     },
     ru: {
-      eyebrow: "Блог Synap",
-      h1: "Блог Synap — видимость бизнеса в ответах ИИ",
+      eyebrow: "Блог Akrux",
+      h1: "Блог Akrux — видимость бизнеса в ответах ИИ",
       lead:
         "Практические статьи для владельцев бизнеса, которые хотят понять и улучшить представление своей компании в ответах ИИ.",
       summaryTitle: "Начните с фактов",
@@ -1892,7 +1892,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/blogs/why-ai-recommends-competitors", label: "Analyze competitor appearances" },
-        { path: "/methodology", label: "Use Synap's extraction definitions" },
+        { path: "/methodology", label: "Use Akrux's extraction definitions" },
         { path: "/generative-engine-optimization", label: "Turn findings into a GEO plan" },
       ],
     }),
@@ -1945,7 +1945,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       ],
       related: [
         { path: "/blogs/why-ai-recommends-competitors", label: "Анализ конкурентов" },
-        { path: "/methodology", label: "Определения извлечения Synap" },
+        { path: "/methodology", label: "Определения извлечения Akrux" },
         { path: "/generative-engine-optimization", label: "План GEO по результатам" },
       ],
     }),
@@ -2051,16 +2051,16 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/changelog": {
     en: en({
       eyebrow: "Changelog",
-      h1: "Synap product updates",
+      h1: "Akrux product updates",
       lead: "Only changes verified in the repository are recorded here; no historical releases are reconstructed.",
       summaryTitle: "Latest update",
       summary:
-        "On August 2, 2026, the product adopted the Synap brand and added a public, bilingual entity and methodology layer for crawlability and verification.",
+        "On August 2, 2026, the product adopted the Akrux brand and added a public, bilingual entity and methodology layer for crawlability and verification.",
       sections: [
         {
           heading: "August 2, 2026 — Public entity and methodology release",
           bullets: [
-            "Unified the public product name as Synap while retaining the former name only as structured entity continuity data.",
+            "Unified the public product name as Akrux while retaining the former name only as structured entity continuity data.",
             "Added crawlable product, methodology, about, pricing, FAQ, documentation, use-case, guide, legal and contact pages in English and Russian.",
             "Centralized metadata, canonicals, hreflang, social cards and page-specific JSON-LD.",
             "Expanded prerendering, crawl controls, sitemaps, llms.txt resources, real 404 behavior and automated quality checks.",
@@ -2082,16 +2082,16 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
     ru: ru({
       eyebrow: "Обновления",
-      h1: "История обновлений Synap",
+      h1: "История обновлений Akrux",
       lead: "Здесь фиксируются только подтверждённые репозиторием изменения; прошлые релизы не реконструируются.",
       summaryTitle: "Последнее обновление",
       summary:
-        "2 августа 2026 года продукт перешёл на бренд Synap и получил публичный двуязычный слой сущности и методологии для обхода и проверки.",
+        "2 августа 2026 года продукт перешёл на бренд Akrux и получил публичный двуязычный слой сущности и методологии для обхода и проверки.",
       sections: [
         {
           heading: "2 августа 2026 года — публичная сущность и методология",
           bullets: [
-            "Публичное название унифицировано как Synap; прежнее имя сохранено только в структурированных данных для связи сущности.",
+            "Публичное название унифицировано как Akrux; прежнее имя сохранено только в структурированных данных для связи сущности.",
             "Добавлены индексируемые страницы продукта, методологии, компании, цены, FAQ, документации, сценариев, руководств, условий и контактов на русском и английском.",
             "Централизованы метаданные, канонические URL, hreflang, социальные карточки и JSON-LD по типу страницы.",
             "Расширены пререндеринг, правила обхода, карта сайта, llms.txt, реальные ответы 404 и автоматические проверки качества.",
@@ -2115,12 +2115,12 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/privacy": {
     en: en({
       eyebrow: "Privacy",
-      h1: "Synap privacy policy",
+      h1: "Akrux privacy policy",
       lead:
         "Public discoverability applies to product information only. Customer profiles, prompts, answers and reports remain access-controlled.",
       summaryTitle: "Privacy boundary",
       summary:
-        "Synap processes account and scan data to provide private visibility reports. Public SEO resources contain no customer scans, user emails, access tokens, billing data or private provider responses.",
+        "Akrux processes account and scan data to provide private visibility reports. Public SEO resources contain no customer scans, user emails, access tokens, billing data or private provider responses.",
       sections: [
         {
           heading: "Data the product processes",
@@ -2146,7 +2146,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Cookies, retention and requests",
           paragraphs: [
-            "Synap uses an HTTP-only session cookie after authentication and local browser storage for language and pending form preferences. A production retention schedule, legal operator identity, jurisdiction-specific rights process and privacy contact are not configured in this repository. The product owner must supply them before relying on this page as a complete jurisdictional notice.",
+            "Akrux uses an HTTP-only session cookie after authentication and local browser storage for language and pending form preferences. A production retention schedule, legal operator identity, jurisdiction-specific rights process and privacy contact are not configured in this repository. The product owner must supply them before relying on this page as a complete jurisdictional notice.",
           ],
         },
         {
@@ -2164,12 +2164,12 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
     }),
     ru: ru({
       eyebrow: "Конфиденциальность",
-      h1: "Политика конфиденциальности Synap",
+      h1: "Политика конфиденциальности Akrux",
       lead:
         "Публичная обнаруживаемость относится только к информации о продукте. Клиентские профили, вопросы, ответы и отчёты остаются закрытыми.",
       summaryTitle: "Граница приватности",
       summary:
-        "Synap обрабатывает данные аккаунта и проверки для приватного отчёта. Публичные SEO-ресурсы не содержат клиентские проверки, почту пользователей, токены, платёжные данные и приватные ответы провайдера.",
+        "Akrux обрабатывает данные аккаунта и проверки для приватного отчёта. Публичные SEO-ресурсы не содержат клиентские проверки, почту пользователей, токены, платёжные данные и приватные ответы провайдера.",
       sections: [
         {
           heading: "Какие данные обрабатываются",
@@ -2195,7 +2195,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Файлы cookie, хранение и запросы",
           paragraphs: [
-            "После входа Synap использует HTTP-only cookie сессии, а локальное хранилище браузера — для языка и незавершённых полей формы. Срок хранения в рабочей среде, юридический оператор, процесс прав по юрисдикциям и контакт приватности в репозитории не настроены. Владелец должен добавить их до использования страницы как полного юридического уведомления.",
+            "После входа Akrux использует HTTP-only cookie сессии, а локальное хранилище браузера — для языка и незавершённых полей формы. Срок хранения в рабочей среде, юридический оператор, процесс прав по юрисдикциям и контакт приватности в репозитории не настроены. Владелец должен добавить их до использования страницы как полного юридического уведомления.",
           ],
         },
         {
@@ -2215,12 +2215,12 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
   "/terms": {
     en: en({
       eyebrow: "Terms",
-      h1: "Synap terms of service",
+      h1: "Akrux terms of service",
       lead:
-        "These terms describe the current product behavior. Synap is the product name; verified legal-operator details still need to be supplied for a production legal notice.",
+        "These terms describe the current product behavior. Akrux is the product name; verified legal-operator details still need to be supplied for a production legal notice.",
       summaryTitle: "Core terms",
       summary:
-        "Use Synap only for businesses and data you are authorized to evaluate. Treat generated answers and metrics as variable analytical evidence, not guarantees or professional advice.",
+        "Use Akrux only for businesses and data you are authorized to evaluate. Treat generated answers and metrics as variable analytical evidence, not guarantees or professional advice.",
       sections: [
         {
           heading: "Accounts and acceptable use",
@@ -2228,7 +2228,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
             "Keep account access secure and provide accurate profile information.",
             "Do not scan or submit private personal data, credentials or confidential customer material.",
             "Do not bypass quotas, interfere with providers, scrape authenticated reports or use the service unlawfully.",
-            "Do not present Synap output as a guaranteed model ranking, endorsement or verified professional advice.",
+            "Do not present Akrux output as a guaranteed model ranking, endorsement or verified professional advice.",
           ],
         },
         {
@@ -2246,7 +2246,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Content and product rights",
           paragraphs: [
-            "Users retain responsibility for the business information they submit. Third-party model names, answers and cited content remain subject to their respective rights and terms. Synap software, original documentation and brand assets may not be misrepresented as a third-party endorsement.",
+            "Users retain responsibility for the business information they submit. Third-party model names, answers and cited content remain subject to their respective rights and terms. Akrux software, original documentation and brand assets may not be misrepresented as a third-party endorsement.",
           ],
         },
         {
@@ -2259,17 +2259,17 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       related: [
         { path: "/privacy", label: "Read the Privacy Policy" },
         { path: "/methodology", label: "Understand output limitations" },
-        { path: "/contact", label: "Contact Synap" },
+        { path: "/contact", label: "Contact Akrux" },
       ],
     }),
     ru: ru({
       eyebrow: "Условия",
-      h1: "Условия использования Synap",
+      h1: "Условия использования Akrux",
       lead:
-        "Условия описывают текущее поведение продукта. Synap — название продукта; подтверждённые данные юридического оператора ещё нужно добавить для рабочего юридического документа.",
+        "Условия описывают текущее поведение продукта. Akrux — название продукта; подтверждённые данные юридического оператора ещё нужно добавить для рабочего юридического документа.",
       summaryTitle: "Основные условия",
       summary:
-        "Используйте Synap только для бизнеса и данных, которые вы вправе проверять. Рассматривайте ответы и метрики как изменчивые аналитические доказательства, а не гарантии или профессиональную консультацию.",
+        "Используйте Akrux только для бизнеса и данных, которые вы вправе проверять. Рассматривайте ответы и метрики как изменчивые аналитические доказательства, а не гарантии или профессиональную консультацию.",
       sections: [
         {
           heading: "Аккаунты и допустимое использование",
@@ -2277,7 +2277,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
             "Защищайте доступ к аккаунту и указывайте точные данные профиля.",
             "Не отправляйте приватные персональные данные, учётные данные и конфиденциальные клиентские материалы.",
             "Не обходите квоты, не мешайте провайдерам, не извлекайте закрытые отчёты автоматически и не нарушайте закон.",
-            "Не представляйте результат Synap как гарантированную позицию, одобрение или профессиональную консультацию.",
+            "Не представляйте результат Akrux как гарантированную позицию, одобрение или профессиональную консультацию.",
           ],
         },
         {
@@ -2295,7 +2295,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
         {
           heading: "Права на контент и продукт",
           paragraphs: [
-            "Пользователь отвечает за отправленную информацию о бизнесе. Названия моделей, их ответы и процитированный контент регулируются правами и условиями соответствующих сторон. Нельзя выдавать ПО, документацию и бренд Synap за одобрение третьей стороны.",
+            "Пользователь отвечает за отправленную информацию о бизнесе. Названия моделей, их ответы и процитированный контент регулируются правами и условиями соответствующих сторон. Нельзя выдавать ПО, документацию и бренд Akrux за одобрение третьей стороны.",
           ],
         },
         {
@@ -2308,7 +2308,7 @@ export const PUBLIC_PAGE_CONTENT: Record<ContentPagePath, Record<Locale, PublicP
       related: [
         { path: "/privacy", label: "Политика конфиденциальности" },
         { path: "/methodology", label: "Ограничения результатов" },
-        { path: "/contact", label: "Связаться с Synap" },
+        { path: "/contact", label: "Связаться с Akrux" },
       ],
     }),
   },

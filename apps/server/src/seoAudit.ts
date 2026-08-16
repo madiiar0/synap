@@ -82,7 +82,7 @@ async function auditPage(
   const robots = first(html, /<meta name="robots" content="([^"]*)">/i);
   if (expectedMeta.indexable) {
     assert(robots.startsWith("index,follow"), `${route.path}: public route is not indexable`);
-    const json = first(html, /<script id="synap-structured-data" type="application\/ld\+json">([\s\S]*?)<\/script>/i);
+    const json = first(html, /<script id="akrux-structured-data" type="application\/ld\+json">([\s\S]*?)<\/script>/i);
     assert(Boolean(json), `${route.path}: missing JSON-LD`);
     if (json) {
       try {
@@ -102,14 +102,14 @@ async function auditPage(
       `${route.path}: response-level follow policy is incorrect`,
     );
     if (route.basePath === "/login") {
-      assert(!html.includes("synap-structured-data"), `${route.path}: sign-in route exposes page schema`);
+      assert(!html.includes("akrux-structured-data"), `${route.path}: sign-in route exposes page schema`);
     } else {
-      assert(html.includes("synap-structured-data"), `${route.path}: retained noindex page lost visible page schema`);
+      assert(html.includes("akrux-structured-data"), `${route.path}: retained noindex page lost visible page schema`);
     }
   }
 
   const withoutScripts = html.replace(/<script\b[\s\S]*?<\/script>/gi, "");
-  const formerName = ["Synap", "AI"].join("");
+  const formerName = ["Syn", "ap"].join("");
   assert(!withoutScripts.includes(formerName), `${route.path}: former brand is visible in HTML`);
   for (const image of html.match(/<img\b[^>]*>/gi) ?? []) {
     assert(/\salt="[^"]*"/i.test(image), `${route.path}: image is missing alt text`);
@@ -196,7 +196,7 @@ async function run(): Promise<void> {
     for (const resource of ["/llms.txt", "/llms-full.txt"]) {
       const response = await get(origin, resource);
       const body = await response.text();
-      assert(response.status === 200 && body.startsWith("# Synap"), `${resource} is invalid`);
+      assert(response.status === 200 && body.startsWith("# Akrux"), `${resource} is invalid`);
       assert(!/sk-[A-Za-z0-9]|BEGIN PRIVATE KEY/.test(body), `${resource} may contain a secret`);
     }
 
@@ -209,7 +209,7 @@ async function run(): Promise<void> {
     assert(privateRoute.headers.get("x-robots-tag")?.includes("noindex"), "/app is missing X-Robots-Tag noindex");
     assert(privateRoute.headers.get("cache-control")?.includes("private"), "/app is publicly cacheable");
 
-    const missing = await get(origin, "/definitely-not-a-synap-page");
+    const missing = await get(origin, "/definitely-not-an-akrux-page");
     assert(missing.status === 404, "unknown client routes do not return a real 404");
     assert(missing.headers.get("x-robots-tag")?.includes("noindex"), "404 response is indexable");
 

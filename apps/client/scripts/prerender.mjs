@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  CANONICAL_SITE_URL,
   injectPublicHead,
   llmsFullText,
   llmsText,
@@ -23,8 +24,14 @@ const { render, prerenderRoutes } = await import(path.join(clientRoot, "dist-ssr
 
 function canonicalBaseUrl() {
   const explicit = process.env.PUBLIC_SITE_URL?.trim();
-  const vercelProduction = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
-  const candidate = explicit || (vercelProduction ? `https://${vercelProduction}` : "http://localhost:5173");
+  // A production build always publishes the checked-in canonical origin. The
+  // per-deployment URL is deliberately not used as a fallback: emitting a
+  // second origin in canonicals, hreflang, the sitemap, llms.txt or JSON-LD is
+  // exactly what makes crawlers and AI retrievers split one entity into two.
+  const candidate =
+    process.env.VERCEL_ENV === "production"
+      ? CANONICAL_SITE_URL
+      : explicit || (process.env.VERCEL === "1" ? CANONICAL_SITE_URL : "http://localhost:5173");
   const url = new URL(candidate);
   if (url.pathname !== "/" || url.search || url.hash) {
     throw new Error("PUBLIC_SITE_URL must be an origin without a path, query, or fragment");

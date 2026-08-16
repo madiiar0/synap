@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import { synapFaviconSvg } from "./icon-source.mjs";
+import { akruxFaviconSvg } from "./icon-source.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = path.join(root, "apps/client/public");
@@ -21,7 +21,7 @@ for (const href of referenced) {
 
 const svgPath = path.join(publicDir, "favicon.svg");
 const svg = fs.readFileSync(svgPath, "utf8");
-assert.equal(svg, synapFaviconSvg(24), "favicon.svg must be generated from icon-source.mjs");
+assert.equal(svg, akruxFaviconSvg(24), "favicon.svg must be generated from icon-source.mjs");
 assert.match(svg, /<circle cx="12" cy="12" r="11" fill="#FFFFFF"\/>/);
 assert.match(svg, /scale\(0\.78\)/);
 assert.doesNotMatch(svg, /<rect/);
@@ -78,7 +78,7 @@ for (const [filename, size] of [
 ]) {
   await inspectRaster(path.join(publicDir, filename), size, filename);
 }
-await inspectRaster(Buffer.from(synapFaviconSvg(48)), 48, "favicon.svg at 48px");
+await inspectRaster(Buffer.from(akruxFaviconSvg(48)), 48, "favicon.svg at 48px");
 
 const ico = fs.readFileSync(path.join(publicDir, "favicon.ico"));
 assert.equal(ico.readUInt16LE(4), 2, "favicon.ico should contain 16px and 32px entries");

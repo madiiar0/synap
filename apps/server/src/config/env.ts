@@ -40,7 +40,7 @@ const schema = z.object({
   PORT: z.coerce.number().int().default(4000),
   CLIENT_URL: z.string().default("http://localhost:5173"),
   APP_BASE_URL: z.string().url().default("http://localhost:4000"),
-  BRAND_NAME: z.string().default("Synap"),
+  BRAND_NAME: z.string().default("Akrux"),
   JWT_SECRET: z.string().default("change_me"),
   MONGODB_URI: z.string().optional().default(""),
   REDIS_URL: z.string().optional().default(""),
@@ -74,14 +74,14 @@ const schema = z.object({
   SMTP_PORT: z.coerce.number().int().default(587),
   SMTP_USER: z.string().optional().default(""),
   SMTP_PASS: z.string().optional().default(""),
-  MAIL_FROM: z.string().default("Synap <no-reply@synapai.app>"),
+  MAIL_FROM: z.string().default("Akrux <no-reply@akrux.app>"),
   /**
    * #9: comma-separated list. Every address here is promoted to admin
    * (unlimited audits, bypasses the per-IP gate) on boot AND on each sign-in,
    * so adding one takes effect without a restart. Server-side only: a client
    * can never set this.
    */
-  ADMIN_EMAIL: z.string().default("admin@synapai.app"),
+  ADMIN_EMAIL: z.string().default("admin@akrux.app"),
   // Optional shared credential for the canonical ADMIN_EMAIL account. It is
   // checked only by the server and must never be exposed through /api/config.
   ADMIN_PASSWORD: z.string().optional().default(""),

@@ -152,7 +152,7 @@ Concrete walkthrough with **Brevo** (free tier is enough to start):
 - [ ] Copy the values into `.env`:
       `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=587`,
       `SMTP_USER=<your login>`, `SMTP_PASS=<your SMTP key>`
-- [ ] Set `MAIL_FROM="Synap <no-reply@yourdomain.com>"` and verify that
+- [ ] Set `MAIL_FROM="Akrux <no-reply@yourdomain.com>"` and verify that
       sender/domain inside Brevo (SPF/DKIM records they show you).
 
 (Any other SMTP provider — Resend, Postmark, Mailgun — works the same way.)
@@ -199,7 +199,7 @@ match the error:
   password to letters and digits only.
 - **No database name in the URI** — a string ending in `.mongodb.net/?...`
   writes to the default `test` database. Put the name before the query
-  string: `...mongodb.net/synapai?appName=Synap`. `pnpm db:check` warns
+  string: `...mongodb.net/synapai?appName=Akrux`. `pnpm db:check` warns
   about this even when the connection succeeds.
 
 In production the server **refuses to start** rather than falling back, so a

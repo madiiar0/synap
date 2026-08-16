@@ -96,7 +96,7 @@ if (!isVercel) {
       app.listen(env.PORT, () => {
         logger.info(
           { port: env.PORT, demo: env.DEMO_MODE, client: env.CLIENT_URL },
-          "Synap server listening",
+          "Akrux server listening",
         );
       });
     })

@@ -14,7 +14,7 @@ password) which is fine for local demos and refused in production.
 
 1. Open https://console.firebase.google.com and click **Create a project**
    (or **Add project**).
-2. Name it `synapai` (any name works; it only shows in the console).
+2. Name it `akrux` (any name works; it only shows in the console).
 3. Google Analytics: **turn it off**. You do not need it and it adds steps.
 4. Click **Create project**, wait, then **Continue**.
 
@@ -31,7 +31,7 @@ password) which is fine for local demos and refused in production.
 
 1. Click the gear icon (top left) → **Project settings** → tab **General**.
 2. Scroll to **Your apps** → click the **web** icon `</>`.
-3. App nickname: `synapai-web`. Do **not** tick "Firebase Hosting". →
+3. App nickname: `akrux-web`. Do **not** tick "Firebase Hosting". →
    **Register app**.
 4. Firebase shows a `firebaseConfig` snippet. Keep this tab open; you need
    four values from it:
@@ -39,8 +39,8 @@ password) which is fine for local demos and refused in production.
    ```js
    const firebaseConfig = {
      apiKey: "AIzaSy...",              // -> VITE_FIREBASE_API_KEY
-     authDomain: "synapai.firebaseapp.com",  // -> VITE_FIREBASE_AUTH_DOMAIN
-     projectId: "synapai-xxxxx",       // -> VITE_FIREBASE_PROJECT_ID
+     authDomain: "akrux.firebaseapp.com",  // -> VITE_FIREBASE_AUTH_DOMAIN
+     projectId: "akrux-xxxxx",       // -> VITE_FIREBASE_PROJECT_ID
      storageBucket: "...",             // not needed
      messagingSenderId: "...",         // not needed
      appId: "1:123...:web:abc...",     // -> VITE_FIREBASE_APP_ID
@@ -50,14 +50,22 @@ password) which is fine for local demos and refused in production.
    These four are **public by design** (they ship in the browser bundle).
    They are not secrets.
 
+   `authDomain` is **brand-visible**: Google sign-in shows it to the user as
+   "continue to &lt;authDomain&gt;". A Firebase project ID cannot be renamed
+   after creation, so an existing project keeps its original ID. To show the
+   Akrux brand there instead, add a custom domain such as `auth.akrux.app`
+   under **Authentication → Settings → Authorized domains** / Hosting and set
+   `VITE_FIREBASE_AUTH_DOMAIN` to it. The repository does not pin this value;
+   it comes from the deployment environment.
+
 ## 4. Put those 4 values in the client env
 
 Open (or create) **`apps/client/.env`** and write:
 
 ```
 VITE_FIREBASE_API_KEY=AIzaSy...
-VITE_FIREBASE_AUTH_DOMAIN=synapai.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=synapai-xxxxx
+VITE_FIREBASE_AUTH_DOMAIN=akrux.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=akrux-xxxxx
 VITE_FIREBASE_APP_ID=1:123...:web:abc...
 ```
 
@@ -72,7 +80,7 @@ No quotes, no spaces around `=`. Vite only reads variables that start with
 3. In a terminal, turn it into one line of base64:
 
    ```bash
-   base64 -i ~/Downloads/synapai-xxxxx-firebase-adminsdk-xxxxx.json | tr -d '\n' | pbcopy
+   base64 -i ~/Downloads/akrux-xxxxx-firebase-adminsdk-xxxxx.json | tr -d '\n' | pbcopy
    ```
 
    (`pbcopy` puts it on your clipboard. Drag the downloaded file into the
@@ -93,7 +101,7 @@ ADMIN_EMAIL=your.real@email.com
 
 Notes:
 
-- `ADMIN_EMAIL` is currently `admin@synapai.app`. **Change it to the email you
+- `ADMIN_EMAIL` is currently `admin@akrux.app`. **Change it to the email you
   will actually sign in with.** That account is promoted to admin with
   unlimited scans automatically every time the server boots, and it skips the
   email-verification gate. It also receives lead and budget alerts.
@@ -139,7 +147,7 @@ Firebase sends the confirmation email, not your SMTP provider, so the wording
 is configured in the Firebase Console:
 
 1. **Authentication → Templates → Email address verification**.
-2. Click the pencil icon. Set **Sender name** to `Synap` (the reply-to
+2. Click the pencil icon. Set **Sender name** to `Akrux` (the reply-to
    address can stay the default).
 3. Change the template language with the dropdown at the top right of the
    template list: pick **Russian** so Russian-speaking customers get a Russian
@@ -181,7 +189,7 @@ Work through these in order:
 
 Every Firebase failure now appears on the sign-in page with its raw code
 underneath the message, and is logged to the browser console as
-`[Synap auth] <code>: <message>`. If Google sign-in misbehaves, open the
+`[Akrux auth] <code>: <message>`. If Google sign-in misbehaves, open the
 console, read the code, and match it here:
 
 | Code | Meaning and fix |

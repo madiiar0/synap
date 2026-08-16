@@ -17,7 +17,7 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
    1.15 (capped at 100). Constants live in `packages/shared/src/constants.ts`.
 4. **ADMIN_EMAIL env var added.** The spec requires admin emails (budget
    pause, lead notifications) but defines no recipient; `ADMIN_EMAIL` was
-   added (default `admin@synapai.app`).
+   added (default `admin@akrux.app`).
 5. **"Disable prompts for next scan"** is stored on the Brand as a list of
    normalized prompt texts (`disabledPrompts`); prompt generation filters
    them out. Prompts are per-scan documents, so disabling must outlive scans.
@@ -118,16 +118,20 @@ Decisions taken where the spec was ambiguous or silent, with reasoning.
 
 ## Iteration 8
 
-30. **Canonical production domain is operator-supplied.** The repository does
-    not establish ownership of a Synap domain, so metadata uses
-    `APP_BASE_URL`; production refuses localhost/non-HTTPS values and redirects
-    other hosts. No new brand domain, email address or social profile was
-    invented.
-31. **Entity continuity is machine-readable only.** The previous public name is
-    retained solely as Organization `alternateName`. Internal package scopes,
-    database/queue names, cookies, local-storage keys and existing mail domains
-    are deliberately unchanged because renaming them creates migration risk
-    without improving the visible entity.
+30. **Canonical production domain is checked in.** `CANONICAL_SITE_URL`
+    (`https://akrux.app`) is the single public origin for canonicals, hreflang,
+    the sitemap, llms.txt and JSON-LD. A production frontend build ignores
+    `PUBLIC_SITE_URL` and per-deployment Vercel hostnames so a stale dashboard
+    value cannot publish a second origin for the same entity. The backend keeps
+    using `APP_BASE_URL`; it refuses localhost/non-HTTPS values in production
+    and should run with `SITE_NOINDEX=true` behind the frontend proxy.
+31. **No entity continuity is claimed with the former name.** Structured data
+    carries no `alternateName` for the retired brand: nothing in the repository
+    substantiates a verified continuity claim, and asserting one invites the
+    entity confusion the migration exists to prevent. Internal package scopes,
+    the database and queue names, the session cookie and local-storage keys are
+    deliberately unchanged because renaming them creates migration risk without
+    improving the visible entity.
 32. **Public content is implementation-backed.** The current 25-prompt mix,
     43-call free plan, model-family/provider distinction, metric version 2,
     unbranded score formula, failure handling and Share of Voice rules were

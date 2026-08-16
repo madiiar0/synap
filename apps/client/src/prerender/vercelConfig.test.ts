@@ -26,7 +26,7 @@ describe("Vercel public-site routing", () => {
     expect(config.rewrites).toEqual([
       {
         source: "/api/:path*",
-        destination: "/api/bridge?__synap_path=:path*",
+        destination: "/api/bridge?__akrux_path=:path*",
       },
       {
         source: "/:path((?!api(?:/|$)).*)",

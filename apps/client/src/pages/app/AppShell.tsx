@@ -114,7 +114,7 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
              was pushed below the fold on long pages. */
           className="sticky top-0 hidden h-[100dvh] w-56 shrink-0 flex-col border-r border-line bg-surface px-3 py-6 md:flex"
         >
-          <Link to="/" className="mb-8 px-3" aria-label="Synap">
+          <Link to="/" className="mb-8 px-3" aria-label="Akrux">
             <Logo size={18} className="text-lg" />
           </Link>
           <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">

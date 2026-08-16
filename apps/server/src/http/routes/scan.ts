@@ -62,7 +62,7 @@ async function notifyScanCap(count: number): Promise<void> {
   await settings.save();
   await sendMail(
     env.ADMIN_EMAIL,
-    "Synap: daily scan cap reached",
+    "Akrux: daily scan cap reached",
     `<p>The daily scan cap (${env.DAILY_SCAN_CAP}) was reached with ${count} scans today. New scans are paused until tomorrow.</p>`,
   ).catch((err) => logger.error({ err }, "scan-cap email failed"));
 }

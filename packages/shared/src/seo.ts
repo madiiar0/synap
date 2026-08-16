@@ -4,6 +4,15 @@ import enTranslations from "./i18n/en.json" with { type: "json" };
 import ruTranslations from "./i18n/ru.json" with { type: "json" };
 
 /**
+ * The one public origin every crawler, AI retriever and structured-data
+ * consumer must see. Canonicals, hreflang, the sitemap, llms.txt and JSON-LD
+ * all derive from it, so it is checked in rather than left to a deployment
+ * variable: a stale or missing dashboard value must never publish a second
+ * origin for the same entity.
+ */
+export const CANONICAL_SITE_URL = "https://akrux.app";
+
+/**
  * Public information architecture. Keep this registry authoritative: routing,
  * prerendering, metadata, hreflang, the sitemap, llms.txt and SEO tests all
  * consume it so a page cannot silently become orphaned.
@@ -87,25 +96,25 @@ export const PRODUCT_POSITIONING: Record<Locale, {
 }> = {
   en: {
     sentence:
-      "Synap gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
+      "Akrux gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
     short:
-      "Synap gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
+      "Akrux gives Kazakhstan businesses a free audit of how they appear in AI-generated answers, followed by human-led improvement support. AI placement is not guaranteed.",
     full:
-      "Synap is a human-assisted AI-visibility audit and improvement service for businesses in Kazakhstan. The free audit provides a dated sample of how a business appears in supported AI-generated answers, including visibility metrics, branded recognition, competitors, answer-level positions and cited sources. Business owners can review the private report and book a call with Synap. The team then plans and manually carries out agreed improvement work. AI answers vary by model, wording, date and retrieved sources, so Synap does not guarantee indexing, mentions, citations, rankings or recommendations.",
+      "Akrux is a human-assisted AI-visibility audit and improvement service for businesses in Kazakhstan. The free audit provides a dated sample of how a business appears in supported AI-generated answers, including visibility metrics, branded recognition, competitors, answer-level positions and cited sources. Business owners can review the private report and book a call with Akrux. The team then plans and manually carries out agreed improvement work. AI answers vary by model, wording, date and retrieved sources, so Akrux does not guarantee indexing, mentions, citations, rankings or recommendations.",
   },
   ru: {
     sentence:
-      "Synap бесплатно проверяет, как бизнес в Казахстане представлен в ответах ИИ, а затем команда вручную помогает с улучшениями. Позиции в ИИ не гарантируются.",
+      "Akrux бесплатно проверяет, как бизнес в Казахстане представлен в ответах ИИ, а затем команда вручную помогает с улучшениями. Позиции в ИИ не гарантируются.",
     short:
-      "Synap бесплатно проверяет, как бизнес в Казахстане представлен в ответах ИИ, а затем команда вручную помогает с улучшениями. Позиции в ИИ не гарантируются.",
+      "Akrux бесплатно проверяет, как бизнес в Казахстане представлен в ответах ИИ, а затем команда вручную помогает с улучшениями. Позиции в ИИ не гарантируются.",
     full:
-      "Synap — сервис аудита и улучшения видимости бизнеса в ответах ИИ для компаний Казахстана с участием команды специалистов. Бесплатный аудит показывает датированную выборку ответов поддерживаемых ИИ-моделей, включая метрики видимости, узнаваемость бренда, конкурентов, позиции в отдельных ответах и процитированные источники. Владелец бизнеса может изучить закрытый отчёт и записаться на созвон с Synap. Затем команда составляет и вручную выполняет согласованный план улучшений. Ответы ИИ зависят от модели, формулировки, даты и найденных источников, поэтому Synap не гарантирует индексацию, упоминания, цитирование, позиции или рекомендации.",
+      "Akrux — сервис аудита и улучшения видимости бизнеса в ответах ИИ для компаний Казахстана с участием команды специалистов. Бесплатный аудит показывает датированную выборку ответов поддерживаемых ИИ-моделей, включая метрики видимости, узнаваемость бренда, конкурентов, позиции в отдельных ответах и процитированные источники. Владелец бизнеса может изучить закрытый отчёт и записаться на созвон с Akrux. Затем команда составляет и вручную выполняет согласованный план улучшений. Ответы ИИ зависят от модели, формулировки, даты и найденных источников, поэтому Akrux не гарантирует индексацию, упоминания, цитирование, позиции или рекомендации.",
   },
 };
 
 export const SOCIAL_IMAGE_ALT: Record<Locale, string> = {
-  en: "Synap — AI-visibility audit and human-assisted improvement in Kazakhstan",
-  ru: "Synap — аудит и улучшение видимости бизнеса в ИИ в Казахстане",
+  en: "Akrux — AI-visibility audit and human-assisted improvement in Kazakhstan",
+  ru: "Akrux — аудит и улучшение видимости бизнеса в ИИ в Казахстане",
 };
 
 const UPDATED = "2026-08-02";
@@ -113,46 +122,46 @@ const UPDATED = "2026-08-02";
 const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   "/": {
     en: {
-      title: "Synap — Improve AI Visibility in Kazakhstan",
+      title: "Akrux — Improve AI Visibility in Kazakhstan",
       description:
-        "Get a free audit of how your business appears in AI answers. Synap’s team helps Kazakhstan businesses carry out agreed improvements; AI placement is not guaranteed.",
+        "Get a free audit of how your business appears in AI answers. Akrux’s team helps Kazakhstan businesses carry out agreed improvements; AI placement is not guaranteed.",
       kind: "home",
       lastModified: UPDATED,
     },
     ru: {
-      title: "Synap — улучшение видимости бизнеса в ИИ в Казахстане",
+      title: "Akrux — улучшение видимости бизнеса в ИИ в Казахстане",
       description:
-        "Получите бесплатный аудит представленности бизнеса в ответах ИИ. Команда Synap помогает компаниям Казахстана с улучшениями; позиции в ИИ не гарантируются.",
+        "Получите бесплатный аудит представленности бизнеса в ответах ИИ. Команда Akrux помогает компаниям Казахстана с улучшениями; позиции в ИИ не гарантируются.",
       kind: "home",
       lastModified: UPDATED,
     },
   },
   "/product": {
     en: {
-      title: "AI Visibility Audit for Kazakhstan | Synap",
+      title: "AI Visibility Audit for Kazakhstan | Akrux",
       description:
-        "See how Synap’s browser application creates a private, dated AI-visibility audit for Kazakhstan businesses before any separately scoped manual service work.",
+        "See how Akrux’s browser application creates a private, dated AI-visibility audit for Kazakhstan businesses before any separately scoped manual service work.",
       kind: "product",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Аудит видимости бизнеса в ИИ в Казахстане | Synap",
+      title: "Аудит видимости бизнеса в ИИ в Казахстане | Akrux",
       description:
-        "Узнайте, как приложение Synap создаёт закрытый датированный аудит видимости для бизнеса Казахстана до отдельно согласуемой ручной работы команды.",
+        "Узнайте, как приложение Akrux создаёт закрытый датированный аудит видимости для бизнеса Казахстана до отдельно согласуемой ручной работы команды.",
       kind: "product",
       lastModified: "2026-08-03",
     },
   },
   "/services": {
     en: {
-      title: "AI Visibility Services in Kazakhstan — Synap",
+      title: "AI Visibility Services in Kazakhstan — Akrux",
       description:
         "Start with a free, dated AI-visibility audit, then review separately scoped human-assisted improvement work for your business in Kazakhstan.",
       kind: "webpage",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Услуги по улучшению видимости бизнеса в ИИ в Казахстане — Synap",
+      title: "Услуги по улучшению видимости бизнеса в ИИ в Казахстане — Akrux",
       description:
         "Начните с бесплатного датированного аудита видимости в ИИ и обсудите отдельно согласуемые работы команды для бизнеса в Казахстане.",
       kind: "webpage",
@@ -161,49 +170,49 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/how-it-works": {
     en: {
-      title: "How Synap's AI Visibility Service Works",
+      title: "How Akrux's AI Visibility Service Works",
       description:
-        "Follow the full Synap process: free audit, private report, optional call, agreed human-led improvement work and later user-initiated rescans.",
+        "Follow the full Akrux process: free audit, private report, optional call, agreed human-led improvement work and later user-initiated rescans.",
       kind: "webpage",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Как работает аудит и помощь команды Synap",
+      title: "Как работает аудит и помощь команды Akrux",
       description:
-        "Полный процесс Synap: бесплатный аудит, закрытый отчёт, необязательный созвон, согласованная ручная работа и повторные проверки.",
+        "Полный процесс Akrux: бесплатный аудит, закрытый отчёт, необязательный созвон, согласованная ручная работа и повторные проверки.",
       kind: "webpage",
       lastModified: "2026-08-03",
     },
   },
   "/methodology": {
     en: {
-      title: "AI Visibility Scoring Methodology | Synap",
+      title: "AI Visibility Scoring Methodology | Akrux",
       description:
-        "Read the implemented methodology behind Synap’s dated diagnostic audit: prompts, mentions, positions, failed requests, Visibility Score and Share of Voice.",
+        "Read the implemented methodology behind Akrux’s dated diagnostic audit: prompts, mentions, positions, failed requests, Visibility Score and Share of Voice.",
       kind: "methodology",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Методология расчёта видимости в ИИ | Synap",
+      title: "Методология расчёта видимости в ИИ | Akrux",
       description:
-        "Реализованная методология датированного аудита Synap: вопросы, упоминания, позиции, ошибки, Индекс видимости и доля голоса.",
+        "Реализованная методология датированного аудита Akrux: вопросы, упоминания, позиции, ошибки, Индекс видимости и доля голоса.",
       kind: "methodology",
       lastModified: "2026-08-03",
     },
   },
   "/blogs/ai-visibility-kazakhstan": {
     en: {
-      title: "What AI Visibility Means for Kazakhstan Businesses | Synap",
+      title: "What AI Visibility Means for Kazakhstan Businesses | Akrux",
       description:
-        "Learn how mentions, recommendations, prompts and citations shape AI visibility for Kazakhstan businesses—and what a dated Synap audit can and cannot show.",
+        "Learn how mentions, recommendations, prompts and citations shape AI visibility for Kazakhstan businesses—and what a dated Akrux audit can and cannot show.",
       kind: "article",
       lastModified: "2026-08-03",
       headline: "What AI Visibility Means for Businesses in Kazakhstan",
     },
     ru: {
-      title: "Что означает видимость бизнеса в ответах ИИ в Казахстане | Synap",
+      title: "Что означает видимость бизнеса в ответах ИИ в Казахстане | Akrux",
       description:
-        "Разбираем упоминания, рекомендации, вопросы и источники в ответах ИИ для бизнеса Казахстана, а также возможности и ограничения датированного аудита Synap.",
+        "Разбираем упоминания, рекомендации, вопросы и источники в ответах ИИ для бизнеса Казахстана, а также возможности и ограничения датированного аудита Akrux.",
       kind: "article",
       lastModified: "2026-08-03",
       headline: "Что означает видимость бизнеса в ответах ИИ для компаний Казахстана",
@@ -211,14 +220,14 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/generative-engine-optimization": {
     en: {
-      title: "GEO for Kazakhstan Businesses: A Practical Guide | Synap",
+      title: "GEO for Kazakhstan Businesses: A Practical Guide | Akrux",
       description:
         "Learn how human-led GEO work can improve crawlability, entity clarity, useful content and sources for Kazakhstan businesses without guaranteed AI placement.",
       kind: "article",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "GEO для бизнеса Казахстана: практическое руководство | Synap",
+      title: "GEO для бизнеса Казахстана: практическое руководство | Akrux",
       description:
         "Как ручная GEO-работа улучшает обход сайта, ясность сущности, полезный контент и источники бизнеса без гарантии позиции в ИИ.",
       kind: "article",
@@ -227,14 +236,14 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/use-cases": {
     en: {
-      title: "AI Visibility Use Cases by Business Type | Synap",
+      title: "AI Visibility Use Cases by Business Type | Akrux",
       description:
         "Explore practical AI visibility measurement for local businesses, SaaS teams, ecommerce brands and professional services without generic doorway content.",
       kind: "webpage",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Сценарии аналитики видимости в ИИ | Synap",
+      title: "Сценарии аналитики видимости в ИИ | Akrux",
       description:
         "Практические сценарии измерения видимости для локального бизнеса, SaaS, электронной торговли и профессиональных услуг без шаблонных страниц.",
       kind: "webpage",
@@ -243,14 +252,14 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/use-cases/local-businesses": {
     en: {
-      title: "AI Visibility for Local Businesses in Kazakhstan | Synap",
+      title: "AI Visibility for Local Businesses in Kazakhstan | Akrux",
       description:
         "Practical guidance for auditing local AI visibility in Kazakhstan across business facts, city prompts, competitor appearances, listings, citations and dated rescans.",
       kind: "article",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Видимость локального бизнеса Казахстана в ответах ИИ | Synap",
+      title: "Видимость локального бизнеса Казахстана в ответах ИИ | Akrux",
       description:
         "Практический аудит локальной видимости в Казахстане: факты о бизнесе, городские вопросы, конкуренты, карточки, источники и датированные проверки.",
       kind: "article",
@@ -259,14 +268,14 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/pricing": {
     en: {
-      title: "Free AI Visibility Audit and Service Pricing | Synap",
+      title: "Free AI Visibility Audit and Service Pricing | Akrux",
       description:
-        "The initial audit is free during testing. Synap has no fixed public subscription or universal service price; optional manual work is scoped after review.",
+        "The initial audit is free during testing. Akrux has no fixed public subscription or universal service price; optional manual work is scoped after review.",
       kind: "pricing",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Бесплатный аудит и стоимость услуг Synap",
+      title: "Бесплатный аудит и стоимость услуг Akrux",
       description:
         "Начальный аудит бесплатный на этапе тестирования. Фиксированной подписки и универсальной цены нет; ручная работа оценивается после разбора.",
       kind: "pricing",
@@ -275,14 +284,14 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/faq": {
     en: {
-      title: "Synap Service and AI Visibility Audit FAQ",
+      title: "Akrux Service and AI Visibility Audit FAQ",
       description:
-        "Answers about Synap’s free audit, Kazakhstan focus, private reports, model coverage, human-assisted work, testing stage and limitations.",
+        "Answers about Akrux’s free audit, Kazakhstan focus, private reports, model coverage, human-assisted work, testing stage and limitations.",
       kind: "faq",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Частые вопросы об аудите и услугах Synap",
+      title: "Частые вопросы об аудите и услугах Akrux",
       description:
         "Ответы о бесплатном аудите, фокусе на Казахстане, приватных отчётах, моделях, ручной работе команды, тестировании и ограничениях.",
       kind: "faq",
@@ -291,71 +300,71 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/about": {
     en: {
-      title: "About Synap — AI Visibility Service in Kazakhstan",
+      title: "About Akrux — AI Visibility Service in Kazakhstan",
       description:
-        "Learn how Synap combines a free, dated AI-visibility audit with separately scoped human-assisted improvement work for businesses in Kazakhstan.",
+        "Learn how Akrux combines a free, dated AI-visibility audit with separately scoped human-assisted improvement work for businesses in Kazakhstan.",
       kind: "about",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "О Synap — сервисе видимости бизнеса в ИИ в Казахстане",
+      title: "О Akrux — сервисе видимости бизнеса в ИИ в Казахстане",
       description:
-        "Узнайте, как Synap сочетает бесплатный датированный аудит видимости в ИИ с отдельно согласуемой помощью команды для бизнеса Казахстана.",
+        "Узнайте, как Akrux сочетает бесплатный датированный аудит видимости в ИИ с отдельно согласуемой помощью команды для бизнеса Казахстана.",
       kind: "about",
       lastModified: "2026-08-03",
     },
   },
   "/contact": {
     en: {
-      title: "Contact Synap",
+      title: "Contact Akrux",
       description:
-        "Start a free AI-visibility audit or use Synap’s existing call-booking flow to discuss a private report and possible agreed improvement work.",
+        "Start a free AI-visibility audit or use Akrux’s existing call-booking flow to discuss a private report and possible agreed improvement work.",
       kind: "contact",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Связаться с Synap",
+      title: "Связаться с Akrux",
       description:
-        "Запустите бесплатный аудит или используйте форму записи Synap, чтобы обсудить закрытый отчёт и возможные согласованные работы.",
+        "Запустите бесплатный аудит или используйте форму записи Akrux, чтобы обсудить закрытый отчёт и возможные согласованные работы.",
       kind: "contact",
       lastModified: "2026-08-03",
     },
   },
   "/docs": {
     en: {
-      title: "AI Visibility Audit Documentation | Synap",
+      title: "AI Visibility Audit Documentation | Akrux",
       description:
-        "Documentation for Synap’s diagnostic application: create a profile, run an audit and interpret scores, prompts, sampled answers, competitors and sources.",
+        "Documentation for Akrux’s diagnostic application: create a profile, run an audit and interpret scores, prompts, sampled answers, competitors and sources.",
       kind: "docs",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Документация по аудиту видимости Synap",
+      title: "Документация по аудиту видимости Akrux",
       description:
-        "Документация диагностического приложения Synap: профиль, аудит, Индекс видимости, вопросы, выборка ответов, конкуренты и источники.",
+        "Документация диагностического приложения Akrux: профиль, аудит, Индекс видимости, вопросы, выборка ответов, конкуренты и источники.",
       kind: "docs",
       lastModified: "2026-08-03",
     },
   },
   "/blogs": {
     en: {
-      title: "Synap Blog — AI Visibility in Kazakhstan",
+      title: "Akrux Blog — AI Visibility in Kazakhstan",
       description:
-        "Practical Synap articles about auditing AI-generated brand information, understanding competitor recommendations and improving AI visibility in Kazakhstan.",
+        "Practical Akrux articles about auditing AI-generated brand information, understanding competitor recommendations and improving AI visibility in Kazakhstan.",
       kind: "webpage",
       lastModified: "2026-08-03",
     },
     ru: {
-      title: "Блог Synap — видимость бизнеса в ответах ИИ",
+      title: "Блог Akrux — видимость бизнеса в ответах ИИ",
       description:
-        "Практические статьи Synap об аудите информации о бренде, причинах рекомендаций конкурентов и улучшении видимости бизнеса в ответах ИИ в Казахстане.",
+        "Практические статьи Akrux об аудите информации о бренде, причинах рекомендаций конкурентов и улучшении видимости бизнеса в ответах ИИ в Казахстане.",
       kind: "webpage",
       lastModified: "2026-08-03",
     },
   },
   "/blogs/audit-ai-generated-brand-information": {
     en: {
-      title: "How to Audit AI-Generated Brand Information | Synap",
+      title: "How to Audit AI-Generated Brand Information | Akrux",
       description:
         "A repeatable audit for checking whether AI answers identify a business correctly, describe it consistently, cite reliable sources and confuse it with other entities.",
       kind: "article",
@@ -363,7 +372,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       datePublished: UPDATED,
     },
     ru: {
-      title: "Как проверить информацию о бренде в ответах ИИ | Synap",
+      title: "Как проверить информацию о бренде в ответах ИИ | Akrux",
       description:
         "Повторяемый аудит: правильно ли ИИ распознаёт бизнес, последовательно ли описывает его, ссылается ли на надёжные источники и путает ли сущности.",
       kind: "article",
@@ -373,7 +382,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/blogs/why-ai-recommends-competitors": {
     en: {
-      title: "Why AI Answers Recommend Competitors | Synap",
+      title: "Why AI Answers Recommend Competitors | Akrux",
       description:
         "Learn why competitors may appear in AI recommendations, how to separate evidence gaps from model variability and which corrective actions can be verified.",
       kind: "article",
@@ -381,7 +390,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       datePublished: UPDATED,
     },
     ru: {
-      title: "Почему ИИ рекомендует конкурентов | Synap",
+      title: "Почему ИИ рекомендует конкурентов | Akrux",
       description:
         "Почему конкуренты появляются в рекомендациях ИИ, как отличить нехватку подтверждений от изменчивости модели и какие действия можно проверить.",
       kind: "article",
@@ -391,63 +400,63 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   },
   "/changelog": {
     en: {
-      title: "Synap Product Changelog",
+      title: "Akrux Product Changelog",
       description:
-        "Dated, factual updates to Synap product behavior, methodology and public documentation. Entries are added only for changes verified in the product repository.",
+        "Dated, factual updates to Akrux product behavior, methodology and public documentation. Entries are added only for changes verified in the product repository.",
       kind: "webpage",
       lastModified: UPDATED,
     },
     ru: {
-      title: "История обновлений Synap",
+      title: "История обновлений Akrux",
       description:
-        "Датированные фактические обновления продукта, методологии и публичной документации Synap. Записи добавляются только для подтверждённых изменений.",
+        "Датированные фактические обновления продукта, методологии и публичной документации Akrux. Записи добавляются только для подтверждённых изменений.",
       kind: "webpage",
       lastModified: UPDATED,
     },
   },
   "/privacy": {
     en: {
-      title: "Synap Privacy Policy",
+      title: "Akrux Privacy Policy",
       description:
-        "Understand which account, business, scan and contact data Synap processes, why private reports remain access-controlled and what is included in public resources.",
+        "Understand which account, business, scan and contact data Akrux processes, why private reports remain access-controlled and what is included in public resources.",
       kind: "webpage",
       lastModified: UPDATED,
     },
     ru: {
-      title: "Политика конфиденциальности Synap",
+      title: "Политика конфиденциальности Akrux",
       description:
-        "Какие данные аккаунта, бизнеса, проверок и обращений обрабатывает Synap, почему отчёты закрыты и какая информация публикуется для индексации.",
+        "Какие данные аккаунта, бизнеса, проверок и обращений обрабатывает Akrux, почему отчёты закрыты и какая информация публикуется для индексации.",
       kind: "webpage",
       lastModified: UPDATED,
     },
   },
   "/terms": {
     en: {
-      title: "Synap Terms of Service",
+      title: "Akrux Terms of Service",
       description:
-        "Terms for using Synap scans and reports, including account responsibilities, acceptable use, AI-answer limitations, availability and intellectual property.",
+        "Terms for using Akrux scans and reports, including account responsibilities, acceptable use, AI-answer limitations, availability and intellectual property.",
       kind: "webpage",
       lastModified: UPDATED,
     },
     ru: {
-      title: "Условия использования Synap",
+      title: "Условия использования Akrux",
       description:
-        "Условия использования проверок и отчётов Synap: обязанности аккаунта, допустимое использование, ограничения ответов ИИ, доступность и права.",
+        "Условия использования проверок и отчётов Akrux: обязанности аккаунта, допустимое использование, ограничения ответов ИИ, доступность и права.",
       kind: "webpage",
       lastModified: UPDATED,
     },
   },
   "/login": {
     en: {
-      title: "Sign in to Synap",
+      title: "Sign in to Akrux",
       description:
-        "Sign in or create a Synap account to run a private AI visibility scan and view your business report.",
+        "Sign in or create a Akrux account to run a private AI visibility scan and view your business report.",
       kind: "login",
     },
     ru: {
-      title: "Вход в Synap",
+      title: "Вход в Akrux",
       description:
-        "Войдите или создайте аккаунт Synap, чтобы запустить приватную проверку видимости бизнеса в ИИ и открыть отчёт.",
+        "Войдите или создайте аккаунт Akrux, чтобы запустить приватную проверку видимости бизнеса в ИИ и открыть отчёт.",
       kind: "login",
     },
   },
@@ -516,7 +525,7 @@ export function organizationLd(baseUrl: string, locale: Locale = "en"): Record<s
   return {
     "@type": "Organization",
     "@id": `${base}/#organization`,
-    name: "Synap",
+    name: "Akrux",
     url: base,
     logo: {
       "@type": "ImageObject",
@@ -524,7 +533,7 @@ export function organizationLd(baseUrl: string, locale: Locale = "en"): Record<s
       url: `${base}/icon-512.png`,
       width: 512,
       height: 512,
-      caption: "Synap",
+      caption: "Akrux",
     },
     description: PRODUCT_POSITIONING[locale].short,
     areaServed: {
@@ -551,7 +560,7 @@ export function webSiteLd(baseUrl: string, locale: Locale = "en"): Record<string
   return {
     "@type": "WebSite",
     "@id": `${base}/#website`,
-    name: "Synap",
+    name: "Akrux",
     url: base,
     description: PRODUCT_POSITIONING[locale].short,
     inLanguage: ["en", "ru"],
@@ -565,7 +574,7 @@ export function serviceLd(baseUrl: string, locale: Locale): Record<string, unkno
   return {
     "@type": "Service",
     "@id": `${base}/#service`,
-    name: "Synap",
+    name: "Akrux",
     url: `${base}${localizedPublicPath("/", locale)}`,
     mainEntityOfPage: `${base}${localizedPublicPath("/", locale)}`,
     serviceType:
@@ -614,13 +623,13 @@ export function softwareApplicationLd(baseUrl: string, locale: Locale): Record<s
     ],
   };
   const descriptions: Record<Locale, string> = {
-    en: "The browser-based Synap audit interface lets authenticated business owners review a private, dated sample of supported AI-generated answers and related visibility metrics.",
-    ru: "Браузерный интерфейс аудита Synap позволяет авторизованному владельцу бизнеса изучить закрытую датированную выборку ответов поддерживаемых ИИ-моделей и связанные метрики видимости.",
+    en: "The browser-based Akrux audit interface lets authenticated business owners review a private, dated sample of supported AI-generated answers and related visibility metrics.",
+    ru: "Браузерный интерфейс аудита Akrux позволяет авторизованному владельцу бизнеса изучить закрытую датированную выборку ответов поддерживаемых ИИ-моделей и связанные метрики видимости.",
   };
   return {
     "@type": "SoftwareApplication",
     "@id": `${base}/#audit-application`,
-    name: locale === "ru" ? "Интерфейс аудита Synap" : "Synap audit interface",
+    name: locale === "ru" ? "Интерфейс аудита Akrux" : "Akrux audit interface",
     url: `${base}${localizedPublicPath("/product", locale)}`,
     mainEntityOfPage: `${base}${localizedPublicPath("/product", locale)}`,
     applicationCategory: "BusinessApplication",
@@ -687,7 +696,7 @@ function breadcrumbNames(path: PublicPath, locale: Locale): Array<{ name: string
   if (path.startsWith("/blogs/")) {
     crumbs.push({ name: locale === "ru" ? "Блог" : "Blogs", path: "/blogs" });
   }
-  crumbs.push({ name: routeMeta(path, locale).title.replace(/ \| Synap$/, ""), path });
+  crumbs.push({ name: routeMeta(path, locale).title.replace(/ \| Akrux$/, ""), path });
   return crumbs;
 }
 

@@ -23,8 +23,8 @@ import {
 } from "../src/http/seo.js";
 import { SESSION_COOKIE } from "../src/services/auth.js";
 
-const BASE = "https://synap.example";
-const FORMER_NAME = ["Synap", "AI"].join("");
+const BASE = "https://akrux.example";
+const FORMER_NAME = ["Syn", "ap"].join("");
 
 describe("crawl and retrieval resources", () => {
   it("preserves route counts and compatibility-sensitive internal identifiers", () => {
@@ -133,7 +133,7 @@ describe("crawl and retrieval resources", () => {
     for (const locale of ["en", "ru"] as const) {
       const head = buildHeadTags("/", locale);
       const raw = head.match(
-        /<script id="synap-structured-data" type="application\/ld\+json">([\s\S]*?)<\/script>/,
+        /<script id="akrux-structured-data" type="application\/ld\+json">([\s\S]*?)<\/script>/,
       )?.[1];
       expect(raw).toBeTruthy();
       const graph = (JSON.parse(raw ?? "{}") as { "@graph": Array<Record<string, unknown>> })[
@@ -165,13 +165,13 @@ describe("crawl and retrieval resources", () => {
     expect(serialized).toContain(PRODUCT_POSITIONING.en.full);
     expect(serialized).not.toContain(FORMER_NAME);
     expect(serialized).not.toMatch(/"Product"|"Offer"|priceCurrency|"price"/);
-    expect(serialized).not.toContain("synapai.app");
+    expect(serialized).not.toContain("@akrux.app");
   });
 
   it("keeps llms resources factual, supplemental and outside private data", () => {
     const concise = llmsText(BASE);
     const full = llmsFullText(BASE);
-    expect(concise).toContain("# Synap");
+    expect(concise).toContain("# Akrux");
     expect(concise).toContain("llms.txt is supplemental");
     expect(concise).toContain("Primary market: businesses in Kazakhstan");
     expect(concise).toContain("Normal free-audit model families: ChatGPT, Gemini, Perplexity");
@@ -191,7 +191,7 @@ describe("crawl and retrieval resources", () => {
     expect(combined).not.toMatch(
       /(?<!not )guarantees? (?:indexing|mentions|citations|positions|rankings|recommendations)/i,
     );
-    expect(combined).not.toMatch(/sk-[A-Za-z0-9]|BEGIN PRIVATE KEY|synapai_session|synapai\.app/);
+    expect(combined).not.toMatch(/sk-[A-Za-z0-9]|BEGIN PRIVATE KEY|synapai_session|@akrux\.app/);
     expect(llmsText(BASE)).toContain(`Canonical website: ${BASE}`);
     expect(llmsText("https://another.example")).toContain(
       "Canonical website: https://another.example",

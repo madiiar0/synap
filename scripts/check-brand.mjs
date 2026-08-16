@@ -5,13 +5,18 @@ const files = execFileSync("git", ["ls-files", "--cached", "--others", "--exclud
   encoding: "utf8",
 }).trim().split("\n").filter(Boolean);
 const textExtensions = new Set([".css", ".html", ".json", ".md", ".mjs", ".ts", ".tsx", ".txt", ".xml", ".yaml", ".yml"]);
-const formerCompact = ["Synap", "AI"].join("");
-const formerSpaced = ["Synap", " AI"].join("");
-const forbidden = new RegExp(`(?:${formerCompact}|${formerSpaced}|SYNAPAI|synap-ai)`, "g");
+// The visible former brand and every machine-readable spelling that preceded
+// it. The literals are assembled so this file never trips its own check.
+const formerBrand = ["Syn", "ap"].join("");
+const formerCompact = `${formerBrand}AI`;
+const forbidden = new RegExp(`(?:${formerBrand}|${formerCompact}|SYNAPAI|${formerBrand.toLowerCase()}-ai)`, "g");
+// BUILDLOG.md is an append-only history: dated entries legitimately name the
+// brand that was in force when they were written.
+const skipped = new Set(["scripts/check-brand.mjs", "BUILDLOG.md"]);
 const violations = [];
 
 for (const file of files) {
-  if (file === "scripts/check-brand.mjs" || file.startsWith("apps/client/dist")) continue;
+  if (skipped.has(file) || file.startsWith("apps/client/dist")) continue;
   const extension = file.slice(file.lastIndexOf("."));
   if (!textExtensions.has(extension) || !fs.existsSync(file)) continue;
   const lines = fs.readFileSync(file, "utf8").split("\n");

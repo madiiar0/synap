@@ -1,6 +1,6 @@
 {
   "common": {
-    "brand": "Synap",
+    "brand": "Akrux",
     "loading": "Loading…",
     "error": "Something went wrong. Please try again.",
     "retry": "Retry",
@@ -18,7 +18,7 @@
     "logout": "Log out",
     "email": "Email",
     "emailPlaceholder": "you@company.com",
-    "copyright": "© 2026 Synap"
+    "copyright": "© 2026 Akrux"
   },
   "nav": {
     "product": "Product",
@@ -372,11 +372,11 @@
     },
     "leadNotification": {
       "subject": "New lead: {{type}}",
-      "title": "New lead in Synap",
+      "title": "New lead in Akrux",
       "body": "Type: {{type}}. Business: {{brand}}. Contact: {{contact}}."
     },
     "budgetPaused": {
-      "subject": "Synap: daily LLM budget exhausted",
+      "subject": "Akrux: daily LLM budget exhausted",
       "title": "Scans paused",
       "body": "Today's spend reached {{spend}} USD against a {{budget}} USD limit. Scans are paused until tomorrow. Resume from the admin panel."
     }
@@ -420,7 +420,7 @@
   },
   "notFound": {
     "title": "Page not found",
-    "body": "The address may be outdated or mistyped. Return to the Synap homepage to continue."
+    "body": "The address may be outdated or mistyped. Return to the Akrux homepage to continue."
   },
   "verifyPage": {
     "title": "Verify your email",

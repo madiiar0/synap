@@ -173,7 +173,7 @@ export function ErrorPanel({
 }): JSX.Element {
   const { t } = useTranslation();
   useEffect(() => {
-    if (error) console.error("[Synap] dashboard query failed:", error);
+    if (error) console.error("[Akrux] dashboard query failed:", error);
   }, [error]);
 
   return (

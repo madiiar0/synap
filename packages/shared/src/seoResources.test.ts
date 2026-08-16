@@ -7,14 +7,14 @@ import {
   sitemapXml,
 } from "./seoResources.js";
 
-const BASE = "https://synap.example";
+const BASE = "https://akrux.example";
 const SHELL = `<!doctype html>
 <html lang="ru">
   <head>
-    <!-- synap-seo:start -->
+    <!-- akrux-seo:start -->
     <title>Old title</title>
     <meta name="robots" content="index,follow">
-    <!-- synap-seo:end -->
+    <!-- akrux-seo:end -->
   </head>
   <body><div id="root"><main><h1>Visible content stays identical</h1></main></div></body>
 </html>`;

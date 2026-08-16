@@ -20,14 +20,14 @@ export interface SeedResult {
  * MANUAL_SETUP.md for granting admin).
  */
 export async function seedDemoData(): Promise<SeedResult> {
-  const adminEmail = "admin@synapai.app";
+  const adminEmail = "admin@akrux.app";
   await User.findOneAndUpdate(
     { email: adminEmail },
     { email: adminEmail, role: "admin", locale: "ru", name: "Admin" },
     { upsert: true },
   );
 
-  const demoEmail = "demo@synapai.app";
+  const demoEmail = "demo@akrux.app";
   const demoUser = await User.findOneAndUpdate(
     { email: demoEmail },
     { email: demoEmail, role: "user", locale: "ru", name: "Demo" },

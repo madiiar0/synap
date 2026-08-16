@@ -11,7 +11,7 @@ function configurationError(message: string): Response {
 
 /**
  * Same-origin bridge from the Vercel-hosted frontend to the separately
- * deployed Synap API. BACKEND_URL stays server-side; the browser continues to
+ * deployed Akrux API. BACKEND_URL stays server-side; the browser continues to
  * call /api and receives the existing host-only HTTP-only session cookie.
  */
 export async function proxyRequest(
@@ -37,7 +37,7 @@ export async function proxyRequest(
   const targetPath = forwardedApiPath
     ? `/api/${forwardedApiPath.replace(/^\/+/, "")}`
     : incoming.pathname;
-  incoming.searchParams.delete("__synap_path");
+  incoming.searchParams.delete("__akrux_path");
   const target = new URL(`${targetPath}${incoming.search}`, backend.origin);
   const headers = new Headers(request.headers);
   headers.delete("host");

@@ -1,6 +1,8 @@
 # BUILDLOG
 
-Chronological log of the Synap v2 build. Newest entries last.
+Chronological log of the Akrux v2 build. Newest entries last. Dated entries
+keep the product name that was in force when they were written, so entries
+before 2026-08-16 name the former brand.
 
 ## 2026-07-31 — Session start
 
@@ -622,3 +624,40 @@ answers, ever** — every scan issues a complete fresh set of provider calls;
   ✅ desktop 1440px and mobile 375px browser checks with zero horizontal
   overflow ✅. The build still reports a 529 kB raw/169 kB gzip main public JS
   chunk; Firebase (35 kB gzip) and dashboard charts (115 kB gzip) are separate.
+
+## Iteration 9 — Akrux rename and canonical origin (2026-08-16)
+
+- Renamed the product and company from Synap to **Akrux** across every surface
+  a user, crawler, AI retriever or structured-data consumer reads: page titles
+  and descriptions, Open Graph and Twitter cards, `og:site_name`, image alt
+  text, Organization/WebSite/Service/SoftwareApplication/WebPage/Breadcrumb/FAQ
+  JSON-LD, `robots.txt`, the sitemap, `llms.txt`, `llms-full.txt`, the web
+  manifest, all public page copy in RU and EN, email templates, `BRAND_NAME`,
+  logo wordmark, nav/dashboard/auth `aria-label`s and console prefixes.
+- Regenerated `og-image.png`: the wordmark was baked into the PNG. Geometry,
+  typography, colours and layout are byte-for-byte the same recipe; only the
+  five letters changed. The favicon/app icons carry no text and were untouched.
+- Introduced `CANONICAL_SITE_URL = "https://akrux.app"` in `packages/shared`.
+  A production frontend build now publishes that origin unconditionally and no
+  longer falls back to `VERCEL_PROJECT_PRODUCTION_URL`, and the client-side
+  metadata effect uses it instead of `window.location.origin`. A preview alias
+  or a retired hostname can no longer advertise a second canonical identity.
+- Renamed crawler-visible and DOM-visible markers: `akrux-seo` head sentinels,
+  `#akrux-structured-data`, `data-akrux-managed`, `akrux-leads.csv`, and the
+  internal `__akrux_path` proxy parameter (`vercel.json` + bridge together).
+- `scripts/check-brand.mjs` now guards the retired `Synap`/`SynapAI` family and
+  skips this log, which keeps dated entries historically accurate.
+- **Deliberately unchanged** (state-bearing or externally coupled, invisible to
+  users and crawlers): the `@synapai/*` workspace scope, the MongoDB database
+  name, the `synapai-jobs` queue, the `synapai_session` cookie and the
+  `synapai:*` / `synapai_locale` browser-storage keys. Renaming them would drop
+  live data, sign every session out or break a deployment build command with no
+  effect on the public entity. See `DEPLOYMENT.md` §6 for the dashboard-side
+  items (domain, `MAIL_FROM`, `ADMIN_EMAIL`, Firebase `authDomain`).
+- No layout, spacing, typography, colour, animation, component, imagery or
+  responsiveness change: the diff touches identity strings, metadata and the
+  one regenerated PNG only.
+- **QA:** lint ✅ typecheck (shared/client/server) ✅ shared 61/61 ✅ client
+  55/55 ✅ server 107/107 ✅ i18n sweep ✅ brand check ✅ icon check ✅
+  production build + prerender of 42 localized routes ✅ deployed-style SEO
+  audit 42/42 ✅.

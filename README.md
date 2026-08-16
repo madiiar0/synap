@@ -1,6 +1,6 @@
-# Synap v2 — AI Visibility Scanner
+# Akrux v2 — AI Visibility Scanner
 
-Synap answers one question for a business: **"How visible are you in AI
+Akrux answers one question for a business: **"How visible are you in AI
 assistants' answers — from 0 to 100 — and who wins instead of you?"**
 
 A business owner signs up → enters their company → the system generates

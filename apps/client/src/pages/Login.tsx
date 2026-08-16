@@ -160,7 +160,7 @@ export default function Login(): JSX.Element {
       {/* Left: the auth card (§2.3) */}
       <div className="flex items-center justify-center px-6 py-16">
         <div className="w-full max-w-[440px]">
-          <Link to={localizedPath("/")} aria-label="Synap">
+          <Link to={localizedPath("/")} aria-label="Akrux">
             <Logo size={20} className="text-lg" />
           </Link>
           <h1 className="mt-8 text-2xl font-semibold tracking-tight sm:text-3xl">

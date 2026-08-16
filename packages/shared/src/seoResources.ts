@@ -62,15 +62,15 @@ export function buildPublicHeadTags(
   const tags = [
     `<title>${escapeHtml(meta.title)}</title>`,
     `<meta name="description" content="${escapeHtml(meta.description)}">`,
-    '<meta name="author" content="Synap">',
-    '<meta name="publisher" content="Synap">',
+    '<meta name="author" content="Akrux">',
+    '<meta name="publisher" content="Akrux">',
     `<meta name="robots" content="${robots}">`,
     `<link rel="canonical" href="${escapeHtml(canonical)}">`,
     `<link rel="alternate" hreflang="ru" href="${escapeHtml(ruUrl)}">`,
     `<link rel="alternate" hreflang="en" href="${escapeHtml(enUrl)}">`,
     `<link rel="alternate" hreflang="x-default" href="${escapeHtml(ruUrl)}">`,
     `<meta property="og:type" content="${meta.kind === "article" ? "article" : "website"}">`,
-    '<meta property="og:site_name" content="Synap">',
+    '<meta property="og:site_name" content="Akrux">',
     `<meta property="og:title" content="${escapeHtml(meta.title)}">`,
     `<meta property="og:description" content="${escapeHtml(meta.description)}">`,
     `<meta property="og:url" content="${escapeHtml(canonical)}">`,
@@ -92,7 +92,7 @@ export function buildPublicHeadTags(
   }
   if (basePath !== "/login") {
     tags.push(
-      `<script id="synap-structured-data" type="application/ld+json">${safeJson(
+      `<script id="akrux-structured-data" type="application/ld+json">${safeJson(
         structuredDataForRoute(base, basePath, locale, faq),
       )}</script>`,
     );
@@ -111,14 +111,14 @@ export function injectPublicHead(
     /<html lang="[^"]*"(?: data-site-noindex="[^"]*")?>/i,
     `<html lang="${locale}" data-site-noindex="${siteNoindex}">`,
   );
-  const block = `<!-- synap-seo:start -->\n    ${buildPublicHeadTags(
+  const block = `<!-- akrux-seo:start -->\n    ${buildPublicHeadTags(
     baseUrl,
     basePath,
     locale,
     siteNoindex,
-  )}\n    <!-- synap-seo:end -->`;
-  if (/<!-- synap-seo:start -->[\s\S]*?<!-- synap-seo:end -->/.test(out)) {
-    return out.replace(/<!-- synap-seo:start -->[\s\S]*?<!-- synap-seo:end -->/, block);
+  )}\n    <!-- akrux-seo:end -->`;
+  if (/<!-- akrux-seo:start -->[\s\S]*?<!-- akrux-seo:end -->/.test(out)) {
+    return out.replace(/<!-- akrux-seo:start -->[\s\S]*?<!-- akrux-seo:end -->/, block);
   }
   return out.replace("</head>", `    ${block}\n  </head>`);
 }
@@ -140,7 +140,7 @@ export function robotsText(baseUrl: string, siteNoindex = false): string {
     "Disallow: /verify-email",
   ];
   return [
-    "# Public Synap product content is crawlable for search and AI retrieval.",
+    "# Public Akrux product content is crawlable for search and AI retrieval.",
     "# Account data stays protected by authentication; these rules reduce unwanted crawling.",
     "User-agent: OAI-SearchBot",
     "Allow: /",
@@ -182,7 +182,7 @@ export function sitemapXml(baseUrl: string, siteNoindex = false): string {
 export function llmsText(baseUrl: string): string {
   const base = cleanBase(baseUrl);
   return [
-    "# Synap",
+    "# Akrux",
     "",
     `> ${PRODUCT_POSITIONING.en.short}`,
     "",
@@ -193,11 +193,11 @@ export function llmsText(baseUrl: string): string {
     "",
     "## Current service",
     "",
-    "Synap is in an early testing stage. A business owner can start a free, user-initiated AI-visibility audit, review the private dated report, and book a call. The Synap team then plans and manually carries out separately scoped improvement work.",
+    "Akrux is in an early testing stage. A business owner can start a free, user-initiated AI-visibility audit, review the private dated report, and book a call. The Akrux team then plans and manually carries out separately scoped improvement work.",
     "",
     "The free audit uses model families associated with ChatGPT, Gemini and Perplexity through configured provider APIs. It does not claim to reproduce every answer shown in the consumer applications.",
     "",
-    "Scans and rescans are started by users. Synap does not currently provide continuous or real-time monitoring.",
+    "Scans and rescans are started by users. Akrux does not currently provide continuous or real-time monitoring.",
     "",
     "## Audit and methodology",
     "",
@@ -218,14 +218,14 @@ export function llmsText(baseUrl: string): string {
     "",
     "## Entity and trust",
     "",
-    `- [About Synap](${base}/en/about)`,
+    `- [About Akrux](${base}/en/about)`,
     `- [Contact](${base}/en/contact)`,
     "",
     "## Data boundary",
     "",
-    "Public resources describe Synap and its methodology. Customer business profiles, account prompts, generated answers, competitor reports, emails and scan data remain authenticated and are not included in public resources.",
+    "Public resources describe Akrux and its methodology. Customer business profiles, account prompts, generated answers, competitor reports, emails and scan data remain authenticated and are not included in public resources.",
     "",
-    "A Synap audit is a dated sample. Synap does not guarantee indexing, mentions, citations, positions, rankings or recommendations in any AI system.",
+    "A Akrux audit is a dated sample. Akrux does not guarantee indexing, mentions, citations, positions, rankings or recommendations in any AI system.",
     "",
     "llms.txt is supplemental and experimental. It does not guarantee discovery, indexing or citation. Canonical HTML pages, metadata, structured data, robots rules and the sitemap remain authoritative.",
   ].join("\n");
@@ -234,20 +234,20 @@ export function llmsText(baseUrl: string): string {
 export function llmsFullText(baseUrl: string): string {
   const base = cleanBase(baseUrl);
   return [
-    "# Synap: public service reference",
+    "# Akrux: public service reference",
     "",
     PRODUCT_POSITIONING.en.full,
     "",
     "## Availability and service workflow",
     "",
-    "Synap is currently in an early testing stage and primarily serves businesses in Kazakhstan.",
+    "Akrux is currently in an early testing stage and primarily serves businesses in Kazakhstan.",
     "",
     "1. A business owner starts a free AI-visibility audit.",
-    "2. Synap makes fresh provider requests and produces a private, dated report.",
-    "3. The owner reviews the report and can book a call with Synap.",
-    "4. The Synap team plans and manually performs agreed improvement work. This work is separately scoped from the free audit.",
+    "2. Akrux makes fresh provider requests and produces a private, dated report.",
+    "3. The owner reviews the report and can book a call with Akrux.",
+    "4. The Akrux team plans and manually performs agreed improvement work. This work is separately scoped from the free audit.",
     "",
-    "Scans and rescans are user-initiated. Synap does not currently provide continuous or real-time monitoring, and future automation is not described as a current capability.",
+    "Scans and rescans are user-initiated. Akrux does not currently provide continuous or real-time monitoring, and future automation is not described as a current capability.",
     "",
     "## Public free-audit coverage",
     "",
@@ -268,7 +268,7 @@ export function llmsFullText(baseUrl: string): string {
     "",
     "## Limitations and privacy boundary",
     "",
-    "Generated answers vary by model, retrieval, date and wording. Provider-hosted model behavior can differ from consumer interfaces. A Synap audit is a dated sample and does not guarantee indexing, mentions, citations, positions, rankings, recommendations, inclusion in training data or commercial results.",
+    "Generated answers vary by model, retrieval, date and wording. Provider-hosted model behavior can differ from consumer interfaces. A Akrux audit is a dated sample and does not guarantee indexing, mentions, citations, positions, rankings, recommendations, inclusion in training data or commercial results.",
     "",
     "Authenticated business profiles, prompts, answers, competitor reports, account details and customer scan data remain private. They are not exposed in this file or other public crawl resources.",
     "",
