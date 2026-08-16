@@ -1,7 +1,16 @@
+import markUrl from "../assets/brand/akrux-mark.png";
+import wordmarkUrl from "../assets/brand/akrux-logo.png";
+
 /**
- * Akrux mark: three black nodes joined by two strokes on a rising
- * diagonal. Single file so the owner can swap it trivially. Uses
- * currentColor; legible at 20px.
+ * Akrux brand lockup. `withWordmark` renders the horizontal logo (symbol plus
+ * wordmark) as a single image; otherwise only the square symbol, which is the
+ * same master the favicon and app icons are generated from.
+ *
+ * Both files are trimmed to their ink, so one dimension drives the size and
+ * the other stays automatic: the aspect ratio is never altered. The wordmark
+ * is sized in `em` so it keeps tracking the `text-*` class each caller already
+ * passes, which is what preserves the previous optical size and the existing
+ * responsive behavior.
  */
 export default function Logo({
   size = 20,
@@ -14,20 +23,24 @@ export default function Logo({
 }): JSX.Element {
   return (
     <span className={`inline-flex items-center gap-2 text-ink ${className}`}>
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        fill="none"
-        aria-hidden
-        className="shrink-0"
-      >
-        <path d="M5.5 18.5 12 12l6.5-6.5" stroke="currentColor" strokeWidth="1.8" />
-        <circle cx="5.5" cy="18.5" r="3" fill="currentColor" />
-        <circle cx="12" cy="12" r="2.2" fill="currentColor" />
-        <circle cx="18.5" cy="5.5" r="3.4" fill="currentColor" />
-      </svg>
-      {withWordmark && <span className="font-bold tracking-tight">Akrux</span>}
+      {withWordmark ? (
+        <img
+          src={wordmarkUrl}
+          alt="Akrux"
+          width={1612}
+          height={305}
+          className="h-[1.4em] w-auto shrink-0"
+        />
+      ) : (
+        <img
+          src={markUrl}
+          alt="Akrux"
+          width={size}
+          height={size}
+          style={{ width: size, height: size }}
+          className="shrink-0"
+        />
+      )}
     </span>
   );
 }

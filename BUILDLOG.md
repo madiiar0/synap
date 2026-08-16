@@ -661,3 +661,31 @@ answers, ever** — every scan issues a complete fresh set of provider calls;
   55/55 ✅ server 107/107 ✅ i18n sweep ✅ brand check ✅ icon check ✅
   production build + prerender of 42 localized routes ✅ deployed-style SEO
   audit 42/42 ✅.
+
+### Logo assets (2026-08-16)
+
+- Added the owner-supplied Akrux artwork as trimmed masters in
+  `apps/client/src/assets/brand/`: `akrux-mark.png` (square symbol, 512x512)
+  and `akrux-logo.png` (horizontal wordmark, 1612x305). Both are cropped to
+  their ink on transparent backgrounds, so padding and size are decided in code
+  instead of being baked into the files.
+- `Logo.tsx` no longer draws the placeholder node/stroke SVG. The wordmark
+  branch renders the horizontal logo as one image at `h-[1.4em] w-auto`, which
+  keeps honoring the `text-lg`/`text-sm` class every caller already passed and
+  lands within 3px of the previous lockup height. The icon-only branch renders
+  the square symbol at `size`. Neither branch constrains both axes, so the
+  aspect ratios stay exact (measured 5.285 rendered vs 5.2852 intrinsic).
+- `icon-source.mjs` now owns the symbol master plus two builders: an SVG that
+  keeps the white disc and transparent corners as vectors and embeds the
+  symbol, and a matching rasterizer. `generate-icons.mjs` regenerated
+  favicon.svg/.ico, 16/32/180/192/512px icons and the OG image, which now uses
+  the real wordmark instead of drawn geometry and Helvetica text. It also
+  merges into `site.webmanifest` rather than overwriting the curated copy.
+- `check-icons.mjs` verifies the SVG and raster paths agree and that the symbol
+  is centred without distortion, alongside the existing transparent-corner,
+  white-disc and 12-88% padding assertions at every size down to 16px.
+- **QA:** lint, typecheck, shared 61/61, client 55/55, server 107/107, i18n
+  sweep, brand check, icon check, production build + prerender, SEO audit 42/42.
+  Browser-verified at 1440px and 375px: navbar and footer show the wordmark,
+  nav height stays 72px (the CTA, not the logo, drives the row), no horizontal
+  overflow, and no asset request fails.

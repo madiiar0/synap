@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import { akruxFaviconSvg } from "./icon-source.mjs";
+import { akruxFaviconSvg, akruxIconPng, MARK_SCALE } from "./icon-source.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = path.join(root, "apps/client/public");
@@ -21,9 +21,18 @@ for (const href of referenced) {
 
 const svgPath = path.join(publicDir, "favicon.svg");
 const svg = fs.readFileSync(svgPath, "utf8");
-assert.equal(svg, akruxFaviconSvg(24), "favicon.svg must be generated from icon-source.mjs");
+assert.equal(svg, await akruxFaviconSvg(24), "favicon.svg must be generated from icon-source.mjs");
 assert.match(svg, /<circle cx="12" cy="12" r="11" fill="#FFFFFF"\/>/);
-assert.match(svg, /scale\(0\.78\)/);
+// The symbol is placed as a square, centred, aspect-preserving image.
+const inner = Number((24 * MARK_SCALE).toFixed(4));
+const offset = Number(((24 - inner) / 2).toFixed(4));
+assert.match(
+  svg,
+  new RegExp(
+    `<image x="${offset}" y="${offset}" width="${inner}" height="${inner}" preserveAspectRatio="xMidYMid meet" href="data:image/png;base64,`,
+  ),
+  "favicon.svg must centre the symbol without distorting it",
+);
 assert.doesNotMatch(svg, /<rect/);
 
 async function inspectRaster(input, expectedSize, label) {
@@ -78,7 +87,10 @@ for (const [filename, size] of [
 ]) {
   await inspectRaster(path.join(publicDir, filename), size, filename);
 }
-await inspectRaster(Buffer.from(akruxFaviconSvg(48)), 48, "favicon.svg at 48px");
+await inspectRaster(Buffer.from(await akruxFaviconSvg(48)), 48, "favicon.svg at 48px");
+// The rasterizer and the SVG must agree, so a browser using either renders
+// the same icon.
+await inspectRaster(await akruxIconPng(64), 64, "generated icon at 64px");
 
 const ico = fs.readFileSync(path.join(publicDir, "favicon.ico"));
 assert.equal(ico.readUInt16LE(4), 2, "favicon.ico should contain 16px and 32px entries");
