@@ -18,46 +18,67 @@ export const MARK_SOURCE = path.join(BRAND_DIR, "akrux-mark.png");
 export const WORDMARK_SOURCE = path.join(BRAND_DIR, "akrux-logo.png");
 
 /**
- * Share of the icon box occupied by the symbol. The remaining margin keeps the
- * mark inside the white disc and clear of the rounding that browsers and
- * launchers apply to app icons.
+ * The icon plate: a slightly rounded square rather than a circle, in the same
+ * flat black the landing page uses for its primary buttons. A solid dark plate
+ * keeps the symbol readable at 16px against light *and* dark browser chrome,
+ * survives the opaque background iOS composites behind home-screen icons, and
+ * is what makes the rounded corners visible at all.
  */
-export const MARK_SCALE = 0.72;
+export const PLATE_COLOR = "#0A0A0A";
+export const SYMBOL_COLOR = "#FFFFFF";
 
-/** Pixel size of the symbol embedded into favicon.svg. */
+/** Corner radius in viewBox units (24), i.e. ~21% — rounded, not a squircle. */
+export const CORNER_RADIUS = 5;
+
+/** Share of the plate width taken by the symbol; the rest is optical padding. */
+export const MARK_SCALE = 0.78;
+
+/** Pixel width of the symbol embedded into favicon.svg. */
 const EMBED_SIZE = 256;
 
 const PNG_OPTIONS = { compressionLevel: 9, effort: 10, palette: true, colours: 64 };
 
-/** The symbol on a transparent square canvas, at an exact pixel size. */
-export async function markPng(size) {
-  return sharp(MARK_SOURCE)
-    .resize(size, size, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+/**
+ * The symbol recoloured to `color`, on a transparent canvas `size` wide. Only
+ * the width is pinned: the master's own aspect ratio decides the height, so
+ * the mark is never stretched.
+ */
+export async function markPng(size, color = SYMBOL_COLOR) {
+  const scaled = await sharp(MARK_SOURCE).resize({ width: size }).png().toBuffer();
+  const { width, height } = await sharp(scaled).metadata();
+  const alpha = await sharp(scaled).extractChannel("alpha").raw().toBuffer();
+  return sharp({ create: { width, height, channels: 3, background: color } })
+    .joinChannel(alpha, { raw: { width, height, channels: 1 } })
     .png(PNG_OPTIONS)
     .toBuffer();
 }
 
+function plateSvg(size) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24"><rect width="24" height="24" rx="${CORNER_RADIUS}" ry="${CORNER_RADIUS}" fill="${PLATE_COLOR}"/></svg>`;
+}
+
 /**
- * White circular icon surface with transparent corners and a padded symbol.
- * The disc keeps the black mark legible on dark browser chrome; the corners
- * stay transparent so the icon reads as a circle, not a white square.
+ * Rounded-square icon with transparent corners and a centred symbol. The plate
+ * stays a real vector; only the symbol is embedded, so the corners keep their
+ * clean edge at every rendered size.
  */
 export async function akruxFaviconSvg(size) {
-  const embedded = (await markPng(EMBED_SIZE)).toString("base64");
-  const inner = Number((24 * MARK_SCALE).toFixed(4));
-  const offset = Number(((24 - inner) / 2).toFixed(4));
+  const symbol = await markPng(EMBED_SIZE);
+  const meta = await sharp(symbol).metadata();
+  const embedded = symbol.toString("base64");
+  const w = Number((24 * MARK_SCALE).toFixed(4));
+  const h = Number(((w * meta.height) / meta.width).toFixed(4));
+  const x = Number(((24 - w) / 2).toFixed(4));
+  const y = Number(((24 - h) / 2).toFixed(4));
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24">
-  <circle cx="12" cy="12" r="11" fill="#FFFFFF"/>
-  <image x="${offset}" y="${offset}" width="${inner}" height="${inner}" preserveAspectRatio="xMidYMid meet" href="data:image/png;base64,${embedded}"/>
+  <rect width="24" height="24" rx="${CORNER_RADIUS}" ry="${CORNER_RADIUS}" fill="${PLATE_COLOR}"/>
+  <image x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet" href="data:image/png;base64,${embedded}"/>
 </svg>`;
 }
 
-/** Raster icon: the same white disc and padded symbol, rasterized to PNG. */
+/** Raster icon: the same rounded plate and centred symbol, rasterized to PNG. */
 export async function akruxIconPng(size) {
-  const disc = Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#FFFFFF"/></svg>`,
-  );
-  return sharp(disc, { density: (72 * size) / 24 })
+  return sharp(Buffer.from(plateSvg(size)), { density: (72 * size) / 24 })
     .resize(size, size)
     .composite([{ input: await markPng(Math.round(size * MARK_SCALE)), gravity: "centre" }])
     .png({ compressionLevel: 9, effort: 10 })

@@ -689,3 +689,35 @@ answers, ever** — every scan issues a complete fresh set of provider calls;
   Browser-verified at 1440px and 375px: navbar and footer show the wordmark,
   nav height stays 72px (the CTA, not the logo, drives the row), no horizontal
   overflow, and no asset request fails.
+
+### Logo artwork refresh and rounded-square favicon (2026-08-18)
+
+- Replaced both brand masters in place with the owner's newer artwork:
+  `akrux-mark.png` (symbol, 512x512) and `akrux-logo.png` (wordmark,
+  1737x453, aspect 3.8344 where the previous set was 5.2852). Same filenames,
+  so nothing was orphaned and every reference kept resolving.
+- The supplied symbol arrived as ink on an opaque near-white plate. It is
+  re-keyed to ink-on-transparent using the two modes of its bimodal luminance
+  histogram rather than min/max: outlier pixels had otherwise left solid ink at
+  233/255 alpha, which rendered the symbol grey instead of white on the plate.
+- Favicon container changed from a white circle to a **rounded square**:
+  a flat `#0A0A0A` plate with `rx=5` of 24 and the symbol knocked out in white
+  at 78% width. A dark plate makes the requested rounded corners actually
+  visible, keeps the mark readable at 16px against light and dark browser
+  chrome, and survives the opaque background iOS composites behind home-screen
+  icons. Polarity and radius are single constants in `icon-source.mjs`.
+- `markPng` now recolours the symbol by joining the master's alpha to a solid
+  fill, so one master serves both the dark-on-light UI and the light-on-dark
+  icons without a second asset.
+- The OG image composition is derived from the artwork's height instead of
+  hard-coded offsets, so a future logo with a different ratio stays centred.
+- `check-icons.mjs` asserts a rounded-square plate and no circle, that the
+  symbol is centred and aspect-preserving, and flips its coverage checks to the
+  new polarity. Symbol detection uses a loose threshold because at 16px nearly
+  every symbol pixel is antialiased against the plate.
+- **QA:** lint, typecheck, shared 61/61, client 55/55, server 107/107, i18n
+  sweep, brand check, icon check, production build + prerender, SEO audit
+  42/42. Browser-verified at 1440px and 375px: rendered logo ratio 3.8344
+  against 3.8344 intrinsic (no distortion), nav height still 72px with the CTA
+  and not the logo driving the row, no horizontal overflow, no broken images
+  among 65 on the page.

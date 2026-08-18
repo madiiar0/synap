@@ -64,13 +64,18 @@ const wordmark = await sharp(WORDMARK_SOURCE)
   .png()
   .toBuffer();
 const wordmarkHeight = (await sharp(wordmark).metadata()).height;
-const wordmarkTop = 232;
+// Centre the wordmark-plus-tagline block, derived from the artwork's own
+// height so a future logo with a different aspect ratio stays composed.
+const TAGLINE_GAP = 46;
+const TAGLINE_SIZE = 30;
+const wordmarkTop = Math.round((OG.height - (wordmarkHeight + TAGLINE_GAP + TAGLINE_SIZE)) / 2);
+const taglineBaseline = wordmarkTop + wordmarkHeight + TAGLINE_GAP + Math.round(TAGLINE_SIZE * 0.8);
 
 // Rasterized at 2x and scaled back down so the text stays crisp.
 const tagline = await sharp(
   Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${OG.width}" height="${OG.height}">
-  <text x="600" y="440" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#6F6F6F">AI visibility analytics for businesses</text>
+  <text x="600" y="${taglineBaseline}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="${TAGLINE_SIZE}" fill="#6F6F6F">AI visibility analytics for businesses</text>
 </svg>`,
   ),
   { density: 144 },

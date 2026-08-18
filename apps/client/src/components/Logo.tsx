@@ -27,8 +27,8 @@ export default function Logo({
         <img
           src={wordmarkUrl}
           alt="Akrux"
-          width={1612}
-          height={305}
+          width={1737}
+          height={453}
           className="h-[1.4em] w-auto shrink-0"
         />
       ) : (

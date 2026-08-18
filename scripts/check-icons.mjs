@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import { akruxFaviconSvg, akruxIconPng, MARK_SCALE } from "./icon-source.mjs";
+import { akruxFaviconSvg, akruxIconPng, CORNER_RADIUS, MARK_SCALE } from "./icon-source.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = path.join(root, "apps/client/public");
@@ -22,18 +22,29 @@ for (const href of referenced) {
 const svgPath = path.join(publicDir, "favicon.svg");
 const svg = fs.readFileSync(svgPath, "utf8");
 assert.equal(svg, await akruxFaviconSvg(24), "favicon.svg must be generated from icon-source.mjs");
-assert.match(svg, /<circle cx="12" cy="12" r="11" fill="#FFFFFF"\/>/);
-// The symbol is placed as a square, centred, aspect-preserving image.
-const inner = Number((24 * MARK_SCALE).toFixed(4));
-const offset = Number(((24 - inner) / 2).toFixed(4));
+// The plate is a rounded square, not a circle.
 assert.match(
   svg,
-  new RegExp(
-    `<image x="${offset}" y="${offset}" width="${inner}" height="${inner}" preserveAspectRatio="xMidYMid meet" href="data:image/png;base64,`,
-  ),
-  "favicon.svg must centre the symbol without distorting it",
+  new RegExp(`<rect width="24" height="24" rx="${CORNER_RADIUS}" ry="${CORNER_RADIUS}" fill="#0A0A0A"/>`),
+  "favicon.svg must use a rounded-square plate",
 );
-assert.doesNotMatch(svg, /<rect/);
+assert.doesNotMatch(svg, /<circle/, "the plate must not be a circle");
+assert.ok(CORNER_RADIUS > 0 && CORNER_RADIUS < 12, "corner radius must round without becoming a circle");
+// The symbol is centred and aspect-preserving: width is pinned to MARK_SCALE
+// and the height follows the artwork, so it is never stretched.
+const inner = Number((24 * MARK_SCALE).toFixed(4));
+const offsetX = Number(((24 - inner) / 2).toFixed(4));
+const placed = svg.match(
+  /<image x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="([\d.]+)" preserveAspectRatio="xMidYMid meet" href="data:image\/png;base64,/,
+);
+assert.ok(placed, "favicon.svg must embed the symbol as a placed image");
+assert.equal(Number(placed[3]), inner, "symbol width must follow MARK_SCALE");
+assert.equal(Number(placed[1]), offsetX, "symbol must be horizontally centred");
+assert.equal(
+  Number(placed[2]).toFixed(2),
+  ((24 - Number(placed[4])) / 2).toFixed(2),
+  "symbol must be vertically centred",
+);
 
 async function inspectRaster(input, expectedSize, label) {
   const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -53,29 +64,37 @@ async function inspectRaster(input, expectedSize, label) {
     assert.ok(pixel(x, y)[3] < 32, `${label} must have transparent corners`);
   }
 
-  let whitePixels = 0;
-  let blackPixels = 0;
-  let blackMinX = info.width;
-  let blackMaxX = -1;
-  let blackMinY = info.height;
-  let blackMaxY = -1;
+  let platePixels = 0;
+  let symbolPixels = 0;
+  let symbolMinX = info.width;
+  let symbolMaxX = -1;
+  let symbolMinY = info.height;
+  let symbolMaxY = -1;
   for (let y = 0; y < info.height; y += 1) {
     for (let x = 0; x < info.width; x += 1) {
       const [red, green, blue, alpha] = pixel(x, y);
-      if (alpha > 200 && red > 235 && green > 235 && blue > 235) whitePixels += 1;
-      if (alpha > 200 && red < 55 && green < 55 && blue < 55) {
-        blackPixels += 1;
-        blackMinX = Math.min(blackMinX, x);
-        blackMaxX = Math.max(blackMaxX, x);
-        blackMinY = Math.min(blackMinY, y);
-        blackMaxY = Math.max(blackMaxY, y);
+      if (alpha > 200 && red < 55 && green < 55 && blue < 55) platePixels += 1;
+      // Deliberately loose: at 16px almost every symbol pixel is antialiased
+      // against the plate, so a strict "pure white" test would only measure
+      // the rasterizer, not whether the symbol is actually there.
+      if (alpha > 128 && red > 140 && green > 140 && blue > 140) {
+        symbolPixels += 1;
+        symbolMinX = Math.min(symbolMinX, x);
+        symbolMaxX = Math.max(symbolMaxX, x);
+        symbolMinY = Math.min(symbolMinY, y);
+        symbolMaxY = Math.max(symbolMaxY, y);
       }
     }
   }
-  assert.ok(whitePixels > expectedSize * expectedSize * 0.15, `${label} needs a white circle`);
-  assert.ok(blackPixels > expectedSize * expectedSize * 0.02, `${label} needs the black mark`);
-  assert.ok(blackMinX >= expectedSize * 0.12 && blackMaxX <= expectedSize * 0.88, `${label} horizontal padding`);
-  assert.ok(blackMinY >= expectedSize * 0.12 && blackMaxY <= expectedSize * 0.88, `${label} vertical padding`);
+  assert.ok(platePixels > expectedSize * expectedSize * 0.3, `${label} needs the dark plate`);
+  assert.ok(symbolPixels > expectedSize * expectedSize * 0.1, `${label} needs the light symbol`);
+  // Padding: inside the plate, but tight enough to avoid dead space.
+  assert.ok(symbolMinX >= expectedSize * 0.06 && symbolMaxX <= expectedSize * 0.94, `${label} horizontal padding`);
+  assert.ok(symbolMinY >= expectedSize * 0.1 && symbolMaxY <= expectedSize * 0.9, `${label} vertical padding`);
+  assert.ok(
+    symbolMaxX - symbolMinX > expectedSize * 0.6,
+    `${label} symbol is too small for its plate`,
+  );
 }
 
 for (const [filename, size] of [
@@ -106,4 +125,4 @@ for (const [index, size] of [16, 32].entries()) {
   );
 }
 
-console.log(`Icon check passed: ${referenced.length} HTML/manifest references and circular 16/32/48/180/192/512px assets.`);
+console.log(`Icon check passed: ${referenced.length} HTML/manifest references and rounded-square 16/32/48/180/192/512px assets.`);
