@@ -5,6 +5,8 @@ import {
   buildPublicHeadTags,
   injectPublicHead,
   LEGACY_PUBLIC_REDIRECTS,
+  LOCALE_PREFIX,
+  LOCALES,
   llmsFullText,
   llmsText,
   localizedPublicPath,
@@ -33,16 +35,17 @@ interface PublicRedirect {
 export function publicRoutes(): PublicRoute[] {
   const out: PublicRoute[] = [];
   for (const basePath of PUBLIC_PATHS) {
-    out.push({ urlPath: localizedPublicPath(basePath, "ru"), basePath, locale: "ru" });
-    out.push({ urlPath: localizedPublicPath(basePath, "en"), basePath, locale: "en" });
+    for (const locale of LOCALES) {
+      out.push({ urlPath: localizedPublicPath(basePath, locale), basePath, locale });
+    }
   }
   return out;
 }
 
 export function publicRedirects(): PublicRedirect[] {
   return LEGACY_PUBLIC_REDIRECTS.flatMap(({ from, to }) =>
-    (["ru", "en"] as const).map((locale) => ({
-      urlPath: locale === "ru" ? from : `/en${from}`,
+    LOCALES.map((locale) => ({
+      urlPath: `${LOCALE_PREFIX[locale]}${from}`,
       targetPath: localizedPublicPath(to, locale),
     })),
   );

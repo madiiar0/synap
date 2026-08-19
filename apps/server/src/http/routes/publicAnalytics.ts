@@ -1,4 +1,4 @@
-import { PUBLIC_PATHS } from "@synapai/shared";
+import { LOCALES, PUBLIC_PATHS } from "@synapai/shared";
 import { Router } from "express";
 import { z } from "zod";
 import { env } from "../../config/env.js";
@@ -8,7 +8,7 @@ export const publicAnalyticsRouter = Router();
 
 const metricSchema = z.object({
   path: z.enum(PUBLIC_PATHS),
-  locale: z.enum(["ru", "en"]),
+  locale: z.enum(LOCALES),
   event: z.enum(["page_view", "signup_intent", "contact_intent"]),
   source: z.enum(["direct", "internal", "search", "chatgpt", "perplexity", "claude", "copilot", "other"]),
 }).strict();

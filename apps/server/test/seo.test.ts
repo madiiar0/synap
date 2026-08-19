@@ -6,6 +6,8 @@ import express from "express";
 import { describe, expect, it } from "vitest";
 import {
   INDEXABLE_PUBLIC_PATHS,
+  LEGACY_PUBLIC_REDIRECTS,
+  LOCALES,
   landingFaqItems,
   PRODUCT_POSITIONING,
   PUBLIC_PATHS,
@@ -50,9 +52,10 @@ describe("crawl and retrieval resources", () => {
     expect(packageMetadata.description).toBe(PRODUCT_POSITIONING.en.short);
   });
 
-  it("registers both locales for every public route", () => {
-    expect(publicRoutes()).toHaveLength(PUBLIC_PATHS.length * 2);
-    expect(new Set(publicRoutes().map((route) => route.urlPath)).size).toBe(PUBLIC_PATHS.length * 2);
+  it("registers every locale for every public route", () => {
+    const expected = PUBLIC_PATHS.length * LOCALES.length;
+    expect(publicRoutes()).toHaveLength(expected);
+    expect(new Set(publicRoutes().map((route) => route.urlPath)).size).toBe(expected);
   });
 
   it("blocks private route families while keeping public content crawlable", () => {
@@ -74,20 +77,22 @@ describe("crawl and retrieval resources", () => {
   it("sitemaps only canonical indexable routes with alternates", () => {
     const xml = sitemapXml(BASE);
     const locations = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-    expect(locations).toHaveLength(INDEXABLE_PUBLIC_PATHS.length * 2);
+    expect(locations).toHaveLength(INDEXABLE_PUBLIC_PATHS.length * LOCALES.length);
     expect(new Set(locations).size).toBe(locations.length);
     expect(xml).toContain('hreflang="x-default"');
     expect(xml).toContain(`${BASE}/blogs`);
     expect(xml).toContain(`${BASE}/en/blogs`);
     expect(xml).toContain(`${BASE}/services`);
     expect(xml).toContain(`${BASE}/en/services`);
+    expect(xml).toContain(`${BASE}/kk/services`);
+    expect(xml).toContain('hreflang="kk"');
     expect(xml).not.toContain(`${BASE}/guides`);
     expect(xml).not.toMatch(/use-cases\/(?:saas|ecommerce|professional-services)/);
     expect(xml).not.toMatch(/\/(?:login|privacy|terms|changelog)<|\/app<|\/api\//);
   });
 
   it("permanently redirects every localized legacy content URL without loops", async () => {
-    expect(publicRedirects()).toHaveLength(14);
+    expect(publicRedirects()).toHaveLength(LEGACY_PUBLIC_REDIRECTS.length * LOCALES.length);
     expect(publicRedirects().every(({ targetPath }) => !targetPath.includes("/guides"))).toBe(true);
 
     const app = express();
@@ -165,7 +170,10 @@ describe("crawl and retrieval resources", () => {
     expect(serialized).toContain(PRODUCT_POSITIONING.en.full);
     expect(serialized).not.toContain(FORMER_NAME);
     expect(serialized).not.toMatch(/"Product"|"Offer"|priceCurrency|"price"/);
-    expect(serialized).not.toContain("@akrux.app");
+    // support@akrux.app is now a published identity signal on the Organization
+    // and its contactPoint; what must stay out is any customer or private data.
+    expect(serialized).toContain("support@akrux.app");
+    expect(serialized).not.toMatch(/demo@|admin@|no-reply@/);
   });
 
   it("keeps llms resources factual, supplemental and outside private data", () => {

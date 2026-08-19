@@ -1,3 +1,4 @@
+import { LOCALES, type Locale } from "@synapai/shared";
 import mongoose, { Schema, type Document } from "mongoose";
 
 export type PublicMetricEvent = "page_view" | "signup_intent" | "contact_intent";
@@ -14,7 +15,7 @@ export type PublicMetricSource =
 export interface PublicMetricDoc extends Document {
   date: string;
   path: string;
-  locale: "ru" | "en";
+  locale: Locale;
   event: PublicMetricEvent;
   source: PublicMetricSource;
   count: number;
@@ -24,7 +25,7 @@ const publicMetricSchema = new Schema<PublicMetricDoc>(
   {
     date: { type: String, required: true },
     path: { type: String, required: true },
-    locale: { type: String, enum: ["ru", "en"], required: true },
+    locale: { type: String, enum: [...LOCALES], required: true },
     event: {
       type: String,
       enum: ["page_view", "signup_intent", "contact_intent"],

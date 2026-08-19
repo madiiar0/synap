@@ -68,9 +68,38 @@ const EN_PROMPTS: MarqueeChip[] = [
   { text: "pizza delivery open now", platform: "perplexity" },
 ];
 
+/** Kazakh consumer prompts, same 24 slots and platform mix as ru/en. */
+const KK_PROMPTS: MarqueeChip[] = [
+  { text: "Алматыдағы үздік кофеханалар", platform: "chatgpt" },
+  { text: "кофе дәнін қайдан тапсырам", platform: "perplexity" },
+  { text: "ауырсынусыз стоматология пікірлер", platform: "claude" },
+  { text: "ЖК үшін қай банкті таңдау", platform: "grok" },
+  { text: "балаларға ағылшын тілі мектебі", platform: "gemini" },
+  { text: "түнде азық-түлік жеткізу", platform: "chatgpt" },
+  { text: "сенімді құрылыс салушы Астана", platform: "perplexity" },
+  { text: "шағын бизнеске CRM", platform: "chatgpt" },
+  { text: "жаныма жақын фитнес-клуб", platform: "gemini" },
+  { text: "2026 ең тиімді депозит", platform: "grok" },
+  { text: "таңғы асқа қайда барсам", platform: "claude" },
+  { text: "лазерлік көру түзету бағасы", platform: "grok" },
+  { text: "онлайн бағдарламалау курстары", platform: "perplexity" },
+  { text: "бір сағатта гүл жеткізу", platform: "gemini" },
+  { text: "метро жанындағы жаңа пәтерлер", platform: "chatgpt" },
+  { text: "мейрамханаға есеп жүргізу сервисі", platform: "gemini" },
+  { text: "орталықтағы үздік барбершоп", platform: "chatgpt" },
+  { text: "саяхатқа сақтандыру", platform: "claude" },
+  { text: "кепілдігі бар автосервис", platform: "perplexity" },
+  { text: "ағылшын тілі бар балабақша", platform: "grok" },
+  { text: "жылжымайтын мүлік заңгері", platform: "claude" },
+  { text: "маңайдағы кофе қуырушылар", platform: "chatgpt" },
+  { text: "ЖШС үшін онлайн бухгалтерия", platform: "gemini" },
+  { text: "қазір жеткізетін пиццерия", platform: "perplexity" },
+];
+
 export const MARQUEE_PROMPTS: Record<Locale, MarqueeChip[]> = {
   ru: RU_PROMPTS,
   en: EN_PROMPTS,
+  kk: KK_PROMPTS,
 };
 
 /** Split a locale's 24 prompts into the three marquee rows. */

@@ -1,6 +1,8 @@
 import { ENGINE_LABELS, type EngineId } from "./engines.js";
-import type { Locale } from "./constants.js";
+import { publicPageContent } from "./publicContent.js";
+import { DEFAULT_LOCALE, LOCALES, type Locale } from "./constants.js";
 import enTranslations from "./i18n/en.json" with { type: "json" };
+import kkTranslations from "./i18n/kk.json" with { type: "json" };
 import ruTranslations from "./i18n/ru.json" with { type: "json" };
 
 /**
@@ -11,6 +13,34 @@ import ruTranslations from "./i18n/ru.json" with { type: "json" };
  * origin for the same entity.
  */
 export const CANONICAL_SITE_URL = "https://akrux.app";
+
+/**
+ * Verified, externally checkable identity. These are the strings that let a
+ * model merge the site, the LinkedIn page and any directory listing into one
+ * entity, so they are checked in rather than derived, and they must stay
+ * byte-identical to /docs/entity-identity.md.
+ *
+ * `legalName` is deliberately absent: no registered entity exists yet, and a
+ * placeholder would be worse than an omission.
+ */
+export const ORGANIZATION_IDENTITY = {
+  sameAs: ["https://www.linkedin.com/company/akrux/"],
+  email: "support@akrux.app",
+  /** E.164 for schema and tel: links. */
+  telephone: "+77757138329",
+  /** Human-readable form, rendered in visible page copy. */
+  telephoneDisplay: "+7 775 713 8329",
+  foundingDate: "2026-07",
+  addressLocality: "Astana",
+  addressCountry: "KZ",
+} as const;
+
+/** The one human named anywhere on this site. */
+export const FOUNDER = {
+  name: "Madiyar Askaruly",
+  jobTitle: "Founder",
+  linkedIn: "https://www.linkedin.com/in/askkaruly/",
+} as const;
 
 /**
  * Public information architecture. Keep this registry authoritative: routing,
@@ -110,14 +140,94 @@ export const PRODUCT_POSITIONING: Record<Locale, {
     full:
       "Akrux — сервис аудита и улучшения видимости бизнеса в ответах ИИ для компаний Казахстана с участием команды специалистов. Бесплатный аудит показывает датированную выборку ответов поддерживаемых ИИ-моделей, включая метрики видимости, узнаваемость бренда, конкурентов, позиции в отдельных ответах и процитированные источники. Владелец бизнеса может изучить закрытый отчёт и записаться на созвон с Akrux. Затем команда составляет и вручную выполняет согласованный план улучшений. Ответы ИИ зависят от модели, формулировки, даты и найденных источников, поэтому Akrux не гарантирует индексацию, упоминания, цитирование, позиции или рекомендации.",
   },
+  kk: {
+    sentence:
+      "Akrux Қазақстандағы бизнестің ЖИ жауаптарында қалай көрсетілетінін тегін тексереді, содан кейін команда қолмен жақсартуға көмектеседі. ЖИ-дегі позициялар кепілдендірілмейді.",
+    short:
+      "Akrux Қазақстандағы бизнестің ЖИ жауаптарында қалай көрсетілетінін тегін тексереді, содан кейін команда қолмен жақсартуға көмектеседі. ЖИ-дегі позициялар кепілдендірілмейді.",
+    full:
+      "Akrux — Қазақстан компанияларына арналған, мамандар командасы қатысатын ЖИ жауаптарындағы көрінуді аудиттеу және жақсарту сервисі. Тегін аудит қолдау көрсетілетін ЖИ модельдерінің жауаптарынан күні көрсетілген таңдаманы көрсетеді: көріну метрикалары, бренд танымалдығы, бәсекелестер, жекелеген жауаптардағы позициялар және дәйексөз алынған дереккөздер. Бизнес иесі жабық есепті қарап, Akrux-пен қоңырауға жазыла алады. Содан кейін команда келісілген жақсарту жоспарын құрып, оны қолмен орындайды. ЖИ жауаптары модельге, тұжырымға, күнге және табылған дереккөздерге байланысты өзгереді, сондықтан Akrux индекстеуге, аталымдарға, дәйексөздерге, позицияларға немесе ұсыныстарға кепілдік бермейді.",
+  },
 };
 
 export const SOCIAL_IMAGE_ALT: Record<Locale, string> = {
   en: "Akrux — AI-visibility audit and human-assisted improvement in Kazakhstan",
   ru: "Akrux — аудит и улучшение видимости бизнеса в ИИ в Казахстане",
+  kk: "Akrux — Қазақстанда бизнестің ЖИ-дегі көрінуіне аудит және жақсарту",
+};
+
+/** schema.org availableLanguage names, one per supported public locale. */
+export const LOCALE_SCHEMA_NAMES: string[] = ["Russian", "English", "Kazakh"];
+
+/** Locale-specific schema and breadcrumb vocabulary. */
+const SCHEMA_VOCAB: Record<Locale, {
+  country: string;
+  language: string;
+  ogLocale: string;
+  home: string;
+  useCases: string;
+  blogs: string;
+  serviceType: string;
+  appName: string;
+}> = {
+  ru: {
+    country: "Казахстан",
+    language: "Russian",
+    ogLocale: "ru_RU",
+    home: "Главная",
+    useCases: "Сценарии",
+    blogs: "Блог",
+    serviceType:
+      "Бесплатный аудит видимости бизнеса в ИИ и отдельно согласуемая помощь команды",
+    appName: "Интерфейс аудита Akrux",
+  },
+  en: {
+    country: "Kazakhstan",
+    language: "English",
+    ogLocale: "en_US",
+    home: "Home",
+    useCases: "Use cases",
+    blogs: "Blogs",
+    serviceType:
+      "Free AI-visibility audit with separately scoped human-assisted improvement",
+    appName: "Akrux audit interface",
+  },
+  kk: {
+    country: "Қазақстан",
+    language: "Kazakh",
+    ogLocale: "kk_KZ",
+    home: "Басты бет",
+    useCases: "Сценарийлер",
+    blogs: "Блог",
+    serviceType:
+      "Бизнестің ЖИ-дегі көрінуіне тегін аудит және бөлек келісілетін команда көмегі",
+    appName: "Akrux аудит интерфейсі",
+  },
+};
+
+/** og:locale for a page, and the alternates a crawler should also consider. */
+export function ogLocale(locale: Locale): string {
+  return SCHEMA_VOCAB[locale].ogLocale;
+}
+export function ogLocaleAlternates(locale: Locale): string[] {
+  return LOCALES.filter((l) => l !== locale).map((l) => SCHEMA_VOCAB[l].ogLocale);
+}
+
+/** Homepage FAQ copy, read from the same bundles the landing renders. */
+const LANDING_FAQ_SOURCE: Record<Locale, typeof ruTranslations.landing.faq> = {
+  ru: ruTranslations.landing.faq,
+  en: enTranslations.landing.faq,
+  kk: kkTranslations.landing.faq,
 };
 
 const UPDATED = "2026-08-02";
+/**
+ * Phase 2.4 rule (a): first-commit date of the file carrying the article body.
+ * Every article lives in publicContent.ts, whose first commit is 2026-08-03
+ * (`git log --diff-filter=A --follow`). No article needed the founding-month
+ * fallback.
+ */
+const FIRST_PUBLISHED = "2026-08-03";
 
 const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
   "/": {
@@ -132,6 +242,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       title: "Akrux — улучшение видимости бизнеса в ИИ в Казахстане",
       description:
         "Получите бесплатный аудит представленности бизнеса в ответах ИИ. Команда Akrux помогает компаниям Казахстана с улучшениями; позиции в ИИ не гарантируются.",
+      kind: "home",
+      lastModified: UPDATED,
+    },
+    kk: {
+      title: "Akrux — Қазақстанда бизнестің ЖИ-дегі көрінуін жақсарту",
+      description:
+        "Бизнесіңіздің ЖИ жауаптарындағы көрінуіне тегін аудит алыңыз. Akrux командасы Қазақстан компанияларына жақсартуға көмектеседі; ЖИ-дегі позиция кепілдендірілмейді.",
       kind: "home",
       lastModified: UPDATED,
     },
@@ -151,6 +268,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       kind: "product",
       lastModified: "2026-08-03",
     },
+    kk: {
+      title: "Қазақстанда бизнестің ЖИ-дегі көріну аудиті | Akrux",
+      description:
+        "Akrux қосымшасы Қазақстан бизнесі үшін команданың бөлек келісілетін қолмен жұмысына дейін жабық әрі күні көрсетілген көріну аудитін қалай жасайтынын біліңіз.",
+      kind: "product",
+      lastModified: "2026-08-03",
+    },
   },
   "/services": {
     en: {
@@ -164,6 +288,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       title: "Услуги по улучшению видимости бизнеса в ИИ в Казахстане — Akrux",
       description:
         "Начните с бесплатного датированного аудита видимости в ИИ и обсудите отдельно согласуемые работы команды для бизнеса в Казахстане.",
+      kind: "webpage",
+      lastModified: "2026-08-03",
+    },
+    kk: {
+      title: "Қазақстанда бизнестің ЖИ-дегі көрінуін жақсарту қызметтері — Akrux",
+      description:
+        "ЖИ-дегі көрінудің тегін әрі күні көрсетілген аудитінен бастаңыз да, Қазақстандағы бизнес үшін команданың бөлек келісілетін жұмысын талқылаңыз.",
       kind: "webpage",
       lastModified: "2026-08-03",
     },
@@ -183,6 +314,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       kind: "webpage",
       lastModified: "2026-08-03",
     },
+    kk: {
+      title: "Akrux аудиті мен команда көмегі қалай жұмыс істейді",
+      description:
+        "Akrux толық процесі: тегін аудит, жабық есеп, міндетті емес қоңырау, келісілген қолмен жұмыс және қайталама тексерулер.",
+      kind: "webpage",
+      lastModified: "2026-08-03",
+    },
   },
   "/methodology": {
     en: {
@@ -199,6 +337,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       kind: "methodology",
       lastModified: "2026-08-03",
     },
+    kk: {
+      title: "ЖИ-дегі көріну есептеу әдістемесі | Akrux",
+      description:
+        "Akrux күні көрсетілген аудитінің іске асырылған әдістемесі: сұрақтар, аталымдар, позициялар, қателер, Көріну индексі және дауыс үлесі.",
+      kind: "methodology",
+      lastModified: "2026-08-03",
+    },
   },
   "/blogs/ai-visibility-kazakhstan": {
     en: {
@@ -207,6 +352,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Learn how mentions, recommendations, prompts and citations shape AI visibility for Kazakhstan businesses—and what a dated Akrux audit can and cannot show.",
       kind: "article",
       lastModified: "2026-08-03",
+      datePublished: FIRST_PUBLISHED,
       headline: "What AI Visibility Means for Businesses in Kazakhstan",
     },
     ru: {
@@ -215,7 +361,17 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Разбираем упоминания, рекомендации, вопросы и источники в ответах ИИ для бизнеса Казахстана, а также возможности и ограничения датированного аудита Akrux.",
       kind: "article",
       lastModified: "2026-08-03",
+      datePublished: FIRST_PUBLISHED,
       headline: "Что означает видимость бизнеса в ответах ИИ для компаний Казахстана",
+    },
+    kk: {
+      title: "Қазақстанда бизнестің ЖИ жауаптарындағы көрінуі не білдіреді | Akrux",
+      description:
+        "Қазақстан бизнесі үшін ЖИ жауаптарындағы аталымдарды, ұсыныстарды, сұрақтар мен дереккөздерді, сондай-ақ күні көрсетілген Akrux аудитінің мүмкіндіктері мен шектеулерін талдаймыз.",
+      kind: "article",
+      lastModified: "2026-08-03",
+      datePublished: FIRST_PUBLISHED,
+      headline: "Қазақстан компаниялары үшін бизнестің ЖИ жауаптарындағы көрінуі не білдіреді",
     },
   },
   "/generative-engine-optimization": {
@@ -225,6 +381,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Learn how human-led GEO work can improve crawlability, entity clarity, useful content and sources for Kazakhstan businesses without guaranteed AI placement.",
       kind: "article",
       lastModified: "2026-08-03",
+      datePublished: FIRST_PUBLISHED,
     },
     ru: {
       title: "GEO для бизнеса Казахстана: практическое руководство | Akrux",
@@ -232,6 +389,15 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Как ручная GEO-работа улучшает обход сайта, ясность сущности, полезный контент и источники бизнеса без гарантии позиции в ИИ.",
       kind: "article",
       lastModified: "2026-08-03",
+      datePublished: FIRST_PUBLISHED,
+    },
+    kk: {
+      title: "Қазақстан бизнесіне GEO: практикалық нұсқаулық | Akrux",
+      description:
+        "Қолмен жасалатын GEO жұмысы сайтты аралауды, сущность айқындығын, пайдалы мазмұн мен дереккөздерді ЖИ-дегі позицияға кепілдіксіз қалай жақсартады.",
+      kind: "article",
+      lastModified: "2026-08-03",
+      datePublished: FIRST_PUBLISHED,
     },
   },
   "/use-cases": {
@@ -249,6 +415,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       kind: "webpage",
       lastModified: "2026-08-03",
     },
+    kk: {
+      title: "ЖИ-дегі көріну аналитикасының сценарийлері | Akrux",
+      description:
+        "Жергілікті бизнес, SaaS, электрондық сауда және кәсіби қызметтер үшін көрінуді өлшеудің практикалық сценарийлері, шаблон беттерсіз.",
+      kind: "webpage",
+      lastModified: "2026-08-03",
+    },
   },
   "/use-cases/local-businesses": {
     en: {
@@ -257,6 +430,7 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Practical guidance for auditing local AI visibility in Kazakhstan across business facts, city prompts, competitor appearances, listings, citations and dated rescans.",
       kind: "article",
       lastModified: "2026-08-03",
+      datePublished: FIRST_PUBLISHED,
     },
     ru: {
       title: "Видимость локального бизнеса Казахстана в ответах ИИ | Akrux",
@@ -264,6 +438,15 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
         "Практический аудит локальной видимости в Казахстане: факты о бизнесе, городские вопросы, конкуренты, карточки, источники и датированные проверки.",
       kind: "article",
       lastModified: "2026-08-03",
+      datePublished: FIRST_PUBLISHED,
+    },
+    kk: {
+      title: "Қазақстандағы жергілікті бизнестің ЖИ жауаптарындағы көрінуі | Akrux",
+      description:
+        "Қазақстандағы жергілікті көріну аудиті: бизнес фактілері, қалалық сұрақтар, бәсекелестер, карточкалар, дереккөздер және күні көрсетілген тексерулер.",
+      kind: "article",
+      lastModified: "2026-08-03",
+      datePublished: FIRST_PUBLISHED,
     },
   },
   "/pricing": {
@@ -278,6 +461,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       title: "Бесплатный аудит и стоимость услуг Akrux",
       description:
         "Начальный аудит бесплатный на этапе тестирования. Фиксированной подписки и универсальной цены нет; ручная работа оценивается после разбора.",
+      kind: "pricing",
+      lastModified: "2026-08-03",
+    },
+    kk: {
+      title: "Akrux тегін аудиті және қызмет құны",
+      description:
+        "Бастапқы аудит тестілеу кезеңінде тегін. Тіркелген жазылым мен әмбебап баға жоқ; қолмен жұмыс талдаудан кейін бағаланады.",
       kind: "pricing",
       lastModified: "2026-08-03",
     },
@@ -297,6 +487,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       kind: "faq",
       lastModified: "2026-08-03",
     },
+    kk: {
+      title: "Akrux аудиті мен қызметтері туралы жиі қойылатын сұрақтар",
+      description:
+        "Тегін аудит, Қазақстанға назар, жабық есептер, модельдер, команданың қолмен жұмысы, тестілеу және шектеулер туралы жауаптар.",
+      kind: "faq",
+      lastModified: "2026-08-03",
+    },
   },
   "/about": {
     en: {
@@ -310,6 +507,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       title: "О Akrux — сервисе видимости бизнеса в ИИ в Казахстане",
       description:
         "Узнайте, как Akrux сочетает бесплатный датированный аудит видимости в ИИ с отдельно согласуемой помощью команды для бизнеса Казахстана.",
+      kind: "about",
+      lastModified: "2026-08-03",
+    },
+    kk: {
+      title: "Akrux туралы — Қазақстанда бизнестің ЖИ-дегі көріну сервисі",
+      description:
+        "Akrux ЖИ-дегі көрінудің тегін әрі күні көрсетілген аудитін Қазақстан бизнесіне арналған бөлек келісілетін команда көмегімен қалай ұштастыратынын біліңіз.",
       kind: "about",
       lastModified: "2026-08-03",
     },
@@ -329,6 +533,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       kind: "contact",
       lastModified: "2026-08-03",
     },
+    kk: {
+      title: "Akrux-пен байланысу",
+      description:
+        "Тегін аудитті іске қосыңыз немесе жабық есеп пен ықтимал келісілген жұмысты талқылау үшін Akrux жазылу формасын пайдаланыңыз.",
+      kind: "contact",
+      lastModified: "2026-08-03",
+    },
   },
   "/docs": {
     en: {
@@ -342,6 +553,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       title: "Документация по аудиту видимости Akrux",
       description:
         "Документация диагностического приложения Akrux: профиль, аудит, Индекс видимости, вопросы, выборка ответов, конкуренты и источники.",
+      kind: "docs",
+      lastModified: "2026-08-03",
+    },
+    kk: {
+      title: "Akrux көріну аудиті бойынша құжаттама",
+      description:
+        "Akrux диагностикалық қосымшасының құжаттамасы: профиль, аудит, Көріну индексі, сұрақтар, жауаптар таңдамасы, бәсекелестер және дереккөздер.",
       kind: "docs",
       lastModified: "2026-08-03",
     },
@@ -361,6 +579,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       kind: "webpage",
       lastModified: "2026-08-03",
     },
+    kk: {
+      title: "Akrux блогы — бизнестің ЖИ жауаптарындағы көрінуі",
+      description:
+        "Бренд туралы ақпарат аудиті, бәсекелестерді ұсыну себептері және Қазақстанда бизнестің ЖИ жауаптарындағы көрінуін жақсарту туралы Akrux мақалалары.",
+      kind: "webpage",
+      lastModified: "2026-08-03",
+    },
   },
   "/blogs/audit-ai-generated-brand-information": {
     en: {
@@ -375,6 +600,14 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       title: "Как проверить информацию о бренде в ответах ИИ | Akrux",
       description:
         "Повторяемый аудит: правильно ли ИИ распознаёт бизнес, последовательно ли описывает его, ссылается ли на надёжные источники и путает ли сущности.",
+      kind: "article",
+      lastModified: UPDATED,
+      datePublished: UPDATED,
+    },
+    kk: {
+      title: "ЖИ жауаптарындағы бренд ақпаратын қалай тексеру керек | Akrux",
+      description:
+        "Қайталанатын аудит: ЖИ бизнесті дұрыс тани ма, оны дәйекті сипаттай ма, сенімді дереккөздерге сілтей ме және сущностьтарды шатастыра ма.",
       kind: "article",
       lastModified: UPDATED,
       datePublished: UPDATED,
@@ -397,6 +630,14 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       lastModified: UPDATED,
       datePublished: UPDATED,
     },
+    kk: {
+      title: "ЖИ неге бәсекелестерді ұсынады | Akrux",
+      description:
+        "Бәсекелестер ЖИ ұсыныстарында неге шығады, растаудың жетіспеуін модель өзгергіштігінен қалай ажыратуға болады және қандай әрекеттерді тексеруге болады.",
+      kind: "article",
+      lastModified: UPDATED,
+      datePublished: UPDATED,
+    },
   },
   "/changelog": {
     en: {
@@ -410,6 +651,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       title: "История обновлений Akrux",
       description:
         "Датированные фактические обновления продукта, методологии и публичной документации Akrux. Записи добавляются только для подтверждённых изменений.",
+      kind: "webpage",
+      lastModified: UPDATED,
+    },
+    kk: {
+      title: "Akrux жаңарту тарихы",
+      description:
+        "Akrux өнімінің, әдістемесінің және жария құжаттамасының күні көрсетілген нақты жаңартулары. Жазбалар тек расталған өзгерістер үшін қосылады.",
       kind: "webpage",
       lastModified: UPDATED,
     },
@@ -429,6 +677,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       kind: "webpage",
       lastModified: UPDATED,
     },
+    kk: {
+      title: "Akrux құпиялық саясаты",
+      description:
+        "Akrux аккаунт, бизнес, тексеру және өтініш деректерінің қайсысын өңдейді, есептер неге жабық және индекстеуге қандай ақпарат жарияланады.",
+      kind: "webpage",
+      lastModified: UPDATED,
+    },
   },
   "/terms": {
     en: {
@@ -445,6 +700,13 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       kind: "webpage",
       lastModified: UPDATED,
     },
+    kk: {
+      title: "Akrux пайдалану шарттары",
+      description:
+        "Akrux тексерулері мен есептерін пайдалану шарттары: аккаунт міндеттері, рұқсат етілген пайдалану, ЖИ жауаптарының шектеулері, қолжетімділік және құқықтар.",
+      kind: "webpage",
+      lastModified: UPDATED,
+    },
   },
   "/login": {
     en: {
@@ -457,6 +719,12 @@ const META: Record<PublicPath, Record<Locale, Omit<RouteMeta, "indexable">>> = {
       title: "Вход в Akrux",
       description:
         "Войдите или создайте аккаунт Akrux, чтобы запустить приватную проверку видимости бизнеса в ИИ и открыть отчёт.",
+      kind: "login",
+    },
+    kk: {
+      title: "Akrux-ке кіру",
+      description:
+        "Бизнестің ЖИ-дегі көрінуін жеке тексеруді іске қосып, есепті ашу үшін Akrux аккаунтына кіріңіз немесе оны жасаңыз.",
       kind: "login",
     },
   },
@@ -475,9 +743,17 @@ export function routeMeta(path: PublicPath, locale: Locale): RouteMeta {
 }
 
 /** /methodology + en → /en/methodology; / + en → /en. */
+/**
+ * URL prefix per locale. The default locale is served from the root; each
+ * additional locale gets its own prefix, so every language is independently
+ * crawlable under one origin.
+ */
+export const LOCALE_PREFIX: Record<Locale, string> = { ru: "", en: "/en", kk: "/kk" };
+
 export function localizedPublicPath(path: PublicPath, locale: Locale): string {
-  if (locale === "ru") return path;
-  return path === "/" ? "/en" : `/en${path}`;
+  const prefix = LOCALE_PREFIX[locale];
+  if (!prefix) return path;
+  return path === "/" ? prefix : `${prefix}${path}`;
 }
 
 /** Resolve a request path back to its locale-neutral registry path. */
@@ -486,9 +762,16 @@ export function parseLocalizedPublicPath(pathname: string): {
   locale: Locale;
 } | null {
   const normalized = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
-  const locale: Locale = normalized === "/en" || normalized.startsWith("/en/") ? "en" : "ru";
-  const base = locale === "en" ? (normalized === "/en" ? "/" : normalized.slice(3)) : normalized;
-  return isPublicPath(base) ? { path: base, locale } : null;
+  for (const locale of LOCALES) {
+    const prefix = LOCALE_PREFIX[locale];
+    if (!prefix) continue;
+    if (normalized === prefix) return isPublicPath("/") ? { path: "/", locale } : null;
+    if (normalized.startsWith(`${prefix}/`)) {
+      const base = normalized.slice(prefix.length);
+      return isPublicPath(base) ? { path: base, locale } : null;
+    }
+  }
+  return isPublicPath(normalized) ? { path: normalized, locale: DEFAULT_LOCALE } : null;
 }
 
 export interface FaqItem {
@@ -498,7 +781,7 @@ export interface FaqItem {
 
 /** Homepage FAQ copy comes from the same localization keys rendered by FaqSection. */
 export function landingFaqItems(locale: Locale): FaqItem[] {
-  const faq = locale === "ru" ? ruTranslations.landing.faq : enTranslations.landing.faq;
+  const faq = LANDING_FAQ_SOURCE[locale];
   return [1, 2, 3, 4, 5, 6].map((number) => ({
     question: faq[`q${number}` as keyof typeof faq],
     answer: faq[`a${number}` as keyof typeof faq],
@@ -538,7 +821,7 @@ export function organizationLd(baseUrl: string, locale: Locale = "en"): Record<s
     description: PRODUCT_POSITIONING[locale].short,
     areaServed: {
       "@type": "Country",
-      name: locale === "ru" ? "Казахстан" : "Kazakhstan",
+      name: SCHEMA_VOCAB[locale].country,
     },
     knowsAbout: [
       "AI visibility",
@@ -546,12 +829,40 @@ export function organizationLd(baseUrl: string, locale: Locale = "en"): Record<s
       "Answer engine optimization",
       "AI-generated brand answers",
     ],
+    sameAs: [...ORGANIZATION_IDENTITY.sameAs],
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: ORGANIZATION_IDENTITY.addressLocality,
+      addressCountry: ORGANIZATION_IDENTITY.addressCountry,
+    },
+    email: ORGANIZATION_IDENTITY.email,
+    telephone: ORGANIZATION_IDENTITY.telephone,
+    foundingDate: ORGANIZATION_IDENTITY.foundingDate,
+    founder: { "@id": `${base}/#founder` },
     contactPoint: {
       "@type": "ContactPoint",
+      // Platform support only. Sales intent routes to the existing
+      // call-booking action, never to this address.
       contactType: "customer support",
       url: `${base}/contact`,
-      availableLanguage: ["English", "Russian"],
+      email: ORGANIZATION_IDENTITY.email,
+      telephone: ORGANIZATION_IDENTITY.telephone,
+      availableLanguage: LOCALE_SCHEMA_NAMES,
     },
+  };
+}
+
+/** The founder. Referenced by Organization.founder and every Article author. */
+export function personLd(baseUrl: string): Record<string, unknown> {
+  const base = cleanBase(baseUrl);
+  return {
+    "@type": "Person",
+    "@id": `${base}/#founder`,
+    name: FOUNDER.name,
+    jobTitle: FOUNDER.jobTitle,
+    url: `${base}/about`,
+    sameAs: [FOUNDER.linkedIn],
+    worksFor: { "@id": `${base}/#organization` },
   };
 }
 
@@ -563,7 +874,7 @@ export function webSiteLd(baseUrl: string, locale: Locale = "en"): Record<string
     name: "Akrux",
     url: base,
     description: PRODUCT_POSITIONING[locale].short,
-    inLanguage: ["en", "ru"],
+    inLanguage: [...LOCALES],
     about: { "@id": `${base}/#service` },
     publisher: { "@id": `${base}/#organization` },
   };
@@ -577,21 +888,18 @@ export function serviceLd(baseUrl: string, locale: Locale): Record<string, unkno
     name: "Akrux",
     url: `${base}${localizedPublicPath("/", locale)}`,
     mainEntityOfPage: `${base}${localizedPublicPath("/", locale)}`,
-    serviceType:
-      locale === "ru"
-        ? "Бесплатный аудит видимости бизнеса в ИИ и отдельно согласуемая помощь команды"
-        : "Free AI-visibility audit with separately scoped human-assisted improvement",
+    serviceType: SCHEMA_VOCAB[locale].serviceType,
     category: "AI visibility audit and human-assisted improvement",
     availableLanguage: ["English", "Russian"],
     areaServed: {
       "@type": "Country",
-      name: locale === "ru" ? "Казахстан" : "Kazakhstan",
+      name: SCHEMA_VOCAB[locale].country,
     },
     audience: {
       "@type": "BusinessAudience",
       geographicArea: {
         "@type": "Country",
-        name: locale === "ru" ? "Казахстан" : "Kazakhstan",
+        name: SCHEMA_VOCAB[locale].country,
       },
     },
     provider: { "@id": `${base}/#organization` },
@@ -599,7 +907,7 @@ export function serviceLd(baseUrl: string, locale: Locale): Record<string, unkno
     availableChannel: {
       "@type": "ServiceChannel",
       serviceUrl: `${base}${localizedPublicPath("/contact", locale)}`,
-      availableLanguage: locale === "ru" ? "Russian" : "English",
+      availableLanguage: SCHEMA_VOCAB[locale].language,
     },
   };
 }
@@ -621,15 +929,23 @@ export function softwareApplicationLd(baseUrl: string, locale: Locale): Record<s
       "Анализ конкурентов и доли голоса",
       "Просмотр вопросов и источников",
     ],
+    kk: [
+      "Брендсіз сұрақтар бойынша Көріну индексі",
+      "Бренд танымалдығының бөлек диагностикасы",
+      "Модельдер бойынша жауаптарды талдау",
+      "Бәсекелестер мен дауыс үлесін талдау",
+      "Сұрақтар мен дереккөздерді қарау",
+    ],
   };
   const descriptions: Record<Locale, string> = {
     en: "The browser-based Akrux audit interface lets authenticated business owners review a private, dated sample of supported AI-generated answers and related visibility metrics.",
     ru: "Браузерный интерфейс аудита Akrux позволяет авторизованному владельцу бизнеса изучить закрытую датированную выборку ответов поддерживаемых ИИ-моделей и связанные метрики видимости.",
+    kk: "Akrux браузерлік аудит интерфейсі авторизацияланған бизнес иесіне қолдау көрсетілетін ЖИ модельдері жауаптарының жабық әрі күні көрсетілген таңдамасын және оған қатысты көріну метрикаларын қарауға мүмкіндік береді.",
   };
   return {
     "@type": "SoftwareApplication",
     "@id": `${base}/#audit-application`,
-    name: locale === "ru" ? "Интерфейс аудита Akrux" : "Akrux audit interface",
+    name: SCHEMA_VOCAB[locale].appName,
     url: `${base}${localizedPublicPath("/product", locale)}`,
     mainEntityOfPage: `${base}${localizedPublicPath("/product", locale)}`,
     applicationCategory: "BusinessApplication",
@@ -650,6 +966,18 @@ function pageSchemaType(kind: PageKind): string {
   if (kind === "faq") return "FAQPage";
   if (kind === "article") return "Article";
   return "WebPage";
+}
+
+/**
+ * The visible H1, which is the only correct value for Article.headline. Derived
+ * from the rendered content so the two cannot drift; `headline` in META stays
+ * available as an explicit override.
+ */
+function articleHeadline(path: PublicPath, locale: Locale): string {
+  const meta = META[path][locale];
+  if (meta.headline) return meta.headline;
+  if (path === "/" || path === "/login") return meta.title;
+  return publicPageContent(path, locale).h1;
 }
 
 export function webPageLd(
@@ -679,22 +1007,26 @@ export function webPageLd(
   }
   if (meta.lastModified) page.dateModified = meta.lastModified;
   if (meta.kind === "article") {
-    page.headline = meta.headline ?? meta.title;
+    // The headline must be what the reader sees, never the browser title:
+    // a " | Akrux" suffix in headline makes the Article disagree with its own
+    // H1 and reads as boilerplate rather than a claim about the page.
+    page.headline = articleHeadline(path, locale);
     if (meta.datePublished) page.datePublished = meta.datePublished;
+    page.author = { "@id": `${base}/#founder` };
     page.mainEntityOfPage = { "@id": `${url}#webpage` };
   }
   return page;
 }
 
 function breadcrumbNames(path: PublicPath, locale: Locale): Array<{ name: string; path: PublicPath }> {
-  const home = { name: locale === "ru" ? "Главная" : "Home", path: "/" as PublicPath };
+  const home = { name: SCHEMA_VOCAB[locale].home, path: "/" as PublicPath };
   if (path === "/") return [home];
   const crumbs = [home];
   if (path.startsWith("/use-cases/")) {
-    crumbs.push({ name: locale === "ru" ? "Сценарии" : "Use cases", path: "/use-cases" });
+    crumbs.push({ name: SCHEMA_VOCAB[locale].useCases, path: "/use-cases" });
   }
   if (path.startsWith("/blogs/")) {
-    crumbs.push({ name: locale === "ru" ? "Блог" : "Blogs", path: "/blogs" });
+    crumbs.push({ name: SCHEMA_VOCAB[locale].blogs, path: "/blogs" });
   }
   crumbs.push({ name: routeMeta(path, locale).title.replace(/ \| Akrux$/, ""), path });
   return crumbs;
@@ -726,6 +1058,7 @@ export function structuredDataForRoute(
 ): Record<string, unknown> {
   const graph: Record<string, unknown>[] = [
     organizationLd(baseUrl, locale),
+    personLd(baseUrl),
     webSiteLd(baseUrl, locale),
   ];
   if (path !== "/login") {

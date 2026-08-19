@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 import {
   CANONICAL_SITE_URL,
+  DEFAULT_LOCALE,
+  LOCALES,
+  ogLocale,
+  ogLocaleAlternates,
   localizedPublicPath,
   landingFaqItems,
   publicFaqItems,
@@ -40,8 +44,8 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
     // canonical identity for the same pages.
     const base = CANONICAL_SITE_URL;
     const canonical = `${base}${localizedPublicPath(path, locale)}`;
-    const ruUrl = `${base}${localizedPublicPath(path, "ru")}`;
-    const enUrl = `${base}${localizedPublicPath(path, "en")}`;
+    const alternates = LOCALES.map((l) => [l, `${base}${localizedPublicPath(path, l)}`] as const);
+    const defaultUrl = `${base}${localizedPublicPath(path, DEFAULT_LOCALE)}`;
     const description = meta.description;
     const image = `${base}/og-image.png`;
 
@@ -59,7 +63,7 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
             : "noindex,follow,noarchive",
     });
     upsertLink('link[rel="canonical"]', { rel: "canonical", href: canonical });
-    for (const [hreflang, href] of [["ru", ruUrl], ["en", enUrl], ["x-default", ruUrl]]) {
+    for (const [hreflang, href] of [...alternates, ["x-default", defaultUrl] as const]) {
       upsertLink(`link[rel="alternate"][hreflang="${hreflang}"]`, {
         rel: "alternate",
         hreflang,
@@ -74,8 +78,8 @@ export function PublicPageMetadata({ path, locale }: { path: PublicPath; locale:
       ["og:url", canonical],
       ["og:image", image],
       ["og:image:alt", SOCIAL_IMAGE_ALT[locale]],
-      ["og:locale", locale === "ru" ? "ru_RU" : "en_US"],
-      ["og:locale:alternate", locale === "ru" ? "en_US" : "ru_RU"],
+      ["og:locale", ogLocale(locale)],
+      ...ogLocaleAlternates(locale).map((alt) => ["og:locale:alternate", alt] as [string, string]),
     ];
     for (const [property, content] of og) {
       upsertMeta(`meta[property="${property}"]`, { property, content });

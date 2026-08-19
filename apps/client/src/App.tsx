@@ -1,9 +1,13 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import {
+  DEFAULT_LOCALE,
   LEGACY_PUBLIC_REDIRECTS,
+  LOCALE_PREFIX,
+  LOCALES,
   localizedPublicPath,
   PUBLIC_PATHS,
+  type Locale,
 } from "@synapai/shared";
 import QuotaModal from "./components/QuotaModal";
 import VerifyEmailModal from "./components/VerifyEmailModal";
@@ -23,13 +27,20 @@ const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
 const AppShell = lazy(() => import("./pages/app/AppShell"));
 const Onboarding = lazy(() => import("./pages/app/Onboarding"));
 
-/** §1.4: /en-prefixed public routes render the English variant. */
-function EnRoute({ children }: { children: JSX.Element }): JSX.Element {
+/**
+ * §1.4: a prefixed public route renders that locale's variant. The default
+ * locale is served unprefixed and needs no wrapper, so this is registered only
+ * for the additional locales.
+ */
+function LocaleRoute({ locale, children }: { locale: Locale; children: JSX.Element }): JSX.Element {
   useEffect(() => {
-    if (currentLocale() !== "en") setLocale("en");
-  }, []);
+    if (currentLocale() !== locale) setLocale(locale);
+  }, [locale]);
   return children;
 }
+
+/** Every locale served under a prefix, i.e. all but the default. */
+const PREFIXED_LOCALES = LOCALES.filter((locale) => locale !== DEFAULT_LOCALE);
 
 function LegacyPublicRedirect({ to }: { to: string }): JSX.Element {
   const location = useLocation();
@@ -46,33 +57,54 @@ export default function App(): JSX.Element {
       <EnvBanners />
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/en" element={<EnRoute><Landing /></EnRoute>} />
+        {PREFIXED_LOCALES.map((locale) => (
+          <Route
+            key={LOCALE_PREFIX[locale]}
+            path={LOCALE_PREFIX[locale]}
+            element={<LocaleRoute locale={locale}><Landing /></LocaleRoute>}
+          />
+        ))}
         {contentPaths.map((path) => (
           <Route key={path} path={path} element={<PublicPage />} />
         ))}
-        {contentPaths.map((path) => (
-          <Route key={`/en${path}`} path={`/en${path}`} element={<EnRoute><PublicPage /></EnRoute>} />
-        ))}
+        {PREFIXED_LOCALES.flatMap((locale) =>
+          contentPaths.map((path) => (
+            <Route
+              key={`${LOCALE_PREFIX[locale]}${path}`}
+              path={`${LOCALE_PREFIX[locale]}${path}`}
+              element={<LocaleRoute locale={locale}><PublicPage /></LocaleRoute>}
+            />
+          )),
+        )}
         {LEGACY_PUBLIC_REDIRECTS.map(({ from, to }) => (
           <Route
             key={from}
             path={from}
-            element={<LegacyPublicRedirect to={localizedPublicPath(to, "ru")} />}
+            element={<LegacyPublicRedirect to={localizedPublicPath(to, DEFAULT_LOCALE)} />}
           />
         ))}
-        {LEGACY_PUBLIC_REDIRECTS.map(({ from, to }) => (
-          <Route
-            key={`/en${from}`}
-            path={`/en${from}`}
-            element={<LegacyPublicRedirect to={localizedPublicPath(to, "en")} />}
-          />
-        ))}
+        {PREFIXED_LOCALES.flatMap((locale) =>
+          LEGACY_PUBLIC_REDIRECTS.map(({ from, to }) => (
+            <Route
+              key={`${LOCALE_PREFIX[locale]}${from}`}
+              path={`${LOCALE_PREFIX[locale]}${from}`}
+              element={<LegacyPublicRedirect to={localizedPublicPath(to, locale)} />}
+            />
+          )),
+        )}
         <Route path="/scan/:id" element={<Suspense fallback={null}><ScanProgress /></Suspense>} />
         <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
-        <Route
-          path="/en/login"
-          element={<PublicOnly><EnRoute><Login /></EnRoute></PublicOnly>}
-        />
+        {PREFIXED_LOCALES.map((locale) => (
+          <Route
+            key={`${LOCALE_PREFIX[locale]}/login`}
+            path={`${LOCALE_PREFIX[locale]}/login`}
+            element={
+              <PublicOnly>
+                <LocaleRoute locale={locale}><Login /></LocaleRoute>
+              </PublicOnly>
+            }
+          />
+        ))}
         <Route path="/verify-email" element={<RequireAuth><Suspense fallback={null}><VerifyEmail /></Suspense></RequireAuth>} />
         {/* §3: onboarding is authenticated but renders without the dashboard chrome. */}
         <Route path="/app/onboarding" element={<RequireAuth><Suspense fallback={null}><Onboarding /></Suspense></RequireAuth>} />

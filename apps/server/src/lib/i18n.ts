@@ -1,5 +1,6 @@
 import { DEFAULT_LOCALE, type Locale } from "@synapai/shared";
 import en from "@synapai/shared/i18n/en.json" with { type: "json" };
+import kk from "@synapai/shared/i18n/kk.json" with { type: "json" };
 import ru from "@synapai/shared/i18n/ru.json" with { type: "json" };
 
 type Dict = { [key: string]: string | Dict };
@@ -7,6 +8,7 @@ type Dict = { [key: string]: string | Dict };
 const dictionaries: Record<Locale, Dict> = {
   ru: ru as Dict,
   en: en as Dict,
+  kk: kk as Dict,
 };
 
 /** Server-side translation for emails: dot-path lookup + {{var}} interpolation. */

@@ -3,6 +3,12 @@ import type { Server } from "node:http";
 import {
   INDEXABLE_PUBLIC_PATHS,
   LEGACY_PUBLIC_REDIRECTS,
+  LOCALE_PREFIX,
+  LOCALES,
+  landingFaqItems,
+  publicFaqItems,
+  publicPageContent,
+  publicUiText,
   PUBLIC_PATHS,
   localizedPublicPath,
   routeMeta,
@@ -36,7 +42,7 @@ function first(html: string, expression: RegExp): string {
 
 function publicRoutePairs(): Array<{ path: string; basePath: PublicPath; locale: Locale }> {
   return PUBLIC_PATHS.flatMap((basePath) =>
-    (["ru", "en"] as const).map((locale) => ({
+    LOCALES.map((locale) => ({
       path: localizedPublicPath(basePath, locale),
       basePath,
       locale,
@@ -70,7 +76,7 @@ async function auditPage(
   assert(description.length > 40, `${route.path}: missing description`);
   assert(title === expectedMeta.title, `${route.path}: title does not match the route registry`);
   assert(canonical === `${canonicalBase}${route.path}`, `${route.path}: incorrect canonical`);
-  for (const hreflang of ["ru", "en", "x-default"]) {
+  for (const hreflang of [...LOCALES, "x-default"]) {
     assert(
       new RegExp(`<link rel="alternate" hreflang="${hreflang}" href="[^"]+">`, "i").test(html),
       `${route.path}: missing ${hreflang} alternate`,
@@ -86,9 +92,44 @@ async function auditPage(
     assert(Boolean(json), `${route.path}: missing JSON-LD`);
     if (json) {
       try {
-        const parsed = JSON.parse(json) as { "@context"?: string; "@graph"?: unknown[] };
+        const parsed = JSON.parse(json) as { "@context"?: string; "@graph"?: Record<string, unknown>[] };
         assert(parsed["@context"] === "https://schema.org", `${route.path}: invalid schema context`);
         assert(Array.isArray(parsed["@graph"]) && parsed["@graph"].length >= 4, `${route.path}: incomplete schema graph`);
+        const graph = parsed["@graph"] ?? [];
+
+        // The Organization must be externally checkable, not a closed loop.
+        const org = graph.find((node) => node["@type"] === "Organization");
+        assert(Boolean(org), `${route.path}: missing Organization node`);
+        if (org) {
+          assert(Array.isArray(org.sameAs) && org.sameAs.length > 0, `${route.path}: Organization has no sameAs`);
+          assert(typeof org.email === "string" && org.email.includes("@"), `${route.path}: Organization has no email`);
+          assert(typeof org.telephone === "string" && org.telephone.startsWith("+"), `${route.path}: Organization has no telephone`);
+          const address = org.address as Record<string, unknown> | undefined;
+          assert(
+            Boolean(address) && typeof address?.addressCountry === "string",
+            `${route.path}: Organization has no postal address`,
+          );
+          assert(!("legalName" in org), `${route.path}: Organization must not claim a legalName`);
+        }
+
+        // Articles must carry a date and a named author, and their headline
+        // must be the visible H1 rather than the browser title.
+        for (const article of graph.filter((node) => node["@type"] === "Article")) {
+          assert(typeof article.datePublished === "string", `${route.path}: Article has no datePublished`);
+          assert(Boolean(article.author), `${route.path}: Article has no author`);
+          const authorId = (article.author as { "@id"?: string })?.["@id"];
+          assert(
+            graph.some((node) => node["@type"] === "Person" && node["@id"] === authorId),
+            `${route.path}: Article author does not resolve to a Person node`,
+          );
+          const headline = String(article.headline ?? "");
+          assert(
+            !/\s[|—–-]\s*Akrux\s*$/.test(headline),
+            `${route.path}: Article headline carries a browser-title suffix`,
+          );
+          const visibleH1 = first(html, /<h1[^>]*>([\s\S]*?)<\/h1>/i).replace(/<[^>]+>/g, "").trim();
+          assert(headline === visibleH1, `${route.path}: Article headline does not match the visible H1`);
+        }
       } catch {
         failures.push(`${route.path}: JSON-LD is not valid JSON`);
       }
@@ -149,8 +190,8 @@ async function run(): Promise<void> {
     );
 
     for (const { from, to } of LEGACY_PUBLIC_REDIRECTS) {
-      for (const locale of ["ru", "en"] as const) {
-        const source = locale === "ru" ? from : `/en${from}`;
+      for (const locale of LOCALES) {
+        const source = `${LOCALE_PREFIX[locale]}${from}`;
         const target = localizedPublicPath(to, locale);
         const response = await get(origin, `${source}?audit=1`);
         assert(response.status === 308, `${source}: legacy guide redirect is not permanent`);
@@ -185,7 +226,38 @@ async function run(): Promise<void> {
     const sitemapBody = await sitemap.text();
     const sitemapLocations = [...sitemapBody.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
     assert(sitemap.status === 200, "sitemap.xml did not return 200");
-    assert(sitemapLocations.length === INDEXABLE_PUBLIC_PATHS.length * 2, "sitemap.xml has the wrong URL count");
+    assert(
+      sitemapLocations.length === INDEXABLE_PUBLIC_PATHS.length * LOCALES.length,
+      "sitemap.xml has the wrong URL count",
+    );
+
+    // Translations must never steer their own wrapping: a forced break makes a
+    // locale diverge from the reference layout at some breakpoint.
+    const FORCED_BREAK = /<br\s*\/?>|\u00a0|\u200b/i;
+    for (const locale of LOCALES) {
+      const strings: string[] = [];
+      const collect = (node: unknown): void => {
+        if (typeof node === "string") strings.push(node);
+        else if (Array.isArray(node)) node.forEach(collect);
+        else if (node && typeof node === "object") Object.values(node).forEach(collect);
+      };
+      for (const basePath of PUBLIC_PATHS) {
+        const meta = routeMeta(basePath, locale);
+        collect([meta.title, meta.description, meta.headline]);
+      }
+      collect(publicUiText(locale));
+      collect(publicFaqItems(locale));
+      collect(landingFaqItems(locale));
+      for (const basePath of PUBLIC_PATHS) {
+        if (basePath === "/" || basePath === "/login") continue;
+        collect(publicPageContent(basePath, locale));
+      }
+      const offenders = strings.filter((value) => FORCED_BREAK.test(value));
+      assert(
+        offenders.length === 0,
+        `${locale}: ${offenders.length} translated string(s) contain a forced line break`,
+      );
+    }
     assert(sitemapBody.includes("/blogs"), "sitemap.xml is missing the blog hub");
     assert(!sitemapBody.includes("/guides"), "sitemap.xml contains a legacy guide URL");
     assert(
@@ -234,7 +306,7 @@ async function run(): Promise<void> {
     return;
   }
   console.log(
-    `SEO audit passed: ${PUBLIC_PATHS.length * 2} localized HTML routes, crawl resources, metadata, schema, links, noindex boundaries and status codes.`,
+    `SEO audit passed: ${PUBLIC_PATHS.length * LOCALES.length} localized HTML routes, crawl resources, metadata, schema, links, noindex boundaries and status codes.`,
   );
 }
 

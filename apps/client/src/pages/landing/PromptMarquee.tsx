@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { marqueeRows, type MarqueeChip } from "@synapai/shared";
+import { marqueeRows, type Locale, type MarqueeChip } from "@synapai/shared";
 import EngineMark from "../../components/EngineMark";
 import Reveal from "../../components/Reveal";
 import { currentLocale } from "../../lib/i18n";
@@ -39,6 +39,13 @@ function Row({
 }
 
 /** §8: three localized prompt rows: right / left / right, varied speeds. */
+/** Heading measure per locale: long Cyrillic words need a narrower column. */
+const MARQUEE_MEASURE: Record<Locale, string> = {
+  ru: "max-w-[760px]",
+  en: "max-w-[1020px]",
+  kk: "max-w-[760px]",
+};
+
 export default function PromptMarquee(): JSX.Element {
   const { t } = useTranslation();
   const locale = currentLocale();
@@ -47,11 +54,11 @@ export default function PromptMarquee(): JSX.Element {
   return (
     <section className="hairline-dashed overflow-hidden bg-base py-14 sm:py-24">
       <Reveal className="mx-auto max-w-container px-6 text-center">
-        {/* §6: RU wraps to three lines, EN keeps exactly two. */}
+        {/* §6: the measure is set per locale so each language wraps evenly.
+            RU wraps to three lines, EN keeps exactly two, KK matches RU's
+            block shape with its longer words. */}
         <h2
-          className={`mx-auto font-semibold tracking-tight ${
-            locale === "ru" ? "max-w-[760px]" : "max-w-[1020px]"
-          }`}
+          className={`mx-auto font-semibold tracking-tight ${MARQUEE_MEASURE[locale]}`}
           style={{ fontSize: "clamp(26px, 3.4vw, 44px)", lineHeight: 1.2 }}
         >
           {t("landing.marquee.heading1")}

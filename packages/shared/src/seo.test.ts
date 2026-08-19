@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { publicPageContent } from "./publicContent.js";
+import { LOCALES } from "./constants.js";
 import {
   INDEXABLE_PUBLIC_PATHS,
   landingFaqItems,
@@ -198,7 +199,7 @@ describe("structured data", () => {
       inLanguage: string[];
       about: { "@id": string };
     };
-    expect(website.inLanguage).toEqual(["en", "ru"]);
+    expect(website.inLanguage).toEqual([...LOCALES]);
     expect(website.about).toEqual({ "@id": `${BASE}/#service` });
   });
 
@@ -280,7 +281,9 @@ describe("structured data", () => {
     const graph = (structuredDataForRoute(BASE, "/login", "en") as {
       "@graph": Array<Record<string, unknown>>;
     })["@graph"];
-    expect(graph.map((node) => node["@type"])).toEqual(["Organization", "WebSite"]);
+    // The founder Person stays in the graph so Organization.founder resolves
+    // even on the noindex sign-in page; no page or product schema is added.
+    expect(graph.map((node) => node["@type"])).toEqual(["Organization", "Person", "WebSite"]);
   });
 
   it("uses visible article schema for migrated blog posts", () => {
@@ -305,8 +308,10 @@ describe("structured data", () => {
 
     expect(article?.headline).toBe("What AI Visibility Means for Businesses in Kazakhstan");
     expect(article?.dateModified).toBe("2026-08-03");
-    expect(article).not.toHaveProperty("datePublished");
-    expect(article).not.toHaveProperty("author");
+    // Phase 2.4: resolved from the first-commit date of the file carrying the
+    // article body, and attributed to the one named Person.
+    expect(article?.datePublished).toBe("2026-08-03");
+    expect(article?.author).toEqual({ "@id": `${BASE}/#founder` });
   });
 
   it("connects the Services WebPage to the primary Service entity", () => {

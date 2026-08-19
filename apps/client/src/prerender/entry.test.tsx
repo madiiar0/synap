@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { publicPageContent } from "@synapai/shared";
+import { LOCALES, localizedPublicPath, PUBLIC_PATHS, publicPageContent } from "@synapai/shared";
 import { prerenderRoutes, render } from "./entry";
 
 describe("blog prerender output", () => {
@@ -17,11 +17,14 @@ describe("blog prerender output", () => {
     expect(`${ru}${en}`).not.toMatch(/sk-[A-Za-z0-9]|BEGIN PRIVATE KEY|customer@example/i);
   });
 
-  it("retains noindex legal and history pages in the 42-document prerender inventory", () => {
+  it("retains noindex legal and history pages in every locale's prerender inventory", () => {
     const routes = prerenderRoutes();
-    expect(routes).toHaveLength(42);
-    for (const path of ["/privacy", "/en/privacy", "/terms", "/en/terms", "/changelog", "/en/changelog"]) {
-      expect(routes.some((route) => route.url === path)).toBe(true);
+    expect(routes).toHaveLength(PUBLIC_PATHS.length * LOCALES.length);
+    for (const basePath of ["/privacy", "/terms", "/changelog"] as const) {
+      for (const locale of LOCALES) {
+        const url = localizedPublicPath(basePath, locale);
+        expect(routes.some((route) => route.url === url)).toBe(true);
+      }
     }
   });
 });

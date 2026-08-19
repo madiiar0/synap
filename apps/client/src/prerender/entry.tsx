@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom/server";
 import {
+  LOCALES,
   PUBLIC_PATHS,
   localizedPublicPath,
   type Locale,
@@ -34,7 +35,7 @@ export function prerenderRoutes(): Array<{
   out: string;
 }> {
   return PUBLIC_PATHS.flatMap((basePath) =>
-    (["ru", "en"] as const).map((locale) => {
+    LOCALES.map((locale) => {
       const url = localizedPublicPath(basePath, locale);
       return {
         url,

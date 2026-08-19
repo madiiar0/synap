@@ -81,6 +81,12 @@ export const AUTO_COMPETITOR_MIN_MENTIONS = 3;
 
 export const MAX_USER_COMPETITORS = 5;
 
-export const LOCALES = ["ru", "en"] as const;
+/**
+ * Public site locales. Order is display order. `ru` is the default and is
+ * served from the root; every other locale is served under its own prefix.
+ * This is the site locale, distinct from the language a scan's prompts are
+ * generated in (see GeneratedPrompt.language).
+ */
+export const LOCALES = ["ru", "en", "kk"] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "ru";

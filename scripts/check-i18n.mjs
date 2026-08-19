@@ -61,22 +61,48 @@ function keysOf(obj, prefix = "") {
   return out;
 }
 
-const ru = JSON.parse(fs.readFileSync(path.join(i18nDir, "ru.json"), "utf8"));
-const en = JSON.parse(fs.readFileSync(path.join(i18nDir, "en.json"), "utf8"));
-const ruKeys = new Set(keysOf(ru));
-const enKeys = new Set(keysOf(en));
-const missingInEn = [...ruKeys].filter((k) => !enKeys.has(k));
-const missingInRu = [...enKeys].filter((k) => !ruKeys.has(k));
+// ru is the source of truth; every other locale bundle must mirror it exactly.
+const LOCALE_FILES = ["ru", "en", "kk"];
+const bundles = Object.fromEntries(
+  LOCALE_FILES.map((l) => [l, JSON.parse(fs.readFileSync(path.join(i18nDir, `${l}.json`), "utf8"))]),
+);
+const keySets = Object.fromEntries(
+  LOCALE_FILES.map((l) => [l, new Set(keysOf(bundles[l]))]),
+);
+for (const locale of LOCALE_FILES) {
+  for (const other of LOCALE_FILES) {
+    if (locale === other) continue;
+    const missing = [...keySets[locale]].filter((k) => !keySets[other].has(k));
+    if (missing.length > 0) {
+      failed = true;
+      console.error(`✗ Missing in ${other}.json:`, missing.join(", "));
+    }
+  }
+}
 
-if (missingInEn.length > 0 || missingInRu.length > 0) {
-  failed = true;
-  if (missingInEn.length > 0) console.error("✗ Missing in en.json:", missingInEn.join(", "));
-  if (missingInRu.length > 0) console.error("✗ Missing in ru.json:", missingInRu.join(", "));
+// A forced line break in a translation steers wrapping instead of letting the
+// browser do it, which is how a locale silently diverges from the reference
+// layout. Reject them in every bundle.
+const FORCED_BREAK = /<br\s*\/?>|\u00a0|\u200b|\\n/i;
+for (const locale of LOCALE_FILES) {
+  const bad = [];
+  const scan = (node, prefix) => {
+    if (typeof node === "string") {
+      if (FORCED_BREAK.test(node)) bad.push(prefix);
+      return;
+    }
+    for (const [k, v] of Object.entries(node)) scan(v, prefix ? `${prefix}.${k}` : k);
+  };
+  scan(bundles[locale], "");
+  if (bad.length > 0) {
+    failed = true;
+    console.error(`✗ Forced line breaks in ${locale}.json:`, bad.join(", "));
+  }
 }
 
 if (failed) {
   process.exit(1);
 }
 console.log(
-  `✓ i18n sweep clean: no hard-coded Cyrillic in apps/client/src; ${ruKeys.size} keys mirrored in ru/en`,
+  `✓ i18n sweep clean: no hard-coded Cyrillic in apps/client/src; ${keySets.ru.size} keys mirrored across ${LOCALE_FILES.join("/")}; no forced line breaks`,
 );

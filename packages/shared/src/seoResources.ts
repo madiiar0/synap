@@ -1,5 +1,7 @@
 import {
   INDEXABLE_PUBLIC_PATHS,
+  ogLocale,
+  ogLocaleAlternates,
   landingFaqItems,
   localizedPublicPath,
   PRODUCT_POSITIONING,
@@ -9,7 +11,7 @@ import {
   structuredDataForRoute,
   type PublicPath,
 } from "./seo.js";
-import type { Locale } from "./constants.js";
+import { DEFAULT_LOCALE, LOCALES, type Locale } from "./constants.js";
 import { publicFaqItems } from "./publicContent.js";
 
 function cleanBase(baseUrl: string): string {
@@ -49,8 +51,8 @@ export function buildPublicHeadTags(
       ? "noindex,nofollow,noarchive"
       : "noindex,follow,noarchive";
   const canonical = `${base}${localizedPublicPath(basePath, locale)}`;
-  const ruUrl = `${base}${localizedPublicPath(basePath, "ru")}`;
-  const enUrl = `${base}${localizedPublicPath(basePath, "en")}`;
+  const alternates = LOCALES.map((l) => [l, `${base}${localizedPublicPath(basePath, l)}`] as const);
+  const defaultUrl = `${base}${localizedPublicPath(basePath, DEFAULT_LOCALE)}`;
   const ogImage = `${base}/og-image.png`;
   const ogAlt = SOCIAL_IMAGE_ALT[locale];
   const faq = basePath === "/"
@@ -66,9 +68,10 @@ export function buildPublicHeadTags(
     '<meta name="publisher" content="Akrux">',
     `<meta name="robots" content="${robots}">`,
     `<link rel="canonical" href="${escapeHtml(canonical)}">`,
-    `<link rel="alternate" hreflang="ru" href="${escapeHtml(ruUrl)}">`,
-    `<link rel="alternate" hreflang="en" href="${escapeHtml(enUrl)}">`,
-    `<link rel="alternate" hreflang="x-default" href="${escapeHtml(ruUrl)}">`,
+    ...alternates.map(
+      ([l, href]) => `<link rel="alternate" hreflang="${l}" href="${escapeHtml(href)}">`,
+    ),
+    `<link rel="alternate" hreflang="x-default" href="${escapeHtml(defaultUrl)}">`,
     `<meta property="og:type" content="${meta.kind === "article" ? "article" : "website"}">`,
     '<meta property="og:site_name" content="Akrux">',
     `<meta property="og:title" content="${escapeHtml(meta.title)}">`,
@@ -78,8 +81,10 @@ export function buildPublicHeadTags(
     '<meta property="og:image:width" content="1200">',
     '<meta property="og:image:height" content="630">',
     `<meta property="og:image:alt" content="${escapeHtml(ogAlt)}">`,
-    `<meta property="og:locale" content="${locale === "ru" ? "ru_RU" : "en_US"}">`,
-    `<meta property="og:locale:alternate" content="${locale === "ru" ? "en_US" : "ru_RU"}">`,
+    `<meta property="og:locale" content="${ogLocale(locale)}">`,
+    ...ogLocaleAlternates(locale).map(
+      (alt) => `<meta property="og:locale:alternate" content="${alt}">`,
+    ),
     '<meta name="twitter:card" content="summary_large_image">',
     `<meta name="twitter:title" content="${escapeHtml(meta.title)}">`,
     `<meta name="twitter:description" content="${escapeHtml(meta.description)}">`,
@@ -160,18 +165,22 @@ export function sitemapXml(baseUrl: string, siteNoindex = false): string {
     return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>';
   }
   const urls = INDEXABLE_PUBLIC_PATHS.flatMap((basePath) =>
-    (["ru", "en"] as const).map((locale) => {
+    LOCALES.map((locale) => {
       const meta = routeMeta(basePath, locale);
       const loc = `${base}${localizedPublicPath(basePath, locale)}`;
-      const ru = `${base}${localizedPublicPath(basePath, "ru")}`;
-      const en = `${base}${localizedPublicPath(basePath, "en")}`;
+      const alternates = LOCALES.map(
+        (l) => [l, `${base}${localizedPublicPath(basePath, l)}`] as const,
+      );
+      const fallback = `${base}${localizedPublicPath(basePath, DEFAULT_LOCALE)}`;
       return [
         "  <url>",
         `    <loc>${escapeXml(loc)}</loc>`,
         meta.lastModified ? `    <lastmod>${meta.lastModified}</lastmod>` : null,
-        `    <xhtml:link rel="alternate" hreflang="ru" href="${escapeXml(ru)}"/>`,
-        `    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(en)}"/>`,
-        `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(ru)}"/>`,
+        ...alternates.map(
+          ([l, href]) =>
+            `    <xhtml:link rel="alternate" hreflang="${l}" href="${escapeXml(href)}"/>`,
+        ),
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(fallback)}"/>`,
         "  </url>",
       ].filter(Boolean).join("\n");
     }),
@@ -188,7 +197,7 @@ export function llmsText(baseUrl: string): string {
     "",
     `Canonical website: ${base}`,
     "Primary market: businesses in Kazakhstan",
-    "Languages: English and Russian",
+    "Languages: Kazakh, Russian and English",
     `Normal free-audit model families: ${publicFreeAuditEngineNames().join(", ")}`,
     "",
     "## Current service",

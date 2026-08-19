@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   BLOG_ARTICLE_PATHS,
+  FOUNDER,
+  ORGANIZATION_IDENTITY,
   publicFaqItems,
   publicPageContent,
   publicUiText,
@@ -211,6 +213,53 @@ export default function PublicPage(): JSX.Element {
               </section>
             ))}
           </div>}
+
+          {path === "/contact" && (
+            <section aria-labelledby="direct-contact" className="mt-16 border-t border-line pt-10">
+              <h2 id="direct-contact" className="text-xl font-semibold">
+                {ui.directContactHeading}
+              </h2>
+              <dl className="mt-4 space-y-4 text-[15px] leading-7">
+                <div>
+                  <dt className="sr-only">{ui.directContactHeading}</dt>
+                  <dd>
+                    <a className="font-semibold hover:underline" href={`tel:${ORGANIZATION_IDENTITY.telephone}`}>
+                      {ORGANIZATION_IDENTITY.telephoneDisplay}
+                    </a>
+                    <span className="block text-sub">{ui.phoneNote}</span>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="sr-only">{ui.supportEmailNote}</dt>
+                  <dd>
+                    <a className="font-semibold hover:underline" href={`mailto:${ORGANIZATION_IDENTITY.email}`}>
+                      {ORGANIZATION_IDENTITY.email}
+                    </a>
+                    <span className="block text-sub">{ui.supportEmailNote}</span>
+                  </dd>
+                </div>
+              </dl>
+            </section>
+          )}
+
+          {path === "/about" && (
+            <section aria-labelledby="organization" className="mt-16 border-t border-line pt-10">
+              <h2 id="organization" className="text-xl font-semibold">
+                {ui.organizationHeading}
+              </h2>
+              <p className="mt-4 text-[15px] leading-7 text-sub">{ui.organizationPlace}</p>
+              <p className="mt-3 text-[15px] leading-7">
+                <a
+                  className="font-semibold hover:underline"
+                  href={FOUNDER.linkedIn}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {`${FOUNDER.name}, ${FOUNDER.jobTitle}`}
+                </a>
+              </p>
+            </section>
+          )}
 
           {showContactAction && (
             <section aria-labelledby="contact-action" className="mt-16 rounded-2xl bg-ink p-8 text-white">
