@@ -890,7 +890,7 @@ export function serviceLd(baseUrl: string, locale: Locale): Record<string, unkno
     mainEntityOfPage: `${base}${localizedPublicPath("/", locale)}`,
     serviceType: SCHEMA_VOCAB[locale].serviceType,
     category: "AI visibility audit and human-assisted improvement",
-    availableLanguage: ["English", "Russian"],
+    availableLanguage: LOCALE_SCHEMA_NAMES,
     areaServed: {
       "@type": "Country",
       name: SCHEMA_VOCAB[locale].country,

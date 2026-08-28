@@ -92,7 +92,9 @@ export function buildPublicHeadTags(
     `<meta name="twitter:image:alt" content="${escapeHtml(ogAlt)}">`,
   ];
   if (meta.kind === "article" && meta.lastModified) {
-    tags.push(`<meta property="article:published_time" content="${meta.lastModified}">`);
+    tags.push(
+      `<meta property="article:published_time" content="${meta.datePublished ?? meta.lastModified}">`,
+    );
     tags.push(`<meta property="article:modified_time" content="${meta.lastModified}">`);
   }
   if (basePath !== "/login") {
@@ -234,7 +236,7 @@ export function llmsText(baseUrl: string): string {
     "",
     "Public resources describe Akrux and its methodology. Customer business profiles, account prompts, generated answers, competitor reports, emails and scan data remain authenticated and are not included in public resources.",
     "",
-    "A Akrux audit is a dated sample. Akrux does not guarantee indexing, mentions, citations, positions, rankings or recommendations in any AI system.",
+    "An Akrux audit is a dated sample. Akrux does not guarantee indexing, mentions, citations, positions, rankings or recommendations in any AI system.",
     "",
     "llms.txt is supplemental and experimental. It does not guarantee discovery, indexing or citation. Canonical HTML pages, metadata, structured data, robots rules and the sitemap remain authoritative.",
   ].join("\n");
@@ -277,7 +279,7 @@ export function llmsFullText(baseUrl: string): string {
     "",
     "## Limitations and privacy boundary",
     "",
-    "Generated answers vary by model, retrieval, date and wording. Provider-hosted model behavior can differ from consumer interfaces. A Akrux audit is a dated sample and does not guarantee indexing, mentions, citations, positions, rankings, recommendations, inclusion in training data or commercial results.",
+    "Generated answers vary by model, retrieval, date and wording. Provider-hosted model behavior can differ from consumer interfaces. An Akrux audit is a dated sample and does not guarantee indexing, mentions, citations, positions, rankings, recommendations, inclusion in training data or commercial results.",
     "",
     "Authenticated business profiles, prompts, answers, competitor reports, account details and customer scan data remain private. They are not exposed in this file or other public crawl resources.",
     "",
