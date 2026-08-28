@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Logo from "../../components/Logo";
 import { apiPost } from "../../lib/api";
-import { currentLocale, setLocale, localizedPath } from "../../lib/i18n";
+import { nextLocale, setLocale, localizedPath } from "../../lib/i18n";
 import { useSession } from "../../lib/queries";
 
 /** §1: avatar menu for a signed-in visitor on the public pages. */
@@ -138,10 +138,10 @@ export default function LandingNav(): JSX.Element {
         <div className="hidden items-center gap-4 text-sm md:flex">
           <button
             type="button"
-            onClick={() => setLocale(currentLocale() === "ru" ? "en" : "ru")}
+            onClick={() => setLocale(nextLocale())}
             className="text-sub transition-colors hover:text-ink"
           >
-            {currentLocale() === "ru" ? "EN" : "RU"}
+            {nextLocale().toUpperCase()}
           </button>
           {/* §1: signed in shows one primary pill plus the account menu;
               while resolving, a same-size placeholder avoids a state flash. */}
@@ -216,7 +216,7 @@ export default function LandingNav(): JSX.Element {
             <button
               type="button"
               onClick={() => {
-                setLocale(currentLocale() === "ru" ? "en" : "ru");
+                setLocale(nextLocale());
                 setMenuOpen(false);
               }}
               className="flex min-h-[44px] items-center border-b border-line py-3 text-left text-lg text-sub"

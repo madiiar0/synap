@@ -115,6 +115,7 @@ export default function SettingsPage(): JSX.Element {
             >
               <option value="ru">{t("common.langRu")}</option>
               <option value="en">{t("common.langEn")}</option>
+              <option value="kk">{t("common.langKk")}</option>
             </select>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import mongoose, { Schema, type Document } from "mongoose";
-import type { Locale, UserRole } from "@synapai/shared";
+import { LOCALES, type Locale, type UserRole } from "@synapai/shared";
 
 export interface UserDoc extends Document {
   email: string;
@@ -21,7 +21,7 @@ const userSchema = new Schema<UserDoc>(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     name: { type: String },
-    locale: { type: String, enum: ["ru", "en"], default: "ru" },
+    locale: { type: String, enum: LOCALES, default: "ru" },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     firebaseUid: { type: String, unique: true, sparse: true },
     photoUrl: { type: String },

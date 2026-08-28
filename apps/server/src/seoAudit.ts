@@ -3,6 +3,7 @@ import type { Server } from "node:http";
 import {
   INDEXABLE_PUBLIC_PATHS,
   LEGACY_PUBLIC_REDIRECTS,
+  DEFAULT_LOCALE,
   LOCALE_PREFIX,
   LOCALES,
   landingFaqItems,
@@ -25,7 +26,19 @@ interface PageResult {
   title: string;
   description: string;
   indexable: boolean;
+  locale: Locale;
+  hasArticle: boolean;
 }
+
+/**
+ * Routes typed as articles in the registry. Five, since /use-cases/{saas,
+ * ecommerce,professional-services} were consolidated into /use-cases on
+ * 2026-08-03 and kept only as permanent redirects. Asserted per locale so a
+ * page cannot quietly lose its Article node again.
+ */
+const ARTICLE_PATHS = PUBLIC_PATHS.filter(
+  (path) => path !== "/" && path !== "/login" && routeMeta(path, DEFAULT_LOCALE).kind === "article",
+);
 
 const failures: string[] = [];
 const assert = (condition: unknown, message: string): void => {
@@ -155,7 +168,15 @@ async function auditPage(
   for (const image of html.match(/<img\b[^>]*>/gi) ?? []) {
     assert(/\salt="[^"]*"/i.test(image), `${route.path}: image is missing alt text`);
   }
-  return { path: route.path, html, title, description, indexable: expectedMeta.indexable };
+  return {
+    path: route.path,
+    html,
+    title,
+    description,
+    indexable: expectedMeta.indexable,
+    locale: route.locale,
+    hasArticle: /"@type":"Article"/.test(html),
+  };
 }
 
 async function run(): Promise<void> {
@@ -170,6 +191,21 @@ async function run(): Promise<void> {
   try {
     const pages: PageResult[] = [];
     for (const route of publicRoutePairs()) pages.push(await auditPage(origin, route));
+
+    for (const locale of LOCALES) {
+      const withArticle = pages.filter((page) => page.locale === locale && page.hasArticle);
+      assert(
+        withArticle.length === ARTICLE_PATHS.length,
+        `${locale}: expected ${ARTICLE_PATHS.length} pages with an Article node, found ${withArticle.length}`,
+      );
+      for (const basePath of ARTICLE_PATHS) {
+        const url = localizedPublicPath(basePath, locale);
+        assert(
+          withArticle.some((page) => page.path === url),
+          `${url}: article route lost its Article node`,
+        );
+      }
+    }
 
     const indexed = pages.filter((page) => page.indexable);
     assert(new Set(indexed.map((page) => page.title)).size === indexed.length, "Indexable page titles are not unique");

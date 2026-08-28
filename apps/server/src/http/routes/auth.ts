@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { Router } from "express";
 import { z } from "zod";
 import { scanAllowance } from "../../services/allowance.js";
-import { isDisposableEmail, type SessionUserDto } from "@synapai/shared";
+import { isDisposableEmail, LOCALES, type Locale, type SessionUserDto } from "@synapai/shared";
 import { adminEmails, authMode, env, isAdminEmail, isProd } from "../../config/env.js";
 import { logger } from "../../lib/logger.js";
 import { AppError } from "../../lib/errors.js";
@@ -41,7 +41,7 @@ export function toSessionDto(user: UserDoc, ip?: string): SessionUserDto {
 const sessionSchema = z.object({
   idToken: z.string().min(10).max(4096).optional(),
   email: z.string().trim().toLowerCase().email().max(120).optional(),
-  locale: z.enum(["ru", "en"]).optional(),
+  locale: z.enum(LOCALES).optional(),
 });
 
 const sharedAdminSessionSchema = z.object({
@@ -92,7 +92,7 @@ authRouter.post("/admin-session", sharedAdminAuthLimiter, async (req, res, next)
  * linked to the new Firebase identity (§5). */
 async function upsertFirebaseUser(
   identity: VerifiedIdentity,
-  locale: "ru" | "en" | undefined,
+  locale: Locale | undefined,
   req: { ip?: string },
 ): Promise<UserDoc> {
   let user = await User.findOne({ firebaseUid: identity.firebaseUid });

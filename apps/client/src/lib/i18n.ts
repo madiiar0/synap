@@ -72,6 +72,16 @@ export function currentLocale(): Locale {
 }
 
 /** Locale-aware link target for public routes (keeps the /en prefix). */
+/**
+ * The locale the switcher moves to next, cycling through LOCALES in order.
+ * `setLocale` rewrites the URL to the same route in the new locale, so a reader
+ * on /en/methodology lands on /kk/methodology rather than the home page.
+ */
+export function nextLocale(): Locale {
+  const order = LOCALES as readonly Locale[];
+  return order[(order.indexOf(currentLocale()) + 1) % order.length];
+}
+
 export function localizedPath(path: PublicPath): string {
   return localizedPublicPath(path, currentLocale());
 }

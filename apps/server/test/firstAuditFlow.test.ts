@@ -39,7 +39,7 @@ describe("first audit, end to end", () => {
     const session = await fetch(`${base}/api/auth/session`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: "firstaudit@test.dev", locale: "ru" }),
+      body: JSON.stringify({ email: "firstaudit@test.dev", locale: "kk" }),
     });
     cookie = (session.headers.get("set-cookie") ?? "").split(";")[0];
   });
@@ -55,9 +55,11 @@ describe("first audit, end to end", () => {
     const me = (await (await api("/api/auth/me")).json()) as {
       scansLeft: number;
       canScan: boolean;
+      locale: string;
     };
     expect(me.scansLeft).toBe(3);
     expect(me.canScan).toBe(true);
+    expect(me.locale).toBe("kk");
   });
 
   it("#5 accepts every business identity field the settings form has", async () => {

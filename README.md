@@ -93,7 +93,7 @@ docker-compose.yml mongo + redis for real deployments
 ## Going live
 
 See **MANUAL_SETUP.md** — a step-by-step checklist (Perplexity API key,
-Firebase, SMTP, Calendly, Mongo Atlas, deploy, go-live verification) written
+Firebase, SMTP, WhatsApp booking, Mongo Atlas, deploy, go-live verification) written
 for a non-DevOps founder. Design decisions and spec interpretations are
 recorded in **ASSUMPTIONS.md**; the build history in **BUILDLOG.md**.
 

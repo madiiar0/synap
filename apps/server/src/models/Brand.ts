@@ -1,5 +1,5 @@
 import mongoose, { Schema, type Document, type Types } from "mongoose";
-import type { CompetitorRef, Locale, Market } from "@synapai/shared";
+import { LOCALES, type CompetitorRef, type Locale, type Market } from "@synapai/shared";
 
 export interface BrandDoc extends Document {
   _id: Types.ObjectId;
@@ -47,7 +47,7 @@ const brandSchema = new Schema<BrandDoc>(
     country: { type: String, default: "KZ" },
     market: { type: String, enum: ["kz", "ru", "global"], default: "kz" },
     competitors: { type: [competitorSchema], default: [] },
-    locale: { type: String, enum: ["ru", "en"], default: "ru" },
+    locale: { type: String, enum: LOCALES, default: "ru" },
     disabledPrompts: { type: [String], default: [] },
     normKey: { type: String, required: true, index: true },
   },

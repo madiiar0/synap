@@ -15,6 +15,7 @@
     "language": "Language",
     "langRu": "Русский",
     "langEn": "English",
+    "langKk": "Қазақша",
     "logout": "Log out",
     "email": "Email",
     "emailPlaceholder": "you@company.com",
@@ -39,7 +40,7 @@
     "account": "Account",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "switchLanguage": "Русский"
+    "switchLanguage": "Қазақша"
   },
   "landing": {
     "heroLine1": "Be the answer in",
@@ -288,6 +289,7 @@
   },
   "bookCall": {
     "button": "Book a call",
+    "whatsappMessage": "Hello! I’d like to book a call with the Akrux team about improving my business’s visibility in AI answers.",
     "title": "A 20-minute call",
     "subtitle": "We'll walk through your report and show how to raise visibility.",
     "name": "Name",

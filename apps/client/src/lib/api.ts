@@ -58,8 +58,6 @@ export const apiPatch = <T>(path: string, data?: unknown): Promise<T> =>
 export interface AppConfig {
   brandName: string;
   demo: boolean;
-  calendlyUrl: string | null;
-  whatsappUrl: string | null;
   authMode: "firebase" | "mock";
   publicAnalyticsEnabled: boolean;
   /** §0.1: true when the in-memory fallback database is in use (dev only). */

@@ -134,8 +134,6 @@ export function createApp(): Express {
     res.json({
       brandName: env.BRAND_NAME,
       demo: env.DEMO_MODE,
-      calendlyUrl: env.CALENDLY_URL || null,
-      whatsappUrl: env.WHATSAPP_URL || null,
       authMode,
       publicAnalyticsEnabled: env.PUBLIC_ANALYTICS_ENABLED,
       // §0.1/§0.2: the UI warns when data is not persisted or auth is mocked.

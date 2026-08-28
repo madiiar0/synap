@@ -32,7 +32,11 @@ const BANNED_IN_RU = [
  * A language switcher names the OTHER language in that language, so the EN
  * bundle legitimately carries "Русский".
  */
-const CYRILLIC_ALLOWED_IN_EN = new Set(["common.langRu", "nav.switchLanguage"]);
+const CYRILLIC_ALLOWED_IN_EN = new Set([
+  "common.langRu",
+  "common.langKk",
+  "nav.switchLanguage",
+]);
 
 describe("i18n purity (§13)", () => {
   it("RU bundle contains no known-English UI terms", () => {

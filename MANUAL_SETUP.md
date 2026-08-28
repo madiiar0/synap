@@ -68,19 +68,17 @@ prompt generation + batched extraction).
 
 ---
 
-## 3. Booking a call — Calendly + WhatsApp
+## 3. Booking a call — WhatsApp
 
-**Why:** "Book a call" is the product's only conversion. With no Calendly URL
-the button falls back to a lead form (works fine, but a calendar converts
-better).
+**Why:** "Book a call" is the product's only conversion. Every booking button
+opens a WhatsApp chat with `+7 775 713 8329` and a message localized to the
+current site language. The destination is checked into
+`apps/client/src/components/BookCallButton.tsx`; no deployment variable is
+required.
 
-- [ ] Create an event type at https://calendly.com (20-minute call)
-- [ ] Copy the event link (e.g. `https://calendly.com/you/20min`) into
-      `CALENDLY_URL=`
-- [ ] Put your WhatsApp link (`https://wa.me/7700…`) into `WHATSAPP_URL=`
-
-**Verify:** click «Записаться на созвон» on the landing — the modal should
-embed your calendar; every open is also logged in Admin → Leads.
+**Verify:** click «Записаться на созвон» on the landing page. WhatsApp should
+open with the Akrux message already filled in. The click is also recorded in
+Admin → Leads when the background request completes.
 
 ---
 

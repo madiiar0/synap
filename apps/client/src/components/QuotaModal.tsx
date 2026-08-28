@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import BookCallButton, { useAppConfig } from "./BookCallButton";
+import BookCallButton from "./BookCallButton";
 import { onQuotaExceeded } from "../lib/quotaModal";
 
 /**
@@ -11,7 +11,6 @@ import { onQuotaExceeded } from "../lib/quotaModal";
  */
 export default function QuotaModal(): JSX.Element | null {
   const { t } = useTranslation();
-  const config = useAppConfig();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
@@ -48,16 +47,6 @@ export default function QuotaModal(): JSX.Element | null {
         <p className="mt-3 text-sm leading-relaxed text-sub">{t("quota.body")}</p>
         <div className="mt-6 flex flex-col gap-3">
           <BookCallButton source="dashboard" variant="primary" label={t("quota.cta")} />
-          {config?.whatsappUrl && (
-            <a
-              href={config.whatsappUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-line bg-surface px-6 py-3 text-center text-sm font-medium text-ink transition-colors hover:border-[#D4D4D4]"
-            >
-              {t("quota.whatsapp")}
-            </a>
-          )}
           <button
             type="button"
             onClick={() => setOpen(false)}

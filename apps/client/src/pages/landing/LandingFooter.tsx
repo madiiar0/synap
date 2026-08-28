@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Logo from "../../components/Logo";
-import { currentLocale, setLocale, localizedPath } from "../../lib/i18n";
+import { nextLocale, setLocale, localizedPath } from "../../lib/i18n";
 
 export default function LandingFooter(): JSX.Element {
   const { t } = useTranslation();
@@ -24,10 +24,10 @@ export default function LandingFooter(): JSX.Element {
           </Link>
           <button
             type="button"
-            onClick={() => setLocale(currentLocale() === "ru" ? "en" : "ru")}
+            onClick={() => setLocale(nextLocale())}
             className="hover:text-ink"
           >
-            {currentLocale() === "ru" ? "EN" : "RU"}
+            {nextLocale().toUpperCase()}
           </button>
         </nav>
       </div>

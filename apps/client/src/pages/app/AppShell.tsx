@@ -23,7 +23,7 @@ import {
 import type { BrandDto } from "@synapai/shared";
 import Logo from "../../components/Logo";
 import { apiPost } from "../../lib/api";
-import { currentLocale, setLocale } from "../../lib/i18n";
+import { nextLocale, setLocale } from "../../lib/i18n";
 import { onboardingSkipped, readPreferredBrand } from "../../lib/pendingBusiness";
 import { useBrands, useMe, useOverview, useStartScan } from "../../lib/queries";
 import { DemoBadge, Skeleton } from "../../components/ui";
@@ -230,10 +230,10 @@ export default function AppShell({ admin = false }: { admin?: boolean }): JSX.El
               )}
               <button
                 type="button"
-                onClick={() => setLocale(currentLocale() === "ru" ? "en" : "ru")}
+                onClick={() => setLocale(nextLocale())}
                 className="flex h-11 w-11 items-center justify-center text-sm text-sub hover:text-ink sm:h-auto sm:w-auto"
               >
-                {currentLocale() === "ru" ? "EN" : "RU"}
+                {nextLocale().toUpperCase()}
               </button>
             </div>
           </header>

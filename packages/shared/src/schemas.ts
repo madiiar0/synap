@@ -46,7 +46,7 @@ export const bookCallLeadSchema = z.object({
   brandName: optionalText(1, 80),
   scanId: optionalText(1, 64),
   source: z.enum(["landing", "dashboard", "report"]).default("landing"),
-  /** true when the modal was merely opened (Calendly may complete off-site). */
+  /** true when the visitor opened the off-site WhatsApp booking link. */
   opened: z.boolean().optional(),
 });
 

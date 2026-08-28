@@ -68,8 +68,6 @@ const schema = z.object({
   // robots.txt disallows all crawling and the sitemap is empty.
   SITE_NOINDEX: bool.default("false"),
 
-  CALENDLY_URL: z.string().optional().default(""),
-  WHATSAPP_URL: z.string().optional().default(""),
   SMTP_HOST: z.string().optional().default(""),
   SMTP_PORT: z.coerce.number().int().default(587),
   SMTP_USER: z.string().optional().default(""),

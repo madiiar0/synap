@@ -3,8 +3,32 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/guides", "destination": "/blogs", "permanent": true },
-    { "source": "/en/guides", "destination": "/en/blogs", "permanent": true },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "^synap\\.vercel\\.app$"
+        }
+      ],
+      "destination": "https://akrux.app/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/guides",
+      "destination": "/blogs",
+      "permanent": true
+    },
+    {
+      "source": "/en/guides",
+      "destination": "/en/blogs",
+      "permanent": true
+    },
+    {
+      "source": "/kk/guides",
+      "destination": "/kk/blogs",
+      "permanent": true
+    },
     {
       "source": "/guides/audit-ai-brand-information",
       "destination": "/blogs/audit-ai-generated-brand-information",
@@ -13,6 +37,11 @@
     {
       "source": "/en/guides/audit-ai-brand-information",
       "destination": "/en/blogs/audit-ai-generated-brand-information",
+      "permanent": true
+    },
+    {
+      "source": "/kk/guides/audit-ai-brand-information",
+      "destination": "/kk/blogs/audit-ai-generated-brand-information",
       "permanent": true
     },
     {
@@ -26,6 +55,11 @@
       "permanent": true
     },
     {
+      "source": "/kk/guides/why-ai-recommends-competitors",
+      "destination": "/kk/blogs/why-ai-recommends-competitors",
+      "permanent": true
+    },
+    {
       "source": "/ai-visibility",
       "destination": "/blogs/ai-visibility-kazakhstan",
       "permanent": true
@@ -35,12 +69,39 @@
       "destination": "/en/blogs/ai-visibility-kazakhstan",
       "permanent": true
     },
-    { "source": "/use-cases/saas", "destination": "/use-cases", "permanent": true },
-    { "source": "/en/use-cases/saas", "destination": "/en/use-cases", "permanent": true },
-    { "source": "/use-cases/ecommerce", "destination": "/use-cases", "permanent": true },
+    {
+      "source": "/kk/ai-visibility",
+      "destination": "/kk/blogs/ai-visibility-kazakhstan",
+      "permanent": true
+    },
+    {
+      "source": "/use-cases/saas",
+      "destination": "/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/en/use-cases/saas",
+      "destination": "/en/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/kk/use-cases/saas",
+      "destination": "/kk/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/use-cases/ecommerce",
+      "destination": "/use-cases",
+      "permanent": true
+    },
     {
       "source": "/en/use-cases/ecommerce",
       "destination": "/en/use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/kk/use-cases/ecommerce",
+      "destination": "/kk/use-cases",
       "permanent": true
     },
     {
@@ -52,56 +113,103 @@
       "source": "/en/use-cases/professional-services",
       "destination": "/en/use-cases",
       "permanent": true
+    },
+    {
+      "source": "/kk/use-cases/professional-services",
+      "destination": "/kk/use-cases",
+      "permanent": true
     }
   ],
   "headers": [
     {
       "source": "/robots.txt",
       "headers": [
-        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
       ]
     },
     {
       "source": "/sitemap.xml",
       "headers": [
-        { "key": "Content-Type", "value": "application/xml; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
       ]
     },
     {
       "source": "/:file(llms|llms-full).txt",
       "headers": [
-        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
       ]
     },
     {
       "source": "/:private(app|admin|scan)/:path*",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
-        { "key": "Cache-Control", "value": "private, no-store" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store"
+        }
       ]
     },
     {
       "source": "/verify-email",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
-        { "key": "Cache-Control", "value": "private, no-store" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store"
+        }
       ]
     },
     {
       "source": "/api/:path*",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
-        { "key": "Cache-Control", "value": "private, no-store" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store"
+        }
       ]
     },
     {
       "source": "/spa",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
-        { "key": "Cache-Control", "value": "private, no-store" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store"
+        }
       ]
     }
   ],
