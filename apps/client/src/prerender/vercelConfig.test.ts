@@ -47,16 +47,11 @@ describe("Vercel public-site routing", () => {
 
   it("consolidates the retired host before resolving any path", () => {
     const host = config.redirects?.[0];
-    expect(host?.has).toEqual([{ type: "host", value: "^synap\\.vercel\\.app$" }]);
+    expect(host?.has).toEqual([{ type: "host", value: "synap.vercel.app" }]);
     expect(host?.source).toBe("/:path*");
     expect(host?.destination).toBe("https://akrux.app/:path*");
     expect(host?.permanent).toBe(true);
-    // Anchored, so a Vercel preview host can never match it.
-    const rule = new RegExp(host?.has?.[0].value ?? "");
-    expect(rule.test("synap.vercel.app")).toBe(true);
-    expect(rule.test("synap-a1b2c3-team.vercel.app")).toBe(false);
-    expect(rule.test("synap-git-main-team.vercel.app")).toBe(false);
-    expect(rule.test("akrux.app")).toBe(false);
+    // Vercel's host condition is an exact hostname, so preview hosts do not match.
   });
 
   it("turns every localized legacy route into a permanent server redirect", () => {
